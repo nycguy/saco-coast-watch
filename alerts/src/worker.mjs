@@ -16,7 +16,7 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
+  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v3",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -78,6 +78,91 @@ async function confirm(req,env){
   }
   return html("Email test complete",'<p>Your confirmation worked and your verified email was recorded in D1. <strong>No coastal alerts are being sent yet.</strong></p><p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p>');
 }
+
+const DATA_TIMEOUT_MS = 12000;
+function dataFetch(url, options={}) {
+  return fetch(url, {...options, signal: AbortSignal.timeout(DATA_TIMEOUT_MS)});
+}
+function utcObservation(ts) {
+  if (typeof ts!=="string" || !/^\d{4}-\d\d-\d\d[ T]\d\d:\d\d/.test(ts)) return NaN;
+  // NOAA CO-OPS data requests use GMT; NOAA's JSON timestamps have no timezone suffix.
+  return Date.parse(ts.replace(" ","T").replace(/(?:Z|\+\d\d:\d\d)?$/,"Z"));
+}
+function sourceValue(metric,value,timeMs,source,kind="observation") {
+  return {metric,value,time:new Date(timeMs).toISOString(),ageMinutes:Math.round((Date.now()-timeMs)/60000),source,kind};
+}
+async function sourceObservedWater() {
+  const p=new URLSearchParams({station:"8418150",product:"water_level",date:"recent",datum:"MLLW",units:"english",time_zone:"gmt",format:"json",application:"saco-coast-watch"});
+  const res=await dataFetch("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?"+p);
+  if(!res.ok)throw Error("NOAA water level HTTP "+res.status);
+  const body=await res.json();
+  if(body.error)throw Error("NOAA water level response error");
+  const rows=Array.isArray(body.data)?body.data:[];
+  const points=rows.map(r=>({timeMs:utcObservation(r.t),value:Number(r.v),raw:r})).filter(r=>Number.isFinite(r.timeMs)&&Number.isFinite(r.value)&&r.value>=-20&&r.value<=35).sort((a,b)=>b.timeMs-a.timeMs);
+  if(!points.length)throw Error("No valid water observations");
+  const latest=points[0];
+  if(Math.abs(Date.now()-latest.timeMs)>45*60000)throw Error("Latest water observation is stale");
+  return sourceValue("waterObserved",latest.value,latest.timeMs,"NOAA Portland station 8418150; ft MLLW");
+}
+async function sourceForecastWater() {
+  const day=ms=>new Date(ms).toISOString().slice(0,10).replaceAll("-","");
+  const p=new URLSearchParams({station:"8418150",product:"ofs_water_level",begin_date:day(Date.now()-86400000),end_date:day(Date.now()+4*86400000),datum:"MLLW",units:"english",time_zone:"gmt",format:"json",application:"saco-coast-watch"});
+  const res=await dataFetch("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?"+p);
+  if(!res.ok)throw Error("NOAA forecast model HTTP "+res.status);
+  const body=await res.json();
+  if(body.error)throw Error("NOAA forecast model response error");
+  const rows=[body.data,body.predictions,body.ofs_water_level,body.forecast].find(Array.isArray)||[];
+  const start=Date.now(),end=start+72*3600000;
+  const upcoming=rows.map(r=>({timeMs:utcObservation(r.t||r.time),value:Number(r.v??r.value)})).filter(r=>Number.isFinite(r.timeMs)&&r.timeMs>=start&&r.timeMs<=end&&Number.isFinite(r.value)&&r.value>=-20&&r.value<=35).sort((a,b)=>b.value-a.value);
+  if(!upcoming.length)throw Error("No usable 72-hour model guidance (not a tide prediction)");
+  const peak=upcoming[0];
+  return sourceValue("waterForecastPeak72h",peak.value,peak.timeMs,"NOAA Portland station 8418150; ft MLLW","model forecast peak, next 72 hours");
+}
+async function sourceBuoy() {
+  const res=await dataFetch("https://www.ndbc.noaa.gov/data/realtime2/44007.txt");
+  if(!res.ok)throw Error("NDBC buoy HTTP "+res.status);
+  const lines=(await res.text()).split(/\r?\n/);
+  const head=lines.find(x=>x.startsWith("#")&&x.includes("WSPD")&&x.includes("GST"));
+  if(!head)throw Error("Wind column headers unavailable");
+  const cols=head.trim().split(/\s+/).map(x=>x.replace(/^#/,""));
+  const results=[];
+  for(const line of lines){
+    if(!line.trim()||line.startsWith("#"))continue;
+    const parts=line.trim().split(/\s+/);if(parts.length<cols.length)continue;
+    const record=Object.fromEntries(cols.map((c,i)=>[c,parts[i]]));
+    let yr=Number(record.YY??record.YYYY);if(yr<100)yr+=2000;
+    const timeMs=Date.UTC(yr,Number(record.MM)-1,Number(record.DD),Number(record.hh),Number(record.mm));
+    if(!Number.isFinite(timeMs)||Math.abs(Date.now()-timeMs)>90*60000)continue;
+    const wspd=Number(record.WSPD),gust=Number(record.GST);
+    const mph=ms=>Math.round(ms*2.2369362921*10)/10;
+    if(wspd>=0&&wspd<90)results.push(sourceValue("wind",mph(wspd),timeMs,"NOAA/NDBC buoy 44007; mph"));
+    if(gust>=0&&gust<90)results.push(sourceValue("gust",mph(gust),timeMs,"NOAA/NDBC buoy 44007; mph"));
+    if(results.length)return results;
+  }
+  throw Error("No fresh valid buoy wind observations");
+}
+async function sourceAirTemp() {
+  const res=await dataFetch("https://api.weather.gov/stations/KPWM/observations/latest",{headers:{"accept":"application/geo+json","user-agent":"Saco Coast Watch (public coastal conditions; contact: mikewiley.nyc@gmail.com)"}});
+  if(!res.ok)throw Error("NWS airport temperature HTTP "+res.status);
+  const p=(await res.json()).properties||{};
+  const timeMs=Date.parse(p.timestamp),c=p.temperature?.value;
+  if(!Number.isFinite(timeMs)||Math.abs(Date.now()-timeMs)>90*60000||typeof c!=="number"||!Number.isFinite(c))throw Error("Latest airport air temperature is missing or stale");
+  return sourceValue("airTemp",Math.round((c*9/5+32)*10)/10,timeMs,"NWS Portland Jetport KPWM; °F (not beach temperature)");
+}
+async function pilotData() {
+  // Read-only diagnostic; never sends email or activates a coastal alert.
+  const providers=[
+    ["observedWater",sourceObservedWater],
+    ["forecastWater",sourceForecastWater],
+    ["buoyWind",sourceBuoy],
+    ["airportTemperature",sourceAirTemp],
+  ];
+  const entries=await Promise.all(providers.map(async ([name,fn])=>{
+    try{return [name,{available:true,data:await fn()}];}
+    catch(e){console.warn("Pilot weather feed unavailable",name,String(e));return [name,{available:false,error:String(e?.message||e)}];}
+  }));
+  return json({phase:"read-only-feed-diagnostics",checkedAt:new Date().toISOString(),locationNote:"Portland tide and forecast and offshore buoy/airport conditions are proxies, not property-level flood predictions.",alertsSent:false,sources:Object.fromEntries(entries)});
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
@@ -85,6 +170,7 @@ export default{
       if(path==="/health"&&req.method==="GET")return health(env);
       if(path==="/"&&req.method==="GET")return json({service:"Saco Coast Watch Alerts",status:"Owner-only email pilot; no public signup or active coastal notifications",pilot:"/pilot"});
       if(path==="/pilot"&&req.method==="GET")return landing(req,env);
+      if(path==="/pilot/data"&&req.method==="GET")return pilotData();
       if(path==="/pilot/signup"&&req.method==="POST")return requestConfirmation(req,env);
       if(path==="/pilot/confirm"&&["GET","POST"].includes(req.method))return confirm(req,env);
       return json({error:"Not found; public signup and notifications are disabled."},404);

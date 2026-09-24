@@ -219,7 +219,10 @@ async function dispatchAlerts(env){
     continue;
    }
    if(old?.active===1)continue;
-   if(old?.last_sent&&stamp-old.last_sent<3600)continue;
+   if(old?.last_sent&&stamp-old.last_sent<3600){
+    await env.DB.prepare("INSERT INTO alert_state(subscriber_id,channel,metric,active,last_sent) VALUES(?,?,?,1,?) ON CONFLICT(subscriber_id,channel,metric) DO UPDATE SET active=1").bind(s.id,channel,metric,old.last_sent).run();
+    continue;
+   }
    const condition=metric==="tempLow"?"at or below":"at or above";
    const body=thresholdLabel(metric)+" is "+m.value+" "+unit(metric)+" ("+condition+" your "+pref.threshold+" "+unit(metric)+" threshold). Measured/forecast time: "+new Date(m.time).toISOString()+". Source: "+m.source+". Portland gauge levels do not predict flooding at individual Saco properties. Follow official NWS alerts.";
    const unsub=await unsubLink(env,s);

@@ -16,7 +16,7 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v4",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
+  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v5",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -199,6 +199,57 @@ async function pilotThresholds() {
     alertsSent:false,databaseWrites:false,automatedChecksEnabled:false,tests
   });
 }
+
+/**
+ * Pure crossing-decision function. It never sends email or writes to D1.
+ * The caller must retain per-subscriber/channel/metric state and persist it
+ * after successful delivery when real notifications are enabled.
+ */
+function decideAlert(previous, value, threshold, metric, checkedAtSeconds) {
+  if (!Number.isFinite(value) || !Number.isFinite(threshold))
+    return {send:false,active:previous?.active===1?1:0,lastSent:previous?.lastSent||0,reason:"invalid-input"};
+  const lastSent=previous?.lastSent||0;
+  const triggered=metric==="tempLow"?value<=threshold:value>=threshold;
+  if (!triggered)
+    return {send:false,active:0,lastSent,reason:"below-trigger"};
+  if (previous?.active===1)
+    return {send:false,active:1,lastSent,reason:"already-active"};
+  if (lastSent && checkedAtSeconds-lastSent<3600)
+    return {send:false,active:1,lastSent,reason:"one-hour-cooldown"};
+  return {send:true,active:1,lastSent:checkedAtSeconds,reason:"new-crossing"};
+}
+/**
+ * Deterministic demonstration of future deduplication behavior; no real
+ * measurements, subscriber data, D1 changes, or notification providers.
+ */
+function pilotEngineCheck() {
+  const t=2000000000,threshold=12;
+  const step=(prev,value,at,metric="waterObserved")=>decideAlert(prev,value,threshold,metric,at);
+  const first=step(null,13,t);
+  const repeat=step(first,13,t+300);
+  const reset=step(repeat,11,t+600);
+  const cooldown=step(reset,13,t+900);
+  const resetAgain=step(cooldown,11,t+1200);
+  const second=step(resetAgain,13,t+4500);
+  const tempLow=decideAlert(null,31,32,"tempLow",t);
+  const tempHigh=decideAlert(null,55,90,"tempHigh",t);
+  const cases=[
+    {name:"initial crossing sends once",pass:first.send===true,decision:first},
+    {name:"remaining above does not resend",pass:repeat.send===false&&repeat.reason==="already-active",decision:repeat},
+    {name:"falling below resets the crossing",pass:reset.active===0&&!reset.send,decision:reset},
+    {name:"recrossing during cooldown does not resend",pass:cooldown.send===false&&cooldown.reason==="one-hour-cooldown",decision:cooldown},
+    {name:"new crossing after cooldown can send",pass:second.send===true&&second.reason==="new-crossing",decision:second},
+    {name:"low temperature checks the correct direction",pass:tempLow.send===true&&tempHigh.send===false,decision:tempLow},
+  ];
+  return json({
+    phase:"in-memory-alert-engine-check",
+    build:"email-test-v5",
+    passed:cases.every(c=>c.pass),testCount:cases.length,
+    simulationsOnly:true,realAlertsSent:false,databaseWrites:false,
+    message:"This checks crossing/cooldown logic only. Real alert delivery, scheduled checking, preferences and unsubscribe are not enabled.",
+    cases
+  },cases.every(c=>c.pass)?200:500);
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
@@ -208,6 +259,7 @@ export default{
       if(path==="/pilot"&&req.method==="GET")return landing(req,env);
       if(path==="/pilot/data"&&req.method==="GET")return pilotData();
       if(path==="/pilot/thresholds"&&req.method==="GET")return pilotThresholds();
+      if(path==="/pilot/engine-check"&&req.method==="GET")return pilotEngineCheck();
       if(path==="/pilot/signup"&&req.method==="POST")return requestConfirmation(req,env);
       if(path==="/pilot/confirm"&&["GET","POST"].includes(req.method))return confirm(req,env);
       return json({error:"Not found; public signup and notifications are disabled."},404);

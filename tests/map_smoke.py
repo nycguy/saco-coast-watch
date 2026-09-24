@@ -34,25 +34,50 @@ def main():
                 zoomControl:!!overlay&&getComputedStyle(overlay).display!=='none',
                 cameraMarkers:markers,cssRules:[...document.styleSheets].reduce((n,s)=>{try{return n+s.cssRules.length}catch(e){return n}},0)};
             }""")
+        # Visual coverage is measured from rendered pixels, not geometric
+        # tile-image bounds: animated Leaflet tiles can overlap at seams.
+        from PIL import Image
+        def screenshot_coverage(filename):
+            page.locator("#coastalMap").screenshot(path=filename,timeout=30000)
+            im=Image.open(filename).convert("RGB")
+            points=[im.getpixel((x,y)) for y in range(20,im.height-20,12)
+                    for x in range(20,im.width-20,12)]
+            # Map background is #264353; Leaflet default background is #ddd.
+            # The broken map had 65% of samples exactly equal to #264353.
+            blanks=sum(color in ((38,67,83),(221,221,221)) for color in points)
+            value=blanks/len(points)
+            print("MAP_PIXEL_COVERAGE",json.dumps({"filename":filename,
+                  "blankFraction":round(value,4),"sampleCount":len(points)}),flush=True)
+            return value
         first=measure()
         print("MAP_INITIAL",json.dumps(first),flush=True)
-        page.locator("#coastalMap").screenshot(path="map-smoke.png",timeout=30000)
+        first_blank=screenshot_coverage("map-smoke.png")
         assert not errors, "Browser JS errors: "+repr(errors)
         assert first["width"]>700 and first["height"]>350, "Map not sized"
         assert first["tilePosition"]=="absolute", "Leaflet tile CSS not applied"
         assert first["loadedCount"]>=8, "Insufficient fetched map tiles"
-        assert first["loadedFraction"]>=.92, "Map has blank gaps among loaded tiles"
+        assert first_blank<.03, "Map has visible blank gaps"
         assert first["zoomControl"] and first["cameraMarkers"]>=3, "Map controls/cameras not rendered"
         page.locator("#coastalBasemap").select_option("imagery")
         page.wait_for_timeout(6000)
         aerial=measure()
         print("MAP_AERIAL",json.dumps(aerial),flush=True)
-        assert aerial["loadedFraction"]>=.90, "Aerial map has missing tiles or fails fallback"
+        aerial_blank=screenshot_coverage("map-smoke-aerial.png")
+        assert aerial["tilePosition"]=="absolute" and aerial["loadedCount"]>=8, "Aerial tiles not loaded"
+        assert aerial_blank<.03, "Aerial map has visible blank gaps or failed to recover"
         page.locator("#coastalBasemap").select_option("streets")
         page.wait_for_timeout(5000)
         streets=measure()
         print("MAP_RETURN",json.dumps(streets),flush=True)
-        assert streets["loadedFraction"]>=.92, "Street map did not recover after switching"
+        return_blank=screenshot_coverage("map-smoke-return.png")
+        assert streets["tilePosition"]=="absolute" and streets["loadedCount"]>=8 and return_blank<.03, "Street map did not recover after switching"
+        # A second viewport catches layout/resize regressions.
+        page.set_viewport_size({"width":430,"height":900})
+        page.wait_for_timeout(1800)
+        mobile=measure()
+        print("MAP_MOBILE",json.dumps(mobile),flush=True)
+        assert mobile["width"]>=320 and mobile["height"]>=390, "Mobile map clipped"
+        assert screenshot_coverage("map-smoke-mobile.png")<.03, "Mobile map has blank gaps"
         browser.close()
         print("PASS: complete street + aerial + return, active map controls and camera markers",flush=True)
 if __name__=="__main__":main()

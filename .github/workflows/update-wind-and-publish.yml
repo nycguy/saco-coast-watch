@@ -34,7 +34,7 @@ jobs:
         if: github.event_name == 'push'
         run: |
           python3 -m venv /tmp/saco-map-venv
-          /tmp/saco-map-venv/bin/python -m pip install --disable-pip-version-check playwright
+          /tmp/saco-map-venv/bin/python -m pip install --disable-pip-version-check playwright pillow
           /tmp/saco-map-venv/bin/python -m playwright install chromium
           python3 -m http.server 8765 --directory dist > /tmp/saco-map-http.log 2>&1 &
           /tmp/saco-map-venv/bin/python tests/map_smoke.py
@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: saco-map-test-image
-          path: map-smoke.png
+          path: map-smoke*.png
           if-no-files-found: ignore
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

@@ -1,0 +1,39 @@
+name: Refresh marine winds and deploy dashboard
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve NOAA marine wind observations
+        run: python3 scripts/fetch_wind.py
+      - name: Retrieve coastal-flood and storm-surge alerts
+        run: python3 scripts/fetch_coastal_alerts.py
+      - name: Assemble site
+        run: |
+          mkdir -p dist/data
+          cp index.html dist/index.html
+          cp data/wind.json dist/data/wind.json
+          cp data/coastal-alerts.json dist/data/coastal-alerts.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Publish GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

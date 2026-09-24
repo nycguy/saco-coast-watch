@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071a27">
+<meta name="description" content="Live coastal water levels, NOAA model guidance and flood alerts for southern Maine, with January 2024 storm benchmarks.">
+<title>Saco Coast Watch | Southern Maine tide and flood dashboard</title>
+<style>
+:root{color-scheme:dark;--bg:#081824;--panel:#102637;--panel2:#142f40;--stroke:#294453;--ink:#ecf7fc;--muted:#a1bbca;--sea:#23E6CB;--lime:#b7e27b;--sun:#FFCF52;--red:#FF7688;--purple:#D9A3FF;--r:17px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 83% -15%,#1e4e60 0,transparent 38%),var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#84e7ed;text-decoration:none}a:hover{text-decoration:underline}button,select{font:inherit}button{cursor:pointer}.shell{width:min(1480px,calc(100% - 48px));margin:auto}.mast{border-bottom:1px solid #36505c99;background:#0818249e}.mastin{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:75px}.brand{display:flex;gap:13px;align-items:center}.logomark{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#4bd2d6,#157887);display:grid;place-items:center;color:#06212c;font-size:28px;font-weight:800;transform:rotate(-8deg)}.brand h1{margin:0;font-size:18px;letter-spacing:.12em;font-weight:850}.brand small{display:block;font-size:11px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase}.headright{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pill{border:1px solid #405b66;background:#193443;border-radius:99px;padding:6px 10px;color:#d4e9f2;font-size:12px;font-weight:700;display:inline-flex;gap:7px;align-items:center}.dot{height:7px;width:7px;border-radius:50%;background:var(--muted)}.dot.good{background:var(--lime);box-shadow:0 0 9px #b7e27b77}.dot.warn{background:var(--sun)}.dot.bad{background:var(--red)}.btn{background:#1d3b4b;color:var(--ink);border:1px solid #456473;border-radius:9px;padding:10px 13px;font-size:13px;font-weight:750;display:inline-flex;align-items:center;gap:7px;justify-content:center}.btn:hover{background:#315466}.btn:disabled{opacity:.55;cursor:wait}.btn.primary{background:var(--sea);color:#06212c;border-color:var(--sea)}.btn.primary:hover{background:#8ae5e6}.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin:31px 0 21px;flex-wrap:wrap}.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:850;color:var(--sea)}h2,h3,p{margin-top:0}.intro h2{font-size:clamp(29px,4vw,47px);letter-spacing:-.05em;line-height:1.08;margin:9px 0}.intro p{color:var(--muted);margin:0;max-width:730px}.sync{font-size:12px;color:var(--muted);text-align:right}.notice{display:flex;gap:14px;align-items:flex-start;padding:14px 18px;border:1px solid #8e713e;background:#352c1f;color:#f6dfaf;border-radius:var(--r);margin:0 0 17px}.notice strong{color:#fff1cf}.notice.hidden{display:none}.notice .icon{font-size:21px}.grid{display:grid;gap:14px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 17px}.panel{border:1px solid var(--stroke);background:linear-gradient(160deg,#153043 0%,var(--panel) 86%);border-radius:var(--r);box-shadow:0 15px 42px #00000012}.metric{padding:21px 21px 17px;min-height:178px}.label{display:flex;align-items:center;justify-content:space-between;gap:6px;text-transform:uppercase;letter-spacing:.085em;color:#b6ccd7;font-size:11px;font-weight:850}.number{font-size:clamp(31px,3.5vw,45px);font-weight:790;letter-spacing:-.06em;line-height:1.2;margin:14px 0 5px;font-variant-numeric:tabular-nums}.number em{font-size:16px;font-style:normal;color:#bbd4e0;letter-spacing:0}.metric p{font-size:12px;color:var(--muted);margin:0;line-height:1.55}.metric .tag{font-weight:850;font-size:11px;border-radius:5px;padding:2px 6px;display:inline-block;background:#254557;color:#c4eaf0}.status{padding:18px 22px;margin-bottom:17px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}.statuscopy{display:flex;align-items:center;gap:12px}.statusbadge{width:43px;height:43px;border-radius:12px;background:#1c4a53;color:#6fe3df;display:grid;place-items:center;font-size:25px}.status h3{font-size:17px;margin:0 0 3px}.status p{font-size:12px;color:var(--muted);margin:0;max-width:780px}.main-grid{grid-template-columns:minmax(0,1.8fr) minmax(300px,1fr);margin-bottom:17px}.chart-panel{padding:21px 20px 16px;min-width:0}.side-panel{padding:22px}.panel-header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}.panel-header h3,.side-panel h3,.section-head h3{font-size:19px;letter-spacing:-.025em;margin:0 0 5px}.sub{color:var(--muted);font-size:12px}.controls{display:flex;gap:5px;align-items:center;border:1px solid #34515f;background:#0d2230;padding:4px;border-radius:10px}.segment{padding:6px 9px;font-size:12px;border:0;border-radius:6px;background:transparent;color:#a5c2cc;font-weight:750}.segment.active{background:#315468;color:#fff}.legend{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0 8px}.legend span{font-size:12px;color:#c2d7df;display:inline-flex;gap:6px;align-items:center}.swatch{width:29px;height:0;border-top:4px solid var(--sea);position:relative;display:inline-block;flex:none}.swatch::after{content:"";position:absolute;top:-7px;left:11px;width:7px;height:7px;background:var(--sea);border:1.5px solid #081824;border-radius:50%}.swatch.pred{border-top:2px dashed var(--sun)}.swatch.pred::after{top:-7px;left:10px;width:0;height:0;background:transparent;border:5px solid transparent;border-bottom:8px solid var(--sun);border-top:0;border-radius:0}.swatch.ofs{border-top:3px dashed var(--purple)}.swatch.ofs::after{top:-6px;left:11px;width:8px;height:8px;background:var(--purple);border:1.5px solid #081824;border-radius:1px}.swatch.flood{border-top:2px dashed var(--red)}.swatch.flood::after{display:none}.chartbox{position:relative;margin-top:7px}.chartbox svg{display:block;width:100%;height:340px;overflow:visible}.chartbox svg text{fill:#a7c1cf;font-size:11px;font-family:inherit}.chartbox svg .gridline{stroke:#314c5b;stroke-width:1;stroke-dasharray:3 5}.chartbox svg .axis{stroke:#355263;stroke-width:1}.chartbox svg .now{stroke:#a7e5d8;stroke-width:1.5;stroke-dasharray:5 5}.chartbox svg .area{fill:#23e6cb11}.chartbox svg .obs{stroke:var(--sea);stroke-width:4}.chartbox svg .pred{stroke:var(--sun);stroke-width:2.4;stroke-dasharray:9 6}.chartbox svg .ofs{stroke:var(--purple);stroke-width:2.8;stroke-dasharray:11 4 2 4}.chartbox svg .obs-marker{fill:var(--sea);stroke:#081824;stroke-width:1.8}.chartbox svg .pred-marker{fill:var(--sun);stroke:#081824;stroke-width:1.4}.chartbox svg .model-marker{fill:var(--purple);stroke:#081824;stroke-width:1.5}.chartbox svg .flood{stroke:var(--red);stroke-width:1.4;stroke-dasharray:5 4;opacity:.88}.chartbox svg .minor{stroke:#f7c56e}.chartbox svg .moderate{stroke:#fc9c70}.chartbox svg .major{stroke:#fd7e8a}.chartbox svg .mark{stroke:#a8d7dc;stroke-width:1.5;stroke-dasharray:3 4;opacity:.35}.tooltip{position:absolute;pointer-events:none;padding:10px 12px;border-radius:9px;background:#071724ed;border:1px solid #5b7b8b;min-width:180px;max-width:230px;z-index:2;font-size:12px;box-shadow:0 12px 40px #0006}.tooltip[hidden]{display:none}.tooltip .ttrow{display:flex;justify-content:space-between;gap:12px}.tooltip b{font-variant-numeric:tabular-nums}.tooltip time{display:block;color:#adc9d6;margin-bottom:8px;font-size:11px}.below-chart{border-top:1px solid #2a4758;padding-top:12px;margin-top:9px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.check{display:inline-flex;gap:7px;align-items:center;font-size:12px;color:#bfdae5;cursor:pointer}.check input{accent-color:#4dd0d5}.mini-link{font-size:12px;font-weight:800}.side-panel p{font-size:12px;color:var(--muted)}.threshold{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:center;margin:15px 0}.rail{height:40px;border-radius:8px;background:#435e69}.rail.minor{background:#f6c56c}.rail.moderate{background:#fa9e75}.rail.major{background:#f77e88}.threshold strong{font-size:13px}.threshold small{display:block;font-size:11px;color:var(--muted)}.threshold b{font-size:16px;white-space:nowrap;font-variant-numeric:tabular-nums}.divider{height:1px;background:#2e4a5b;margin:16px 0}.compare{display:grid;grid-template-columns:1fr 1fr;gap:9px}.history{background:#0c2231;border:1px solid #2d4859;border-radius:10px;padding:11px}.history small{display:block;color:#b1c8d2;font-size:11px}.history strong{font-size:26px;display:block;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.history span{font-size:11px;color:var(--muted)}.side-note{padding:11px;background:#193847;border-radius:9px;font-size:12px!important;line-height:1.55;margin:15px 0 0!important}.lower{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);margin-bottom:17px}.tablepanel,.alertpanel{padding:22px;min-width:0}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:14px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:12px;text-align:left}th{color:#a9c4d1;font-size:10px;text-transform:uppercase;letter-spacing:.075em;font-weight:800;white-space:nowrap}th,td{padding:12px 9px;border-bottom:1px solid #294453}tr:last-child td{border-bottom:0}td{font-variant-numeric:tabular-nums}td b{font-size:14px}td .tabletag{display:inline-block;border-radius:5px;background:#1c3b4b;padding:2px 6px;font-size:10px;color:#d0e6ef}.muted{color:var(--muted)}.alertlist{display:grid;gap:10px}.alert{border:1px solid #416174;background:#0d2433;border-radius:12px;padding:13px}.alert.urgent{border-color:#be725b;background:#332721}.alert strong{display:block;font-size:14px}.alert .meta{font-size:11px;color:#bfd1de;margin:4px 0 6px}.alert p{font-size:12px;color:#d6e5ee;white-space:pre-line;margin:0}.alert details{margin-top:8px}.alert summary{font-size:12px;color:#83e6eb;cursor:pointer}.empty{color:var(--muted);font-size:13px;padding:15px 0}.sources{padding:22px;margin-bottom:30px}.sources h3{margin:0 0 11px}.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.source{border:1px solid #345466;border-radius:11px;padding:11px;background:#0e2736;min-width:0}.source strong{display:flex;justify-content:space-between;gap:6px;font-size:12px}.source small{font-size:11px;line-height:1.5;display:block;color:var(--muted);margin-top:5px}.badge{font-size:10px!important;font-weight:850;border-radius:5px;padding:2px 5px;background:#264758;color:#a9d3dd;white-space:nowrap}.badge.ok{color:#c8f4af;background:#234a3b}.badge.fail{color:#ffd3b9;background:#593a31}.footer{color:#a5bdca;font-size:11px;border-top:1px solid #284657;padding:18px 0 27px}.footin{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.skeleton{color:#b3ccd5}.spinner{width:13px;height:13px;display:inline-block;border:2px solid #9ecece55;border-top-color:var(--sea);border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.visuallyhidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:1100px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.main-grid,.lower{grid-template-columns:1fr}.source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.shell{width:min(100% - 26px,1480px)}.mastin{padding:11px 0;align-items:flex-start;flex-wrap:wrap}.headright{gap:7px}.brand h1{font-size:15px}.metrics{gap:10px}.metric{padding:15px;min-height:158px}.number{font-size:33px}.intro{margin:22px 0 17px}.sync{text-align:left}.panel-header{flex-direction:column}.chart-panel,.tablepanel,.alertpanel,.side-panel,.sources{padding:16px}.chartbox svg{height:300px}.source-grid{grid-template-columns:1fr}.status{padding:14px}.legend{gap:9px}.legend span{font-size:11px}}
+
+/* Extended outlook and 30-day calendar */
+.controls{flex-wrap:wrap;justify-content:center}.controls .segment{min-width:37px}.controls .segment.active{background:#237a81;color:#fff;box-shadow:inset 0 0 0 1px #65d8d5}
+.chart-panel .panel-header{gap:11px}.chartbox svg .obs{stroke-width:4.3}.chartbox svg .pred{stroke-width:2.3}.chartbox svg .ofs{stroke-width:3.1}
+.tides-scroll{max-height:420px;overflow:auto}.tides-scroll thead{position:sticky;top:0;background:#112a3b;z-index:1}.tide-only-tag{background:#3e3430!important;color:#f6d8aa!important}
+.calendar-panel{padding:22px;margin-bottom:17px}.calendar-explain{display:flex;flex-wrap:wrap;gap:12px 25px;margin-bottom:15px;font-size:12px;color:#c6dae4}.calendar-key{display:inline-flex;align-items:center;gap:7px}.calendar-chip{width:12px;height:12px;border-radius:4px;background:#214b50;border:1px solid #78d3d4}.threshold-chip{background:#604b29;border-color:#e2b66b}
+.tide-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.daytile{min-height:104px;border:1px solid #335263;background:#0c2231;border-radius:10px;padding:10px 10px 9px;display:flex;flex-direction:column;gap:3px}.daytile.elevated{background:linear-gradient(155deg,#204e50,#10343b);border-color:#5cbbb2}.daytile.tide-threshold{border-color:#e2b66b;background:linear-gradient(140deg,#4f402d,#18343a)}.daytile .daydate{font-size:11px;font-weight:800;color:#b9d4df}.daytile strong{font-size:21px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.daytile span{font-size:11px;color:#bdd1de}.daytile small{font-size:10px;font-weight:700;color:#8de5d4}.daytile small.at-threshold{color:#f9cb81}.daytile.no-tide{opacity:.57}.calendar-footnote{font-size:12px;color:#a7c1cf;margin:15px 0 0}
+@media(max-width:950px){.tide-calendar{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:620px){.tide-calendar{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-panel{padding:14px}.daytile{min-height:100px}.chart-panel{padding:15px 11px}.controls{width:100%}.segment{flex:1}}
+
+/* Storm-watching priorities: model total level first, history comparison second. */
+.model-hero{border-color:#bc9bea;background:linear-gradient(145deg,#382b51 0%,#1e3047 85%);box-shadow:inset 0 3px 0 #d9a3ff,0 15px 42px #00000016}
+.model-hero .number{color:#e5bdff}.model-hero .tag{background:#654477;color:#ffebff}.model-hero .label{color:#efddfb}
+.comparison-panel{padding:20px 22px;margin-bottom:17px;border-color:#51617a;background:linear-gradient(115deg,#1c3049,#132b3c 65%)}
+.comparison-panel .section-head{align-items:center}.comparison-panel .eyebrow{font-size:10px;color:#dab4fd;margin-bottom:5px}
+.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.compare-tile{background:#0a2232;border:1px solid #4b6073;border-radius:12px;padding:14px 16px;min-width:0}
+.compare-head{display:flex;justify-content:space-between;gap:9px;align-items:baseline;flex-wrap:wrap;color:#b8cfdd;font-size:12px}
+.compare-head strong{color:#f1e4fa;font-size:13px;font-variant-numeric:tabular-nums}
+.compare-delta{font-size:clamp(19px,2.5vw,27px);font-weight:830;letter-spacing:-.035em;margin:6px 0 3px;font-variant-numeric:tabular-nums;color:#ddd4e6}
+.compare-delta.below{color:#b7e27b}.compare-delta.above{color:#ff9ba7}.compare-delta.same{color:#ffcf52}
+.compare-sub,.comparison-footnote{font-size:12px;color:#adc7d6;line-height:1.5}
+.comparison-footnote{margin:12px 0 0}
+@media(max-width:720px){.compare-grid{grid-template-columns:1fr}.comparison-panel{padding:17px}}
+
+/* Nearby measured weather and Saco Bay coastal-point forecasts. */
+.weather-panel{padding:21px 22px;margin:0 0 17px;border-color:#4b7780;background:linear-gradient(145deg,#183544,#112a3b 80%)}
+.weather-panel .weather-intro{max-width:950px;margin:4px 0 16px;color:#b8d2de;font-size:12px}
+.weather-metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 16px}
+.weather-metric{padding:15px;border:1px solid #37586c;background:#0b2433;border-radius:12px;min-width:0}
+.weather-metric .label{line-height:1.4;gap:8px;align-items:flex-start;min-height:30px}
+.weather-metric .number{margin:12px 0 4px;font-size:clamp(26px,3vw,37px)}
+.weather-metric .number em{font-size:13px}.weather-metric p{font-size:11px;line-height:1.5;color:#b7cfdd;margin:0;min-height:44px}
+.weather-metric .subsource{color:#9fb9c6;font-size:10px;margin-top:10px;display:block}
+.weather-metric.wind-observed{box-shadow:inset 0 3px #22e1c0}.weather-metric.wind-forecast{box-shadow:inset 0 3px #e0adff}
+.weather-metric.temp-observed{box-shadow:inset 0 3px #ffce70}.weather-metric.temp-forecast{box-shadow:inset 0 3px #f187a8}
+.weather-metric.wind-observed .number{color:#57ebd6}.weather-metric.wind-forecast .number{color:#e0adff}
+.weather-metric.temp-observed .number{color:#ffd783}.weather-metric.temp-forecast .number{color:#ff9cb8}
+.weather-metric .tag{font-weight:850;font-size:10px;border-radius:5px;padding:3px 6px;background:#24495c;color:#d8ebf5;white-space:nowrap}
+.weather-subhead{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px;border-top:1px solid #315062;padding:12px 0 9px}
+.weather-subhead h4{margin:0;font-size:14px}.weather-table{max-height:315px;overflow:auto}
+.weather-table thead{position:sticky;top:0;background:#112d3d;z-index:1}
+.weather-table .wx-wind{color:#b9e0ff;font-weight:800}.weather-table .wx-gust{color:#e2b6ff;font-weight:800}.weather-table .wx-temp{color:#ffd78c;font-weight:800}
+.weather-note{font-size:11px;color:#aac5d3;margin:10px 0 0;line-height:1.55}
+@media(max-width:1100px){.weather-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.weather-panel{padding:15px}.weather-metrics{grid-template-columns:1fr}.weather-metric p{min-height:0}.weather-table{max-height:340px}}
+
+/* Independent NDBC marine stations. Wind is speed, not a property-specific reading. */
+.marine-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:2px 0 12px;flex-wrap:wrap}
+.marine-head h4{margin:0;font-size:16px}.marine-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 12px}
+.marine-card{padding:17px;border:1px solid #3c6074;border-radius:13px;background:linear-gradient(145deg,#0e3040,#0c2434);min-width:0}
+.marine-card.offshore{box-shadow:inset 0 3px #23e6cb}.marine-card.coastal{box-shadow:inset 0 3px #d9a3ff}
+.marine-top{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}.marine-top h5{font-size:15px;margin:0}.marine-id{font-size:11px;color:#b2ccd6;margin-top:2px}
+.marine-values{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:13px 0 8px}.marine-values>div{border:1px solid #2e4e60;padding:11px;border-radius:9px;background:#081d2b}
+.marine-values small{display:block;color:#aac4cf;font-size:11px}.marine-value{display:block;font-size:clamp(27px,3vw,38px);font-weight:800;letter-spacing:-.04em;line-height:1.4;font-variant-numeric:tabular-nums}
+.marine-value.speed{color:#39ead1}.marine-value.gust{color:#ffd16c}.marine-value em{font-size:12px;color:#bbd2de;font-style:normal;letter-spacing:0}
+.marine-meta{font-size:11px;color:#b7ced9;min-height:17px}.marine-card .mini-link{display:inline-block;margin-top:8px}.marine-foot{font-size:11px;color:#adc6d4;margin:0 0 16px;line-height:1.6}
+.marine-tag{border:1px solid #527084;background:#183b4d;color:#d2e8f1;border-radius:6px;padding:3px 7px;font-weight:800;font-size:10px;letter-spacing:.05em}
+.marine-tag.good{background:#18483f;border-color:#4bab8a;color:#a8f3d3}.marine-tag.stale{background:#4b3b24;border-color:#a7864c;color:#ffd68b}.marine-tag.bad{background:#4b2939;border-color:#b97583;color:#ffc4cd}
+@media(max-width:800px){.marine-grid{grid-template-columns:1fr}}
+
+/* Interactive coastal hazard map: resilient basemaps, official NWS alert polygons, vetted webcam links. */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.coastal-map-panel{padding:22px;margin:0 0 18px;border-color:#45677d;background:linear-gradient(135deg,#122c3e,#112534 70%)}
+.coastal-map-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.coastal-map-head h3{font-size:23px;margin:4px 0}.coastal-map-head p{max-width:760px;margin:0;color:#b7ccda;font-size:12px}
+.map-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.map-actions select,.map-actions button{border:1px solid #507083;background:#19394a;color:#ecf8ff;border-radius:8px;font:600 12px system-ui;padding:9px 10px;cursor:pointer}
+.map-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px;margin:12px 0 12px}.map-controls label{display:flex;align-items:center;gap:8px;font-size:12px;color:#e9f4f8;cursor:pointer}.map-controls input{accent-color:#50dfcd;width:16px;height:16px}
+.map-wrap{position:relative;overflow:hidden;border-radius:13px;border:1px solid #42677d;background:#264353}
+#coastalMap{height:clamp(390px,51vw,585px);width:100%;z-index:0}
+.map-indicator{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin:10px 0 0;color:#b4ccda;font-size:12px}
+.map-indicator strong{color:#eaf6fc}.map-indicator .map-good{color:#a3ecd0}.map-indicator .map-bad{color:#ffca97}
+.map-legend{display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap;margin:13px 0 5px;font-size:11px;color:#c5d9e6}
+.map-legend span{display:flex;align-items:center;gap:7px}.map-swatch{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid #ecf7ff55;background:#f6b850}
+.map-swatch.surge{background:#da4c9e}.map-swatch.coastal{background:#f0ac50}.map-swatch.cam{background:#1ce6ca;border-radius:50%;border:2px solid #07303d}
+.map-note{font-size:11px;line-height:1.65;color:#a9c6d4;margin:10px 0 0}.map-cam-list{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}.map-cam-list a{border:1px solid #315d71;border-radius:8px;background:#112e41;color:#baf4ef;text-decoration:none;font-size:12px;padding:8px 11px}.map-cam-list a:hover{background:#205065}
+.cam-pin{width:29px;height:29px;border:2px solid #d4fff7;border-radius:50%;background:#0f8d89;color:white;box-shadow:0 1px 9px #061824a8;display:flex;align-items:center;justify-content:center;font-size:14px}
+.map-pop{font:13px/1.5 system-ui;color:#172b38;max-width:270px}.map-pop strong{font-size:14px}.map-pop p{margin:6px 0}.map-pop a{display:inline-block;margin-top:5px;color:#075e70;font-weight:750}
+.leaflet-popup-content-wrapper{border-radius:11px!important}.leaflet-control-attribution{font-size:10px!important;background:#fffdf4ed!important}
+@media(max-width:620px){.coastal-map-panel{padding:14px}.coastal-map-head h3{font-size:20px}#coastalMap{height:420px}.map-actions{width:100%}.map-actions select{flex:1}}
+
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoAqqDBF2X7P2s=" crossorigin="anonymous">
+</head>
+<body>
+<header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true">≈</div><div><h1>SACO COAST WATCH</h1><small>Southern Maine · Coastal flood intelligence</small></div></div><div class="headright"><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
+<main class="shell">
+<section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
+<div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
+<section class="metrics grid" aria-label="Current coastal metrics">
+ <article class="panel metric model-hero"><div class="label">Forecast peak total water level <span class="tag">NEXT 72H · NOAA OFS</span></div><div class="number" id="modelValue">--<em> ft</em></div><p id="modelDetail">Looking for available NOAA model guidance…</p></article>
+<article class="panel metric"><div class="label">Observed water level <span class="tag" id="obsBadge">LIVE GAUGE</span></div><div class="number" id="observedValue">--<em> ft</em></div><p id="observedDetail">NOAA Portland · station 8418150</p></article>
+ <article class="panel metric"><div class="label">Observed − normal tide <span class="tag">SURGE SIGNAL</span></div><div class="number" id="departureValue">--<em> ft</em></div><p id="departureDetail">Difference between the observed level and the predicted astronomical tide at the same time.</p></article>
+ <article class="panel metric"><div class="label">Next high tide · baseline <span class="tag">TIDE ONLY</span></div><div class="number" id="nextHighValue">--<em> ft</em></div><p id="nextHighDetail">Loading next high tide…</p></article>
+ 
+</section>
+<section class="panel status" aria-live="polite"><div class="statuscopy"><div class="statusbadge" id="statusIcon">≈</div><div><h3 id="statusHeading">Checking coastal water levels</h3><p id="statusDescription">The status below uses Portland's published flood thresholds and live/model values only when available.</p></div></div><a class="btn" target="_blank" rel="noopener noreferrer" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150">NOAA flood dashboard ↗</a></section>
+
+<section class="panel weather-panel" aria-labelledby="weatherHeading">
+ <div class="section-head"><div><div class="eyebrow">Local storm conditions · Saco Bay coastal area</div><h3 id="weatherHeading">Wind and air temperature</h3><div class="weather-intro">Coastal-point forecasts are for the Ferry Beach / Saco Bay area. Offshore and coastal wind sensors are shown separately from nearby airport measurements; none are at the property. Gusts and shoreline exposure can differ locally.</div></div><a class="mini-link" id="weatherForecastLink" href="https://forecast.weather.gov/MapClick.php?lat=43.472&amp;lon=-70.385" target="_blank" rel="noopener noreferrer">Official coastal-point forecast ↗</a></div>
+ <div class="marine-head"><h4>Coastal wind sensors · measured</h4><span class="sub">NOAA NDBC observations · mph · updated when NOAA reports</span></div>
+<div class="grid marine-grid" id="marineWindGrid" aria-live="polite">
+ <article class="marine-card offshore" aria-labelledby="marine44007Title"><div class="marine-top"><div><h5 id="marine44007Title">Portland Offshore / Casco Bay</h5><div class="marine-id">Buoy 44007 · offshore Gulf of Maine</div></div><span class="marine-tag" id="marine44007Status">WAITING</span></div>
+ <div class="marine-values"><div><small>Wind speed</small><strong class="marine-value speed" id="marine44007Speed">-- <em>mph</em></strong></div><div><small>Wind gust</small><strong class="marine-value gust" id="marine44007Gust">-- <em>mph</em></strong></div></div>
+ <div class="marine-meta" id="marine44007Meta">Waiting for measured wind and observation time.</div><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.ndbc.noaa.gov/station_page.php?station=44007">View NOAA buoy 44007 ↗</a></article>
+ <article class="marine-card coastal" aria-labelledby="marineWEXM1Title"><div class="marine-top"><div><h5 id="marineWEXM1Title">Wells Reserve at Laudholm</h5><div class="marine-id">Station WEXM1 · coastal land station</div></div><span class="marine-tag" id="marineWEXM1Status">WAITING</span></div>
+ <div class="marine-values"><div><small>Wind speed</small><strong class="marine-value speed" id="marineWEXM1Speed">-- <em>mph</em></strong></div><div><small>Wind gust</small><strong class="marine-value gust" id="marineWEXM1Gust">-- <em>mph</em></strong></div></div>
+ <div class="marine-meta" id="marineWEXM1Meta">Waiting for measured wind and observation time.</div><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.ndbc.noaa.gov/station_page.php?station=WEXM1">View NOAA station WEXM1 ↗</a></article>
+</div>
+<p class="marine-foot" id="marineFeedNote">Measured station readings, not at the property. More than 60 minutes old: STALE; wind values are withheld. Missing gusts: Not reported, never zero. The webpage checks every 60 seconds, while NOAA and the site's automated station-data snapshot update on their own schedules.</p>
+<div class="marine-head"><h4>Nearby measured weather &amp; local forecasts</h4><span class="sub">Airport observations and Saco Bay forecasts shown separately</span></div>
+<div class="grid weather-metrics" aria-live="polite">
+  <article class="weather-metric wind-observed"><div class="label">Current observed wind <span class="tag" id="windNowBadge">STATION</span></div><div class="number" id="windNow">--<em> mph</em></div><p id="windNowDetail">Finding a recent measured wind observation…</p><small id="windNowSource" class="subsource">Nearby airport weather station, not Saco Bay shoreline</small></article>
+  <article class="weather-metric wind-forecast"><div class="label">Predicted wind at next high tide <span class="tag">NWS FORECAST</span></div><div class="number" id="windForecast">--<em> mph</em></div><p id="windForecastDetail">Loading Saco Bay coastal-point forecast…</p><small class="subsource">Coastal-point forecast · peak 72-hour wind/gust shown below</small></article>
+  <article class="weather-metric temp-observed"><div class="label">Current observed air temperature <span class="tag" id="tempNowBadge">STATION</span></div><div class="number" id="tempNow">--<em> °F</em></div><p id="tempNowDetail">Finding a recent measured air-temperature observation…</p><small id="tempNowSource" class="subsource">Nearby airport weather station, not an on-site thermometer</small></article>
+  <article class="weather-metric temp-forecast"><div class="label">Predicted temperature at next high tide <span class="tag">NWS FORECAST</span></div><div class="number" id="tempForecast">--<em> °F</em></div><p id="tempForecastDetail">Loading Saco Bay coastal-point forecast…</p><small class="subsource">Coastal-point forecast · next 24-hour range shown below</small></article>
+ </div>
+ <div class="weather-subhead"><h4>Hourly forecast · next 24 hours</h4><span class="sub" id="weatherAsOf">Forecast not loaded</span></div>
+ <div class="table-wrap weather-table"><table><thead><tr><th>Local time</th><th>Wind (mph)</th><th>Gust (mph)</th><th>Direction</th><th>Air temp (°F)</th></tr></thead><tbody id="weatherRows"><tr><td colspan="5" class="muted">Loading official forecast…</td></tr></tbody></table></div>
+ <p class="weather-note" id="weatherSourceNote">NWS hourly forecasts update as issued, not every minute. The webpage checks live readings every 60 seconds and the forecast every 10 minutes while open; NDBC wind snapshots refresh every five minutes through the local helper or the GitHub workflow. “Current” cards show the measurement time; stale data are marked or withheld.</p>
+</section>
+
+<section class="panel coastal-map-panel" aria-labelledby="coastalMapHeading">
+  <div class="coastal-map-head"><div><div class="eyebrow">Storm map · southern Maine</div><h3 id="coastalMapHeading">Coastal alerts &amp; live beach cameras</h3><p>Official active NWS coastal-flood and storm-surge watch/warning areas, plus links to nearby live shoreline cameras. Alert polygons show the affected forecast zones, <strong>not which individual properties will flood</strong>.</p></div>
+    <div class="map-actions"><label for="coastalBasemap" class="sr-only">Choose basemap</label><select id="coastalBasemap" aria-label="Map basemap"><option value="streets">Street map + labels</option><option value="imagery">Aerial photography</option><option value="topo">USGS topographic</option></select><button type="button" id="mapHome">↗ Saco Bay</button></div>
+  </div>
+  <div class="map-controls" role="group" aria-label="Map overlays"><label><input type="checkbox" id="showSurgeAlerts" checked>Storm surge watch / warning</label><label><input type="checkbox" id="showCoastalAlerts" checked>Coastal flooding alerts</label><label><input type="checkbox" id="showCameras" checked>Coastal webcams</label></div>
+  <div class="map-wrap"><div id="coastalMap" role="application" aria-label="Zoomable coastal map with current NWS flood alerts and coastal webcams"><div class="empty">Loading interactive map…</div></div></div>
+  <div class="map-legend"><span><i class="map-swatch surge"></i>Storm surge alerts</span><span><i class="map-swatch coastal"></i>Coastal flood alerts</span><span><i class="map-swatch cam"></i>Webcam location (approx.)</span><span>Solid outline: warning · dashed: watch/advisory</span></div>
+  <div class="map-indicator"><span id="mapAlertStatus" aria-live="polite">Checking official active alert polygons…</span><span id="mapBasemapStatus">Loading basemap…</span></div>
+  <div class="map-cam-list" id="mapCameraLinks" aria-label="View coastal webcams"></div>
+  <p class="map-note">Cameras open at their operators' websites because external live streams may prohibit embedding. Links do not guarantee that a camera is currently online. Storm-surge watch/warning products generally relate to tropical or post-tropical systems; <strong>nor'easters are typically covered by coastal flood alerts</strong>. No static inundation or property-level flood prediction is shown. For emergency decisions use <a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.weather.gov/gyx/">NWS Gray ↗</a> and <a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150">NOAA Portland ↗</a>.</p>
+</section>
+
+<section class="panel comparison-panel" aria-labelledby="compareTitle">
+  <div class="section-head"><div><div class="eyebrow">Storm context · Portland station 8418150</div><h3 id="compareTitle">How the forecast peak compares with January 2024</h3><div class="sub" id="compareSummary">Checking NOAA model guidance for a peak water level in the next 72 hours.</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150" rel="noopener noreferrer" target="_blank">Official Portland flood dashboard ↗</a></div>
+  <div class="compare-grid" aria-live="polite">
+    <div class="compare-tile"><div class="compare-head"><span>January 10, 2024</span><strong>≈13.80 ft MLLW</strong></div><div class="compare-delta" id="compareJan10">Waiting for model data</div><div class="compare-sub" id="compareJan10Detail">Comparison uses forecast peak total water level at Portland.</div></div>
+    <div class="compare-tile"><div class="compare-head"><span>January 13, 2024</span><strong>14.57 ft MLLW</strong></div><div class="compare-delta" id="compareJan13">Waiting for model data</div><div class="compare-sub" id="compareJan13Detail">Comparison uses forecast peak total water level at Portland.</div></div>
+  </div>
+  <p class="comparison-footnote" id="compareFootnote">Historical peaks are observed water levels. Current values are model guidance, not observed peaks or a prediction of damage in Saco. Portland's flood categories and local wave/runup effects must be considered separately.</p>
+</section>
+<div class="grid main-grid"><section class="panel chart-panel"><div class="panel-header"><div><h3>Water-level outlook</h3><div class="sub">Gauge observations · predicted astronomical tide · available NOAA model guidance</div></div><div class="controls" role="group" aria-label="Future outlook period"><button type="button" data-days="1" class="segment">24h</button><button type="button" data-days="3" class="segment active">72h</button><button type="button" data-days="7" class="segment">7d</button><button type="button" data-days="14" class="segment">14d</button><button type="button" data-days="30" class="segment">30d</button></div></div><div class="legend"><span><i class="swatch"></i>Observed</span><span><i class="swatch pred"></i>Astronomical tide</span><span><i class="swatch ofs"></i>NOAA model guidance</span><span><i class="swatch flood"></i>Flood thresholds</span></div><div class="chartbox"><svg id="chart" role="img" aria-label="Water levels in feet versus Eastern time, including observational and predicted data" viewBox="0 0 920 340" preserveAspectRatio="none"><text x="460" y="170" text-anchor="middle">Connecting to NOAA…</text></svg><div id="tooltip" class="tooltip" hidden></div></div><div class="below-chart"><label class="check"><input type="checkbox" id="showFlood" checked>Flood thresholds</label><label class="check"><input type="checkbox" id="showModel" checked>Model guidance</label><span class="sub" id="chartPeriod">Past 24h · next 72h</span><button type="button" class="btn" id="exportBtn" aria-label="Download chart data as CSV">↓ CSV</button></div></section>
+<section class="panel side-panel"><h3>Know the flood thresholds</h3><p>National Weather Service categories for the <strong>Portland gauge</strong>. These are not property-level inundation measurements or Saco-specific road-closure thresholds.</p><div class="threshold"><div class="rail minor"></div><div><strong>Minor flooding</strong><small>Low-lying coastal areas may flood</small></div><b>12.0 ft</b></div><div class="threshold"><div class="rail moderate"></div><div><strong>Moderate flooding</strong><small>More extensive coastal impacts</small></div><b>13.0 ft</b></div><div class="threshold"><div class="rail major"></div><div><strong>Major flooding</strong><small>Substantial coastal impacts possible</small></div><b>14.0 ft</b></div><div class="divider"></div><h3>January 2024 reference</h3><p>Observed Portland gauge peaks from Maine's major coastal storms. Tap NOAA's gauge history for official context.</p><div class="compare"><div class="history"><small>January 10, 2024</small><strong>≈13.8 <span>ft</span></strong><span>Significant coastal flooding</span></div><div class="history"><small>January 13, 2024</small><strong>14.57 <span>ft</span></strong><span>Record water level</span></div></div><p class="side-note">A predicted astronomical tide below 12 ft does <strong>not</strong> rule out coastal flooding. Wind-driven surge, breaking waves, erosion and local topography can change the outcome, especially near Camp Ellis.</p><div style="margin-top:12px"><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.weather.gov/gyx/PortlandRecordTide">Read NWS January 2024 record report ↗</a></div></section></div>
+<div class="grid lower"><section class="panel tablepanel"><div class="section-head"><div><h3>Upcoming high tides</h3><div class="sub" id="highTidesPeriod">Next 72h · Eastern time · Portland gauge</div></div><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8418150">NOAA tide tables ↗</a></div><div class="table-wrap tides-scroll"><table><thead><tr><th>Day and time</th><th>Astronomical tide</th><th>OFS near high tide</th><th>Portland threshold</th></tr></thead><tbody id="highTides"><tr><td colspan="4" class="empty">Loading NOAA high tides…</td></tr></tbody></table></div><div class="sub" style="margin-top:12px">Model values appear only where guidance is available. Beyond that point these are astronomical tide heights only, not a storm-surge or flood forecast.</div></section>
+<section class="panel alertpanel"><div class="section-head"><div><h3>Saco-area weather alerts</h3><div class="sub">Active NWS alerts for a coastal Saco reference point</div></div><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.weather.gov/gyx/">NWS Gray / Portland ↗</a></div><div id="alerts" class="alertlist"><div class="empty">Loading official weather alerts…</div></div><p class="sub" style="margin:13px 0 0">Alert coverage depends on the selected point. Marine advisories and hazard statements for neighboring zones may not appear here; check the linked NWS forecast.</p></section></div>
+<section class="panel calendar-panel" aria-labelledby="calendarHeading">
+<div class="section-head"><div><h3 id="calendarHeading">30-day high-tide calendar</h3><div class="sub" id="calendarPeriod">Portland · daily highest predicted astronomical tide · Eastern time</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8418150" target="_blank" rel="noopener noreferrer">NOAA tide predictions ↗</a></div>
+<div class="calendar-explain"><span class="calendar-key"><i class="calendar-chip"></i>Higher tides relative to this 30-day period</span><span class="calendar-key"><i class="calendar-chip threshold-chip"></i>Tide-only height at or above Portland's minor flood level</span></div>
+<div id="highTideCalendar" class="tide-calendar" aria-live="polite"><div class="empty">Loading 30-day high-tide predictions…</div></div>
+<p class="calendar-footnote" id="calendarNote">Highlighting shows relative astronomical tide height, not an official coastal flood outlook. Wind, surge and waves can cause flooding at lower tides. Dates and times use America/New_York.</p>
+</section>
+<section class="panel sources"><div class="section-head"><div><h3>Data health & direct sources</h3><div class="sub">No stored credentials. Your browser checks current observations and alerts every 60 seconds while active. Short-range tides are refreshed every 5 minutes; long-range tides and high/low tables every 6 hours. The gauge normally reports at six-minute intervals. NOAA NDBC station snapshots are published separately via GitHub Pages workflow.</div></div><div class="sub" id="lastUpdated">Not updated yet</div></div><div class="source-grid"><a class="source" href="https://www.ndbc.noaa.gov/station_page.php?station=44007" target="_blank" rel="noopener noreferrer"><strong>NOAA Portland offshore buoy 44007 <span class="badge" id="healthMarine44007">WAITING</span></strong><small>Measured offshore wind, gusts and observation time ↗</small></a><a class="source" href="https://www.ndbc.noaa.gov/station_page.php?station=WEXM1" target="_blank" rel="noopener noreferrer"><strong>Wells Reserve at Laudholm WEXM1 <span class="badge" id="healthMarineWEXM1">WAITING</span></strong><small>Measured coastal-land wind and reported gusts, when available ↗</small></a><a class="source" id="sourceObserved" href="https://tidesandcurrents.noaa.gov/waterlevels.html?id=8418150" target="_blank" rel="noopener noreferrer"><strong>NOAA measured water levels <span class="badge" id="healthObserved">WAITING</span></strong><small>Portland station 8418150 · six-minute gauge observations ↗</small></a><a class="source" href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8418150" target="_blank" rel="noopener noreferrer"><strong>Astronomical tide predictions <span class="badge" id="healthPredicted">WAITING</span></strong><small>Portland station 8418150 · tide-only projection ↗</small></a><a class="source" href="https://tidesandcurrents.noaa.gov/ofs/gomofs/gomofs.html" target="_blank" rel="noopener noreferrer"><strong>NOAA operational model <span class="badge" id="healthModel">WAITING</span></strong><small>Gulf of Maine water-level guidance, where available ↗</small></a><a class="source" href="https://api.weather.gov/alerts/active?point=43.48,-70.38" target="_blank" rel="noopener noreferrer"><strong>NWS active alerts <span class="badge" id="healthAlerts">WAITING</span></strong><small>Saco coastal reference point · official watch/warning text ↗</small></a><a class="source" href="https://api.weather.gov/stations/KPWM/observations/latest" target="_blank" rel="noopener noreferrer"><strong>Nearby measured wind and temperature <span class="badge" id="healthWeatherObservation">WAITING</span></strong><small>NWS reporting station · labeled with actual site and observation time ↗</small></a><a class="source" href="https://forecast.weather.gov/MapClick.php?lat=43.472&amp;lon=-70.385" target="_blank" rel="noopener noreferrer"><strong>Saco Bay coastal-point weather forecast <span class="badge" id="healthWeatherForecast">WAITING</span></strong><small>NWS hourly wind, available gusts, and air temperature ↗</small></a><a class="source" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150" target="_blank" rel="noopener noreferrer"><strong>NOAA inundation dashboard <span class="badge">OFFICIAL</span></strong><small>Confirm projected water levels and forecast uncertainty ↗</small></a><a class="source" href="https://www.weather.gov/gyx/" target="_blank" rel="noopener noreferrer"><strong>NWS coastal forecast <span class="badge">OFFICIAL</span></strong><small>Consult for coastal flooding, waves and marine hazards ↗</small></a></div></section>
+</main><footer class="footer"><div class="shell footin"><span>Independent dashboard using NOAA / NWS public data. Not affiliated with, endorsed by, or a substitute for NOAA or emergency management.</span><span>Station 8418150 · ft MLLW · America/New_York · Automatically checks for updates every 60 seconds while active</span></div></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+<script>
+'use strict';
+(() => {
+const STATION='8418150', TZ='America/New_York', NOAA='https://api.tidesandcurrents.noaa.gov/api/prod/datagetter';
+// Public coastal-area reference, intentionally NOT the user's street address or its precise coordinates.
+const COASTAL_POINT='43.472,-70.385', WEATHER_OBS_STATIONS=['KPWM','KSFM'];
+const THRESHOLDS=[{name:'Minor',value:12},{name:'Moderate',value:13},{name:'Major',value:14}];
+const JAN2024=[{date:'Jan10',value:13.8},{date:'Jan13',value:14.57}];
+const $=id=>document.getElementById(id);
+const state={obs:[],pred:[],predShort:[],predLong:[],highs:[],model:[],alerts:[],days:3,showFlood:true,showModel:true,loading:false,lastSuccess:null,lastAttempt:null,errors:{},lastFetched:{},weatherObservation:null,weatherForecast:[],weatherForecastUpdated:null,weatherPointUrl:null,marine:{},marineFetchError:null,marineSnapshotAt:null};
+
+const MARINE_MAX_AGE=60*60000;
+function marineNumber(id,value,missingLabel='--'){
+ const node=$(id);node.replaceChildren();
+ const number=document.createTextNode(Number.isFinite(value)?Math.round(value).toString():missingLabel);
+ node.append(number);if(Number.isFinite(value)){const unit=document.createElement('em');unit.textContent=' mph';node.append(unit);}
+}
+function renderMarine(){
+ for(const id of ['44007','WEXM1']){
+  const station=state.marine[id],t=Date.parse(station?.observed_at||''),age=now()-t;
+  const timed=Number.isFinite(t)&&t>0&&age>=-10*60000;
+  const fresh=timed&&age<=MARINE_MAX_AGE;
+  const speed=fresh&&Number.isFinite(station?.speed_mph)?station.speed_mph:null;
+  const gust=fresh&&Number.isFinite(station?.gust_mph)?station.gust_mph:null;
+  const label=!station?'UNAVAILABLE':!fresh?'STALE':speed===null?'NO SPEED':'LIVE';
+  const badge=$('marine'+id+'Status');badge.textContent=label;badge.className='marine-tag '+(label==='LIVE'?'good':label==='STALE'?'stale':'bad');
+  marineNumber('marine'+id+'Speed',speed);
+  marineNumber('marine'+id+'Gust',gust,station&&!fresh?'--':station&&fresh?'Not reported':'--');
+  const when=timed?dayTime(t)+' ET · '+relative(t):'No valid observation timestamp';
+  const direction=fresh&&Number.isFinite(station?.direction_deg)?windCompass(station.direction_deg)+' wind · ':'';
+  const note=!station?'Marine measurement unavailable. Check the local updater or GitHub workflow, and the NOAA station link.':
+    !fresh?'Stale observation ('+when+'). Values withheld until fresh data arrive.':
+    direction+when+(gust===null?' · gust not reported':'');
+  $('marine'+id+'Meta').textContent=note;
+  health('healthMarine'+id,label==='LIVE',label);
+ }
+ $('marineFeedNote').textContent=state.marineFetchError?
+  'Marine snapshot warning: '+state.marineFetchError+'. Station timestamps determine whether values are fresh; old readings are withheld. The webpage retries every 60 seconds.':
+  'NDBC measured winds, not at your property. Station readings older than 60 minutes are withheld; missing gusts show Not reported. Webpage checks each minute; the local updater or GitHub workflow normally refreshes snapshots every five minutes (GitHub runs may be delayed).';
+}
+async function loadMarine(){
+ try{
+  // Same-origin JSON is produced by the local Python helper or the GitHub Actions workflow.
+  if(location.protocol==='file:')throw Error('Local file mode cannot load NOAA snapshots. Start run-local.bat and open http://127.0.0.1:8765/');
+  const data=await getJSON('data/wind.json?ts='+now(),12000);
+  if(!data||!data.stations||typeof data.stations!=='object')throw Error('Invalid marine snapshot; check the local updater or GitHub deployment workflow');
+  state.marine=data.stations;state.marineSnapshotAt=Date.parse(data.generated_at||'');
+  if(!Number.isFinite(state.marineSnapshotAt))throw Error('Marine snapshot is a placeholder: use run-local.bat locally, or run the GitHub Actions workflow on Pages');
+  state.marineFetchError=now()-state.marineSnapshotAt>90*60000?'Station snapshot is older than 90 minutes; check the local updater or GitHub Actions runs':null;
+ }catch(err){
+  state.marine={};
+  const message=String(err?.message||err);
+  state.marineFetchError=message==='Failed to fetch'?'Marine data file cannot be reached. Locally, use run-local.bat, not index.html opened directly; on GitHub, check the deployment workflow':message;
+ }
+ renderMarine();
+}
+const now=()=>Date.now(); const fmtN=(v,d=2)=>Number.isFinite(v)?Number(v).toFixed(d):'--';
+const toDate=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/);return m?Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0)):NaN;};
+const fmt=(ms,options={})=>new Intl.DateTimeFormat('en-US',{timeZone:TZ,...options}).format(ms);
+const time=ms=>fmt(ms,{hour:'numeric',minute:'2-digit'});
+const dayTime=ms=>fmt(ms,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+const relative=ms=>{const min=Math.max(0,Math.round((now()-ms)/60000));return min<2?'just now':min<60?min+' min ago':min<1440?Math.floor(min/60)+'h '+(min%60)+'m ago':Math.floor(min/1440)+' days ago';};
+const ymd=t=>{const d=new Date(t);return d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0')+String(d.getUTCDate()).padStart(2,'0');};
+function query(product,extra={}){const u=new URL(NOAA);Object.entries({station:STATION,product,datum:'MLLW',units:'english',time_zone:'gmt',format:'json',application:'SacoCoastWatch',...extra}).forEach(([k,v])=>u.searchParams.set(k,String(v)));return u.toString();}
+async function getJSON(url,ms=18000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),ms);try{const response=await fetch(url,{signal:controller.signal,cache:'no-store',headers:{Accept:url.startsWith('https://api.weather.gov/')?'application/geo+json':'application/json'}});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));return data;}finally{clearTimeout(timer);}}
+function decodeHighs(json){const rows=json?.predictions||[];return rows.filter(x=>x.type==='H').map(x=>({t:toDate(x.t),v:Number(x.v)})).filter(x=>Number.isFinite(x.t)&&Number.isFinite(x.v)).sort((a,b)=>a.t-b.t);}
+function localParts(ms){const parts=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(ms);const obj=Object.fromEntries(parts.filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));return {year:+obj.year,month:+obj.month,day:+obj.day,key:obj.year+'-'+obj.month+'-'+obj.day};}
+function combinePredictions(){const short=state.predShort,long=state.predLong;if(!long.length){state.pred=short;return;}if(!short.length){state.pred=long;return;}const first=short[0].t,last=short.at(-1).t;state.pred=[...long.filter(x=>x.t<first),...short,...long.filter(x=>x.t>last)];}
+function shouldFetch(name,interval){return !state.lastFetched[name]||now()-state.lastFetched[name]>=interval;}
+function decodeSeries(json,preferred){const rows=preferred.map(k=>json?.[k]).find(x=>Array.isArray(x))||[];return rows.map(x=>({t:toDate(x.t||x.time),v:Number(x.v??x.value)})).filter(x=>Number.isFinite(x.t)&&Number.isFinite(x.v)).sort((a,b)=>a.t-b.t);}
+function nearest(series,t,maxMs=12*60000){if(!series.length)return null;let l=0,r=series.length-1;while(l<r){let m=(l+r)>>1;if(series[m].t<t)l=m+1;else r=m;}const a=series[l],b=series[Math.max(0,l-1)];const picked=!b||Math.abs(a.t-t)<Math.abs(b.t-t)?a:b;return Math.abs(picked.t-t)<=maxMs?picked:null;}
+function peak(series,start,end){return series.filter(p=>p.t>=start&&p.t<=end).reduce((a,b)=>!a||b.v>a.v?b:a,null);}
+function highTides(){
+const cutoff=now()-30*60000,limit=now()+state.days*86400000;
+if(state.highs.length)return state.highs.filter(x=>x.t>=cutoff&&x.t<=limit);
+const p=state.pred,result=[];
+for(let i=1;i<p.length-1;i++){const a=p[i-1],b=p[i],c=p[i+1];if(b.t<cutoff||b.t>limit||b.t-a.t>32*60000||c.t-b.t>32*60000)continue;if(b.v>=a.v&&b.v>c.v&&(!result.length||b.t-result.at(-1).t>3*3600000))result.push(b);}
+return result;
+}
+function currentStatus(){const latest=state.obs.at(-1);const nextPeak=peak(state.model,now(),now()+72*3600000);const gaugeFresh=latest&&now()-latest.t<45*60000;const source=gaugeFresh?latest:nextPeak;return{latest,nextPeak,gaugeFresh,source};}
+function health(id,ok,label){$(id).textContent=label|| (ok?'CONNECTED':'UNAVAILABLE');$(id).className='badge '+(ok?'ok':'fail');}
+
+function metricNumber(id,n,unit,decimals=0){$(id).innerHTML=(Number.isFinite(n)?Number(n).toFixed(decimals):'--')+'<em> '+unit+'</em>';}
+function validMeasurement(measurement){const value=measurement?.value;return typeof value==='number'&&Number.isFinite(value)?value:null;}
+function observationFromNWS(data,station){
+ const p=data?.properties||{},rawTime=Date.parse(p.timestamp||'');
+ if(!Number.isFinite(rawTime)||now()-rawTime>2*3600000||rawTime>now()+10*60000)throw new Error('Station observation is missing, future-dated, or older than 2 hours');
+ const wind=validMeasurement(p.windSpeed),gust=validMeasurement(p.windGust),temp=validMeasurement(p.temperature);
+ if(wind===null&&temp===null)throw new Error('Station did not provide wind or air temperature');
+ return {station,t:rawTime,wind:wind===null?null:wind*2.236936,gust:gust===null?null:gust*2.236936,temp:temp===null?null:temp*9/5+32,direction:validMeasurement(p.windDirection)};
+}
+function parseWindSpeed(text){
+ if(typeof text==='object'&&text!==null){const v=validMeasurement(text);return v===null?null:(String(text.unitCode||'').includes('km_h')?v*.621371:String(text.unitCode||'').includes('m_s-1')?v*2.236936:v);}
+ const m=String(text||'').match(/(\d+(?:\.\d+)?)(?:\s*(?:to|-|–)\s*(\d+(?:\.\d+)?))?/i);
+ return m?Number(m[2]??m[1]):null; // upper end for a forecast range, not a gust
+}
+function windCompass(deg){if(!Number.isFinite(deg))return '—';return ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][Math.round(((deg%360)+360)%360/22.5)%16];}
+function forecastPeriod(p){
+ const begin=Date.parse(p.startTime||''),end=Date.parse(p.endTime||'');
+ if(!Number.isFinite(begin)||!Number.isFinite(end)||end<=begin)return null;
+ const t=Number(p.temperature),temp=Number.isFinite(t)?(p.temperatureUnit==='C'?t*9/5+32:t):null;
+ return {t:begin,end,wind:parseWindSpeed(p.windSpeed),gust:typeof p.windGust?.value==='number'&&Number.isFinite(p.windGust.value)?(String(p.windGust.unitCode||'').includes('km_h')?p.windGust.value*.621371:p.windGust.value):null,dir:String(p.windDirection||'—'),temp};
+}
+function renderWeather(){
+ const o=state.weatherObservation,age=o?now()-o.t:Infinity,fresh=o&&age<=2*3600000;
+ const w=fresh?o.wind:null,temperature=fresh?o.temp:null;
+ metricNumber('windNow',w,'mph');metricNumber('tempNow',temperature,'°F');
+ const origin=o?'NWS '+o.station+' · '+dayTime(o.t)+' ET · '+relative(o.t):'Nearby station observation unavailable';
+ $('windNowBadge').textContent=fresh?(age>45*60000?'DELAYED':'MEASURED'):'UNAVAILABLE';$('tempNowBadge').textContent=fresh?(age>45*60000?'DELAYED':'MEASURED'):'UNAVAILABLE';
+ $('windNowDetail').textContent=w===null?'No recent valid measured wind speed.':(windCompass(o.direction)+' wind'+(Number.isFinite(o.gust)?' · gust '+Math.round(o.gust)+' mph':'')+' · '+origin);
+ $('tempNowDetail').textContent=temperature===null?'No recent valid measured air temperature.':origin;
+ $('windNowSource').textContent=o?'Reporting site: '+o.station+' (nearby, not at the coast point)':'Measured conditions from nearby NWS reporting station';
+ $('tempNowSource').textContent=$('windNowSource').textContent;
+ const active=state.weatherForecast.filter(x=>x.end>now()&&x.t<now()+72*3600000);
+ const high=highTides()[0];const target=high?.t??active[0]?.t;
+ const match=active.find(x=>x.t<=target&&x.end>target)||active.find(x=>x.t>=target)||null;
+ const max72=active.filter(x=>Number.isFinite(x.wind)).reduce((a,b)=>!a||b.wind>a.wind?b:a,null);
+ const forecastGust=active.reduce((v,x)=>Number.isFinite(x.gust)?Math.max(v,x.gust):v,0);
+ const next24=active.filter(x=>x.t<now()+24*3600000&&Number.isFinite(x.temp));
+ const min24=next24.length?Math.min(...next24.map(x=>x.temp)):null,max24=next24.length?Math.max(...next24.map(x=>x.temp)):null;
+ metricNumber('windForecast',match?.wind??null,'mph');metricNumber('tempForecast',match?.temp??null,'°F');
+ const when=match?(high&&Math.abs(match.t-high.t)<=90*60000?'Next high tide '+dayTime(high.t)+' ET':'Forecast '+dayTime(match.t)+' ET'):'Hourly weather forecast unavailable';
+ $('windForecastDetail').textContent=match?(when+' · '+match.dir+(max72?' · Peak forecast wind '+Math.round(max72.wind)+' mph'+(forecastGust?' / gust '+Math.round(forecastGust)+' mph':'')+' within 72h.':'.')):'No current NWS hourly wind forecast; the tide forecast cannot replace it.';
+ $('tempForecastDetail').textContent=match?(when+(min24!==null?' · Next 24h: '+Math.round(min24)+'–'+Math.round(max24)+'°F.':'.')):'No current NWS hourly air-temperature forecast.';
+ $('weatherAsOf').textContent=state.weatherForecast.length?
+  (state.weatherForecastUpdated?'NWS forecast issued '+dayTime(state.weatherForecastUpdated)+' ET':'NWS hourly forecast available (issue time not provided)')+
+  (state.lastFetched.weatherForecast?' · checked '+time(state.lastFetched.weatherForecast)+' ET':''):
+  'NWS hourly forecast unavailable'+(state.errors.weatherForecast?' · '+state.errors.weatherForecast:'');
+ const body=$('weatherRows');body.replaceChildren();const next=active.filter(x=>x.t<now()+24*3600000).slice(0,24);
+ if(!next.length){const row=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.className='muted';td.textContent='Hourly forecast unavailable. Use the official NWS forecast link.';row.append(td);body.append(row);return;}
+ for(const x of next){const row=document.createElement('tr');const vals=[dayTime(x.t)+' ET',Number.isFinite(x.wind)?Math.round(x.wind):'—',Number.isFinite(x.gust)?Math.round(x.gust):'—',x.dir,Number.isFinite(x.temp)?Math.round(x.temp):'—'];vals.forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===1)td.className='wx-wind';if(i===2)td.className='wx-gust';if(i===4)td.className='wx-temp';row.append(td);});body.append(row);}
+}
+async function loadWeather(){
+ if(!shouldFetch('weatherObservation',60*1000)&&!shouldFetch('weatherForecast',10*60000))return;
+ if(shouldFetch('weatherObservation',60*1000)){
+  let obs=null;
+  for(const station of WEATHER_OBS_STATIONS){try{const candidate=observationFromNWS(await getJSON('https://api.weather.gov/stations/'+station+'/observations/latest'),station);obs=candidate;if(candidate.wind!==null&&candidate.temp!==null)break;}catch(err){console.warn('Nearby NWS weather observation '+station+':',err);}}
+  if(obs){state.weatherObservation=obs;delete state.errors.weatherObservation;health('healthWeatherObservation',true,obs.station);}else{state.weatherObservation=null;state.errors.weatherObservation='No recent station observation';health('healthWeatherObservation',false,'UNAVAILABLE');}
+  state.lastFetched.weatherObservation=now();renderWeather();
+ }
+ if(shouldFetch('weatherForecast',10*60000)){
+  try{
+   if(!state.weatherPointUrl||shouldFetch('weatherPoint',24*3600000)){
+    const point=await getJSON('https://api.weather.gov/points/'+COASTAL_POINT);
+    const u=point?.properties?.forecastHourly;if(!u||!u.startsWith('https://api.weather.gov/'))throw new Error('NWS point did not provide an hourly forecast URL');
+    state.weatherPointUrl=u;state.lastFetched.weatherPoint=now();
+   }
+   let forecast;
+   try{forecast=await getJSON(state.weatherPointUrl);}catch(err){ // Gridpoint URL may change: re-resolve once.
+    const point=await getJSON('https://api.weather.gov/points/'+COASTAL_POINT);
+    state.weatherPointUrl=point?.properties?.forecastHourly;state.lastFetched.weatherPoint=now();forecast=await getJSON(state.weatherPointUrl);
+   }
+   const rows=(forecast?.properties?.periods||[]).map(forecastPeriod).filter(Boolean).sort((a,b)=>a.t-b.t);
+   if(!rows.length)throw new Error('No NWS hourly forecast periods returned');
+   state.weatherForecast=rows;const updated=Date.parse(forecast?.properties?.updated||'');state.weatherForecastUpdated=Number.isFinite(updated)?updated:null;
+   state.lastFetched.weatherForecast=now();delete state.errors.weatherForecast;health('healthWeatherForecast',true,'CONNECTED');
+  }catch(err){state.errors.weatherForecast=String(err?.message||err);console.warn('NWS hourly coastal forecast:',err);state.lastFetched.weatherForecast=now();health('healthWeatherForecast',false,'UNAVAILABLE');}
+  renderWeather();
+ }
+}
+
+function renderSummary(){const {latest,nextPeak,gaugeFresh,source}=currentStatus();$('observedValue').innerHTML=(latest?fmtN(latest.v):'--')+'<em> ft</em>';$('observedDetail').textContent=latest?'Recorded '+dayTime(latest.t)+' ET · '+relative(latest.t):'No Portland gauge data returned.';$('obsBadge').textContent=gaugeFresh?'CURRENT':latest?'STALE':'OFFLINE';$('obsBadge').style.color=gaugeFresh?'#b7e27b':'#ffd19e';
+ const predicted=latest?nearest(state.pred,latest.t,12*60000):null;const residual=latest&&predicted?latest.v-predicted.v:null;$('departureValue').innerHTML=(residual!==null?(residual>0?'+':'')+fmtN(residual):'--')+'<em> ft</em>';$('departureDetail').textContent=residual!==null?'At '+time(latest.t)+' ET. Observed '+fmtN(latest.v)+' ft vs. tide-only '+fmtN(predicted.v)+' ft.':'Needs current gauge data and matching astronomical tide.';
+ const high=highTides()[0];$('nextHighValue').innerHTML=(high?fmtN(high.v):'--')+'<em> ft</em>';$('nextHighDetail').textContent=high?dayTime(high.t)+' ET · tide only, excludes storm surge.':'No upcoming tide predictions returned.';
+ $('modelValue').innerHTML=(nextPeak?fmtN(nextPeak.v):'--')+'<em> ft</em>';
+ const modelCoverage=state.model.filter(p=>p.t>=now()).at(-1);const sameTimeTide=nextPeak?nearest(state.pred,nextPeak.t,18*60000):null;
+ const uplift=nextPeak&&sameTimeTide?nextPeak.v-sameTimeTide.v:null;
+ $('modelDetail').textContent=nextPeak?'Peak '+dayTime(nextPeak.t)+' ET · model checked '+(state.lastFetched.model?time(state.lastFetched.model)+' ET':'recently')+' · '+(uplift===null?'astronomical comparison unavailable':(uplift>=0?'+':'')+fmtN(uplift)+' ft vs tide-only at that time')+'. '+(modelCoverage&&modelCoverage.t<now()+70*3600000?'Guidance currently ends '+dayTime(modelCoverage.t)+' ET.':''):'Unavailable: no NOAA forecast peak. Astronomical tide is not a substitute.';
+ const statusTitle=$('statusHeading'), desc=$('statusDescription'), icon=$('statusIcon');if(!source){statusTitle.textContent='Live flood status unavailable';desc.textContent='Neither a recent gauge reading nor near-term model guidance is available. Use the official NOAA and NWS links before making decisions.';icon.textContent='?';icon.style.color='var(--sun)';return;}
+ const useModel=!!nextPeak&&(!gaugeFresh||nextPeak.v>latest.v),decision=useModel?nextPeak:latest;const value=decision.v,which=useModel?'Highest available NOAA model guidance':'Latest Portland observation';let level=value>=14?3:value>=13?2:value>=12?1:0;const context=useModel?'indicated by model guidance':'observed at Portland';statusTitle.textContent=level===3?'Major flood threshold '+context:level===2?'Moderate flood threshold '+context:level===1?'Minor flood threshold '+context:'Below the Portland minor flooding threshold';icon.textContent=level>0?'!':'✓';icon.style.color=level>0?'var(--sun)':'var(--lime)';desc.textContent=which+': '+fmtN(value)+' ft MLLW. '+(level?'Portland threshold conditions are '+(useModel?'suggested by model guidance, not confirmed by observation.':'met in a recent gauge observation.')+' ':'This does not rule out waves, erosion or flooding in Saco. ')+(gaugeFresh&&nextPeak?'Latest observed '+fmtN(latest.v)+' ft; highest model guidance '+fmtN(nextPeak.v)+' ft in the next 72 hours. ':'')+'See NWS alerts for locally expected impacts.';
+}
+function renderTable(){
+const highs=highTides(),body=$('highTides');body.replaceChildren();$('highTidesPeriod').textContent='Next '+(state.days===1?'24h':state.days===3?'72h':state.days+' days')+' · Eastern time · Portland gauge';
+if(!highs.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=4;td.className='empty';td.textContent='No high tides available. Check the NOAA tide tables link.';tr.append(td);body.append(tr);return;}
+for(const tide of highs){const model=nearest(state.model,tide.t,45*60000);const label=model?(model.v>=14?'Major (model)':model.v>=13?'Moderate (model)':model.v>=12?'Minor (model)':'Below minor (model)'):'Tide only · no model';const row=document.createElement('tr');const cells=[dayTime(tide.t),fmtN(tide.v)+' ft',model?fmtN(model.v)+' ft':'—',label];cells.forEach((value,i)=>{const td=document.createElement('td');if(i===1||i===2){const b=document.createElement('b');b.textContent=value;td.append(b);}else if(i===3){const span=document.createElement('span');span.className='tabletag'+(model?'':' tide-only-tag');span.textContent=value;td.append(span);}else td.textContent=value;row.append(td);});body.append(row);}
+}
+function renderCalendar(){
+const cal=$('highTideCalendar');cal.replaceChildren();const t=now();const start=localParts(t);const startUTC=Date.UTC(start.year,start.month-1,start.day);const end=t+30*86400000;
+const highData=state.highs.length?state.highs:extractHighsFromCurve(state.pred);
+const highs=highData.filter(x=>x.t>=t-86400000&&x.t<=end);
+const groups=new Map();for(const high of highs){const k=localParts(high.t).key;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(high);}
+const daily=Array.from({length:30},(_,i)=>{const d=new Date(startUTC+i*86400000);const k=localParts(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),16)).key;const arr=(groups.get(k)||[]).filter(x=>i>0||x.t>=t-30*60000);return {date:new Date(startUTC+i*86400000),key:k,peak:arr.reduce((a,b)=>!a||b.v>a.v?b:a,null)};});
+const values=daily.map(x=>x.peak?.v).filter(Number.isFinite).sort((a,b)=>a-b);const cutoff=values.length>=5?values[Math.floor(.8*(values.length-1))]:Infinity;
+for(const d of daily){const cell=document.createElement('div');cell.className='daytile'+(d.peak&&d.peak.v>=cutoff?' elevated':'')+(d.peak&&d.peak.v>=THRESHOLDS[0].value?' tide-threshold':'')+(!d.peak?' no-tide':'');const date=document.createElement('div');date.className='daydate';date.textContent=fmt(d.date.getTime()+12*3600000,{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});cell.append(date);const height=document.createElement('strong');height.textContent=d.peak?fmtN(d.peak.v)+' ft':'—';cell.append(height);const at=document.createElement('span');at.textContent=d.peak?'High at '+time(d.peak.t)+' ET':'No tide data';cell.append(at);if(d.peak&&d.peak.v>=cutoff){const flag=document.createElement('small');flag.textContent='Higher predicted tide';cell.append(flag);}if(d.peak&&d.peak.v>=THRESHOLDS[0].value){const flag=document.createElement('small');flag.className='at-threshold';flag.textContent='Tide-only ≥ minor gauge level';cell.append(flag);}cal.append(cell);}
+const count=daily.filter(x=>x.peak).length;$('calendarNote').textContent=(count===30?'All 30 days populated.':count+' of 30 days have tide data; open NOAA if dates are missing.')+(state.highs.length?' Peaks use NOAA high/low tide predictions.':' High-tide times are approximated from sampled astronomical tide predictions.')+(state.errors.longTide?' Long-range data feed is currently unavailable.':'')+' Higher-tide highlights mark approximately the top 20% of daily peaks within this displayed period, not official flooding predictions. Astronomical tides exclude storm surge, wind and waves.';
+}
+function extractHighsFromCurve(p){const result=[];for(let i=1;i<p.length-1;i++){const a=p[i-1],b=p[i],c=p[i+1];if(b.t-a.t>32*60000||c.t-b.t>32*60000)continue;if(b.v>=a.v&&b.v>c.v&&(!result.length||b.t-result.at(-1).t>3*3600000))result.push(b);}return result;}
+
+function renderHistoricalComparison(){
+ const future=state.model.filter(p=>p.t>=now()&&p.t<=now()+72*3600000);
+ const highest=peak(future,-Infinity,Infinity),ending=future.at(-1);
+ const summary=$('compareSummary'),foot=$('compareFootnote');
+ if(!highest){
+   summary.textContent='No current model peak is available. Check NOAA directly; a tide-only height cannot be compared as a storm forecast.';
+   for(const id of ['Jan10','Jan13']){$('compare'+id).textContent='Forecast unavailable';$('compare'+id).className='compare-delta';$('compare'+id+'Detail').textContent='Historical observed peak remains a reference, not a forecast.';}
+   foot.textContent='These are historical Portland gauge observations; no current NOAA model forecast is being substituted or estimated.';return;
+ }
+ const predicted=nearest(state.pred,highest.t,18*60000);
+ const uplift=predicted?highest.v-predicted.v:null;
+ summary.textContent='NOAA model peak '+fmtN(highest.v)+' ft MLLW at '+dayTime(highest.t)+' ET · '+(uplift===null?'tide comparison unavailable':(uplift>=0?'+':'')+fmtN(uplift)+' ft versus astronomical tide at that time')+'.';
+ for(const mark of JAN2024){const diff=highest.v-mark.value,el=$('compare'+mark.date);el.className='compare-delta '+(Math.abs(diff)<.005?'same':diff<0?'below':'above');el.textContent=Math.abs(diff)<.005?'At the historical peak':fmtN(Math.abs(diff))+' ft '+(diff<0?'below':'above')+' the 2024 peak';$('compare'+mark.date+'Detail').textContent='Current modeled peak '+fmtN(highest.v)+' ft vs. observed '+fmtN(mark.value)+' ft (MLLW).';}
+ foot.textContent='Peak uses available model points through '+dayTime(ending.t)+' ET'+(ending.t<now()+70*3600000?' (partial 72-hour coverage)':'')+'. Last retrieved '+(state.lastFetched.model?dayTime(state.lastFetched.model)+' ET':'time unavailable')+'; retrieval time is not model issuance time. The 2024 levels are observed Portland peaks, not damage thresholds; waves, runup and local conditions in Saco can produce different impacts.';
+}
+function renderAlerts(){const list=$('alerts');list.replaceChildren();if(state.errors.alerts){const e=document.createElement('div');e.className='empty';e.textContent='NWS alerts could not be retrieved. Open the NWS link to check official alerts.';list.append(e);return;}if(!state.alerts.length){const e=document.createElement('div');e.className='empty';e.textContent='No active NWS alerts were returned for the selected Saco reference point. This is not an all-clear for the coast or marine zones.';list.append(e);return;}
+ for(const a of state.alerts.slice(0,8)){const p=a.properties||{};const card=document.createElement('article');card.className='alert'+(['Severe','Extreme'].includes(p.severity)?' urgent':'');const heading=document.createElement('strong');heading.textContent=p.event||'Weather alert';card.append(heading);const meta=document.createElement('div');meta.className='meta';meta.textContent=[p.severity?'Severity: '+p.severity:'',p.expires?'Expires '+dayTime(Date.parse(p.expires))+' ET':''].filter(Boolean).join(' · ');card.append(meta);const short=document.createElement('p');short.textContent=p.headline||p.description?.slice(0,240)||'See full NWS alert details.';card.append(short);if(p.description){const details=document.createElement('details');const sum=document.createElement('summary');sum.textContent='Read official alert';details.append(sum);const txt=document.createElement('p');txt.style.marginTop='7px';txt.textContent=p.description;details.append(txt);card.append(details);}list.append(card);}
+}
+function renderChart(){
+const svg=$('chart'),tip=$('tooltip'),W=920,H=340,margin={top:18,right:24,bottom:42,left:50},cw=W-margin.left-margin.right,ch=H-margin.top-margin.bottom;
+const current=now(),end=current+state.days*86400000,start=current-24*3600000;
+const points=[...state.obs,...state.pred,...(state.showModel?state.model:[])].filter(d=>d.t>=start&&d.t<=end);
+let min=Math.min(0,...points.map(p=>p.v)),max=Math.max(12,...points.map(p=>p.v));if(state.showFlood)max=Math.max(14.7,max);if(max-min<5){max+=1;min-=1;}
+const lo=Math.floor((min-.4)/2)*2,hi=Math.ceil((max+.4)/2)*2,x=t=>margin.left+(t-start)/(end-start)*cw,y=v=>margin.top+(hi-v)/(hi-lo)*ch;
+const ns='http://www.w3.org/2000/svg';svg.replaceChildren();tip.hidden=true;
+function el(tag,attrs={},content){const item=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))item.setAttribute(k,v);if(content!==undefined)item.textContent=content;svg.append(item);return item;}
+const defs=el('defs');const clip=document.createElementNS(ns,'clipPath');clip.setAttribute('id','plotClip');const rect=document.createElementNS(ns,'rect');Object.entries({x:margin.left,y:margin.top,width:cw,height:ch}).forEach(([k,v])=>rect.setAttribute(k,v));clip.append(rect);defs.append(clip);
+const available=state.model.filter(p=>p.t>=current-10*60000&&p.t<=end);const modelEnd=available.length?Math.max(current,available.at(-1).t):current;
+const shadeFrom=Math.max(current,modelEnd);if(end>shadeFrom+20*60000){const sx=x(shadeFrom);el('rect',{x:sx,y:margin.top,width:Math.max(0,W-margin.right-sx),height:ch,fill:'#d6b47712','clip-path':'url(#plotClip)'});el('line',{x1:sx,x2:sx,y1:margin.top,y2:H-margin.bottom,stroke:'#d6b477','stroke-dasharray':'5 5','stroke-width':'1.4',opacity:'.8'});if(W-margin.right-sx>152)el('text',{x:sx+8,y:margin.top+15,fill:'#f3ca83','font-size':11},'TIDE ONLY · NO MODEL GUIDANCE');}
+for(let n=lo;n<=hi;n+=2){el('line',{x1:margin.left,x2:W-margin.right,y1:y(n),y2:y(n),class:'gridline'});el('text',{x:margin.left-11,y:y(n)+4,'text-anchor':'end'},String(n));}
+const step=state.days<=1?6:state.days<=3?12:state.days<=7?24:state.days<=14?48:120;
+for(let tick=Math.ceil(start/(step*3600000))*step*3600000;tick<=end;tick+=step*3600000){const tx=x(tick);el('line',{x1:tx,x2:tx,y1:margin.top,y2:H-margin.bottom,class:'gridline'});el('text',{x:tx,y:H-14,'text-anchor':'middle'},fmt(tick,state.days<=3?{weekday:'short',hour:'numeric'}:{month:'short',day:'numeric'}));}
+const nowX=x(current);el('line',{x1:nowX,x2:nowX,y1:margin.top,y2:H-margin.bottom,class:'now'});el('text',{x:nowX+5,y:margin.top+11,fill:'#dcf8ee'},'NOW');
+if(state.showFlood)for(const t of THRESHOLDS){el('line',{x1:margin.left,x2:W-margin.right,y1:y(t.value),y2:y(t.value),class:'flood '+t.name.toLowerCase()});el('text',{x:W-margin.right-3,y:y(t.value)-5,'text-anchor':'end'},t.name.toUpperCase()+' '+t.value+' FT');}
+function path(series,cls,gapMinutes=45){let d='',last=null,count=0;for(const p of series){if(p.t<start||p.t>end)continue;d+=(last&&p.t-last.t<=gapMinutes*60000?'L':'M')+x(p.t).toFixed(2)+','+y(p.v).toFixed(2)+' ';last=p;count++;}if(count>=2)el('path',{d,fill:'none',class:cls,'clip-path':'url(#plotClip)','stroke-linecap':'round','stroke-linejoin':'round'});}
+path(state.pred,'pred',35);if(state.showModel)path(state.model,'ofs',150);path(state.obs,'obs');
+function addMarkers(series,shape,minDistance){let lastX=-Infinity;const valid=series.filter(p=>p.t>=start&&p.t<=end);for(let i=0;i<valid.length;i++){const p=valid[i],cx=x(p.t),cy=y(p.v);if(cx<margin.left+4||cx>W-margin.right-4||cy<margin.top+4||cy>H-margin.bottom-4)continue;const latest=shape==='obs-marker'&&i===valid.length-1;if(!latest&&cx-lastX<minDistance)continue;lastX=cx;if(shape==='obs-marker')el('circle',{cx,cy,r:latest?5.5:4,class:shape});else if(shape==='pred-marker')el('polygon',{points:`${cx},${cy-5.6} ${cx-5.3},${cy+4.6} ${cx+5.3},${cy+4.6}`,class:shape});else el('rect',{x:cx-4.4,y:cy-4.4,width:8.8,height:8.8,rx:1.2,class:shape});}}
+addMarkers(state.pred,'pred-marker',state.days>7?85:108);if(state.showModel)addMarkers(state.model,'model-marker',104);addMarkers(state.obs,'obs-marker',70);
+if(!points.length)el('text',{x:W/2,y:H/2,'text-anchor':'middle'},'No data available. Use the direct source links below.');
+const overlay=el('rect',{x:margin.left,y:margin.top,width:cw,height:ch,fill:'transparent','pointer-events':'all',style:'cursor:crosshair'});
+overlay.addEventListener('pointermove',event=>{const box=svg.getBoundingClientRect(),px=(event.clientX-box.left)/box.width*W,t=start+(px-margin.left)/cw*(end-start),tol=state.days>=14?17*60000:state.days>=7?12*60000:18*60000;const o=nearest(state.obs,t,15*60000),p=nearest(state.pred,t,tol),m=state.showModel?nearest(state.model,t,60*60000):null;if(!o&&!p&&!m){tip.hidden=true;return;}const rows=[['Observed',o],['Astronomical tide',p],['NOAA model',m]].filter(a=>a[1]);tip.replaceChildren();const tm=document.createElement('time');tm.textContent=dayTime(t)+' ET';tip.append(tm);for(const [name,point] of rows){const row=document.createElement('div');row.className='ttrow';const n=document.createElement('span');n.textContent=name;const val=document.createElement('b');val.textContent=fmtN(point.v)+' ft';row.append(n,val);tip.append(row);}tip.hidden=false;const w=box.width,left=px/W*w;tip.style.left=Math.max(0,Math.min(w-228,left+12))+'px';tip.style.top=event.clientY-box.top>box.height/2?'9px':Math.max(0,box.height-110)+'px';});overlay.addEventListener('pointerleave',()=>tip.hidden=true);
+$('chartPeriod').textContent='Past 24h · next '+(state.days===1?'24h':state.days===3?'72h':state.days+' days')+(end>shadeFrom+20*60000?' · shaded: tide only, no model forecast':' · available model shown where provided');
+}
+function updateNotice(){const missing=[];if(state.errors.observed)missing.push('live gauge');if(state.errors.predicted)missing.push('astronomical tide');if(state.errors.model)missing.push('model forecast');if(state.errors.alerts)missing.push('NWS alerts');if(state.errors.weatherObservation)missing.push('nearby measured weather');if(state.errors.weatherForecast)missing.push('coastal-point weather forecast');const recent=state.obs.at(-1);const stale=recent&&now()-recent.t>45*60000;const node=$('notice');if(!missing.length&&!stale){node.classList.add('hidden');return;}node.classList.remove('hidden');const lines=[];if(missing.length)lines.push('Some live feeds are unavailable: '+missing.join(', ')+'. A dash means no data, not zero risk.');if(stale)lines.push('The most recent gauge reading is '+relative(recent.t)+'; treat it as stale.');lines.push('Open the official NOAA/NWS links below for current conditions.');$('noticeText').textContent=lines.join(' ');}
+function updateClock(){$('currentClock').textContent=fmt(now(),{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});const o=state.obs.at(-1);const healthy=!!o&&now()-o.t<45*60000;$('liveDot').className='dot '+(healthy?'good':state.loading?'warn':'bad');$('liveText').textContent=state.loading?'Refreshing feeds':healthy?'Gauge current':o?'Gauge delayed':'Live data unavailable';if(state.lastSuccess)$('syncTime').textContent='Last successful data refresh '+relative(state.lastSuccess);}
+function render(){renderSummary();renderHistoricalComparison();renderMarine();renderWeather();renderTable();renderCalendar();renderAlerts();renderChart();updateNotice();updateClock();}
+async function load(){
+if(state.loading)return;state.loading=true;state.lastAttempt=now();updateClock();const t=now(),start=ymd(t-3*86400000),end=ymd(t+4*86400000);
+const calls=[
+['observed',query('water_level',{date:'recent'}),data=>{const pts=decodeSeries(data,['data','observations']);if(!pts.length)throw Error('No gauge observations returned');state.obs=pts;},0],
+['predicted',query('predictions',{begin_date:start,end_date:end,interval:'6'}),data=>{const pts=decodeSeries(data,['predictions','data']);if(!pts.length)throw Error('No short-range tide predictions returned');state.predShort=pts;combinePredictions();},5*60000],
+['longTide',query('predictions',{begin_date:ymd(t),end_date:ymd(t+30*86400000),interval:'15'}),data=>{const pts=decodeSeries(data,['predictions','data']);if(!pts.length)throw Error('No 30-day tide predictions returned');state.predLong=pts;combinePredictions();},6*3600000],
+['highs',query('predictions',{begin_date:ymd(t),end_date:ymd(t+30*86400000),interval:'hilo'}),data=>{const pts=decodeHighs(data);if(!pts.length)throw Error('No 30-day high tide predictions returned');state.highs=pts;},6*3600000],
+['model',query('ofs_water_level',{begin_date:ymd(t-86400000),end_date:ymd(t+4*86400000)}),data=>{const pts=decodeSeries(data,['data','predictions','ofs_water_level','forecast']);const future=pts.filter(p=>p.t>t-10*60000&&p.t<t+72*3600000);if(!future.length)throw Error('No near-term model guidance returned');state.model=pts.filter(p=>p.t<=t+72*3600000);},0],
+['alerts','https://api.weather.gov/alerts/active?point=43.48,-70.38',data=>{if(!Array.isArray(data.features))throw Error('No valid NWS alert response');state.alerts=data.features;},0]
+];
+for(const [name,url,save,interval] of calls){if(interval&&!shouldFetch(name,interval))continue;try{const data=await getJSON(url);save(data);state.lastFetched[name]=now();delete state.errors[name];if(['observed','predicted','model','alerts'].includes(name))health('health'+name[0].toUpperCase()+name.slice(1),true,name==='alerts'?state.alerts.length+' ACTIVE':'CONNECTED');state.lastSuccess=now();}catch(err){if(name==='model')state.model=[];state.errors[name]=String(err?.message||err);if(['observed','predicted','model','alerts'].includes(name))health('health'+name[0].toUpperCase()+name.slice(1),false,'UNAVAILABLE');console.warn('Saco Coast Watch '+name+':',err);}render();if(name!=='alerts')await new Promise(r=>setTimeout(r,250));}
+await Promise.all([loadWeather(),loadMarine()]);state.loading=false;$('lastUpdated').textContent='Last checked '+fmt(now(),{hour:'numeric',minute:'2-digit',timeZoneName:'short'})+' · 60-second live checks';render();
+}
+function exportCSV(){const timestamps=new Set([...state.obs,...state.pred,...state.model].map(x=>x.t));const lines=['utc_time,observed_ft_MLLW,astronomical_tide_ft_MLLW,model_guidance_ft_MLLW'];const obs=new Map(state.obs.map(x=>[x.t,x.v])),pred=new Map(state.pred.map(x=>[x.t,x.v])),model=new Map(state.model.map(x=>[x.t,x.v]));for(const t of [...timestamps].sort((a,b)=>a-b)){lines.push([new Date(t).toISOString(),obs.get(t)??'',pred.get(t)??'',model.get(t)??''].join(','));}const blob=new Blob([lines.join('\n')+'\n'],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='saco-coast-watch-'+ymd(now())+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+$('exportBtn').addEventListener('click',exportCSV);
+document.querySelectorAll('[data-days]').forEach(btn=>btn.addEventListener('click',()=>{state.days=Number(btn.dataset.days);document.querySelectorAll('[data-days]').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-pressed',String(b===btn));});render();}));
+$('showFlood').addEventListener('change',e=>{state.showFlood=e.target.checked;renderChart();});$('showModel').addEventListener('change',e=>{state.showModel=e.target.checked;renderChart();});
+setInterval(updateClock,10000);setInterval(()=>{if(!document.hidden)load();},60*1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.lastAttempt||now()-state.lastAttempt>=60*1000))load();});load();
+
+})();
+</script>
+
+<script>
+/* Coastal hazard map is independent of water-level/meteorological feed failures. */
+(() => {
+ 'use strict';
+ const status=document.getElementById('mapAlertStatus');
+ const cameras=[
+  {name:'Camp Ellis · jetty & surf',lat:43.4640,lng:-70.3795,url:'https://webcoos.org/cameras/campellis_south/',source:'WebCOOS / NERACOOS'},
+  {name:'Ferry Beach · shoreline',lat:43.4740,lng:-70.3855,url:'https://webcoos.org/cameras/ferrybeach_north/',source:'WebCOOS / NERACOOS'},
+  {name:'Camp Ellis · city cameras',lat:43.4613,lng:-70.3830,url:'https://www.sacomaine.org/departments/administration/camp_ellis_cameras.php',source:'City of Saco'},
+  {name:'Old Orchard Beach · ocean',lat:43.5145,lng:-70.3738,url:'https://abellonainn.com/webcam/',source:'Abellona Inn'},
+  {name:'Wells Beach · ocean',lat:43.3062,lng:-70.5630,url:'https://www.wellsbeachmaine.com/wells-beach-maine-web-cam/',source:'Lafayette’s Oceanfront Resort'}
+ ];
+ for(const c of cameras){const a=document.createElement('a');a.href=c.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=c.name+' ↗';document.getElementById('mapCameraLinks').append(a);}
+ if(typeof window.L==='undefined'){
+  status.textContent='Map library could not load. Webcam links remain available below.';
+  status.className='map-bad';document.getElementById('coastalMap').textContent='Interactive map unavailable. Verify your internet connection and try again.';return;
+ }
+ document.getElementById('coastalMap').replaceChildren();
+ const L=window.L, map=L.map('coastalMap',{zoomControl:false,scrollWheelZoom:false,preferCanvas:true}).setView([43.47,-70.40],11);
+ L.control.zoom({position:'topright'}).addTo(map);
+ L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
+ // The former default USGS imagery/labels service returned only a subset of tiles
+ // at some zoom levels, producing large blank rectangles. Start with a complete
+ // street basemap; offer independent aerial and topo layers and fall back on errors.
+ const tiles={
+  streets:L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+   subdomains:'abc',attribution:'&copy; OpenStreetMap contributors',maxZoom:19,updateWhenIdle:true,keepBuffer:3}),
+  imagery:L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+   attribution:'Tiles &copy; Esri, Maxar, Earthstar Geographics and the GIS User Community',maxZoom:19,updateWhenIdle:true,keepBuffer:3}),
+  topo:L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',{
+   attribution:'USGS The National Map',maxNativeZoom:16,maxZoom:19,updateWhenIdle:true,keepBuffer:3})
+ };
+ let currentBasemap='streets';
+ const basemapSelect=document.getElementById('coastalBasemap');
+ const basemapStatus=document.getElementById('mapBasemapStatus');
+ let errors=0;
+ function activateBasemap(name){
+  if(!tiles[name])name='streets';
+  Object.values(tiles).forEach(layer=>{if(map.hasLayer(layer))map.removeLayer(layer)});
+  currentBasemap=name;errors=0;basemapSelect.value=name;
+  tiles[name].addTo(map);
+  basemapStatus.textContent='Basemap: '+(name==='streets'?'OpenStreetMap streets':name==='imagery'?'Esri aerial imagery':'USGS topographic')+' · no API key';
+ }
+ Object.entries(tiles).forEach(([name,layer])=>layer.on('tileerror',()=>{
+  if(currentBasemap!==name)return;
+  errors++;
+  if(errors>=3&&name!=='streets'){
+   activateBasemap('streets');
+   basemapStatus.textContent='Some '+(name==='imagery'?'aerial':'topographic')+' tiles failed; switched to street map.';
+  }else if(errors>=3){
+   basemapStatus.textContent='Street tiles are unavailable. Check internet access; alert and camera links remain below.';
+  }
+ }));
+ activateBasemap('streets');
+ const surge=L.layerGroup().addTo(map), coastal=L.layerGroup().addTo(map), cams=L.layerGroup().addTo(map);
+ for(const c of cameras){
+  const icon=L.divIcon({html:'<div class="cam-pin" aria-hidden="true">▣</div>',className:'',iconSize:[29,29],iconAnchor:[14,14]});
+  const pop=document.createElement('div');pop.className='map-pop';
+  const strong=document.createElement('strong');strong.textContent=c.name;pop.append(strong);
+  const para=document.createElement('p');para.textContent=c.source+' · location approximate; feed availability is controlled by the operator.';pop.append(para);
+  const link=document.createElement('a');link.href=c.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open live camera ↗';pop.append(link);
+  L.marker([c.lat,c.lng],{icon,title:c.name}).bindPopup(pop).addTo(cams);
+ }
+ basemapSelect.addEventListener('change',e=>activateBasemap(e.target.value));
+ document.getElementById('mapHome').addEventListener('click',()=>map.flyTo([43.47,-70.40],11,{duration:.65}));
+ [['showSurgeAlerts',surge],['showCoastalAlerts',coastal],['showCameras',cams]].forEach(([id,layer])=>document.getElementById(id).addEventListener('change',e=>e.target.checked?layer.addTo(map):map.removeLayer(layer)));
+ const approved=new Set(['Storm Surge Watch','Storm Surge Warning','Coastal Flood Watch','Coastal Flood Warning','Coastal Flood Advisory']);
+ const getColor=name=>name.startsWith('Storm Surge')?(name.endsWith('Warning')?'#df3e99':'#c89de9'):(name.endsWith('Warning')?'#f69b45':name.endsWith('Watch')?'#f1cb64':'#ffe3a0');
+ async function updateAlertMap(){
+  try{
+   const response=await fetch('data/coastal-alerts.json?ts='+Date.now(),{cache:'no-store'});
+   if(!response.ok)throw new Error('Map alert feed HTTP '+response.status);
+   const json=await response.json();
+   if(json.error)throw new Error(String(json.error));
+   if(!json.generatedAt||!Array.isArray(json.features))throw new Error('Map alert snapshot missing');
+   const age=Date.now()-Date.parse(json.generatedAt);
+   if(!Number.isFinite(age)||age< -120000||age>30*60000)throw new Error('Mapped alert snapshot is delayed or stale');
+   const nextSurge=L.layerGroup(),nextCoastal=L.layerGroup();let displayed=0;
+   for(const f of json.features){
+    const a=f.properties||{},name=a.prod_type||a.event||'';
+    if(!approved.has(name)||!f.geometry)continue;
+    const isSurge=name.startsWith('Storm Surge'),color=getColor(name);
+    const feat=L.geoJSON(f,{style:{color,weight:name.endsWith('Warning')?3:2,dashArray:name.endsWith('Warning')?null:'7 6',fillColor:color,fillOpacity:isSurge ? 0.23 : 0.17},interactive:true});
+    const pop=document.createElement('div');pop.className='map-pop';
+    const strong=document.createElement('strong');strong.textContent=name;pop.append(strong);
+    const p=document.createElement('p');p.textContent='Official NWS alert area, not a street-level flood footprint.';pop.append(p);
+    if(a.ends||a.expiration){const t=document.createElement('p');const date=new Date(a.ends||a.expiration);if(Number.isFinite(date.getTime())){t.textContent='Listed end: '+date.toLocaleString('en-US',{timeZone:'America/New_York',dateStyle:'medium',timeStyle:'short'})+' ET';pop.append(t);}}
+    const url=String(a.url||'');if(/^https:\/\//i.test(url)){const link=document.createElement('a');link.href=url;link.rel='noopener noreferrer';link.target='_blank';link.textContent='Read official alert ↗';pop.append(link);}
+    feat.bindPopup(pop);feat.addTo(isSurge?nextSurge:nextCoastal);displayed++;
+   }
+   surge.clearLayers();coastal.clearLayers();
+   nextSurge.eachLayer(l=>surge.addLayer(l));nextCoastal.eachLayer(l=>coastal.addLayer(l));
+   const stamp=new Date(json.generatedAt).toLocaleString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+   status.textContent=(displayed?displayed+' active coastal alert area'+(displayed===1?'':'s')+' mapped':'No matching active surge/coastal-flood alerts reported for map area')+' · checked '+stamp;
+   status.className='map-good';
+  }catch(err){
+   // Do not keep old polygons on screen as if they were still active.
+   surge.clearLayers();coastal.clearLayers();
+   status.textContent='Map alert feed unavailable or stale. No active-alert status can be confirmed here; check NWS Gray. '+(err?.message||'');
+   status.className='map-bad';
+  }
+ }
+ updateAlertMap();setInterval(()=>{if(!document.hidden)updateAlertMap()},60*1000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateAlertMap()});
+ window.addEventListener('resize',()=>map.invalidateSize());
+})();
+</script>
+
+</body></html>

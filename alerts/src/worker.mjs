@@ -236,6 +236,26 @@ async function dispatchAlerts(env){
  await env.DB.prepare("DELETE FROM tokens WHERE expires_at<?").bind(stamp-86400).run();
  await env.DB.prepare("DELETE FROM request_limits WHERE until_ts<?").bind(stamp-86400).run();
 }
+async function twilioInbound(request,env){
+ if(!smsReady(env))return new Response(null,{status:503});
+ if(request.headers.get("content-type")?.split(";")[0]?.trim()!=="application/x-www-form-urlencoded")return new Response(null,{status:415});
+ const incoming=await request.text();if(incoming.length>10000)return new Response(null,{status:413});
+ const params=new URLSearchParams(incoming),signature=request.headers.get("X-Twilio-Signature")||"";
+ const signedUrl=env.WORKER_PUBLIC_URL.replace(/\/$/,"")+"/twilio/inbound";
+ const names=[...new Set(params.keys())].sort(),message=signedUrl+names.map(name=>name+params.get(name)).join("");
+ const key=await crypto.subtle.importKey("raw",encoder.encode(env.TWILIO_AUTH_TOKEN),{name:"HMAC",hash:"SHA-1"},false,["verify"]);
+ let signatureBytes;
+ try{signatureBytes=Uint8Array.from(atob(signature),c=>c.charCodeAt(0));}
+ catch{return new Response(null,{status:403});}
+ const authentic=await crypto.subtle.verify("HMAC",key,signatureBytes,encoder.encode(message));
+ if(!authentic)return new Response(null,{status:403});
+ const from=params.get("From")||"",optOut=params.get("OptOutType")||"";
+ if(optOut==="STOP"&&phoneNormalize(from)){
+  await env.DB.prepare("UPDATE subscribers SET sms_confirmed=0,sms_consent_at=NULL,updated_at=? WHERE phone=?").bind(now(),phoneNormalize(from)).run();
+ }
+ // Twilio Advanced Opt-Out sends its own STOP/HELP reply; don't send a second text.
+ return new Response("<Response></Response>",{status:200,headers:{"content-type":"text/xml;charset=utf-8","cache-control":"no-store"}});
+}
 export default {
  async fetch(request,env){
   const url=new URL(request.url),origin=originFor(request,env);
@@ -250,6 +270,7 @@ export default {
    if(url.pathname==="/manage"&&["GET","POST"].includes(request.method))return manage(request,env);
    if(url.pathname==="/unsubscribe"&&["GET","POST"].includes(request.method))return handleUnsubscribe(request,env);
    if(url.pathname.startsWith("/confirm/")&&["GET","POST"].includes(request.method)&&["email","sms"].includes(url.pathname.split("/")[2]))return handleConfirm(request,env,url.pathname.split("/")[2]);
+   if(url.pathname==="/twilio/inbound"&&request.method==="POST")return twilioInbound(request,env);
    if(url.pathname==="/health"&&request.method==="GET")return json({service:"saco-coastal-alerts",configured:configured(env),smsReady:smsReady(env)},200,origin);
    return json({error:"Not found"},404,origin);
   }catch(e){console.error("Alerts service error",e?.message||e);return json({error:"Service unavailable. Please retry later."},503,origin);}

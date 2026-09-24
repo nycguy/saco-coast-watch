@@ -120,39 +120,34 @@
 @media(max-width:800px){.ferry-camera .ferry-layout{grid-template-columns:1fr}.ferry-camera{padding:16px}.ferry-side{gap:10px}.ferry-player{min-height:180px}}
 
 
-/* Dynamic Portland-gauge flood threshold styling (feet above MLLW) */
+/* Dynamic Portland flood-level stoplight colors. Reference: ft MLLW. */
 .model-hero,.panel.status{transition:background-color .35s ease,border-color .35s ease,box-shadow .35s ease}
-.model-hero .risk-label{margin-top:9px;display:inline-block;font-size:11px;font-weight:800;line-height:1.4;padding:4px 8px;border-radius:6px;border:1px solid currentColor}
-.model-hero.risk-below{background:linear-gradient(145deg,#163d3c,#112e38 90%);border-color:#42bda2;box-shadow:inset 0 3px #63e5c9,0 15px 42px #00000016}
-.model-hero.risk-below .number,.model-hero.risk-below .risk-label{color:#63e5c9}
-.model-hero.risk-below .tag{background:#205e51;color:#ddfff4}
-.model-hero.risk-below .label{color:#ddfff4}
-.panel.status.risk-below{background:linear-gradient(120deg,#163d3c,#112e38 85%);border-color:#42bda2}
-.panel.status.risk-below .statusbadge{background:#21594c;color:#63e5c9}
-.model-hero.risk-minor{background:linear-gradient(145deg,#514323,#242e35 90%);border-color:#e4bb55;box-shadow:inset 0 3px #ffcf52,0 15px 42px #00000016}
-.model-hero.risk-minor .number,.model-hero.risk-minor .risk-label{color:#ffcf52}
-.model-hero.risk-minor .tag{background:#76602e;color:#fff2ce}
-.model-hero.risk-minor .label{color:#fff2ce}
-.panel.status.risk-minor{background:linear-gradient(120deg,#514323,#242e35 85%);border-color:#e4bb55}
-.panel.status.risk-minor .statusbadge{background:#655027;color:#ffcf52}
-.model-hero.risk-moderate{background:linear-gradient(145deg,#54391f,#2e2d33 90%);border-color:#e89d5e;box-shadow:inset 0 3px #ffac67,0 15px 42px #00000016}
-.model-hero.risk-moderate .number,.model-hero.risk-moderate .risk-label{color:#ffac67}
-.model-hero.risk-moderate .tag{background:#78502b;color:#ffe9d4}
-.model-hero.risk-moderate .label{color:#ffe9d4}
-.panel.status.risk-moderate{background:linear-gradient(120deg,#54391f,#2e2d33 85%);border-color:#e89d5e}
-.panel.status.risk-moderate .statusbadge{background:#70492b;color:#ffac67}
-.model-hero.risk-major{background:linear-gradient(145deg,#572a38,#342737 90%);border-color:#f07f98;box-shadow:inset 0 3px #ff8fa0,0 15px 42px #00000016}
-.model-hero.risk-major .number,.model-hero.risk-major .risk-label{color:#ff8fa0}
-.model-hero.risk-major .tag{background:#7a3548;color:#ffe1e7}
-.model-hero.risk-major .label{color:#ffe1e7}
-.panel.status.risk-major{background:linear-gradient(120deg,#572a38,#342737 85%);border-color:#f07f98}
-.panel.status.risk-major .statusbadge{background:#703343;color:#ff8fa0}
-.model-hero.risk-unavailable{background:linear-gradient(145deg,#382b51,#1e3047 90%);border-color:#bc9bea;box-shadow:inset 0 3px #e5bdff,0 15px 42px #00000016}
-.model-hero.risk-unavailable .number,.model-hero.risk-unavailable .risk-label{color:#e5bdff}
-.model-hero.risk-unavailable .tag{background:#654477;color:#efddfb}
-.model-hero.risk-unavailable .label{color:#efddfb}
-.panel.status.risk-unavailable{background:linear-gradient(120deg,#382b51,#1e3047 85%);border-color:#bc9bea}
-.panel.status.risk-unavailable .statusbadge{background:#55416f;color:#e5bdff}
+.model-hero .risk-label{margin-top:9px;display:inline-block;font-size:11px;font-weight:850;line-height:1.4;padding:5px 9px;border-radius:6px}
+.model-hero.risk-below,.panel.status.risk-below{--risk:#008000;--risk-text:#FFFFFF;background:linear-gradient(145deg,#113a26,#102637 94%);border-color:var(--risk);box-shadow:inset 0 5px var(--risk),0 15px 42px #00000016}
+.model-hero.risk-below .number{color:#ffffff}
+.model-hero.risk-below .number em{color:#e9f5f8}
+.model-hero.risk-below .tag,.model-hero.risk-below .risk-label,.panel.status.risk-below .statusbadge{background:var(--risk);color:var(--risk-text);border-color:var(--risk)}
+.model-hero.risk-below .label,.panel.status.risk-below h3{color:#ffffff}
+.model-hero.risk-minor,.panel.status.risk-minor{--risk:#FFFF00;--risk-text:#15202a;background:linear-gradient(145deg,#3a3716,#102637 94%);border-color:var(--risk);box-shadow:inset 0 5px var(--risk),0 15px 42px #00000016}
+.model-hero.risk-minor .number{color:#ffffff}
+.model-hero.risk-minor .number em{color:#e9f5f8}
+.model-hero.risk-minor .tag,.model-hero.risk-minor .risk-label,.panel.status.risk-minor .statusbadge{background:var(--risk);color:var(--risk-text);border-color:var(--risk)}
+.model-hero.risk-minor .label,.panel.status.risk-minor h3{color:#ffffff}
+.model-hero.risk-moderate,.panel.status.risk-moderate{--risk:#FFA500;--risk-text:#15202a;background:linear-gradient(145deg,#3d2e19,#102637 94%);border-color:var(--risk);box-shadow:inset 0 5px var(--risk),0 15px 42px #00000016}
+.model-hero.risk-moderate .number{color:#ffffff}
+.model-hero.risk-moderate .number em{color:#e9f5f8}
+.model-hero.risk-moderate .tag,.model-hero.risk-moderate .risk-label,.panel.status.risk-moderate .statusbadge{background:var(--risk);color:var(--risk-text);border-color:var(--risk)}
+.model-hero.risk-moderate .label,.panel.status.risk-moderate h3{color:#ffffff}
+.model-hero.risk-major,.panel.status.risk-major{--risk:#FF0000;--risk-text:#FFFFFF;background:linear-gradient(145deg,#42212a,#102637 94%);border-color:var(--risk);box-shadow:inset 0 5px var(--risk),0 15px 42px #00000016}
+.model-hero.risk-major .number{color:#ffffff}
+.model-hero.risk-major .number em{color:#e9f5f8}
+.model-hero.risk-major .tag,.model-hero.risk-major .risk-label,.panel.status.risk-major .statusbadge{background:var(--risk);color:var(--risk-text);border-color:var(--risk)}
+.model-hero.risk-major .label,.panel.status.risk-major h3{color:#ffffff}
+.model-hero.risk-unavailable,.panel.status.risk-unavailable{--risk:#808080;--risk-text:#FFFFFF;background:linear-gradient(145deg,#293442,#102637 94%);border-color:var(--risk);box-shadow:inset 0 5px var(--risk),0 15px 42px #00000016}
+.model-hero.risk-unavailable .number{color:#ffffff}
+.model-hero.risk-unavailable .number em{color:#e9f5f8}
+.model-hero.risk-unavailable .tag,.model-hero.risk-unavailable .risk-label,.panel.status.risk-unavailable .statusbadge{background:var(--risk);color:var(--risk-text);border-color:var(--risk)}
+.model-hero.risk-unavailable .label,.panel.status.risk-unavailable h3{color:#ffffff}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoAqqDBF2X7P2s=" crossorigin="anonymous">
 </head>

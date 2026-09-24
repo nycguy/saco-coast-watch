@@ -95,6 +95,30 @@
 .hourly-panel{padding:21px 22px;border-color:#42647a;background:linear-gradient(145deg,#163346,#102637 80%)}
 .hourly-panel .weather-subhead{border-top:0;padding-top:0}
 @media(max-width:620px){.hourly-panel{padding:15px}}
+
+/* Prominent Ferry Beach live HLS camera; player starts only on user request. */
+.ferry-camera{margin:17px 0;border:1px solid #44a59d;background:linear-gradient(120deg,#153b47,#112a3b 75%);padding:22px;box-shadow:inset 0 3px #27e1c5}
+.ferry-camera .ferry-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ferry-camera .ferry-head h3{font-size:clamp(22px,2.5vw,29px);margin:2px 0 4px}
+.ferry-camera .ferry-head p{color:#bcd4df;font-size:12px;margin:0}
+.ferry-camera .ferry-label{color:#74f0da;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.ferry-camera .ferry-pill{background:#174a48;color:#8ff9e3;border:1px solid #448a7d;padding:5px 10px;border-radius:100px;font-size:11px;font-weight:800}
+.ferry-camera .ferry-layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(225px,.8fr);gap:17px;align-items:stretch}
+.ferry-player{position:relative;aspect-ratio:16 / 9;min-height:210px;border:1px solid #426d80;border-radius:12px;background:radial-gradient(circle at 45% 85%,#206c76 0%,#123f53 43%,#0b2433 75%);overflow:hidden;display:grid;place-items:center}
+.ferry-player video{display:block;width:100%;height:100%;object-fit:contain;background:#081824}
+.ferry-player video[hidden],.ferry-player button[hidden]{display:none!important}
+.ferry-start{display:flex;flex-direction:column;align-items:center;gap:9px;justify-content:center;padding:15px;border:1px solid #6cc7c4;border-radius:12px;background:#092c3ad9;color:#fff;font:800 17px/1.35 system-ui;cursor:pointer}
+.ferry-start:hover,.ferry-start:focus-visible{background:#125062;outline:2px solid #a8fff3;outline-offset:3px}
+.ferry-play-icon{display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:#18b5ac;color:#061e28;font-size:30px}
+.ferry-side{display:flex;flex-direction:column;justify-content:center;gap:13px;color:#bbd5e0}
+.ferry-side strong{color:#edfbff;font-size:16px}
+.ferry-side p{margin:0;font-size:12px;line-height:1.6}
+.ferry-side .ferry-status{color:#81e8d5;font-size:12px}
+.ferry-side .ferry-status.warn{color:#ffcf88}
+.ferry-side a{display:inline-block;padding:10px 12px;border:1px solid #65aaa9;border-radius:9px;background:#154350;color:#c7fff7;font-weight:750;font-size:12px;text-decoration:none;text-align:center}
+.ferry-side a:hover{background:#1c5868}
+@media(max-width:800px){.ferry-camera .ferry-layout{grid-template-columns:1fr}.ferry-camera{padding:16px}.ferry-side{gap:10px}.ferry-player{min-height:180px}}
+
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoAqqDBF2X7P2s=" crossorigin="anonymous">
 </head>
@@ -111,6 +135,25 @@
  
 </section>
 <section class="panel status" aria-live="polite"><div class="statuscopy"><div class="statusbadge" id="statusIcon">≈</div><div><h3 id="statusHeading">Checking coastal water levels</h3><p id="statusDescription">The status below uses Portland's published flood thresholds and live/model values only when available.</p></div></div><a class="btn" target="_blank" rel="noopener noreferrer" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150">NOAA flood dashboard ↗</a></section>
+
+<section class="panel ferry-camera" aria-labelledby="ferryLiveCamera">
+  <div class="ferry-head">
+    <div><div class="ferry-label">Coastal webcam · Saco Bay</div><h3 id="ferryLiveCamera">Ferry Beach · Live shoreline camera</h3><p>North-facing coastal view · WebCOOS / NERACOOS stream</p></div>
+    <span class="ferry-pill">LIVE CAMERA</span>
+  </div>
+  <div class="ferry-layout">
+    <div class="ferry-player">
+      <button class="ferry-start" type="button" id="ferryStart" aria-label="Start Ferry Beach live video"><span class="ferry-play-icon" aria-hidden="true">▶</span>Watch Ferry Beach live<span style="font-size:11px;font-weight:500;color:#b7d6df">Tap to start video · sound muted initially</span></button>
+      <video id="ferryVideo" hidden controls playsinline muted preload="none" aria-label="Live Ferry Beach north-facing webcam"></video>
+    </div>
+    <div class="ferry-side">
+      <strong>See current surf and shoreline conditions</strong>
+      <p>Watch the beach alongside NOAA water levels and coastal alerts. The camera is for visual context only, not a measurement of flood depth or wave height.</p>
+      <p class="ferry-status" id="ferryStatus" role="status" aria-live="polite">Camera is ready. Select Watch Ferry Beach live to connect.</p>
+      <a href="https://webcoos.org/cameras/ferrybeach_north/" target="_blank" rel="noopener noreferrer">Open official Ferry Beach camera ↗</a>
+    </div>
+  </div>
+</section>
 
 <section class="panel comparison-panel" aria-labelledby="compareTitle">
   <div class="section-head"><div><div class="eyebrow">Storm context · Portland station 8418150</div><h3 id="compareTitle">How the forecast peak compares with January 2024</h3><div class="sub" id="compareSummary">Checking NOAA model guidance for a peak water level in the next 72 hours.</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150" rel="noopener noreferrer" target="_blank">Official Portland flood dashboard ↗</a></div>
@@ -532,6 +575,71 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
  updateAlertMap();setInterval(()=>{if(!document.hidden)updateAlertMap()},60*1000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateAlertMap()});
  window.addEventListener('resize',()=>map.invalidateSize());
+})();
+</script>
+
+
+<script>
+/* HLS playback: native on Safari, hls.js on browsers without native HLS.
+   Load only when the visitor requests video; no stream bandwidth on page load. */
+(function(){
+  'use strict';
+  const stream='https://stage-ams.srv.axds.co/stream/adaptive/neracoos/ferrybeach_north/hls.m3u8';
+  const button=document.getElementById('ferryStart');
+  const video=document.getElementById('ferryVideo');
+  const status=document.getElementById('ferryStatus');
+  if(!button||!video||!status)return;
+  let hls=null,started=false;
+  function message(text,isWarning){
+    status.textContent=text;
+    status.classList.toggle('warn',Boolean(isWarning));
+  }
+  function unavailable(){
+    message('Camera stream unavailable here. Try the official camera page using the link below.',true);
+    video.pause();
+  }
+  function playWhenReady(){
+    video.play().catch(()=>{
+      message('Stream loaded. Press Play on the video to begin.',false);
+    });
+  }
+  video.addEventListener('playing',()=>message('Live camera playing · stream may be delayed.',false));
+  video.addEventListener('waiting',()=>message('Loading live video…',false));
+  video.addEventListener('error',unavailable);
+  button.addEventListener('click',()=>{
+    if(started)return;
+    started=true;
+    button.hidden=true;
+    video.hidden=false;
+    message('Connecting to Ferry Beach live stream…',false);
+    if(video.canPlayType('application/vnd.apple.mpegurl')){
+      video.src=stream;
+      video.load();
+      playWhenReady();
+      return;
+    }
+    function connect(){
+      if(!window.Hls||!window.Hls.isSupported()){
+        message('This browser cannot play the HLS feed. Use the official camera link below.',true);
+        return;
+      }
+      hls=new window.Hls({liveSyncDurationCount:3,enableWorker:true});
+      hls.on(window.Hls.Events.MANIFEST_PARSED,playWhenReady);
+      hls.on(window.Hls.Events.ERROR,(_event,data)=>{
+        if(data&&data.fatal)unavailable();
+      });
+      hls.loadSource(stream);
+      hls.attachMedia(video);
+    }
+    if(window.Hls){connect();return;}
+    const loader=document.createElement('script');
+    loader.src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js';
+    loader.async=true;
+    loader.onload=connect;
+    loader.onerror=()=>message('Video player could not load. Use the official camera link below.',true);
+    document.head.appendChild(loader);
+  });
+  window.addEventListener('pagehide',()=>{if(hls)hls.destroy();});
 })();
 </script>
 

@@ -9,3 +9,5 @@ GitHub Actions refreshes marine wind and coastal-alert snapshots on a five-minut
 
 ## Important limitations
 The static map does not depict actual floodwater. Alert areas are official warning polygons, not inundation footprints. Portland tide-gauge levels are regional references and do not establish flood elevation at an individual Saco Bay property. Model guidance and astronomical tide predictions are not interchangeable, and wave runup is not included in gauge level comparisons. Verify local conditions with NWS Gray and NOAA.
+
+Deployment note: GitHub Pages is built from the main branch by the scheduled and push-triggered GitHub Actions workflow.

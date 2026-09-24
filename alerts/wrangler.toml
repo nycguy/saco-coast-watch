@@ -3,17 +3,11 @@ main = "src/worker.mjs"
 compatibility_date = "2026-09-24"
 workers_dev = true
 
-[triggers]
-crons = ["*/5 * * * *"]
-
 [[d1_databases]]
 binding = "DB"
 database_name = "saco-coastal-alerts"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "459e72a7-98b1-4dd5-8bfd-8b406468e6bf"
 migrations_dir = "migrations"
 
-[vars]
-PUBLIC_SITE = "https://nycguy.github.io/saco-coast-watch/"
-ALLOWED_ORIGIN = "https://nycguy.github.io"
-SENDER_NAME = "Saco Coast Watch"
-# Sensitive credentials must be set with wrangler secret put, never added to this file.
+# Set runtime variables and secrets in Cloudflare's Worker Settings.
+# This staging Worker has no cron; scheduled alerts will be added only after testing.

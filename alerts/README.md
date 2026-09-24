@@ -1,6 +1,6 @@
 # Saco Coast Watch Alerts: owner-only email test
 
-**Current state:** The live Cloudflare Worker was last verified as a staging health checker. The new owner-only email pilot source has been committed to `alerts/src/worker.mjs` but **is not deployed to Cloudflare until the owner manually copies it into the Worker editor and clicks Deploy**. The root GitHub Pages dashboard has no public alert signup. Email threshold alerts, Web Push, and scheduled notifications remain disabled.
+**Current state:** The live Cloudflare Worker was last verified as a staging health checker. The owner completed the owner-only email confirmation pilot and verified an email address in D1. The newest Worker source adds a **read-only NOAA/NDBC/NWS weather-feed diagnostic** at `/pilot/data`, but it is not live until the owner copies the updated code from GitHub into the Cloudflare editor and deploys it. The root GitHub Pages dashboard has no public alert signup. Email threshold alerts, Web Push, and scheduled notifications remain disabled.
 
 ## Owner-only email pilot: required steps
 
@@ -8,7 +8,8 @@
 2. Open [the complete standalone Worker source](https://github.com/nycguy/saco-coast-watch/blob/main/alerts/src/worker.mjs), copy its raw file, replace all old code in Cloudflare Workers & Pages → `saco-coastal-alerts` → Edit code, and deploy. Existing D1 binding and Cloudflare-stored variables/secrets should remain.
 3. Visit `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health` and verify `configurationReady=true`.
 4. Open `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/pilot`. Only the address matching the Worker setting `SUPPORT_EMAIL` is accepted. Complete Turnstile and submit. Check the mailbox for a one-time verification link; click the final confirmation button on that page.
-5. Verify that the page says `Email test complete`. This records the owner's verified email in D1 but **does not enable real coastal alerts**. Pilot confirmation links expire in 1 hour; requests are limited to one per 10 minutes per owner address and source IP.
+5. The owner verified the page showed `Email test complete`. This records the owner's verified email in D1 but **does not enable real coastal alerts**.
+6. Deploy the latest standalone Worker source and visit `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/pilot/data` to inspect read-only weather-feed diagnostics for NOAA Portland observations and forecast model guidance, NDBC 44007 wind, and NWS KPWM air temperature. A source can be unavailable or stale; this diagnostic does not send emails or activate alerts.
 
 ## Infrastructure
 

@@ -815,35 +815,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 #coastalMap .leaflet-pane,#coastalMap .leaflet-tile,#coastalMap .leaflet-marker-icon,#coastalMap .leaflet-marker-shadow{position:absolute;left:0;top:0}
 #coastalMap .leaflet-tile{width:256px;height:256px}
 
-/* Subscription settings: publicly visible, but no data collected before backend activation. */
-.alerts-signup{padding:23px;margin:17px 0;border:1px solid #3b918f;background:linear-gradient(135deg,#163a46,#102837 82%);box-shadow:inset 0 3px #55d7c9}
-.alerts-signup .signup-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap}
-.alerts-signup h3{font-size:clamp(21px,2.7vw,27px);margin:4px 0 8px}
-.alerts-signup .signup-head p,.alerts-signup .signup-foot{color:#bdd5df;font-size:12px;max-width:960px;line-height:1.55}
-.signup-state{border:1px solid #81714b;border-radius:8px;background:#342f25;color:#ffe1a0;padding:6px 10px;font-size:11px;font-weight:800}
-.signup-state.ready{border-color:#3a9e87;background:#19433d;color:#aaf5d6}
-.signup-layout{display:grid;grid-template-columns:minmax(260px,.86fr) minmax(350px,1.14fr);gap:18px;margin-top:17px}
-.signup-pane{border:1px solid #355e70;border-radius:12px;padding:15px;background:#0e2737}
-.signup-pane h4{font-size:15px;margin:0 0 10px}
-.signup-field{display:flex;flex-direction:column;gap:5px;margin:10px 0;font-size:12px;color:#d4ebf4}
-.alerts-signup [hidden]{display:none!important}
-.signup-field input{width:100%;padding:10px 11px;color:#ecf9ff;border:1px solid #496f80;border-radius:7px;background:#0a1e2d;font:inherit}
-.signup-check{display:flex;gap:9px;align-items:flex-start;margin:11px 0;font-size:12px;color:#d9ebf3}
-.signup-check input{accent-color:#24d8bb;width:17px;height:17px;flex:none;margin-top:1px}
-.signup-thresholds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.signup-threshold{border:1px solid #345468;border-radius:8px;padding:10px;background:#102c3e}
-.signup-threshold .signup-check{margin:0 0 7px;font-weight:750}
-.signup-threshold label:not(.signup-check){display:flex;align-items:center;gap:8px;color:#bcd5e1;font-size:11px}
-.signup-threshold input[type="number"]{width:85px;background:#091d2b;border:1px solid #4d7183;border-radius:6px;padding:7px;color:#f0fcff;font:700 13px system-ui}
-.signup-actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:15px;align-items:center}
-.signup-actions button{background:#28c9b3;border:1px solid #39ecd4;border-radius:8px;padding:10px 14px;color:#082531;font-weight:850;cursor:pointer;font:800 13px system-ui}
-.signup-actions button:disabled{opacity:.48;cursor:not-allowed}
-.signup-actions button.secondary{background:#183e4c;color:#cef9f1;border-color:#5fa9aa}
-.signup-notice{color:#ffe09a;font-size:12px;margin-top:10px;line-height:1.5}
-.signup-notice.good{color:#9df5d6}
-.signup-legal{margin-top:13px;color:#b9d2dd;font-size:11px;line-height:1.6}
-.signup-legal a{color:#a1f2df;text-decoration:underline}
-@media(max-width:900px){.signup-layout{grid-template-columns:1fr}}@media(max-width:510px){.signup-thresholds{grid-template-columns:1fr}.alerts-signup{padding:15px}}
 </style>
 
 </head>
@@ -881,36 +852,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 </section>
 
 
-<section class="panel alerts-signup" id="coastal-alerts" aria-labelledby="alertsSignupTitle">
- <div class="signup-head"><div><div class="eyebrow">Optional storm notifications · email &amp; text</div><h3 id="alertsSignupTitle">Get alerts when coastal conditions cross your limits</h3><p>Choose your own thresholds for observed or forecast water level, offshore wind and gusts, and measured air temperature. Alerts can be delivered even when this dashboard is closed, once the separate notification service is activated.</p></div><span class="signup-state" id="signupServiceStatus">Delivery service setup pending</span></div>
- <form id="alertsSignupForm" class="signup-layout">
-  <div class="signup-pane"><h4>Contact &amp; delivery</h4>
-   <label class="signup-field">Email address (required for verification)<input id="alertEmail" type="email" name="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required></label>
-   <label class="signup-check"><input id="alertEmailOn" type="checkbox" checked>Send threshold alerts by email</label>
-   <label class="signup-check"><input id="alertSmsOn" type="checkbox">Also send threshold alerts by SMS</label>
-   <label class="signup-field" id="alertPhoneRow" hidden>Mobile number (US +1 only)<input id="alertPhone" type="tel" name="phone" autocomplete="tel" placeholder="+12075550123"></label>
-   <label class="signup-check" id="alertConsentRow" hidden><input type="checkbox" id="alertSmsConsent">I expressly agree to receive automated, non-marketing coastal weather and water-level alerts by SMS at the phone number provided. Frequency varies with conditions. Message and data rates may apply. Reply STOP to opt out or HELP for assistance. Consent is not a condition of purchase.</label>
-   <p class="signup-foot">Confirmation is required by email and separately by text before notifications begin. No subscriber information is stored in GitHub.</p>
-  </div>
-  <div class="signup-pane"><h4>Choose conditions and thresholds</h4>
-   <div class="signup-thresholds">
-    <div class="signup-threshold"><label class="signup-check"><input data-alert-metric="waterForecast" type="checkbox" checked>Forecast peak water level</label><label><input data-alert-threshold="waterForecast" type="number" min="0" max="30" step="0.1" value="12">ft MLLW</label></div>
-    <div class="signup-threshold"><label class="signup-check"><input data-alert-metric="waterObserved" type="checkbox" checked>Observed water level</label><label><input data-alert-threshold="waterObserved" type="number" min="0" max="30" step="0.1" value="12">ft MLLW</label></div>
-    <div class="signup-threshold"><label class="signup-check"><input data-alert-metric="wind" type="checkbox" checked>Offshore sustained wind</label><label><input data-alert-threshold="wind" type="number" min="0" max="180" step="0.1" value="30">mph</label></div>
-    <div class="signup-threshold"><label class="signup-check"><input data-alert-metric="gust" type="checkbox" checked>Offshore wind gusts</label><label><input data-alert-threshold="gust" type="number" min="0" max="220" step="0.1" value="45">mph</label></div>
-    <div class="signup-threshold"><label class="signup-check"><input data-alert-metric="tempLow" type="checkbox">Temperature at or below</label><label><input data-alert-threshold="tempLow" type="number" min="-40" max="140" step="0.1" value="32">°F</label></div>
-    <div class="signup-threshold"><label class="signup-check"><input data-alert-metric="tempHigh" type="checkbox">Temperature at or above</label><label><input data-alert-threshold="tempHigh" type="number" min="-40" max="140" step="0.1" value="90">°F</label></div>
-   </div>
-   <p class="signup-foot">Water levels use the Portland gauge; wind and gusts use offshore buoy 44007; temperature uses the Portland Jetport reporting station. Forecast water-level notifications refer to NOAA model guidance, not measured flood depth at Saco. Missing or stale readings never trigger alerts.</p>
-  </div>
-  <div style="grid-column:1/-1">
-   <div id="alertsTurnstile" aria-label="Human verification"></div>
-   <div class="signup-actions"><button id="alertsSubmit" type="submit" disabled>Subscribe to alerts</button><button id="alertsManage" type="button" class="secondary" disabled>Email me a management link</button></div>
-   <p class="signup-notice" id="alertsFormMessage" role="status" aria-live="polite">Notifications are not yet accepting signups. The external delivery service must be configured and verified first.</p>
-   <div class="signup-legal">This is an independent informational service, not an official emergency warning system. Delivery may be delayed or unavailable. For life-safety decisions, follow <a href="https://www.weather.gov/gyx/" target="_blank" rel="noopener noreferrer">NWS Gray</a>. <a href="alerts-privacy.html">Privacy</a> · <a href="alerts-terms.html">SMS terms</a></div>
-  </div>
- </form>
-</section>
 <section class="panel comparison-panel" aria-labelledby="compareTitle">
   <div class="section-head"><div><div class="eyebrow">Storm context · Portland station 8418150</div><h3 id="compareTitle">How the forecast peak compares with January 2024</h3><div class="sub" id="compareSummary">Checking NOAA model guidance for a peak water level in the next 72 hours.</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150" rel="noopener noreferrer" target="_blank">Official Portland flood dashboard ↗</a></div>
   <div class="compare-grid" aria-live="polite">
@@ -1414,72 +1355,4 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
 </script>
 
 
-<script src="alerts-config.js"></script>
-<script>
-/* Static UI, backed by an independently hosted opt-in service. No secrets client-side. */
-(function(){
- 'use strict';
- const $=id=>document.getElementById(id),form=$('alertsSignupForm'),send=$('alertsSubmit'),manage=$('alertsManage');
- const status=$('alertsFormMessage'),badge=$('signupServiceStatus'),sms=$('alertSmsOn'),smsConsent=$('alertSmsConsent');
- const cfg=window.SACO_ALERTS_CONFIG||{},api=typeof cfg.apiBase==='string'?cfg.apiBase.replace(/\/$/,''):'';
- let available=false,smsReady=false,siteKey='',widgetId=null;
- function message(text,good=false){status.textContent=text;status.classList.toggle('good',good);}
- function smsToggle(){
-  $('alertPhoneRow').hidden=!sms.checked;$('alertConsentRow').hidden=!sms.checked;
-  $('alertPhone').required=sms.checked;smsConsent.required=sms.checked;
- }
- sms.addEventListener('change',smsToggle);smsToggle();
- function resetCaptcha(){if(window.turnstile&&widgetId!==null)window.turnstile.reset(widgetId);}
- function captcha(){return window.turnstile&&widgetId!==null?window.turnstile.getResponse(widgetId):'';}
- async function initialize(){
-  if(!/^https:\/\//.test(api)){message('Signup will open after the operator connects the secure notification service. No contact information is being collected yet.');return;}
-  try{
-   const r=await fetch(api+'/config',{cache:'no-store'});
-   if(!r.ok)throw Error('Service unavailable');
-   const j=await r.json();
-   if(!j.ready||typeof j.siteKey!=='string'||!j.siteKey)throw Error('Service setup incomplete');
-   smsReady=j.smsReady===true;siteKey=j.siteKey;available=true;badge.textContent='Email signup available'+(smsReady?' · SMS available':' · SMS pending');
-   badge.classList.add('ready');send.disabled=false;manage.disabled=false;sms.disabled=!smsReady;
-   if(!smsReady)message('Email alert registration is available. Text registration is pending sender configuration.',true);
-   else message('Choose your thresholds and delivery methods. Email and SMS each require confirmation.',true);
-   const loader=document.createElement('script');loader.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';loader.async=true;
-   loader.onload=()=>{widgetId=window.turnstile.render('#alertsTurnstile',{sitekey:siteKey,action:'subscribe',theme:'dark'});};
-   loader.onerror=()=>{available=false;send.disabled=true;manage.disabled=true;message('Signup verification is unavailable. Please try later.');};
-   document.head.append(loader);
-  }catch{message('The secure notification service is not operational yet. No registration data has been submitted.');}
- }
- async function request(url,data){
-  const response=await fetch(api+url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});
-  let payload;try{payload=await response.json();}catch{throw Error('Notification service did not return a valid response');}
-  if(!response.ok)throw Error(payload.error||'Request unsuccessful');
-  return payload;
- }
- form.addEventListener('submit',async event=>{
-  event.preventDefault();if(!available)return;
-  if(!form.reportValidity())return;
-  const t=captcha();if(!t){message('Complete the human-verification challenge.');return;}
-  const prefs={};
-  document.querySelectorAll('[data-alert-metric]').forEach(box=>{
-   const name=box.dataset.alertMetric;
-   prefs[name]={enabled:box.checked,threshold:Number(document.querySelector('[data-alert-threshold="'+name+'"]').value)};
-  });
-  if(!Object.values(prefs).some(x=>x.enabled)){message('Select at least one alert condition.');return;}
-  send.disabled=true;
-  try{
-   const body={email:$('alertEmail').value.trim(),phone:$('alertPhone').value.trim(),emailAlerts:$('alertEmailOn').checked,
-    smsAlerts:sms.checked,smsConsent:sms.checked&&smsConsent.checked,preferences:prefs,turnstile:t};
-   const result=await request('/subscribe',body);message(result.message||'Check your email to confirm.',true);
-  }catch(e){message(e.message);}finally{send.disabled=false;resetCaptcha();}
- });
- manage.addEventListener('click',async()=>{
-  if(!available)return;
-  if(!$('alertEmail').reportValidity())return;
-  const t=captcha();if(!t){message('Complete the human-verification challenge.');return;}
-  manage.disabled=true;
-  try{const r=await request('/manage/request',{email:$('alertEmail').value.trim(),turnstile:t});message(r.message,true);}
-  catch(e){message(e.message);}finally{manage.disabled=false;resetCaptcha();}
- });
- initialize();
-})();
-</script>
 </body></html>

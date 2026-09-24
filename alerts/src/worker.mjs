@@ -105,7 +105,7 @@ async function handleConfirm(req,env,type){
   try{await smsSend(env,pending.phone,"Saco Coast Watch: You requested SMS coastal alerts. Confirm this number: "+await confirmLink(env,req,"sms",raw)+" Reply STOP to opt out. Msg/data rates may apply.");}
   catch(err){console.error("SMS confirmation unavailable",err.message);return page("Email confirmed; SMS pending","<p>Your email is confirmed, but we could not send SMS verification. SMS alerts are not active. Please retry later.</p>");}
  }
- return page("Email alerts confirmed","<p>Your selected alerts are now active on verified channels. If you requested SMS, click the separate verification link sent to your phone.</p><p><a href="'+safeLink(env.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p>");
+ return page("Email alerts confirmed",'<p>Your selected alerts are now active on verified channels. If you requested SMS, click the separate verification link sent to your phone.</p><p><a href="'+safeLink(env.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p>');
 }
 async function handleUnsubscribe(req,env){
  const url=new URL(req.url);

@@ -131,7 +131,7 @@ async function requestManage(req,env){
  }
  return json({message:"If this email has an active subscription, a management link has been sent."},202,origin);
 }
-function field(k,v){return '<label style="display:block;margin:10px 0"><input type="checkbox" name="'+k+'_enabled" '+(v.enabled?"checked":"")+"> '+escapeHtml(thresholdLabel(k))+' <input type="number" step="0.1" style="width:80px" name="'+k+'_threshold" value="'+escapeHtml(v.threshold)+'"> '+escapeHtml(unit(k))+'</label>';}
+function field(k,v){return `<label style="display:block;margin:10px 0"><input type="checkbox" name="${k}_enabled" ${v.enabled?'checked':''}> ${escapeHtml(thresholdLabel(k))} <input type="number" step="0.1" style="width:80px" name="${k}_threshold" value="${escapeHtml(v.threshold)}"> ${escapeHtml(unit(k))}</label>`;}
 async function manage(req,env){
  const url=new URL(req.url),raw=req.method==="POST"?String((await req.formData()).get("token")||""):url.searchParams.get("token")||"";
  if(!/^[0-9a-f]{64}$/.test(raw))return page("Management link invalid","<p>Request a fresh link from the dashboard.</p>",400);

@@ -119,6 +119,40 @@
 .ferry-side a:hover{background:#1c5868}
 @media(max-width:800px){.ferry-camera .ferry-layout{grid-template-columns:1fr}.ferry-camera{padding:16px}.ferry-side{gap:10px}.ferry-player{min-height:180px}}
 
+
+/* Dynamic Portland-gauge flood threshold styling (feet above MLLW) */
+.model-hero,.panel.status{transition:background-color .35s ease,border-color .35s ease,box-shadow .35s ease}
+.model-hero .risk-label{margin-top:9px;display:inline-block;font-size:11px;font-weight:800;line-height:1.4;padding:4px 8px;border-radius:6px;border:1px solid currentColor}
+.model-hero.risk-below{background:linear-gradient(145deg,#163d3c,#112e38 90%);border-color:#42bda2;box-shadow:inset 0 3px #63e5c9,0 15px 42px #00000016}
+.model-hero.risk-below .number,.model-hero.risk-below .risk-label{color:#63e5c9}
+.model-hero.risk-below .tag{background:#205e51;color:#ddfff4}
+.model-hero.risk-below .label{color:#ddfff4}
+.panel.status.risk-below{background:linear-gradient(120deg,#163d3c,#112e38 85%);border-color:#42bda2}
+.panel.status.risk-below .statusbadge{background:#21594c;color:#63e5c9}
+.model-hero.risk-minor{background:linear-gradient(145deg,#514323,#242e35 90%);border-color:#e4bb55;box-shadow:inset 0 3px #ffcf52,0 15px 42px #00000016}
+.model-hero.risk-minor .number,.model-hero.risk-minor .risk-label{color:#ffcf52}
+.model-hero.risk-minor .tag{background:#76602e;color:#fff2ce}
+.model-hero.risk-minor .label{color:#fff2ce}
+.panel.status.risk-minor{background:linear-gradient(120deg,#514323,#242e35 85%);border-color:#e4bb55}
+.panel.status.risk-minor .statusbadge{background:#655027;color:#ffcf52}
+.model-hero.risk-moderate{background:linear-gradient(145deg,#54391f,#2e2d33 90%);border-color:#e89d5e;box-shadow:inset 0 3px #ffac67,0 15px 42px #00000016}
+.model-hero.risk-moderate .number,.model-hero.risk-moderate .risk-label{color:#ffac67}
+.model-hero.risk-moderate .tag{background:#78502b;color:#ffe9d4}
+.model-hero.risk-moderate .label{color:#ffe9d4}
+.panel.status.risk-moderate{background:linear-gradient(120deg,#54391f,#2e2d33 85%);border-color:#e89d5e}
+.panel.status.risk-moderate .statusbadge{background:#70492b;color:#ffac67}
+.model-hero.risk-major{background:linear-gradient(145deg,#572a38,#342737 90%);border-color:#f07f98;box-shadow:inset 0 3px #ff8fa0,0 15px 42px #00000016}
+.model-hero.risk-major .number,.model-hero.risk-major .risk-label{color:#ff8fa0}
+.model-hero.risk-major .tag{background:#7a3548;color:#ffe1e7}
+.model-hero.risk-major .label{color:#ffe1e7}
+.panel.status.risk-major{background:linear-gradient(120deg,#572a38,#342737 85%);border-color:#f07f98}
+.panel.status.risk-major .statusbadge{background:#703343;color:#ff8fa0}
+.model-hero.risk-unavailable{background:linear-gradient(145deg,#382b51,#1e3047 90%);border-color:#bc9bea;box-shadow:inset 0 3px #e5bdff,0 15px 42px #00000016}
+.model-hero.risk-unavailable .number,.model-hero.risk-unavailable .risk-label{color:#e5bdff}
+.model-hero.risk-unavailable .tag{background:#654477;color:#efddfb}
+.model-hero.risk-unavailable .label{color:#efddfb}
+.panel.status.risk-unavailable{background:linear-gradient(120deg,#382b51,#1e3047 85%);border-color:#bc9bea}
+.panel.status.risk-unavailable .statusbadge{background:#55416f;color:#e5bdff}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoAqqDBF2X7P2s=" crossorigin="anonymous">
 </head>
@@ -128,7 +162,7 @@
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
 <section class="metrics grid" aria-label="Current coastal metrics">
- <article class="panel metric model-hero"><div class="label">Forecast peak total water level <span class="tag">NEXT 72H · NOAA OFS</span></div><div class="number" id="modelValue">--<em> ft</em></div><p id="modelDetail">Looking for available NOAA model guidance…</p></article>
+ <article class="panel metric model-hero"><div class="label">Forecast peak total water level <span class="tag">NEXT 72H · NOAA OFS</span></div><div class="number" id="modelValue">--<em> ft</em></div><p id="modelDetail">Looking for available NOAA model guidance…</p><p class="risk-label" id="modelRiskLabel" role="status">Checking forecast category</p></article>
 <article class="panel metric"><div class="label">Observed water level <span class="tag" id="obsBadge">LIVE GAUGE</span></div><div class="number" id="observedValue">--<em> ft</em></div><p id="observedDetail">NOAA Portland · station 8418150</p></article>
  <article class="panel metric"><div class="label">Observed − normal tide <span class="tag">SURGE SIGNAL</span></div><div class="number" id="departureValue">--<em> ft</em></div><p id="departureDetail">Difference between the observed level and the predicted astronomical tide at the same time.</p></article>
  <article class="panel metric"><div class="label">Next high tide · baseline <span class="tag">TIDE ONLY</span></div><div class="number" id="nextHighValue">--<em> ft</em></div><p id="nextHighDetail">Loading next high tide…</p></article>
@@ -374,15 +408,29 @@ async function loadWeather(){
  }
 }
 
+const RISK_CLASSES=['risk-below','risk-minor','risk-moderate','risk-major','risk-unavailable'];
+function riskBand(value){
+ if(!Number.isFinite(value))return 'unavailable';
+ if(value>=THRESHOLDS[2].value)return 'major';
+ if(value>=THRESHOLDS[1].value)return 'moderate';
+ if(value>=THRESHOLDS[0].value)return 'minor';
+ return 'below';
+}
+function applyRiskBand(node,band){node.classList.remove(...RISK_CLASSES);node.classList.add('risk-'+band);}
 function renderSummary(){const {latest,nextPeak,gaugeFresh,source}=currentStatus();$('observedValue').innerHTML=(latest?fmtN(latest.v):'--')+'<em> ft</em>';$('observedDetail').textContent=latest?'Recorded '+dayTime(latest.t)+' ET · '+relative(latest.t):'No Portland gauge data returned.';$('obsBadge').textContent=gaugeFresh?'CURRENT':latest?'STALE':'OFFLINE';$('obsBadge').style.color=gaugeFresh?'#b7e27b':'#ffd19e';
  const predicted=latest?nearest(state.pred,latest.t,12*60000):null;const residual=latest&&predicted?latest.v-predicted.v:null;$('departureValue').innerHTML=(residual!==null?(residual>0?'+':'')+fmtN(residual):'--')+'<em> ft</em>';$('departureDetail').textContent=residual!==null?'At '+time(latest.t)+' ET. Observed '+fmtN(latest.v)+' ft vs. tide-only '+fmtN(predicted.v)+' ft.':'Needs current gauge data and matching astronomical tide.';
  const high=highTides()[0];$('nextHighValue').innerHTML=(high?fmtN(high.v):'--')+'<em> ft</em>';$('nextHighDetail').textContent=high?dayTime(high.t)+' ET · tide only, excludes storm surge.':'No upcoming tide predictions returned.';
  $('modelValue').innerHTML=(nextPeak?fmtN(nextPeak.v):'--')+'<em> ft</em>';
+ const modelBand=riskBand(nextPeak?.v);
+ applyRiskBand($('modelValue').closest('.model-hero'),modelBand);
+ $('modelRiskLabel').textContent=({below:'Below minor flood threshold · Portland gauge',minor:'Minor flood threshold · Portland gauge',moderate:'Moderate flood threshold · Portland gauge',major:'Major flood threshold · Portland gauge',unavailable:'Model guidance unavailable · no forecast category'})[modelBand];
+
  const modelCoverage=state.model.filter(p=>p.t>=now()).at(-1);const sameTimeTide=nextPeak?nearest(state.pred,nextPeak.t,18*60000):null;
  const uplift=nextPeak&&sameTimeTide?nextPeak.v-sameTimeTide.v:null;
  $('modelDetail').textContent=nextPeak?'Peak '+dayTime(nextPeak.t)+' ET · model checked '+(state.lastFetched.model?time(state.lastFetched.model)+' ET':'recently')+' · '+(uplift===null?'astronomical comparison unavailable':(uplift>=0?'+':'')+fmtN(uplift)+' ft vs tide-only at that time')+'. '+(modelCoverage&&modelCoverage.t<now()+70*3600000?'Guidance currently ends '+dayTime(modelCoverage.t)+' ET.':''):'Unavailable: no NOAA forecast peak. Astronomical tide is not a substitute.';
- const statusTitle=$('statusHeading'), desc=$('statusDescription'), icon=$('statusIcon');if(!source){statusTitle.textContent='Live flood status unavailable';desc.textContent='Neither a recent gauge reading nor near-term model guidance is available. Use the official NOAA and NWS links before making decisions.';icon.textContent='?';icon.style.color='var(--sun)';return;}
- const useModel=!!nextPeak&&(!gaugeFresh||nextPeak.v>latest.v),decision=useModel?nextPeak:latest;const value=decision.v,which=useModel?'Highest available NOAA model guidance':'Latest Portland observation';let level=value>=14?3:value>=13?2:value>=12?1:0;const context=useModel?'indicated by model guidance':'observed at Portland';statusTitle.textContent=level===3?'Major flood threshold '+context:level===2?'Moderate flood threshold '+context:level===1?'Minor flood threshold '+context:'Below the Portland minor flooding threshold';icon.textContent=level>0?'!':'✓';icon.style.color=level>0?'var(--sun)':'var(--lime)';desc.textContent=which+': '+fmtN(value)+' ft MLLW. '+(level?'Portland threshold conditions are '+(useModel?'suggested by model guidance, not confirmed by observation.':'met in a recent gauge observation.')+' ':'This does not rule out waves, erosion or flooding in Saco. ')+(gaugeFresh&&nextPeak?'Latest observed '+fmtN(latest.v)+' ft; highest model guidance '+fmtN(nextPeak.v)+' ft in the next 72 hours. ':'')+'See NWS alerts for locally expected impacts.';
+ const statusPanel=$('statusHeading').closest('.status');
+ const statusTitle=$('statusHeading'), desc=$('statusDescription'), icon=$('statusIcon');if(!source){applyRiskBand(statusPanel,'unavailable');statusTitle.textContent='Live flood status unavailable';desc.textContent='Neither a recent gauge reading nor near-term model guidance is available. Use the official NOAA and NWS links before making decisions.';icon.textContent='?';return;}
+ const useModel=!!nextPeak&&(!gaugeFresh||nextPeak.v>latest.v),decision=useModel?nextPeak:latest;const value=decision.v,which=useModel?'Highest available NOAA model guidance':'Latest Portland observation';let level=value>=14?3:value>=13?2:value>=12?1:0;const context=useModel?'indicated by model guidance':'observed at Portland';statusTitle.textContent=level===3?'Major flood threshold '+context:level===2?'Moderate flood threshold '+context:level===1?'Minor flood threshold '+context:'Below the Portland minor flooding threshold';icon.textContent=level>0?'!':'✓';applyRiskBand(statusPanel,riskBand(value));desc.textContent=which+': '+fmtN(value)+' ft MLLW. '+(level?'Portland threshold conditions are '+(useModel?'suggested by model guidance, not confirmed by observation.':'met in a recent gauge observation.')+' ':'This does not rule out waves, erosion or flooding in Saco. ')+(gaugeFresh&&nextPeak?'Latest observed '+fmtN(latest.v)+' ft; highest model guidance '+fmtN(nextPeak.v)+' ft in the next 72 hours. ':'')+'See NWS alerts for locally expected impacts.';
 }
 function renderTable(){
 const highs=highTides(),body=$('highTides');body.replaceChildren();$('highTidesPeriod').textContent='Next '+(state.days===1?'24h':state.days===3?'72h':state.days+' days')+' · Eastern time · Portland gauge';

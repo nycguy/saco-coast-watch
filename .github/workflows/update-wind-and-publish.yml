@@ -24,10 +24,15 @@ jobs:
         run: python3 scripts/fetch_wind.py
       - name: Retrieve coastal-flood and storm-surge alerts
         run: python3 scripts/fetch_coastal_alerts.py
+      - name: Validate alert thresholds and backend syntax
+        run: |
+          node --check alerts/src/worker.mjs
+          node --test alerts/test/*.test.mjs
       - name: Assemble site
         run: |
           mkdir -p dist/data
           cp index.html dist/index.html
+          cp alerts-config.js alerts-privacy.html alerts-terms.html dist/
           cp data/wind.json dist/data/wind.json
           cp data/coastal-alerts.json dist/data/coastal-alerts.json
       - name: Browser map smoke test before publishing

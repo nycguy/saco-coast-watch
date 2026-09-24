@@ -1,23 +1,26 @@
-# Saco Coast Watch Alerts: current deployment status
+# Saco Coast Watch Alerts: owner-only email test
 
-**Staging only.** The live Cloudflare Worker currently runs a Hello World starter until its owner pastes and deploys the standalone `alerts/src/worker.mjs` from this repository. This staging Worker checks configuration and the five D1 tables at `/health`. It does not accept public signups, send email or push notifications, or run alert checks. Public signup is intentionally hidden from the GitHub Pages site.
+**Current state:** The live Cloudflare Worker was last verified as a staging health checker. The new owner-only email pilot source has been committed to `alerts/src/worker.mjs` but **is not deployed to Cloudflare until the owner manually copies it into the Worker editor and clicks Deploy**. The root GitHub Pages dashboard has no public alert signup. Email threshold alerts, Web Push, and scheduled notifications remain disabled.
 
-The retired SMS/Twilio Worker implementation has been removed from `alerts/src/worker.mjs`. Free email through Resend and standards-based Web Push are the planned notification channels; **Web Push is not implemented yet**. Do not advertise this service as active.
+## Owner-only email pilot: required steps
 
-## Current infrastructure
+1. In Cloudflare Turnstile, open the existing **Saco Coast Watch Alerts** widget → Settings → Hostname Management → Add Hostnames. Add `saco-coastal-alerts.mikewiley-nyc.workers.dev` while retaining `nycguy.github.io`. The pilot form is served from the Worker hostname; the Turnstile widget must authorize that exact hostname.
+2. Open [the complete standalone Worker source](https://github.com/nycguy/saco-coast-watch/blob/main/alerts/src/worker.mjs), copy its raw file, replace all old code in Cloudflare Workers & Pages → `saco-coastal-alerts` → Edit code, and deploy. Existing D1 binding and Cloudflare-stored variables/secrets should remain.
+3. Visit `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health` and verify `configurationReady=true`.
+4. Open `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/pilot`. Only the address matching the Worker setting `SUPPORT_EMAIL` is accepted. Complete Turnstile and submit. Check the mailbox for a one-time verification link; click the final confirmation button on that page.
+5. Verify that the page says `Email test complete`. This records the owner's verified email in D1 but **does not enable real coastal alerts**. Pilot confirmation links expire in 1 hour; requests are limited to one per 10 minutes per owner address and source IP.
 
-- Cloudflare Worker: `saco-coastal-alerts.mikewiley-nyc.workers.dev`.
-- D1 database binding: `DB`, database `saco-coastal-alerts`. The owner created tables `subscribers`, `push_subscriptions`, `tokens`, `alert_state`, and `request_limits` manually, along with indexes `push_subscriber_idx` and `tokens_expiry`. **Do not rerun the initial schema against populated databases.**
-- Resend: verified domain `mainebeachrental.com`; `FROM_EMAIL=ferrybeach@mainebeachrental.com`; `SUPPORT_EMAIL=mikewiley.nyc@gmail.com`; `RESEND_API_KEY` stored only as a Cloudflare secret.
-- Turnstile: widget for `nycguy.github.io`, with `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET` configured in Cloudflare.
-- Worker settings: `WORKER_PUBLIC_URL`, `PUBLIC_SITE`, `ALLOWED_ORIGIN`, and privately rotated `TOKEN_SECRET`.
-- Do not commit secret values, show them in screenshots, or put them in GitHub Pages files.
+## Infrastructure
 
-## Safe initial deployment
+- Worker: `https://saco-coastal-alerts.mikewiley-nyc.workers.dev`.
+- D1 binding: `DB`, database `saco-coastal-alerts`; owner manually created `subscribers`, `push_subscriptions`, `tokens`, `alert_state`, `request_limits`, `push_subscriber_idx` and `tokens_expiry`.
+- Resend: verified `mainebeachrental.com`; Worker variables `FROM_EMAIL=ferrybeach@mainebeachrental.com`, `SUPPORT_EMAIL=mikewiley.nyc@gmail.com`; secret `RESEND_API_KEY`.
+- Turnstile: Worker variables `TURNSTILE_SITE_KEY` and secret `TURNSTILE_SECRET`.
+- Worker variables `PUBLIC_SITE`, `ALLOWED_ORIGIN`, `WORKER_PUBLIC_URL`; secret `TOKEN_SECRET` was privately rotated.
+- Do not paste any private credentials into GitHub, this README, screenshots, public scripts, or chat.
 
-1. Open the Cloudflare Worker `saco-coastal-alerts` and choose **Edit code**.
-2. Open [the standalone Worker source](https://github.com/nycguy/saco-coast-watch/blob/main/alerts/src/worker.mjs), copy its entire raw content, replace the Hello World code in Cloudflare, and **Deploy**.
-3. Visit `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health`. Check `configurationReady`, `databaseConnected`, `missingSettings` and `missingTables`. This status reports missing key names but never secret values.
-4. Continue implementation and testing of email delivery, authentication and consent, Web Push encryption and service worker, data-feed verification, scheduled alerts, unsubscribe and management. Keep signup disabled until those tests pass.
+## Later work before public release
 
-This Worker is a staging health check, not an operational alert service.
+Build and test the subscription preference UI, management and unsubscribe, NOAA/NDBC data checks and freshness limits, scheduled threshold evaluation, Web Push encryption, browser service worker and permission UX, error handling and operational monitoring. Confirm quota limits and free-plan restrictions. Public signup, Web Push and scheduled notification delivery are **not currently implemented or enabled**.
+
+The owner-only email pilot is not an emergency warning system. Rely on official NWS alerts for safety decisions.

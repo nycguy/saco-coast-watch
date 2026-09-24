@@ -8,7 +8,7 @@ function token(){return Array.from(crypto.getRandomValues(new Uint8Array(32)),x=
 async function hash(s){return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",encoder.encode(s))),b=>b.toString(16).padStart(2,"0")).join("");}
 async function hmac(secret,data){const key=await crypto.subtle.importKey("raw",encoder.encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);return Array.from(new Uint8Array(await crypto.subtle.sign("HMAC",key,encoder.encode(data))),b=>b.toString(16).padStart(2,"0")).join("");}
 function originFor(req,env){const origin=req.headers.get("Origin")||"";return origin===env.ALLOWED_ORIGIN?origin:"";}
-function configured(env){return !!(env.DB&&env.PUBLIC_SITE&&env.ALLOWED_ORIGIN&&env.TURNSTILE_SECRET&&env.TURNSTILE_SITE_KEY&&env.RESEND_API_KEY&&env.FROM_EMAIL&&env.TOKEN_SECRET&&env.SUPPORT_EMAIL);}
+function configured(env){return !!(env.DB&&env.PUBLIC_SITE&&env.ALLOWED_ORIGIN&&env.TURNSTILE_SECRET&&env.TURNSTILE_SITE_KEY&&env.RESEND_API_KEY&&env.FROM_EMAIL&&env.TOKEN_SECRET&&env.SUPPORT_EMAIL&&env.WORKER_PUBLIC_URL);}
 function smsReady(env){return !!(env.TWILIO_ACCOUNT_SID&&env.TWILIO_AUTH_TOKEN&&env.TWILIO_MESSAGING_SERVICE_SID);}
 function baseUrl(req){return new URL(req.url).origin;}
 function safeLink(link){return escapeHtml(link);}
@@ -44,7 +44,7 @@ async function takeToken(env,raw,purpose){
 }
 async function unsubLink(env,s){
  const mac=await hmac(env.TOKEN_SECRET,s.id+":"+s.email);
- return env.PUBLIC_SITE.replace(/\/$/,"")+"/?unsubscribe="+encodeURIComponent(s.id+"."+mac)+"#coastal-alerts";
+ return env.WORKER_PUBLIC_URL.replace(/\/$/,"")+"/unsubscribe?token="+encodeURIComponent(s.id+"."+mac);
 }
 async function confirmLink(env,request,type,raw){return baseUrl(request)+"/confirm/"+type+"?token="+raw;}
 function validEmail(s){return typeof s==="string"&&s.length<255&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);}
@@ -141,7 +141,7 @@ async function manage(req,env){
  if(!s)return page("Subscription unavailable","",404);
  const p=JSON.parse(s.prefs_json);
  if(req.method==="GET"){
-  return page("Manage your coastal alerts",'<p>Changes will apply to both active delivery channels. Email: '+escapeHtml(s.email)+'</p><form method="post" action="/manage"><input type="hidden" name="token" value="'+escapeHtml(raw)+'">'+METRICS.map(k=>field(k,p.metrics[k])).join("")+'<button type="submit">Save preferences</button></form><p><a href="'+safeLink(await unsubLink(env,s)).replace("?unsubscribe=","?unsubscribe=")+'">Unsubscribe all</a></p>');
+  return page("Manage your coastal alerts",'<p>Changes will apply to both active delivery channels. Email: '+escapeHtml(s.email)+'</p><form method="post" action="/manage"><input type="hidden" name="token" value="'+escapeHtml(raw)+'">'+METRICS.map(k=>field(k,p.metrics[k])).join("")+'<button type="submit">Save preferences</button></form><p><a href="'+safeLink(await unsubLink(env,s))+'">Unsubscribe all</a></p>');
  }
  const data=await req.formData(),next={};
  for(const k of METRICS)next[k]={enabled:data.get(k+"_enabled")==="on",threshold:data.get(k+"_threshold")};

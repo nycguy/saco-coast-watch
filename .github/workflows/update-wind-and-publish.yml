@@ -32,7 +32,6 @@ jobs:
         run: |
           mkdir -p dist/data
           cp index.html dist/index.html
-          cp alerts-config.js alerts-privacy.html alerts-terms.html dist/
           cp data/wind.json dist/data/wind.json
           cp data/coastal-alerts.json dist/data/coastal-alerts.json
       - name: Browser map smoke test before publishing

@@ -19,6 +19,22 @@ async function health(env){
   return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
 }
 function workerOrigin(request){return new URL(request.url).origin;}
+function isOwnerPilotSubmission(request){
+  // Same-origin HTML form POSTs may omit Origin in some browsers or extensions.
+  // Reject an explicit foreign Origin; otherwise require same-origin fetch metadata
+  // or a matching Referer for the /pilot form.
+  const ownOrigin=workerOrigin(request);
+  const origin=request.headers.get("Origin");
+  if(origin && origin!==ownOrigin)return false;
+  const fetchSite=request.headers.get("Sec-Fetch-Site");
+  if(fetchSite && fetchSite!=="same-origin")return false;
+  const referer=request.headers.get("Referer");
+  if(referer){
+    try{const url=new URL(referer);if(url.origin!==ownOrigin||url.pathname!=="/pilot")return false;}
+    catch(_){return false;}
+  }
+  return fetchSite==="same-origin"||(!!origin&&origin===ownOrigin)||(!!referer);
+}
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
   if(typeof responseToken!=="string"||!responseToken||responseToken.length>2048)return false;
@@ -37,7 +53,7 @@ function landing(req,env){
 }
 async function requestConfirmation(req,env){
   if(!configured(env))return html("Pilot unavailable","<p>Worker configuration is incomplete.</p>",503);
-  if(req.headers.get("Origin")!==workerOrigin(req))return html("Request rejected","<p>Open the pilot form directly on the Worker URL.</p>",403);
+  if(!isOwnerPilotSubmission(req))return html("Request rejected","<p>Open the pilot form directly on the Worker URL.</p>",403);
   const form=await req.formData(),email=String(form.get("email")||"").trim().toLowerCase();
   if(!emailIsOwner(email,env))return html("Pilot restricted","<p>Only the site owner's support email can enroll in this test.</p>",403);
   const ok=await validateTurnstile(req,env,form.get("cf-turnstile-response"));

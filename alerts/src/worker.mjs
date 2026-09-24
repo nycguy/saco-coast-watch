@@ -16,7 +16,7 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v3",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
+  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v4",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -163,6 +163,42 @@ async function pilotData() {
   }));
   return json({phase:"read-only-feed-diagnostics",checkedAt:new Date().toISOString(),locationNote:"Portland tide and forecast and offshore buoy/airport conditions are proxies, not property-level flood predictions.",alertsSent:false,sources:Object.fromEntries(entries)});
 }
+
+// Read-only threshold demonstration. Values and defaults are illustrative until
+// opt-in preferences, durable crossing state, and scheduled delivery are implemented.
+async function pilotThresholds() {
+  const defaults=[
+    {name:"observedWater",label:"Observed Portland water level",threshold:12,unit:"ft MLLW",direction:"at or above",load:sourceObservedWater},
+    {name:"forecastWater",label:"Highest Portland model water level over the next 72 hours",threshold:12,unit:"ft MLLW",direction:"at or above",load:sourceForecastWater},
+    {name:"wind",label:"Observed offshore sustained wind",threshold:30,unit:"mph",direction:"at or above",load:sourceBuoy},
+    {name:"gust",label:"Observed offshore wind gust",threshold:45,unit:"mph",direction:"at or above",load:sourceBuoy},
+    {name:"tempHigh",label:"Observed Portland Jetport air temperature",threshold:90,unit:"°F",direction:"at or above",load:sourceAirTemp},
+    {name:"tempLow",label:"Observed Portland Jetport air temperature",threshold:32,unit:"°F",direction:"at or below",load:sourceAirTemp}
+  ];
+  // Fetch each provider only once per dry-run request.
+  const [water,forecast,buoy,temp]=await Promise.allSettled([
+    sourceObservedWater(),sourceForecastWater(),sourceBuoy(),sourceAirTemp()
+  ]);
+  const resultFor={
+    observedWater:water,forecastWater:forecast,
+    wind:buoy,gust:buoy,tempHigh:temp,tempLow:temp
+  };
+  const tests=defaults.map(spec=>{
+    const result=resultFor[spec.name];
+    if(result.status!=="fulfilled")
+      return {metric:spec.name,label:spec.label,threshold:spec.threshold,unit:spec.unit,status:"source-unavailable",wouldTrigger:null,reason:String(result.reason?.message||result.reason)};
+    const raw=Array.isArray(result.value)?result.value.find(x=>x.metric===spec.name):result.value;
+    if(!raw||!Number.isFinite(raw.value))
+      return {metric:spec.name,label:spec.label,threshold:spec.threshold,unit:spec.unit,status:"source-unavailable",wouldTrigger:null,reason:"Measurement missing"};
+    const exceeds=spec.direction==="at or below"?raw.value<=spec.threshold:raw.value>=spec.threshold;
+    return {metric:spec.name,label:spec.label,threshold:spec.threshold,unit:spec.unit,direction:spec.direction,value:raw.value,readingTime:raw.time,source:raw.source,status:"evaluated",wouldTrigger:exceeds};
+  });
+  return json({
+    phase:"read-only-threshold-dry-run",checkedAt:new Date().toISOString(),
+    note:"Illustrative threshold comparisons only. This does not track threshold crossings, send notifications, or predict flooding at individual Saco properties.",
+    alertsSent:false,databaseWrites:false,automatedChecksEnabled:false,tests
+  });
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
@@ -171,6 +207,7 @@ export default{
       if(path==="/"&&req.method==="GET")return json({service:"Saco Coast Watch Alerts",status:"Owner-only email pilot; no public signup or active coastal notifications",pilot:"/pilot"});
       if(path==="/pilot"&&req.method==="GET")return landing(req,env);
       if(path==="/pilot/data"&&req.method==="GET")return pilotData();
+      if(path==="/pilot/thresholds"&&req.method==="GET")return pilotThresholds();
       if(path==="/pilot/signup"&&req.method==="POST")return requestConfirmation(req,env);
       if(path==="/pilot/confirm"&&["GET","POST"].includes(req.method))return confirm(req,env);
       return json({error:"Not found; public signup and notifications are disabled."},404);

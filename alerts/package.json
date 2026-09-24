@@ -1,0 +1,1 @@
+{"name":"saco-coastal-alerts","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --test test/*.test.mjs","deploy":"wrangler deploy","migrate":"wrangler d1 migrations apply saco-coastal-alerts --remote"},"devDependencies":{"wrangler":"^4.0.0"}}

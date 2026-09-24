@@ -1,21 +1,23 @@
-# Coastal Storm Alerts: owner deployment checklist
+# Saco Coast Watch Alerts: current deployment status
 
-**Status:** Code and static GitHub Pages signup interface may be published to GitHub, but email/SMS delivery is **not enabled** until an operator creates and configures the Cloudflare Worker, D1 database, verified sending domain, and SMS sender. GitHub Pages alone cannot send notifications in the background.
+**Staging only.** The live Cloudflare Worker currently runs a Hello World starter until its owner pastes and deploys the standalone `alerts/src/worker.mjs` from this repository. This staging Worker checks configuration and the five D1 tables at `/health`. It does not accept public signups, send email or push notifications, or run alert checks. Public signup is intentionally hidden from the GitHub Pages site.
 
-## What it does
-- Per-subscriber email and/or SMS opt-in and custom thresholds: Portland observed total water level (ft MLLW), Portland forecast peak total water level (ft MLLW), observed wind and gusts from offshore buoy 44007 (mph), and observed air temperature high/low from NWS KPWM (°F). The airport temperature is **not** a beach temperature.
-- First valid check already exceeding a threshold sends a notification; continued exceedance does not resend. Once a metric returns below its threshold, a new crossing can send again, with a 60-minute cooldown per channel and metric. Delivery is best effort, on a 5-minute cron schedule, subject to feed and provider availability.
-- Email address confirmation before enrollment; optional SMS requires explicit unchecked consent and an independent SMS confirmation link. Email/SMS receipts contain an unsubscribe link. Resubscribe to change phone or delivery channels, or request a management link to adjust existing thresholds.
-- Unverified, stale, or missing measurements are **not** substituted with astronomical tides or estimated values. No real-time delivery guarantee; use official NWS warnings for safety decisions.
+The retired SMS/Twilio Worker implementation has been removed from `alerts/src/worker.mjs`. Free email through Resend and standards-based Web Push are the planned notification channels; **Web Push is not implemented yet**. Do not advertise this service as active.
 
-## External accounts required (operator-only)
-1. **Cloudflare:** Create a Cloudflare account. Install Node.js locally and run `cd alerts && npm install`. Run `npx wrangler login`, then `npx wrangler d1 create saco-coastal-alerts`. Paste the database UUID into `alerts/wrangler.toml`. **Do not commit service secrets.** Run `npx wrangler d1 migrations apply saco-coastal-alerts --remote` to create tables.
-2. **Cloudflare Turnstile:** Register the public hostname `nycguy.github.io` as a widget. Set the widget action to `subscribe` on the public form. Copy the **public site key** to the Worker variable `TURNSTILE_SITE_KEY`. Put the secret with `npx wrangler secret put TURNSTILE_SECRET`. Server-side token verification is mandatory.
-3. **Resend:** Verify a domain you control. Choose an approved sender address, e.g. `alerts@your-verified-domain`. Set Worker variable `FROM_EMAIL`; put your API key with `npx wrangler secret put RESEND_API_KEY`. Set `SUPPORT_EMAIL` to the real address for subscription questions.
-4. **Twilio:** Create and fund an account, acquire a sender, complete the applicable US A2P 10DLC brand/campaign registration **before sending application SMS** (or choose another properly configured sender type), and configure your Messaging Service for opt-out keyword handling. Set `TWILIO_ACCOUNT_SID` and `TWILIO_MESSAGING_SERVICE_SID` as Worker secrets and `TWILIO_AUTH_TOKEN` as a Worker secret. Enable Advanced Opt-Out, and configure the incoming-message webhook of the Messaging Service to POST `https://YOUR-WORKER.workers.dev/twilio/inbound`. The Worker authenticates Twilio webhook signatures and records STOP as withdrawn SMS consent; Twilio sends the opt-out confirmation itself. Ensure its registration describes the checkbox, message frequency, HELP/STOP instructions, and links to public terms/privacy.
-5. **Backend configuration:** Supply Worker variables `TURNSTILE_SITE_KEY`, `FROM_EMAIL`, `SUPPORT_EMAIL`, and `WORKER_PUBLIC_URL` (the exact `https://...workers.dev` or custom Worker URL). Set `TOKEN_SECRET` as a random >=32-character Worker secret. The committed `ALLOWED_ORIGIN` is `https://nycguy.github.io` and `PUBLIC_SITE` is the existing dashboard URL. Add a public site privacy policy and terms detailing SMS purpose, frequency, opt-out, support, potential carrier charges, retention and deletion before opening public registration.
-6. **Deploy Worker:** `npx wrangler deploy`. Confirm `https://YOUR-WORKER.workers.dev/health` returns configured=true and smsReady=true. Then update the GitHub root `alerts-config.js` with the Worker URL as `apiBase`; do **not** paste any secret in GitHub. Push to main to trigger GitHub Pages deployment.
-7. **Testing before public signup:** Use a real email and owned phone number; verify email and SMS separately; test all six thresholds against controlled values; test unsubscribe and management; confirm failed/old observations suppress alerts; verify NDBC and NOAA model availability and your carrier registration. Do not publicly promote the system until operator testing completes.
+## Current infrastructure
 
-## Security and operational notes
-Cloudflare D1 stores personal subscriber email, optional phone and preferences; it is **not** committed to the public repository. Turnstile and rate limiting help reduce abuse. The backend processes no personally identifiable billing data. Never store credentials in GitHub Pages, repository files, screenshots or action logs. Back up D1 using Cloudflare's supported export mechanism as appropriate. This starter implementation processes up to 200 confirmed subscribers per scheduled pass; expand pagination and concurrency controls before a larger public launch. Cloudflare, Resend, Twilio and carriers can charge fees, impose limits, or delay delivery. The Worker has to be operational continuously, not a visitor's browser.
+- Cloudflare Worker: `saco-coastal-alerts.mikewiley-nyc.workers.dev`.
+- D1 database binding: `DB`, database `saco-coastal-alerts`. The owner created tables `subscribers`, `push_subscriptions`, `tokens`, `alert_state`, and `request_limits` manually, along with indexes `push_subscriber_idx` and `tokens_expiry`. **Do not rerun the initial schema against populated databases.**
+- Resend: verified domain `mainebeachrental.com`; `FROM_EMAIL=ferrybeach@mainebeachrental.com`; `SUPPORT_EMAIL=mikewiley.nyc@gmail.com`; `RESEND_API_KEY` stored only as a Cloudflare secret.
+- Turnstile: widget for `nycguy.github.io`, with `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET` configured in Cloudflare.
+- Worker settings: `WORKER_PUBLIC_URL`, `PUBLIC_SITE`, `ALLOWED_ORIGIN`, and privately rotated `TOKEN_SECRET`.
+- Do not commit secret values, show them in screenshots, or put them in GitHub Pages files.
+
+## Safe initial deployment
+
+1. Open the Cloudflare Worker `saco-coastal-alerts` and choose **Edit code**.
+2. Open [the standalone Worker source](https://github.com/nycguy/saco-coast-watch/blob/main/alerts/src/worker.mjs), copy its entire raw content, replace the Hello World code in Cloudflare, and **Deploy**.
+3. Visit `https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health`. Check `configurationReady`, `databaseConnected`, `missingSettings` and `missingTables`. This status reports missing key names but never secret values.
+4. Continue implementation and testing of email delivery, authentication and consent, Web Push encryption and service worker, data-feed verification, scheduled alerts, unsubscribe and management. Keep signup disabled until those tests pass.
+
+This Worker is a staging health check, not an operational alert service.

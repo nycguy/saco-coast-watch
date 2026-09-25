@@ -154,6 +154,7 @@ function coastalSignal(row,alert){
 }
 
 function value(v,digits=1){
+  if(v===null||v===undefined||v==='') return '—';
   const n=Number(v); return Number.isFinite(n)?n.toFixed(digits):'—';
 }
 
@@ -168,10 +169,10 @@ function renderCoastalPulse(){
   target.innerHTML=rows.map(row=>{
     const alert=coastalAlertForState(row.state);
     const signal=coastalSignal(row,alert);
-    const departure=Number(row.departure_ft);
+    const departure=row.departure_ft===null||row.departure_ft===undefined?null:Number(row.departure_ft);
     const departureText=Number.isFinite(departure)?(departure>=0?'+':'')+departure.toFixed(2)+' ft':'—';
-    const gust=Number.isFinite(Number(row.gust_kt))?value(row.gust_kt)+' kt':'—';
-    const wind=Number.isFinite(Number(row.wind_kt))?value(row.wind_kt)+' kt':'—';
+    const gust=row.gust_kt!==null&&row.gust_kt!==undefined&&Number.isFinite(Number(row.gust_kt))?value(row.gust_kt)+' kt':'—';
+    const wind=row.wind_kt!==null&&row.wind_kt!==undefined&&Number.isFinite(Number(row.wind_kt))?value(row.wind_kt)+' kt':'—';
     const marine=gust!=='—'?(wind+' / '+gust):wind;
     const status=alert?.event || (signal==='high'?'Multiple elevated coastal signals':signal==='elevated'?'Elevated coastal conditions':signal==='watch'?'Worth watching':'No major coastal signal');
     return `<button class="coastal-card ${signal}" data-lat="${row.lat}" data-lon="${row.lon}" data-name="${esc(row.name)}" type="button">

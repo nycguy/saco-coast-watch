@@ -88,19 +88,24 @@ def assert_common(page):
     assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
     assert "NOAA OFS total-water peak" in section.inner_text()
 
-    # Water-level outlook uses high-water peaks only; low-tide curves are not rendered.
+    # Short-range water-level outlook restores continuous tide-cycle lines,
+    # clips the lower part of each cycle, and does not plot astronomical tide.
     chart_period=page.locator("#chartPeriod").inner_text()
-    assert "high-water peaks only" in chart_period,chart_period
-    assert "low tides omitted" in chart_period,chart_period
+    assert "observed + NOAA model lines" in chart_period,chart_period
+    assert "clipped below 8 ft" in chart_period,chart_period
     flood_control=page.locator("label.check").filter(has=page.locator("#showFlood")).inner_text()
     assert "Flood thresholds" in flood_control and "Flood zones" not in flood_control,flood_control
 
     y_labels=page.eval_on_selector_all("#chart .y-axis-label","els => els.map(el => Number(el.textContent))")
-    assert y_labels and min(y_labels)>=8,y_labels
-    assert page.locator("#chart path.obs, #chart path.pred, #chart path.ofs").count()==0
-    assert page.locator("#chart .short-observed-point").count()>=1
-    assert page.locator("#chart .short-tide-point").count()>=3
+    assert y_labels and min(y_labels)==8,y_labels
+    assert 0 not in y_labels and 2 not in y_labels and 4 not in y_labels and 6 not in y_labels,y_labels
+    assert page.locator("#chart path.obs").count()==1
+    assert page.locator("#chart path.ofs").count()==1
+    assert page.locator("#chart path.pred").count()==0
+    assert page.locator("#chart .short-tide-point").count()==0
     assert page.locator("#chart .short-model-point").count()>=3
+    chart_text=page.locator("#chart").inner_text()
+    assert "Astronomical high" not in chart_text,chart_text
 
     threshold_fills=page.eval_on_selector_all("#chart .threshold-band","els => els.map(el => el.getAttribute('fill'))")
     assert threshold_fills==["#FFFF00","#FFA500","#FF0000"],threshold_fills

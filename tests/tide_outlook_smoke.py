@@ -63,7 +63,7 @@ def assert_common(page):
     assert page.locator("#tideTrend .tide-point").count()==14
     assert page.locator("#tideTrend .tide-value").count()==14
     assert page.locator("#tideTrend .zone-label").count()==3
-    labels=page.locator("#tideTrend .zone-label").all_inner_texts()
+    labels=page.eval_on_selector_all("#tideTrend .zone-label","els => els.map(el => el.textContent)")
     assert labels==["MINOR 12–13 FT","MODERATE 13–14 FT","MAJOR 14+ FT"],labels
 
     initial=page.locator("#tideTrendSelection").inner_text()

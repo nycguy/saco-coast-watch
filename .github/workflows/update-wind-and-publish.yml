@@ -34,6 +34,13 @@ jobs:
           cp index.html dist/index.html
           cp data/wind.json dist/data/wind.json
           cp data/coastal-alerts.json dist/data/coastal-alerts.json
+          cp -R eastcast dist/eastcast
+      - name: Verify EastCast is included in the Pages artifact
+        run: |
+          test -f dist/eastcast/index.html
+          test -f dist/eastcast/favicon.svg
+          test -f dist/eastcast/manifest.webmanifest
+
       - name: Browser map smoke test before publishing
         if: github.event_name == 'push'
         run: |

@@ -34,11 +34,16 @@ test("first active observation alerts and continued threshold does not repeat",(
  assert.equal(evaluate({active:1,last_sent:1000},"wind",25,30,1100).active,false);
  assert.equal(evaluate({active:0,last_sent:0},"wind",32,30,5000).send,true);
 });
-test("service health is non-operational until secrets and database are configured",async()=>{
- const r=await worker.fetch(new Request("https://example.workers.dev/health"),{});
- assert.equal(r.status,200);
- const body=await r.json();
- assert.equal(body.configured,false);
- const signup=await worker.fetch(new Request("https://example.workers.dev/subscribe",{method:"POST",headers:{"Origin":"https://nycguy.github.io","Content-Type":"application/json"},body:"{}"}),{ALLOWED_ORIGIN:"https://nycguy.github.io"});
+test("health and signup follow the current release contract",async()=>{
+ const response=await worker.fetch(new Request("https://example.workers.dev/health"),{});
+ assert.equal(response.status,200);
+ const health=await response.json();
+ assert.equal(health.configurationReady,false);
+ assert.equal(health.databaseConnected,false);
+ assert.equal(health.publicSignupEnabled,false);
+ assert.equal(health.emailAlertsEnabled,false);
+ assert.equal(health.webPushEnabled,false);
+ assert.ok(health.missingSettings.includes("DB"));
+ const signup=await worker.fetch(new Request("https://example.workers.dev/alerts/subscribe",{method:"POST"}),{});
  assert.equal(signup.status,503);
 });

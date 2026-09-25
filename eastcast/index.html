@@ -11,7 +11,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://api.weather.gov">
-  <link rel="preconnect" href="https://nowcoast.noaa.gov">
+  <link rel="preconnect" href="https://opengeo.ncep.noaa.gov">
   <link rel="preconnect" href="https://tile.openstreetmap.org">
 <style>
 :root{
@@ -849,7 +849,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <div><div class="eyebrow">Built on open public data</div><h2>No subscriptions. No paid APIs.</h2><p>EastCast is deliberately built on government weather feeds and open-source mapping so the core experience remains portable and inexpensive to host.</p></div>
         <div class="source-grid">
           <a href="https://api.weather.gov" target="_blank" rel="noopener"><strong>NWS API</strong><span>Forecasts + alerts</span></a>
-          <a href="https://nowcoast.noaa.gov" target="_blank" rel="noopener"><strong>NOAA nowCOAST</strong><span>Radar WMS</span></a>
+          <a href="https://www.weather.gov/gis/cloudgiswebservices" target="_blank" rel="noopener"><strong>NWS Cloud GIS</strong><span>Official radar WMS</span></a>
           <a href="https://radar.weather.gov" target="_blank" rel="noopener"><strong>NWS RIDGE</strong><span>Animated radar GIFs</span></a>
           <a href="https://www.openstreetmap.org" target="_blank" rel="noopener"><strong>OpenStreetMap</strong><span>Basemap</span></a>
           <a href="https://leafletjs.com" target="_blank" rel="noopener"><strong>Leaflet</strong><span>Interactive mapping</span></a>
@@ -1085,11 +1085,11 @@ function wireControls(){
   const radarImg=$('#radarGif');
   radarImg.addEventListener('error',()=>{radarImg.style.display='none';$('#radarFallback').hidden=false});
   radarImg.addEventListener('load',()=>{radarImg.style.display='block';$('#radarFallback').hidden=true});
-  $('#radarToggle').addEventListener('click',()=>{radarVisible=!radarVisible;$('#radarToggle').classList.toggle('active',radarVisible);radarVisible?radarLayer.addTo(map):map.removeLayer(radarLayer)});
-  $('#alertsToggle').addEventListener('click',()=>{alertsVisible=!alertsVisible;$('#alertsToggle').classList.toggle('active',alertsVisible);alertsVisible?warningLayer.addTo(map):map.removeLayer(warningLayer)});
-  $('#radarOpacity').addEventListener('input',e=>radarLayer.setOpacity(Number(e.target.value)));
-  $('#regionSelect').addEventListener('change',e=>map.fitBounds(regionViews[e.target.value],{padding:[14,14]}));
-  $('#locateBtn').addEventListener('click',()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{map.flyTo([p.coords.latitude,p.coords.longitude],8);loadPointForecast(p.coords.latitude,p.coords.longitude)},()=>alert('Location access was not available.')):alert('Geolocation is not supported by this browser.'));
+  $('#radarToggle').addEventListener('click',()=>{if(!map||!radarLayer)return;radarVisible=!radarVisible;$('#radarToggle').classList.toggle('active',radarVisible);radarVisible?radarLayer.addTo(map):map.removeLayer(radarLayer)});
+  $('#alertsToggle').addEventListener('click',()=>{if(!map||!warningLayer)return;alertsVisible=!alertsVisible;$('#alertsToggle').classList.toggle('active',alertsVisible);alertsVisible?warningLayer.addTo(map):map.removeLayer(warningLayer)});
+  $('#radarOpacity').addEventListener('input',e=>{if(radarLayer)radarLayer.setOpacity(Number(e.target.value))});
+  $('#regionSelect').addEventListener('change',e=>{if(map)map.fitBounds(regionViews[e.target.value],{padding:[14,14]})});
+  $('#locateBtn').addEventListener('click',()=>{if(!map)return;navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{map.flyTo([p.coords.latitude,p.coords.longitude],8);loadPointForecast(p.coords.latitude,p.coords.longitude)},()=>alert('Location access was not available.')):alert('Geolocation is not supported by this browser.')});
   $('#fullscreenBtn').addEventListener('click',()=>{const el=$('.map-shell');if(document.fullscreenElement)document.exitFullscreen();else el.requestFullscreen?.()});
   $('#refreshBtn').addEventListener('click',()=>refreshAll(true));
   $$('.radar-tab').forEach(btn=>btn.addEventListener('click',()=>switchRadar(btn.dataset.radar)));

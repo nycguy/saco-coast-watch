@@ -71,7 +71,7 @@ def assert_common(page):
     assert labels==["MINOR 12–13 FT","MODERATE 13–14 FT","MAJOR 14+ FT"],labels
 
     initial=page.locator("#tideTrendSelection").inner_text()
-    assert "10.71 ft MLLW" in initial and "high at" in initial,initial
+    assert "astronomical high 10.71 ft MLLW" in initial,initial
     page.locator('#tideTrend .tide-hit[data-index="0"]').click()
     selected=page.locator("#tideTrendSelection").inner_text()
     assert "astronomical high 9.84 ft MLLW" in selected,selected

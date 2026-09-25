@@ -36,16 +36,16 @@
 /* Nearby measured weather and Saco Bay coastal-point forecasts. */
 .weather-panel{padding:21px 22px;margin:0 0 17px;border-color:#4b7780;background:linear-gradient(145deg,#183544,#112a3b 80%)}
 .weather-panel .weather-intro{max-width:950px;margin:4px 0 16px;color:#b8d2de;font-size:12px}
-.weather-metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 16px}
+.weather-metrics{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 16px}
 .weather-metric{padding:15px;border:1px solid #37586c;background:#0b2433;border-radius:12px;min-width:0}
 .weather-metric .label{line-height:1.4;gap:8px;align-items:flex-start;min-height:30px}
 .weather-metric .number{margin:12px 0 4px;font-size:clamp(26px,3vw,37px)}
 .weather-metric .number em{font-size:13px}.weather-metric p{font-size:11px;line-height:1.5;color:#b7cfdd;margin:0;min-height:44px}
 .weather-metric .subsource{color:#9fb9c6;font-size:10px;margin-top:10px;display:block}
 .weather-metric.wind-observed{box-shadow:inset 0 3px #22e1c0}.weather-metric.wind-forecast{box-shadow:inset 0 3px #e0adff}
-.weather-metric.temp-observed{box-shadow:inset 0 3px #ffce70}.weather-metric.temp-forecast{box-shadow:inset 0 3px #f187a8}
+.weather-metric.temp-observed{box-shadow:inset 0 3px #ffce70}
 .weather-metric.wind-observed .number{color:#57ebd6}.weather-metric.wind-forecast .number{color:#e0adff}
-.weather-metric.temp-observed .number{color:#ffd783}.weather-metric.temp-forecast .number{color:#ff9cb8}
+.weather-metric.temp-observed .number{color:#ffd783}
 .weather-metric .tag{font-weight:850;font-size:10px;border-radius:5px;padding:3px 6px;background:#24495c;color:#d8ebf5;white-space:nowrap}
 .weather-subhead{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px;border-top:1px solid #315062;padding:12px 0 9px}
 .weather-subhead h4{margin:0;font-size:14px}.weather-table{max-height:315px;overflow:auto}
@@ -879,7 +879,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   <article class="weather-metric wind-observed"><div class="label">Current observed wind <span class="tag" id="windNowBadge">STATION</span></div><div class="number" id="windNow">--<em> mph</em></div><p id="windNowDetail">Finding a recent measured wind observation…</p><small id="windNowSource" class="subsource">Nearby airport weather station, not Saco Bay shoreline</small></article>
   <article class="weather-metric wind-forecast"><div class="label">Predicted wind at next high tide <span class="tag">NWS FORECAST</span></div><div class="number" id="windForecast">--<em> mph</em></div><p id="windForecastDetail">Loading Saco Bay coastal-point forecast…</p><small class="subsource">Coastal-point forecast · peak 72-hour wind/gust shown below</small></article>
   <article class="weather-metric temp-observed"><div class="label">Current observed air temperature <span class="tag" id="tempNowBadge">STATION</span></div><div class="number" id="tempNow">--<em> °F</em></div><p id="tempNowDetail">Finding a recent measured air-temperature observation…</p><small id="tempNowSource" class="subsource">Nearby airport weather station, not an on-site thermometer</small></article>
-  <article class="weather-metric temp-forecast"><div class="label">Predicted temperature at next high tide <span class="tag">NWS FORECAST</span></div><div class="number" id="tempForecast">--<em> °F</em></div><p id="tempForecastDetail">Loading Saco Bay coastal-point forecast…</p><small class="subsource">Coastal-point forecast · next 24-hour range shown below</small></article>
  </div>
 </section>
 <section class="panel alertpanel"><div class="section-head"><div><h3>Saco-area weather alerts</h3><div class="sub">Active NWS alerts for a coastal Saco reference point</div></div><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.weather.gov/gyx/">NWS Gray / Portland ↗</a></div><div id="alerts" class="alertlist"><div class="empty">Loading official weather alerts…</div></div><p class="sub" style="margin:13px 0 0">Alert coverage depends on the selected point. Marine advisories and hazard statements for neighboring zones may not appear here; check the linked NWS forecast.</p></section>
@@ -1028,12 +1027,9 @@ function renderWeather(){
  const match=active.find(x=>x.t<=target&&x.end>target)||active.find(x=>x.t>=target)||null;
  const max72=active.filter(x=>Number.isFinite(x.wind)).reduce((a,b)=>!a||b.wind>a.wind?b:a,null);
  const forecastGust=active.reduce((v,x)=>Number.isFinite(x.gust)?Math.max(v,x.gust):v,0);
- const next24=active.filter(x=>x.t<now()+24*3600000&&Number.isFinite(x.temp));
- const min24=next24.length?Math.min(...next24.map(x=>x.temp)):null,max24=next24.length?Math.max(...next24.map(x=>x.temp)):null;
- metricNumber('windForecast',match?.wind??null,'mph');metricNumber('tempForecast',match?.temp??null,'°F');
+ metricNumber('windForecast',match?.wind??null,'mph');
  const when=match?(high&&Math.abs(match.t-high.t)<=90*60000?'Next high tide '+dayTime(high.t)+' ET':'Forecast '+dayTime(match.t)+' ET'):'Hourly weather forecast unavailable';
  $('windForecastDetail').textContent=match?(when+' · '+match.dir+(max72?' · Peak forecast wind '+Math.round(max72.wind)+' mph'+(forecastGust?' / gust '+Math.round(forecastGust)+' mph':'')+' within 72h.':'.')):'No current NWS hourly wind forecast; the tide forecast cannot replace it.';
- $('tempForecastDetail').textContent=match?(when+(min24!==null?' · Next 24h: '+Math.round(min24)+'–'+Math.round(max24)+'°F.':'.')):'No current NWS hourly air-temperature forecast.';
  $('weatherAsOf').textContent=state.weatherForecast.length?
   (state.weatherForecastUpdated?'NWS forecast issued '+dayTime(state.weatherForecastUpdated)+' ET':'NWS hourly forecast available (issue time not provided)')+
   (state.lastFetched.weatherForecast?' · checked '+time(state.lastFetched.weatherForecast)+' ET':''):

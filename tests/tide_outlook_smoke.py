@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""Deterministic browser regression for the 14-day astronomical high-tide outlook."""
+from datetime import datetime, timedelta, timezone
+import json
+from playwright.sync_api import sync_playwright
+
+BASE="http://127.0.0.1:8765/index.html"
+VALUES=[9.84,9.98,10.23,10.54,10.71,10.70,10.52,10.23,9.94,9.76,9.73,9.85,10.01,10.11,10.12,10.32,10.36,10.24,10.00,9.67,9.31,8.96,8.67,8.50,8.47,8.56,8.78,9.07,9.38,9.87]
+
+def stamp(dt):
+    return dt.strftime("%Y-%m-%d %H:%M")
+
+def install_noaa_fixture(page):
+    start=datetime.now(timezone.utc).date()
+    highs=[]
+    for i,value in enumerate(VALUES):
+        dt=datetime.combine(start+timedelta(days=i),datetime.min.time(),tzinfo=timezone.utc)+timedelta(hours=16)
+        highs.append({"t":stamp(dt),"v":f"{value:.2f}","type":"H"})
+
+    # Six-hour tide samples are sufficient for unrelated dashboard components;
+    # the 14-day trend itself is deliberately driven by NOAA-style H records.
+    tide=[]
+    for i,value in enumerate(VALUES):
+        day=datetime.combine(start+timedelta(days=i),datetime.min.time(),tzinfo=timezone.utc)
+        for hour,delta in ((4,-7.7),(10,-2.0),(16,0.0),(22,-6.5)):
+            tide.append({"t":stamp(day+timedelta(hours=hour)),"v":f"{value+delta:.2f}"})
+
+    now=datetime.now(timezone.utc).replace(second=0,microsecond=0)
+    obs=[{"t":stamp(now-timedelta(minutes=6)),"v":"8.45"}]
+    model=[]
+    for h in range(0,73,3):
+        t=now+timedelta(hours=h)
+        # Stable synthetic total-water guidance; not used for tide assertions.
+        model.append({"t":stamp(t),"v":f"{9.2+1.4*((h%12)/12):.2f}"})
+
+    def handler(route):
+        from urllib.parse import urlparse, parse_qs
+        q=parse_qs(urlparse(route.request.url).query)
+        product=q.get("product",[""])[0]
+        interval=q.get("interval",[""])[0]
+        if product=="predictions" and interval=="hilo":
+            route.fulfill(status=200,content_type="application/json",body=json.dumps({"predictions":highs}))
+        elif product=="predictions":
+            route.fulfill(status=200,content_type="application/json",body=json.dumps({"predictions":tide}))
+        elif product=="water_level":
+            route.fulfill(status=200,content_type="application/json",body=json.dumps({"data":obs}))
+        elif product=="ofs_water_level":
+            route.fulfill(status=200,content_type="application/json",body=json.dumps({"data":model}))
+        else:
+            route.continue_()
+    page.route("**/api/prod/datagetter**",handler)
+
+def assert_common(page):
+    page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
+    page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
+    section=page.locator(".calendar-panel")
+    section.scroll_into_view_if_needed()
+    page.wait_for_timeout(300)
+
+    assert page.locator("#tideOutlookPeak").inner_text().strip()=="10.71 ft"
+    assert page.locator("#tideOutlookChange").inner_text().strip()=="+0.87 ft"
+    assert page.locator("#tideOutlookMinorGap").inner_text().strip()=="1.29 ft below"
+    assert page.locator("#tideTrend .tide-point").count()==14
+    assert page.locator("#tideTrend .tide-value").count()==14
+    assert page.locator("#tideTrend .zone-label").count()==3
+    labels=page.locator("#tideTrend .zone-label").all_inner_texts()
+    assert labels==["MINOR 12–13 FT","MODERATE 13–14 FT","MAJOR 14+ FT"],labels
+
+    initial=page.locator("#tideTrendSelection").inner_text()
+    assert "10.71 ft MLLW" in initial and "high at" in initial,initial
+    page.locator('#tideTrend .tide-hit[data-index="0"]').click()
+    selected=page.locator("#tideTrendSelection").inner_text()
+    assert "9.84 ft MLLW" in selected and "high at" in selected,selected
+    assert page.locator("#tideTrend .tide-point.selected").count()==1
+
+    details=page.locator(".full-calendar")
+    assert not details.evaluate("el => el.open")
+    assert page.locator("#highTideCalendar .daytile").count()==30
+    assert "Higher predicted tide" not in section.inner_text()
+    page.locator(".full-calendar summary").click()
+    assert details.evaluate("el => el.open")
+    assert page.locator("#highTideCalendar .daytile").first.is_visible()
+    return section
+
+def main():
+    errors=[]
+    with sync_playwright() as p:
+        browser=p.chromium.launch(headless=True,args=["--no-sandbox"])
+
+        desktop=browser.new_page(viewport={"width":1440,"height":1000},device_scale_factor=1)
+        desktop.on("pageerror",lambda exc: errors.append("desktop pageerror: "+str(exc)))
+        install_noaa_fixture(desktop)
+        section=assert_common(desktop)
+        desktop_overflow=desktop.evaluate("document.documentElement.scrollWidth-window.innerWidth")
+        assert desktop_overflow<=3,f"desktop horizontal overflow: {desktop_overflow}px"
+        section.screenshot(path="tide-outlook-smoke-desktop.png")
+        desktop.close()
+
+        mobile=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=2)
+        mobile.on("pageerror",lambda exc: errors.append("mobile pageerror: "+str(exc)))
+        install_noaa_fixture(mobile)
+        section=assert_common(mobile)
+        scroll=mobile.locator("#tideTrendScroll").evaluate("el => ({client:el.clientWidth,scroll:el.scrollWidth})")
+        assert scroll["scroll"]>scroll["client"],f"mobile trend should use local horizontal scrolling: {scroll}"
+        page_overflow=mobile.evaluate("document.documentElement.scrollWidth-window.innerWidth")
+        assert page_overflow<=3,f"mobile page overflow: {page_overflow}px"
+        mobile.locator(".full-calendar summary").click()  # close full calendar for compact screenshot
+        section.screenshot(path="tide-outlook-smoke-mobile.png")
+        mobile.close()
+
+        browser.close()
+
+    if errors:
+        raise AssertionError("\n".join(errors))
+    print("PASS: 14-day tide trend, semantic bands, summaries, tap selection, 30-day expansion, desktop + mobile containment")
+
+if __name__=="__main__":
+    main()

@@ -3,1119 +3,228 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#071a27">
-  <meta name="description" content="EastCast is a live East Coast weather story and mapping dashboard using official NOAA and National Weather Service data, from Florida to Maine.">
+  <meta name="theme-color" content="#06141e">
+  <meta name="description" content="EastCast is a live East Coast weather intelligence and storytelling dashboard using official NOAA and National Weather Service data.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="EastCast">
+  <title>EastCast | East Coast weather intelligence</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preconnect" href="https://api.weather.gov">
-  <link rel="preconnect" href="https://opengeo.ncep.noaa.gov">
-  <link rel="preconnect" href="https://tile.openstreetmap.org">
-<style>
-:root{
-  color-scheme:dark;
-  --ink:#edf8fb;--muted:#9eb9c7;--bg:#06141e;--panel:#0c2230;--panel2:#102b3b;--line:#29495a;
-  --cyan:#30d9e8;--cyan2:#7ef3e7;--coral:#ff755c;--gold:#ffcb69;--blue:#6ab9ff;--green:#71e3a5;--purple:#d5a9ff;
-  --shadow:0 24px 70px rgba(0,0,0,.25);--radius:20px;--wrap:min(1480px,calc(100% - 48px));
-}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 85% -10%,#0e5364 0,transparent 30%),linear-gradient(180deg,#071823 0,#06141e 35%,#071720 100%);color:var(--ink);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,select,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.wrap{width:var(--wrap);margin-inline:auto}
-.site-header{position:sticky;top:0;z-index:1000;border-bottom:1px solid #2d526344;background:rgba(5,17,26,.83);backdrop-filter:blur(18px) saturate(140%)}.header-inner{height:74px;display:flex;align-items:center;gap:26px}.brand{display:flex;align-items:center;gap:11px;min-width:max-content}.brand-mark{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,var(--cyan),#13788e);color:#eaffff;box-shadow:inset 0 0 0 1px #fff4,0 7px 20px #20cfe833}.brand-mark svg{width:33px;height:33px}.brand strong{display:block;letter-spacing:.16em;font-size:15px}.brand small{display:block;color:#87a9b8;font-size:10px;letter-spacing:.05em;margin-top:1px}.top-nav{display:flex;gap:22px;margin-left:auto}.top-nav a{font-size:12px;font-weight:750;color:#b7d0dc}.top-nav a:hover{color:#fff}.live-cluster{display:flex;align-items:center;gap:8px}.live-pill,.ghost-btn{border:1px solid #36596b;background:#102b39;border-radius:999px;padding:8px 11px;color:#cce3ec;font-size:11px;font-weight:800}.live-pill{display:flex;align-items:center;gap:7px}.live-pill i,.live-dot:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px #71e3a599}.ghost-btn:hover{background:#173849;color:#fff}
-.hero{min-height:0;display:block;padding-block:42px 28px}.hero-copy{max-width:900px}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:900;color:var(--cyan2)}.hero h1{font-size:clamp(43px,5.8vw,83px);line-height:.99;letter-spacing:-.058em;margin:13px 0 22px;font-weight:820}.hero h1 span{color:transparent;background:linear-gradient(90deg,var(--cyan),#9adff5 48%,var(--gold));background-clip:text;-webkit-background-clip:text}.hero p{max-width:780px;color:#adc7d2;font-size:17px;line-height:1.7;margin:0}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.primary-btn,.secondary-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:11px;padding:12px 16px;font-weight:850;font-size:13px}.primary-btn{background:var(--cyan);color:#031820;box-shadow:0 8px 24px #22cada32}.primary-btn:hover{background:#78edf2}.secondary-btn{border:1px solid #3b6172;background:#102938;color:#d9edf3}.secondary-btn:hover{background:#193849}
-.signal-strip{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#0b202dc9;box-shadow:var(--shadow);margin-bottom:56px}.signal-strip article{padding:20px 23px;border-right:1px solid var(--line);min-height:116px}.signal-strip article:last-child{border-right:0}.signal-strip span{display:block;color:#8fabb8;text-transform:uppercase;font-size:10px;font-weight:850;letter-spacing:.11em}.signal-strip strong{display:block;font-size:35px;line-height:1.1;letter-spacing:-.045em;margin:8px 0 2px}.signal-strip small{color:#7f9daa;font-size:11px}
-.section{padding-block:42px 54px;scroll-margin-top:80px}.section-heading{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:20px}.section-heading h2,.radar-copy h2,.sources-card h2{font-size:clamp(29px,3.4vw,47px);letter-spacing:-.045em;line-height:1.08;margin:7px 0 0}.section-heading>p{max-width:560px;color:#95b3c0;margin:0;font-size:13px}.map-shell{border:1px solid #315365;border-radius:24px;background:#0c2230;overflow:hidden;box-shadow:var(--shadow)}.map-toolbar{min-height:64px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #2b4c5d;background:#0b202dcf}.map-mode-tabs,.map-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.mode-btn,.tool-btn,.map-tools select{border:1px solid #35596b;background:#102b3b;color:#bdd4df;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:800}.mode-btn.active{background:#194454;color:#fff;border-color:#4f8798}.mini-icon{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.radar-icon{background:var(--cyan)}.alert-icon{background:var(--coral)}.opacity-control{font-size:10px;color:#a9c0ca;display:flex;align-items:center;gap:7px;border:1px solid #2e5060;border-radius:9px;padding:4px 8px}.opacity-control input{width:84px;accent-color:var(--cyan)}.map-grid{display:grid;grid-template-columns:minmax(0,1fr) 355px;min-height:630px}.map-grid #eastMap{min-height:630px;background:#d7e4e7}.forecast-panel{border-left:1px solid #2e4e5e;background:linear-gradient(180deg,#102a3a,#0a202d);padding:21px;overflow:auto}.panel-kicker{color:var(--cyan2);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.15em}.forecast-panel h3{font-size:21px;letter-spacing:-.03em;margin:5px 0 8px}.forecast-intro{font-size:12px;color:#9bb7c2;margin:0 0 20px}.forecast-empty{min-height:360px;border:1px dashed #3a6173;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;color:#89a9b7}.forecast-empty .crosshair{width:60px;height:60px;border:1px solid #426a7b;border-radius:50%;display:grid;place-items:center;font-size:34px;color:var(--cyan);margin-bottom:13px}.forecast-empty strong{color:#e4f3f7}.forecast-empty span{font-size:11px;max-width:210px;margin-top:5px}.forecast-location{border-bottom:1px solid #315061;padding-bottom:14px;margin-bottom:12px}.forecast-location h4{font-size:20px;letter-spacing:-.03em;margin:0}.forecast-location p{margin:2px 0 0;color:#8facba;font-size:11px}.point-alert{border:1px solid #9a604e;background:#3b2a24;border-radius:10px;padding:9px 11px;margin:0 0 10px;font-size:11px;color:#f8dbd2}.periods{display:grid;gap:8px}.period{border:1px solid #2f5162;background:#0c2534;border-radius:11px;padding:11px}.period-top{display:flex;justify-content:space-between;gap:8px}.period strong{font-size:12px}.period .temp{font-size:17px;font-weight:850;color:var(--gold)}.period p{font-size:11px;color:#b6cbd5;margin:5px 0 0;line-height:1.45}.forecast-source{font-size:10px;color:#7fa0af;margin-top:12px}.map-footer{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid #284858;background:#0a1e2a;color:#8da9b5;font-size:10px}.legend-inline{display:flex;gap:13px;flex-wrap:wrap}.legend-inline span{display:inline-flex;align-items:center;gap:5px}.lg{width:9px;height:9px;border-radius:2px;background:#fff}.lg.warning{background:#ef554d}.lg.watch{background:#f4c04e}.lg.advisory{background:#4eb8e9}.lg.radar{background:#6ce5e1;border-radius:50%}.leaflet-control-layers,.leaflet-bar a{background:#0d2634!important;color:#eaf6fa!important;border-color:#416070!important}.leaflet-control-layers{border:1px solid #466879!important;border-radius:10px!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0d2837;color:#e9f5f8}.leaflet-popup-content{font:12px/1.5 system-ui}.weather-popup strong{font-size:14px}.weather-popup small{color:#9eb8c4}.state-marker{width:30px!important;height:30px!important;margin:-15px 0 0 -15px!important;border-radius:50%;display:grid!important;place-items:center;background:#0a3345;border:2px solid #75dfe4;color:#fff;font-size:9px;font-weight:900;box-shadow:0 2px 10px #0007}.state-marker.has-alert{background:#5a2f2b;border-color:#ff9d83}.state-marker.has-warning{background:#771f25;border-color:#ff6969}
-.radar-band{background:linear-gradient(110deg,#0c2534,#091a26 56%,#102a35);border-top:1px solid #294758;border-bottom:1px solid #294758}.radar-layout{display:grid;grid-template-columns:minmax(260px,.6fr) minmax(0,1.4fr);gap:30px;align-items:center;padding-block:42px}.radar-copy p{color:#99b5c2;max-width:520px}.radar-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:22px 0}.radar-tab{border:1px solid #3c6171;background:#102b39;color:#9fbac7;border-radius:999px;padding:8px 12px;font-size:11px;font-weight:850}.radar-tab.active{background:var(--cyan);color:#05191f;border-color:var(--cyan)}.radar-card{margin:0;border:1px solid #3a5f70;background:#081c29;border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}.radar-card-head{height:46px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #294859;font-size:12px;font-weight:800}.live-dot{display:flex;align-items:center;gap:6px;color:#97efbd;font-size:9px;letter-spacing:.1em}.gif-wrap{background:#101c23;display:grid;place-items:center;min-height:390px;overflow:hidden}.gif-wrap img{display:block;width:100%;height:auto;max-height:610px;object-fit:contain}.radar-card figcaption{padding:10px 14px;color:#789aa8;font-size:10px;border-top:1px solid #294859}
-.story-heading{align-items:end}.story-heading>p{max-width:640px}.story-controls{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px}.filter-chip{border:1px solid #355768;background:#0c2331;color:#96b3c0;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800}.filter-chip.active{background:#1b4757;color:#fff;border-color:#4b8292}.coastline{position:relative;padding-left:31px}.coastline:before{content:"";position:absolute;left:11px;top:17px;bottom:17px;width:2px;background:linear-gradient(var(--cyan),#438aa2 45%,var(--gold),var(--coral));opacity:.72}.state-card{position:relative;display:grid;grid-template-columns:110px 1fr auto;gap:16px;align-items:center;border:1px solid #294b5c;background:linear-gradient(120deg,#0d2432,#0a1e2a);border-radius:15px;padding:15px 17px;margin-bottom:10px;transition:.2s ease;cursor:pointer}.state-card:hover{transform:translateX(3px);border-color:#4c7789;background:#102c3b}.state-card:before{content:"";position:absolute;left:-27px;width:13px;height:13px;border:3px solid #09202d;border-radius:50%;background:#4b7889;box-shadow:0 0 0 2px #37606f}.state-card.has-alert:before{background:var(--gold)}.state-card.has-warning:before{background:var(--coral)}.state-id strong{display:block;font-size:17px}.state-id span{font-size:10px;color:#7899a8;text-transform:uppercase;letter-spacing:.08em}.state-copy strong{display:block;font-size:13px}.state-copy p{font-size:11px;color:#9fb9c5;margin:4px 0 0;line-height:1.48}.state-status{text-align:right;min-width:94px}.state-status b{display:block;font-size:22px;letter-spacing:-.03em}.state-status span{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#8ba8b5}.state-card.has-warning .state-status b{color:#ff8c79}.state-card.has-alert .state-status b{color:#ffcf75}.state-card.hidden{display:none}.story-loading{border:1px dashed #355b6d;border-radius:16px;padding:26px;color:#91adba;text-align:center}
-.sources-section{padding-top:28px}.sources-card{border:1px solid #315466;border-radius:22px;background:linear-gradient(135deg,#0e2a39,#0a202d);padding:28px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:30px;box-shadow:var(--shadow)}.sources-card p{color:#95b2bf;max-width:580px}.source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.source-grid a{border:1px solid #345b6e;border-radius:12px;background:#0a2130;padding:13px}.source-grid a:hover{background:#123343;border-color:#527c8d}.source-grid strong{display:block;font-size:12px}.source-grid span{display:block;color:#7e9eac;font-size:10px;margin-top:2px}.source-grid a:last-child{grid-column:span 2}
-footer{border-top:1px solid #294858;margin-top:20px}.footer-inner{min-height:120px;display:grid;grid-template-columns:auto 1fr auto;gap:30px;align-items:center}.footer-brand{display:flex;gap:9px;align-items:center}.brand-mark.small{width:33px;height:33px;border-radius:10px;font-size:22px}.footer-brand strong,.footer-brand span{display:block}.footer-brand span{font-size:9px;color:#7899a7}.footer-inner p{color:#7899a7;font-size:10px;max-width:680px;margin:0}.footer-time{font-size:10px;color:#7899a7;white-space:nowrap}
-@media(max-width:1100px){.hero{grid-template-columns:1fr .75fr}.map-grid{grid-template-columns:1fr}.forecast-panel{border-left:0;border-top:1px solid #2e4e5e}.forecast-empty{min-height:180px}.radar-layout{grid-template-columns:1fr}.sources-card{grid-template-columns:1fr}.gif-wrap{min-height:0}}
-@media(max-width:780px){:root{--wrap:min(100% - 26px,1480px)}.header-inner{height:auto;min-height:68px;flex-wrap:wrap;padding:9px 0}.top-nav{order:3;width:100%;justify-content:center;border-top:1px solid #29495a;padding-top:7px}.live-pill{display:none}.ghost-btn{padding:7px 9px}.hero{grid-template-columns:1fr;min-height:auto;padding-block:42px 25px}.hero-visual{min-height:320px}.hero h1{font-size:clamp(42px,12vw,65px)}.hero p{font-size:15px}.signal-strip{grid-template-columns:repeat(2,1fr);margin-bottom:30px}.signal-strip article:nth-child(2){border-right:0}.signal-strip article:nth-child(-n+2){border-bottom:1px solid var(--line)}.section{padding-block:32px 40px}.section-heading{align-items:start;flex-direction:column;gap:8px}.map-toolbar{align-items:flex-start;flex-direction:column}.map-tools{width:100%}.map-tools select{flex:1}.map-grid #eastMap{min-height:520px}.map-footer{flex-direction:column}.radar-layout{padding-block:40px}.state-card{grid-template-columns:72px 1fr}.state-status{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:6px}.state-status b{font-size:18px}.sources-card{padding:19px}.footer-inner{grid-template-columns:1fr;padding-block:22px;gap:12px}.footer-time{white-space:normal}}
-@media(max-width:520px){.brand small{display:none}.top-nav{gap:16px}.hero-visual{min-height:280px}.orbit-1{width:280px;height:280px}.orbit-2{width:225px;height:225px}.orbit-3{width:170px;height:170px}.signal-strip article{padding:16px}.signal-strip strong{font-size:29px}.opacity-control{width:100%;justify-content:space-between}.opacity-control input{flex:1}.map-tools select,.tool-btn{flex:1}.map-grid #eastMap{min-height:465px}.radar-facts{grid-template-columns:1fr}.source-grid{grid-template-columns:1fr}.source-grid a:last-child{grid-column:auto}.state-card{grid-template-columns:1fr}.state-status{grid-column:auto}.coastline{padding-left:24px}.coastline:before{left:6px}.state-card:before{left:-25px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.orbit{animation:none}.state-card{transition:none}}
-
-
-/* Local copy of official Leaflet v1.9.4 CSS to prevent missing layout rules if CDN stylesheet is blocked. */
-/* required styles */
-
-.leaflet-pane,
-.leaflet-tile,
-.leaflet-marker-icon,
-.leaflet-marker-shadow,
-.leaflet-tile-container,
-.leaflet-pane > svg,
-.leaflet-pane > canvas,
-.leaflet-zoom-box,
-.leaflet-image-layer,
-.leaflet-layer {
-	position: absolute;
-	left: 0;
-	top: 0;
-	}
-.leaflet-container {
-	overflow: hidden;
-	}
-.leaflet-tile,
-.leaflet-marker-icon,
-.leaflet-marker-shadow {
-	-webkit-user-select: none;
-	   -moz-user-select: none;
-	        user-select: none;
-	  -webkit-user-drag: none;
-	}
-/* Prevents IE11 from highlighting tiles in blue */
-.leaflet-tile::selection {
-	background: transparent;
-}
-/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
-.leaflet-safari .leaflet-tile {
-	image-rendering: -webkit-optimize-contrast;
-	}
-/* hack that prevents hw layers "stretching" when loading new tiles */
-.leaflet-safari .leaflet-tile-container {
-	width: 1600px;
-	height: 1600px;
-	-webkit-transform-origin: 0 0;
-	}
-.leaflet-marker-icon,
-.leaflet-marker-shadow {
-	display: block;
-	}
-/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
-/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
-.leaflet-container .leaflet-overlay-pane svg {
-	max-width: none !important;
-	max-height: none !important;
-	}
-.leaflet-container .leaflet-marker-pane img,
-.leaflet-container .leaflet-shadow-pane img,
-.leaflet-container .leaflet-tile-pane img,
-.leaflet-container img.leaflet-image-layer,
-.leaflet-container .leaflet-tile {
-	max-width: none !important;
-	max-height: none !important;
-	width: auto;
-	padding: 0;
-	}
-
-.leaflet-container img.leaflet-tile {
-	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
-	mix-blend-mode: plus-lighter;
-}
-
-.leaflet-container.leaflet-touch-zoom {
-	-ms-touch-action: pan-x pan-y;
-	touch-action: pan-x pan-y;
-	}
-.leaflet-container.leaflet-touch-drag {
-	-ms-touch-action: pinch-zoom;
-	/* Fallback for FF which doesn't support pinch-zoom */
-	touch-action: none;
-	touch-action: pinch-zoom;
-}
-.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
-	-ms-touch-action: none;
-	touch-action: none;
-}
-.leaflet-container {
-	-webkit-tap-highlight-color: transparent;
-}
-.leaflet-container a {
-	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
-}
-.leaflet-tile {
-	filter: inherit;
-	visibility: hidden;
-	}
-.leaflet-tile-loaded {
-	visibility: inherit;
-	}
-.leaflet-zoom-box {
-	width: 0;
-	height: 0;
-	-moz-box-sizing: border-box;
-	     box-sizing: border-box;
-	z-index: 800;
-	}
-/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
-.leaflet-overlay-pane svg {
-	-moz-user-select: none;
-	}
-
-.leaflet-pane         { z-index: 400; }
-
-.leaflet-tile-pane    { z-index: 200; }
-.leaflet-overlay-pane { z-index: 400; }
-.leaflet-shadow-pane  { z-index: 500; }
-.leaflet-marker-pane  { z-index: 600; }
-.leaflet-tooltip-pane   { z-index: 650; }
-.leaflet-popup-pane   { z-index: 700; }
-
-.leaflet-map-pane canvas { z-index: 100; }
-.leaflet-map-pane svg    { z-index: 200; }
-
-.leaflet-vml-shape {
-	width: 1px;
-	height: 1px;
-	}
-.lvml {
-	behavior: url(#default#VML);
-	display: inline-block;
-	position: absolute;
-	}
-
-
-/* control positioning */
-
-.leaflet-control {
-	position: relative;
-	z-index: 800;
-	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
-	pointer-events: auto;
-	}
-.leaflet-top,
-.leaflet-bottom {
-	position: absolute;
-	z-index: 1000;
-	pointer-events: none;
-	}
-.leaflet-top {
-	top: 0;
-	}
-.leaflet-right {
-	right: 0;
-	}
-.leaflet-bottom {
-	bottom: 0;
-	}
-.leaflet-left {
-	left: 0;
-	}
-.leaflet-control {
-	float: left;
-	clear: both;
-	}
-.leaflet-right .leaflet-control {
-	float: right;
-	}
-.leaflet-top .leaflet-control {
-	margin-top: 10px;
-	}
-.leaflet-bottom .leaflet-control {
-	margin-bottom: 10px;
-	}
-.leaflet-left .leaflet-control {
-	margin-left: 10px;
-	}
-.leaflet-right .leaflet-control {
-	margin-right: 10px;
-	}
-
-
-/* zoom and fade animations */
-
-.leaflet-fade-anim .leaflet-popup {
-	opacity: 0;
-	-webkit-transition: opacity 0.2s linear;
-	   -moz-transition: opacity 0.2s linear;
-	        transition: opacity 0.2s linear;
-	}
-.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
-	opacity: 1;
-	}
-.leaflet-zoom-animated {
-	-webkit-transform-origin: 0 0;
-	    -ms-transform-origin: 0 0;
-	        transform-origin: 0 0;
-	}
-svg.leaflet-zoom-animated {
-	will-change: transform;
-}
-
-.leaflet-zoom-anim .leaflet-zoom-animated {
-	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
-	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
-	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
-	}
-.leaflet-zoom-anim .leaflet-tile,
-.leaflet-pan-anim .leaflet-tile {
-	-webkit-transition: none;
-	   -moz-transition: none;
-	        transition: none;
-	}
-
-.leaflet-zoom-anim .leaflet-zoom-hide {
-	visibility: hidden;
-	}
-
-
-/* cursors */
-
-.leaflet-interactive {
-	cursor: pointer;
-	}
-.leaflet-grab {
-	cursor: -webkit-grab;
-	cursor:    -moz-grab;
-	cursor:         grab;
-	}
-.leaflet-crosshair,
-.leaflet-crosshair .leaflet-interactive {
-	cursor: crosshair;
-	}
-.leaflet-popup-pane,
-.leaflet-control {
-	cursor: auto;
-	}
-.leaflet-dragging .leaflet-grab,
-.leaflet-dragging .leaflet-grab .leaflet-interactive,
-.leaflet-dragging .leaflet-marker-draggable {
-	cursor: move;
-	cursor: -webkit-grabbing;
-	cursor:    -moz-grabbing;
-	cursor:         grabbing;
-	}
-
-/* marker & overlays interactivity */
-.leaflet-marker-icon,
-.leaflet-marker-shadow,
-.leaflet-image-layer,
-.leaflet-pane > svg path,
-.leaflet-tile-container {
-	pointer-events: none;
-	}
-
-.leaflet-marker-icon.leaflet-interactive,
-.leaflet-image-layer.leaflet-interactive,
-.leaflet-pane > svg path.leaflet-interactive,
-svg.leaflet-image-layer.leaflet-interactive path {
-	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
-	pointer-events: auto;
-	}
-
-/* visual tweaks */
-
-.leaflet-container {
-	background: #ddd;
-	outline-offset: 1px;
-	}
-.leaflet-container a {
-	color: #0078A8;
-	}
-.leaflet-zoom-box {
-	border: 2px dotted #38f;
-	background: rgba(255,255,255,0.5);
-	}
-
-
-/* general typography */
-.leaflet-container {
-	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-size: 0.75rem;
-	line-height: 1.5;
-	}
-
-
-/* general toolbar styles */
-
-.leaflet-bar {
-	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-	border-radius: 4px;
-	}
-.leaflet-bar a {
-	background-color: #fff;
-	border-bottom: 1px solid #ccc;
-	width: 26px;
-	height: 26px;
-	line-height: 26px;
-	display: block;
-	text-align: center;
-	text-decoration: none;
-	color: black;
-	}
-.leaflet-bar a,
-.leaflet-control-layers-toggle {
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	display: block;
-	}
-.leaflet-bar a:hover,
-.leaflet-bar a:focus {
-	background-color: #f4f4f4;
-	}
-.leaflet-bar a:first-child {
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
-	}
-.leaflet-bar a:last-child {
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
-	border-bottom: none;
-	}
-.leaflet-bar a.leaflet-disabled {
-	cursor: default;
-	background-color: #f4f4f4;
-	color: #bbb;
-	}
-
-.leaflet-touch .leaflet-bar a {
-	width: 30px;
-	height: 30px;
-	line-height: 30px;
-	}
-.leaflet-touch .leaflet-bar a:first-child {
-	border-top-left-radius: 2px;
-	border-top-right-radius: 2px;
-	}
-.leaflet-touch .leaflet-bar a:last-child {
-	border-bottom-left-radius: 2px;
-	border-bottom-right-radius: 2px;
-	}
-
-/* zoom control */
-
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out {
-	font: bold 18px 'Lucida Console', Monaco, monospace;
-	text-indent: 1px;
-	}
-
-.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
-	font-size: 22px;
-	}
-
-
-/* layers control */
-
-.leaflet-control-layers {
-	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-	background: #fff;
-	border-radius: 5px;
-	}
-.leaflet-control-layers-toggle {
-	background-image: url(images/layers.png);
-	width: 36px;
-	height: 36px;
-	}
-.leaflet-retina .leaflet-control-layers-toggle {
-	background-image: url(images/layers-2x.png);
-	background-size: 26px 26px;
-	}
-.leaflet-touch .leaflet-control-layers-toggle {
-	width: 44px;
-	height: 44px;
-	}
-.leaflet-control-layers .leaflet-control-layers-list,
-.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
-	display: none;
-	}
-.leaflet-control-layers-expanded .leaflet-control-layers-list {
-	display: block;
-	position: relative;
-	}
-.leaflet-control-layers-expanded {
-	padding: 6px 10px 6px 6px;
-	color: #333;
-	background: #fff;
-	}
-.leaflet-control-layers-scrollbar {
-	overflow-y: scroll;
-	overflow-x: hidden;
-	padding-right: 5px;
-	}
-.leaflet-control-layers-selector {
-	margin-top: 2px;
-	position: relative;
-	top: 1px;
-	}
-.leaflet-control-layers label {
-	display: block;
-	font-size: 13px;
-	font-size: 1.08333em;
-	}
-.leaflet-control-layers-separator {
-	height: 0;
-	border-top: 1px solid #ddd;
-	margin: 5px -10px 5px -6px;
-	}
-
-/* Default icon URLs */
-.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
-	background-image: url(images/marker-icon.png);
-	}
-
-
-/* attribution and scale controls */
-
-.leaflet-container .leaflet-control-attribution {
-	background: #fff;
-	background: rgba(255, 255, 255, 0.8);
-	margin: 0;
-	}
-.leaflet-control-attribution,
-.leaflet-control-scale-line {
-	padding: 0 5px;
-	color: #333;
-	line-height: 1.4;
-	}
-.leaflet-control-attribution a {
-	text-decoration: none;
-	}
-.leaflet-control-attribution a:hover,
-.leaflet-control-attribution a:focus {
-	text-decoration: underline;
-	}
-.leaflet-attribution-flag {
-	display: inline !important;
-	vertical-align: baseline !important;
-	width: 1em;
-	height: 0.6669em;
-	}
-.leaflet-left .leaflet-control-scale {
-	margin-left: 5px;
-	}
-.leaflet-bottom .leaflet-control-scale {
-	margin-bottom: 5px;
-	}
-.leaflet-control-scale-line {
-	border: 2px solid #777;
-	border-top: none;
-	line-height: 1.1;
-	padding: 2px 5px 1px;
-	white-space: nowrap;
-	-moz-box-sizing: border-box;
-	     box-sizing: border-box;
-	background: rgba(255, 255, 255, 0.8);
-	text-shadow: 1px 1px #fff;
-	}
-.leaflet-control-scale-line:not(:first-child) {
-	border-top: 2px solid #777;
-	border-bottom: none;
-	margin-top: -2px;
-	}
-.leaflet-control-scale-line:not(:first-child):not(:last-child) {
-	border-bottom: 2px solid #777;
-	}
-
-.leaflet-touch .leaflet-control-attribution,
-.leaflet-touch .leaflet-control-layers,
-.leaflet-touch .leaflet-bar {
-	box-shadow: none;
-	}
-.leaflet-touch .leaflet-control-layers,
-.leaflet-touch .leaflet-bar {
-	border: 2px solid rgba(0,0,0,0.2);
-	background-clip: padding-box;
-	}
-
-
-/* popup */
-
-.leaflet-popup {
-	position: absolute;
-	text-align: center;
-	margin-bottom: 20px;
-	}
-.leaflet-popup-content-wrapper {
-	padding: 1px;
-	text-align: left;
-	border-radius: 12px;
-	}
-.leaflet-popup-content {
-	margin: 13px 24px 13px 20px;
-	line-height: 1.3;
-	font-size: 13px;
-	font-size: 1.08333em;
-	min-height: 1px;
-	}
-.leaflet-popup-content p {
-	margin: 17px 0;
-	margin: 1.3em 0;
-	}
-.leaflet-popup-tip-container {
-	width: 40px;
-	height: 20px;
-	position: absolute;
-	left: 50%;
-	margin-top: -1px;
-	margin-left: -20px;
-	overflow: hidden;
-	pointer-events: none;
-	}
-.leaflet-popup-tip {
-	width: 17px;
-	height: 17px;
-	padding: 1px;
-
-	margin: -10px auto 0;
-	pointer-events: auto;
-
-	-webkit-transform: rotate(45deg);
-	   -moz-transform: rotate(45deg);
-	    -ms-transform: rotate(45deg);
-	        transform: rotate(45deg);
-	}
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-	background: white;
-	color: #333;
-	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
-	}
-.leaflet-container a.leaflet-popup-close-button {
-	position: absolute;
-	top: 0;
-	right: 0;
-	border: none;
-	text-align: center;
-	width: 24px;
-	height: 24px;
-	font: 16px/24px Tahoma, Verdana, sans-serif;
-	color: #757575;
-	text-decoration: none;
-	background: transparent;
-	}
-.leaflet-container a.leaflet-popup-close-button:hover,
-.leaflet-container a.leaflet-popup-close-button:focus {
-	color: #585858;
-	}
-.leaflet-popup-scrolled {
-	overflow: auto;
-	}
-
-.leaflet-oldie .leaflet-popup-content-wrapper {
-	-ms-zoom: 1;
-	}
-.leaflet-oldie .leaflet-popup-tip {
-	width: 24px;
-	margin: 0 auto;
-
-	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
-	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
-	}
-
-.leaflet-oldie .leaflet-control-zoom,
-.leaflet-oldie .leaflet-control-layers,
-.leaflet-oldie .leaflet-popup-content-wrapper,
-.leaflet-oldie .leaflet-popup-tip {
-	border: 1px solid #999;
-	}
-
-
-/* div icon */
-
-.leaflet-div-icon {
-	background: #fff;
-	border: 1px solid #666;
-	}
-
-
-/* Tooltip */
-/* Base styles for the element that has a tooltip */
-.leaflet-tooltip {
-	position: absolute;
-	padding: 6px;
-	background-color: #fff;
-	border: 1px solid #fff;
-	border-radius: 3px;
-	color: #222;
-	white-space: nowrap;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	pointer-events: none;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
-	}
-.leaflet-tooltip.leaflet-interactive {
-	cursor: pointer;
-	pointer-events: auto;
-	}
-.leaflet-tooltip-top:before,
-.leaflet-tooltip-bottom:before,
-.leaflet-tooltip-left:before,
-.leaflet-tooltip-right:before {
-	position: absolute;
-	pointer-events: none;
-	border: 6px solid transparent;
-	background: transparent;
-	content: "";
-	}
-
-/* Directions */
-
-.leaflet-tooltip-bottom {
-	margin-top: 6px;
-}
-.leaflet-tooltip-top {
-	margin-top: -6px;
-}
-.leaflet-tooltip-bottom:before,
-.leaflet-tooltip-top:before {
-	left: 50%;
-	margin-left: -6px;
-	}
-.leaflet-tooltip-top:before {
-	bottom: 0;
-	margin-bottom: -12px;
-	border-top-color: #fff;
-	}
-.leaflet-tooltip-bottom:before {
-	top: 0;
-	margin-top: -12px;
-	margin-left: -6px;
-	border-bottom-color: #fff;
-	}
-.leaflet-tooltip-left {
-	margin-left: -6px;
-}
-.leaflet-tooltip-right {
-	margin-left: 6px;
-}
-.leaflet-tooltip-left:before,
-.leaflet-tooltip-right:before {
-	top: 50%;
-	margin-top: -6px;
-	}
-.leaflet-tooltip-left:before {
-	right: 0;
-	margin-right: -12px;
-	border-left-color: #fff;
-	}
-.leaflet-tooltip-right:before {
-	left: 0;
-	margin-left: -12px;
-	border-right-color: #fff;
-	}
-
-/* Printing */
-
-@media print {
-	/* Prevent printers from removing background-images of controls. */
-	.leaflet-control {
-		-webkit-print-color-adjust: exact;
-		print-color-adjust: exact;
-		}
-	}
-
-/* Map tile positioning is required for a continuous basemap. */
-#coastalMap .leaflet-pane,#coastalMap .leaflet-tile,#coastalMap .leaflet-marker-icon,#coastalMap .leaflet-marker-shadow{position:absolute;left:0;top:0}
-#coastalMap .leaflet-tile{width:256px;height:256px}
-
-
-</style>
-  <title>EastCast | East Coast Weather, Told Live</title>
+  <link id="leafletCss" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css'">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap header-inner">
-      <a class="brand" href="#top" aria-label="EastCast home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" role="img"><path d="M9 33c8-15 20-22 36-20-8 3-13 7-16 12 8-4 16-4 25-1-11 3-18 8-22 14 8-3 15-2 22 1-12 2-22 8-29 17-2-9-7-16-16-23Z" fill="currentColor"/><path d="M14 28c8 1 15 4 21 9" fill="none" stroke="#071a27" stroke-width="4" stroke-linecap="round"/></svg>
-        </span>
-        <span><strong>EASTCAST</strong><small>Weather, told along the coast</small></span>
-      </a>
-      <nav class="top-nav" aria-label="Primary">
-        <a href="#map-section">Map</a>
-        <a href="#radar-section">Radar</a>
-        <a href="#story-section">Coast story</a>
-      </nav>
-      <div class="live-cluster">
-        <span class="live-pill"><i></i> Live NOAA / NWS</span>
-        <button class="ghost-btn" id="refreshBtn" type="button" title="Refresh now">↻ Refresh</button>
-      </div>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top" aria-label="EastCast home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64"><path d="M9 33c8-15 20-22 36-20-8 3-13 7-16 12 8-4 16-4 25-1-11 3-18 8-22 14 8-3 15-2 22 1-12 2-22 8-29 17-2-9-7-16-16-23Z" fill="#ecfbff"/><path d="M14 28c8 1 15 4 21 9" fill="none" stroke="#0a5263" stroke-width="4" stroke-linecap="round"/></svg>
+      </span>
+      <span><strong>EASTCAST</strong><small>Weather, told along the coast</small></span>
+    </a>
+    <nav class="top-nav" aria-label="Primary">
+      <a href="#map-section">Map</a><a href="#timeline-section">Timeline</a><a href="#story-section">Coast story</a><a href="#outlooks-section">Outlooks</a>
+    </nav>
+    <div class="header-actions">
+      <span class="pill" id="appStatus"><i></i> Loading</span>
+      <button class="header-btn" id="shareBtn" type="button">Share</button>
+      <button class="header-btn" id="refreshBtn" type="button">↻ Refresh</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main id="top">
-    <section class="hero wrap">
-      <div class="hero-copy">
-        <div class="eyebrow">Florida → Maine · refreshed every hour</div>
-        <h1>The East Coast weather story,<br><span>moving in real time.</span></h1>
-        <p>EastCast turns official NOAA and National Weather Service feeds into a single coastal picture: live radar, active watches and warnings, point forecasts and a state-by-state storyline.</p>
-        <div class="hero-actions">
-          <a class="primary-btn" href="#map-section">Explore the live map</a>
-          <a class="secondary-btn" href="#radar-section">Watch radar loops</a>
-        </div>
+<main id="top">
+  <section class="wrap now-grid" aria-labelledby="nowHeadline">
+    <article class="now-card">
+      <div class="eyebrow" id="modeLabel">EAST COAST NOW</div>
+      <h1 id="nowHeadline">Loading the East Coast weather picture…</h1>
+      <p id="nowDek">Pulling official alerts, outlooks and tropical information.</p>
+      <div class="now-meta">
+        <span class="meta-chip"><strong id="topHazard">…</strong> · leading signal</span>
+        <span class="meta-chip confidence" id="confidenceBadge" data-tone="normal"><strong id="confidenceLevel">…</strong> confidence</span>
+        <span class="meta-chip" id="nowTiming">Updating timing…</span>
+        <span class="meta-chip">Snapshot <strong id="freshness">…</strong></span>
       </div>
-    </section>
-
-    <section class="wrap signal-strip" aria-label="Live East Coast weather status">
-      <article><span>Active alerts</span><strong id="metricAlerts">…</strong><small>East Coast states</small></article>
-      <article><span>Warnings</span><strong id="metricWarnings">…</strong><small>highest urgency</small></article>
-      <article><span>States affected</span><strong id="metricStates">…</strong><small>FL through ME</small></article>
-      <article><span>Next refresh</span><strong id="metricRefresh">…</strong><small>top of the hour</small></article>
-    </section>
-
-    <section class="wrap section" id="map-section">
-      <div class="section-heading">
-        <div><div class="eyebrow">Atlantic weather canvas</div><h2>One map. Every coastal signal.</h2></div>
-        <p>Pan, zoom, inspect NWS alert polygons, toggle NOAA radar, or click anywhere for the official point forecast. No paid map or weather APIs.</p>
+      <p id="confidenceText" class="muted" style="font-size:11px;margin-top:10px"></p>
+      <div class="now-actions">
+        <a class="primary" href="#map-section">Explore live map</a>
+        <a class="secondary" href="#timeline-section">See what happens next</a>
       </div>
-
-      <div class="map-shell">
-        <div class="map-toolbar">
-          <div class="map-mode-tabs" role="group" aria-label="Map layers">
-            <button class="mode-btn active" id="radarToggle" type="button"><span class="mini-icon radar-icon"></span>Radar</button>
-            <button class="mode-btn active" id="alertsToggle" type="button"><span class="mini-icon alert-icon"></span>Alerts</button>
-          </div>
-          <div class="map-tools">
-            <label class="opacity-control">Radar <input id="radarOpacity" type="range" min="0" max="1" step="0.05" value="0.58" aria-label="Radar opacity"></label>
-            <select id="regionSelect" aria-label="Jump to region">
-              <option value="all">Entire East Coast</option>
-              <option value="newengland">New England</option>
-              <option value="nyc">NYC / Long Island</option>
-              <option value="midatlantic">Mid-Atlantic</option>
-              <option value="carolinas">Carolinas</option>
-              <option value="southeast">Southeast</option>
-            </select>
-            <button id="locateBtn" type="button" class="tool-btn">◎ Locate me</button>
-            <button id="fullscreenBtn" type="button" class="tool-btn">⛶ Full screen</button>
-          </div>
-        </div>
-        <div class="map-grid">
-          <div id="eastMap" aria-label="Interactive East Coast weather map"></div>
-          <aside class="forecast-panel" id="forecastPanel">
-            <div class="panel-kicker">Click the map</div>
-            <h3>Local forecast inspector</h3>
-            <p class="forecast-intro">Choose any location on the coast or inland. EastCast will retrieve its official NWS forecast and active alerts.</p>
-            <div class="forecast-empty" id="forecastEmpty">
-              <div class="crosshair">＋</div>
-              <strong>Pick a point</strong>
-              <span>Forecast office, conditions and active hazards will appear here.</span>
-            </div>
-            <div id="forecastContent" hidden></div>
-          </aside>
-        </div>
-        <div class="map-footer">
-          <div class="legend-inline"><span><i class="lg warning"></i>Warning</span><span><i class="lg watch"></i>Watch</span><span><i class="lg advisory"></i>Advisory / statement</span><span><i class="lg radar"></i>NOAA radar</span></div>
-          <span id="mapStatus">Loading NOAA layers…</span>
-        </div>
+      <div class="changes">
+        <div class="changes-head"><strong>Changed since your last update</strong><small>Browser-local comparison</small></div>
+        <div class="changes-list" id="changesList"><span class="change-chip neutral">Waiting for live snapshot…</span></div>
       </div>
-    </section>
+    </article>
 
-    <section class="section radar-band" id="radar-section">
-      <div class="wrap radar-layout">
-        <div class="radar-copy">
-          <div class="eyebrow">Official NWS animation</div>
-          <h2>See the weather move.</h2>
-          <p>This is the National Weather Service’s continuously updated low-bandwidth animated radar GIF. Switch regions to follow systems as they climb the coast.</p>
-          <div class="radar-tabs" role="tablist" aria-label="Radar region">
-            <button class="radar-tab active" data-radar="NORTHEAST" type="button">Northeast</button>
-            <button class="radar-tab" data-radar="MIDATLANTIC" type="button">Mid-Atlantic</button>
-            <button class="radar-tab" data-radar="SOUTHEAST" type="button">Southeast</button>
-          </div>
-        </div>
-        <figure class="radar-card">
-          <div class="radar-card-head"><span id="radarTitle">Northeast radar loop</span><span class="live-dot">LIVE</span></div>
-          <div class="gif-wrap"><img id="radarGif" src="https://radar.weather.gov/ridge/standard/NORTHEAST_loop.gif" referrerpolicy="no-referrer" loading="eager" alt="Animated National Weather Service Northeast radar loop"><div id="radarFallback" hidden style="padding:28px;text-align:center;color:#b8ced8"><strong style="display:block;color:#fff;margin-bottom:8px">Radar image could not be embedded.</strong><a href="https://radar.weather.gov/ridge/standard/NORTHEAST_loop.gif" target="_blank" rel="noopener" style="color:#7ef3e7">Open the official NWS animated loop</a></div></div>
-          <figcaption>Source: National Weather Service RIDGE standard radar. Animation refreshes at the top of each hour.</figcaption>
-        </figure>
-      </div>
-    </section>
+    <aside class="watch-panel">
+      <div class="eyebrow">Locations to watch</div>
+      <h3>Where to look first</h3>
+      <div class="watch-list" id="watchList"></div>
+    </aside>
+  </section>
 
-    <section class="wrap section" id="story-section">
-      <div class="section-heading story-heading">
-        <div><div class="eyebrow">The coast story</div><h2>What the East Coast is dealing with now.</h2></div>
-        <p id="storySummary">Reading active NWS alerts from Florida to Maine…</p>
-      </div>
+  <section class="wrap metrics" aria-label="East Coast weather metrics">
+    <article class="metric"><span>Active alerts</span><strong id="metricAlerts">…</strong><small>NWS watches, warnings and advisories</small></article>
+    <article class="metric"><span>Warnings</span><strong id="metricWarnings">…</strong><small>Highest-urgency alert class</small></article>
+    <article class="metric"><span>States affected</span><strong id="metricStates">…</strong><small>Florida through Maine</small></article>
+    <article class="metric"><span id="metricTropicalLabel">Atlantic systems</span><strong id="metricTropical">…</strong><small>Current NHC tropical cyclones</small></article>
+  </section>
 
-      <div class="story-controls">
-        <button class="filter-chip active" data-filter="all" type="button">All states</button>
-        <button class="filter-chip" data-filter="active" type="button">Active alerts only</button>
-        <button class="filter-chip" data-filter="warning" type="button">Warnings</button>
-      </div>
+  <div class="wrap favorite-bar" id="favoritesStrip" aria-label="Saved and quick locations"></div>
 
-      <div class="coastline" id="stateStory" aria-live="polite"></div>
-    </section>
-
-    <section class="wrap section sources-section">
-      <div class="sources-card">
-        <div><div class="eyebrow">Built on open public data</div><h2>No subscriptions. No paid APIs.</h2><p>EastCast is deliberately built on government weather feeds and open-source mapping so the core experience remains portable and inexpensive to host.</p></div>
-        <div class="source-grid">
-          <a href="https://api.weather.gov" target="_blank" rel="noopener"><strong>NWS API</strong><span>Forecasts + alerts</span></a>
-          <a href="https://www.weather.gov/gis/cloudgiswebservices" target="_blank" rel="noopener"><strong>NWS Cloud GIS</strong><span>Official radar WMS</span></a>
-          <a href="https://radar.weather.gov" target="_blank" rel="noopener"><strong>NWS RIDGE</strong><span>Animated radar GIFs</span></a>
-          <a href="https://www.openstreetmap.org" target="_blank" rel="noopener"><strong>OpenStreetMap</strong><span>Basemap</span></a>
-          <a href="https://leafletjs.com" target="_blank" rel="noopener"><strong>Leaflet</strong><span>Interactive mapping</span></a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="wrap footer-inner">
-      <div class="footer-brand"><span class="brand-mark small" aria-hidden="true">≈</span><div><strong>EastCast</strong><span>Weather, told along the coast.</span></div></div>
-      <p>Not an emergency alerting service. For life-safety decisions, follow your local National Weather Service office and emergency management authorities.</p>
-      <div class="footer-time">Updated <time id="lastUpdated">…</time></div>
+  <section class="wrap section" id="map-section">
+    <div class="section-head">
+      <div><div class="eyebrow">Explore</div><h2>One map, organized by the question you are asking.</h2></div>
+      <p>Switch between current radar, official hazards and forecast layers. Click any point for its NWS forecast, or jump directly to a location above.</p>
     </div>
-  </footer>
+    <div class="map-shell">
+      <div class="map-top">
+        <div class="map-modes" role="tablist" aria-label="Weather map mode">
+          <button class="map-mode active" data-mode="radar" type="button">Radar</button>
+          <button class="map-mode" data-mode="alerts" type="button">Alerts</button>
+          <button class="map-mode" data-mode="rain" type="button">Rain</button>
+          <button class="map-mode" data-mode="wind" type="button">Wind</button>
+          <button class="map-mode" data-mode="waves" type="button">Waves</button>
+          <button class="map-mode" data-mode="excessive" type="button">Excessive Rain</button>
+          <button class="map-mode" data-mode="severe" type="button">Severe</button>
+          <button class="map-mode" data-mode="tropical" type="button">Tropical</button>
+          <button class="map-mode" data-mode="cameras" type="button">Webcams</button>
+        </div>
+        <div class="map-tools">
+          <select id="regionSelect" aria-label="Jump map to region">
+            <option value="all">Entire East Coast</option>
+            <option value="newengland">New England</option>
+            <option value="nyc">NYC / Long Island</option>
+            <option value="midatlantic">Mid-Atlantic</option>
+            <option value="carolinas">Carolinas</option>
+            <option value="southeast">Southeast</option>
+          </select>
+          <button class="tool-btn" id="locateBtn" type="button">◎ Locate me</button>
+        </div>
+      </div>
+      <div class="forecast-horizon" id="forecastHorizon">
+        <span class="label">Forecast time</span>
+        <button class="time-btn active" data-horizon="0" type="button">Now</button>
+        <button class="time-btn" data-horizon="6" type="button">+6h</button>
+        <button class="time-btn" data-horizon="12" type="button">+12h</button>
+        <button class="time-btn" data-horizon="24" type="button">+24h</button>
+        <button class="time-btn" data-horizon="48" type="button">+48h</button>
+      </div>
+      <div class="map-grid">
+        <div id="eastMap" aria-label="Interactive East Coast weather map"></div>
+        <aside class="inspector" id="forecastInspector">
+          <div class="inspector-placeholder">
+            <div class="panel-kicker">Local forecast inspector</div>
+            <strong>Tap anywhere on the map</strong>
+            <span>EastCast will retrieve the official NWS forecast and active alerts for that point.</span>
+          </div>
+        </aside>
+      </div>
+      <div class="map-bottom"><strong id="mapLayerStatus">Loading map layer…</strong><span>Basemap © OpenStreetMap · Weather layers NOAA/NWS/WPC/NHC</span></div>
+    </div>
+  </section>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" onerror="this.onerror=null;this.removeAttribute('integrity');this.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'"></script>
-  <script>
-/* EastCast: keyless NOAA/NWS weather dashboard */
-const EAST_STATES = [
-  {code:'ME',name:'Maine',lat:43.66,lon:-70.25,region:'New England'},
-  {code:'NH',name:'New Hampshire',lat:43.07,lon:-70.76,region:'New England'},
-  {code:'MA',name:'Massachusetts',lat:42.36,lon:-71.06,region:'New England'},
-  {code:'RI',name:'Rhode Island',lat:41.49,lon:-71.31,region:'New England'},
-  {code:'CT',name:'Connecticut',lat:41.31,lon:-72.92,region:'New England'},
-  {code:'NY',name:'New York',lat:40.71,lon:-74.01,region:'Northeast'},
-  {code:'NJ',name:'New Jersey',lat:39.36,lon:-74.42,region:'Mid-Atlantic'},
-  {code:'PA',name:'Pennsylvania',lat:39.95,lon:-75.17,region:'Mid-Atlantic'},
-  {code:'DE',name:'Delaware',lat:38.72,lon:-75.08,region:'Mid-Atlantic'},
-  {code:'MD',name:'Maryland',lat:38.98,lon:-76.49,region:'Mid-Atlantic'},
-  {code:'DC',name:'District of Columbia',lat:38.90,lon:-77.04,region:'Mid-Atlantic'},
-  {code:'VA',name:'Virginia',lat:36.85,lon:-75.98,region:'Mid-Atlantic'},
-  {code:'NC',name:'North Carolina',lat:35.91,lon:-75.60,region:'Carolinas'},
-  {code:'SC',name:'South Carolina',lat:32.78,lon:-79.93,region:'Carolinas'},
-  {code:'GA',name:'Georgia',lat:31.98,lon:-80.85,region:'Southeast'},
-  {code:'FL',name:'Florida',lat:29.96,lon:-81.31,region:'Southeast'}
-];
-const STATE_CODES = new Set(EAST_STATES.map(s=>s.code));
-const radarBase = 'https://radar.weather.gov/ridge/standard/';
-const stateAlerts = new Map(EAST_STATES.map(s=>[s.code,[]]));
-let allEastAlerts = [];
-let map, radarLayer, warningLayer, stateMarkerLayer;
-let radarVisible = true, alertsVisible = true;
+  <section class="section radar-band" id="radar-section">
+    <div class="wrap radar-layout">
+      <div class="radar-copy">
+        <div class="eyebrow">Observed motion</div>
+        <h2>Watch the weather move.</h2>
+        <p>Official NWS regional radar animation. This is deliberately separate from the forecast map above so observed weather and forecast guidance are not confused.</p>
+        <div class="radar-tabs">
+          <button class="radar-tab active" data-radar="NORTHEAST" type="button">Northeast</button>
+          <button class="radar-tab" data-radar="MIDATLANTIC" type="button">Mid-Atlantic</button>
+          <button class="radar-tab" data-radar="SOUTHEAST" type="button">Southeast</button>
+        </div>
+      </div>
+      <figure class="radar-card">
+        <div class="radar-head"><span id="radarTitle">Northeast radar loop</span><span>LIVE NWS</span></div>
+        <div class="gif-wrap">
+          <img id="radarGif" src="https://radar.weather.gov/ridge/standard/NORTHEAST_loop.gif" referrerpolicy="no-referrer" loading="eager" alt="Animated NWS Northeast radar">
+          <div id="radarFallback" class="empty-card" hidden><strong>Radar animation could not be embedded.</strong><a id="radarOpen" href="https://radar.weather.gov/ridge/standard/NORTHEAST_loop.gif" target="_blank" rel="noopener">Open official NWS radar ›</a></div>
+        </div>
+        <figcaption>National Weather Service RIDGE regional radar animation.</figcaption>
+      </figure>
+    </div>
+  </section>
 
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => [...document.querySelectorAll(s)];
-const fmtTime = (d) => new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(d);
-const safe = (v='') => String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+  <section class="wrap section" id="timeline-section">
+    <div class="section-head">
+      <div><div class="eyebrow">What happens next</div><h2>A simple impact timeline before the detailed forecast.</h2></div>
+      <p>Each window is derived from the effective and expiration times of active official alerts. Selecting a window also moves the map’s forecast horizon.</p>
+    </div>
+    <div class="timeline-grid" id="impactTimeline"></div>
+  </section>
 
-function severityRank(a){
-  const p=a.properties||{};
-  const sev={Extreme:5,Severe:4,Moderate:3,Minor:2,Unknown:1}[p.severity]||1;
-  const event=String(p.event||'');
-  return sev + (/Warning/i.test(event)?3:/Watch/i.test(event)?2:/Advisory/i.test(event)?1:0);
-}
-function alertType(a){
-  const e=String(a.properties?.event||'');
-  if(/Warning/i.test(e)) return 'warning';
-  if(/Watch/i.test(e)) return 'watch';
-  return 'advisory';
-}
-function extractStates(a){
-  const ugc=a.properties?.geocode?.UGC||[];
-  const same=a.properties?.geocode?.SAME||[];
-  const found=new Set();
-  ugc.forEach(code=>{const s=String(code).slice(0,2);if(STATE_CODES.has(s))found.add(s)});
-  // District alerts sometimes use DC UGC as DCZ/DCC. SAME is retained only as a fallback.
-  if(!found.size && same.length && String(a.properties?.areaDesc||'').includes('District of Columbia')) found.add('DC');
-  return [...found];
-}
-function coastFilter(a){return extractStates(a).length>0}
+  <section class="wrap section" id="story-section">
+    <div class="section-head">
+      <div><div class="eyebrow">The coast story</div><h2>State by state, from Maine to Florida.</h2></div>
+      <p>Summary first. Detailed alert text is available through the point inspector and official source links.</p>
+    </div>
+    <div class="story-filters">
+      <button class="story-filter active" data-filter="all" type="button">All states</button>
+      <button class="story-filter" data-filter="active" type="button">Active only</button>
+      <button class="story-filter" data-filter="warning" type="button">Warnings only</button>
+    </div>
+    <div class="state-story" id="stateStory"></div>
+  </section>
 
-async function getJson(url, opts={}){
-  const r=await fetch(url,{cache:'no-store',headers:{Accept:'application/geo+json, application/json'},...opts});
-  if(!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-  return r.json();
-}
+  <section class="wrap section" id="outlooks-section">
+    <div class="section-head">
+      <div><div class="eyebrow">Official outlooks</div><h2>Go beyond the current warning map.</h2></div>
+      <p>EastCast surfaces the government products that usually live on separate sites, while keeping their official source and meaning clear.</p>
+    </div>
+    <div class="outlook-grid" id="outlookCards"></div>
+    <div class="outlook-status" id="outlookStatus"></div>
+  </section>
 
-function initMap(){
-  if(!window.L) throw new Error('Leaflet mapping library did not load');
-  map=L.map('eastMap',{zoomControl:false,minZoom:4,maxZoom:13}).setView([37.7,-74.4],5);
-  L.control.zoom({position:'bottomright'}).addTo(map);
-  const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
-  const hot=L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors, HOT'});
-  radarLayer=L.tileLayer.wms('https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows',{
-    layers:'conus_bref_qcd',styles:'',format:'image/png',transparent:true,version:'1.1.1',opacity:.62,attribution:'NOAA / NWS RIDGE2 radar'
-  }).addTo(map);
-  warningLayer=L.geoJSON(null,{style:warningStyle,onEachFeature:onWarningFeature}).addTo(map);
-  stateMarkerLayer=L.layerGroup().addTo(map);
-  L.control.layers({'OpenStreetMap':osm,'Humanitarian OSM':hot},{'NOAA radar':radarLayer,'NWS alert polygons':warningLayer},{position:'topright',collapsed:true}).addTo(map);
-  addMapLegend();
-  map.on('click',e=>loadPointForecast(e.latlng.lat,e.latlng.lng));
-}
+  <section class="wrap section">
+    <div class="section-head">
+      <div><div class="eyebrow">Atlantic tropics</div><h2>Current NHC systems.</h2></div>
+      <p>Active Atlantic systems appear here even when they pose no immediate East Coast threat, avoiding the false impression that an active storm automatically means a U.S. impact.</p>
+    </div>
+    <div class="tropical-list" id="tropicalList"></div>
+  </section>
 
-function warningStyle(feature){
-  const e=String(feature.properties?.prod_type||feature.properties?.event||'');
-  if(/Warning/i.test(e)) return {color:'#ff544f',weight:2,fillColor:'#ff544f',fillOpacity:.16};
-  if(/Watch/i.test(e)) return {color:'#ffc654',weight:2,fillColor:'#ffc654',fillOpacity:.13};
-  return {color:'#51bee8',weight:1.6,fillColor:'#51bee8',fillOpacity:.10};
-}
-function onWarningFeature(feature,layer){
-  const p=feature.properties||{};
-  layer.bindPopup(`<div class="weather-popup"><strong>${safe(p.prod_type||'NWS alert')}</strong><br><small>${safe(p.wfo||p.issuer||'National Weather Service')}</small>${p.expiration?`<br><small>Until ${safe(fmtTime(new Date(p.expiration)))}</small>`:''}</div>`);
-}
-function addMapLegend(){
-  const c=L.control({position:'bottomleft'});
-  c.onAdd=()=>{const d=L.DomUtil.create('div','map-leaflet-legend');d.innerHTML='<b>EastCast</b><span><i style="background:#ff544f"></i>Warning</span><span><i style="background:#ffc654"></i>Watch</span><span><i style="background:#51bee8"></i>Advisory</span>';L.DomEvent.disableClickPropagation(d);return d};
-  c.addTo(map);
-  const style=document.createElement('style');style.textContent='.map-leaflet-legend{background:#08212eed;border:1px solid #45697a;border-radius:10px;padding:8px 10px;color:#e9f6f9;font:10px/1.5 system-ui;box-shadow:0 5px 22px #0005}.map-leaflet-legend b{display:block;margin-bottom:3px}.map-leaflet-legend span{display:flex;align-items:center;gap:5px}.map-leaflet-legend i{display:inline-block;width:8px;height:8px;border-radius:2px}';document.head.appendChild(style);
-}
+  <section class="wrap section">
+    <div class="section-head">
+      <div><div class="eyebrow">Eyes on the coast</div><h2>Curated coastal webcams.</h2></div>
+      <p>A small set of useful WebCOOS cameras is more valuable than hundreds of unfiltered feeds. Camera links open the official observation network.</p>
+    </div>
+    <div class="camera-grid" id="cameraGrid"></div>
+  </section>
 
-async function loadMapWarnings(){
-  if(!warningLayer){ $('#mapStatus').textContent='Map engine unavailable · NWS story data still live'; return false; }
-  const url='https://mapservices.weather.noaa.gov/eventdriven/rest/services/WWA/watch_warn_adv/FeatureServer/1/query?where=1%3D1&outFields=*&geometry=-84,24,-65,48&geometryType=esriGeometryEnvelope&inSR=4326&outSR=4326&spatialRel=esriSpatialRelIntersects&returnGeometry=true&f=geojson';
-  try{
-    const data=await getJson(url);
-    warningLayer.clearLayers().addData(data);
-    $('#mapStatus').textContent=`NOAA radar + ${data.features?.length||0} mapped NWS hazard polygons`;
-  }catch(err){
-    $('#mapStatus').textContent='Radar live · alert polygon service temporarily unavailable';
-    console.warn('Map warning layer',err);
-  }
-}
+  <section class="wrap section">
+    <div class="section-head">
+      <div><div class="eyebrow">Historical context</div><h2>Benchmarks, not analog forecasts.</h2></div>
+      <p>Past events help put today’s maps in context, but EastCast does not imply that similar-looking storms will produce the same impacts.</p>
+    </div>
+    <div class="context-grid">
+      <article class="context-card"><strong>January 2024 · Northeast coastal flooding</strong><p>Useful context for high-water and wave impacts in New England and the Gulf of Maine.</p></article>
+      <article class="context-card"><strong>December 2023 · Southeast coastal storm</strong><p>Useful context for a broad non-tropical coastal low affecting the Carolinas and Mid-Atlantic.</p></article>
+      <article class="context-card"><strong>October 2012 · Sandy</strong><p>A major historical coastal-impact benchmark, not a default comparison for ordinary nor’easters.</p></article>
+      <article class="context-card"><strong>Use context carefully</strong><p>Track, tide cycle, antecedent conditions, storm size and local vulnerability matter as much as headline intensity.</p></article>
+    </div>
+    <div class="context-note">Future enhancement path: attach verified local gauge, rainfall and wind records to these benchmarks rather than comparing events by name alone.</div>
+  </section>
 
-async function loadAlerts(){
-  try{
-    let features=[];
-    try{
-      const data=await getJson('https://api.weather.gov/alerts/active');
-      features=data.features||[];
-    }catch(primaryErr){
-      console.warn('National NWS alerts request failed; using state fallback',primaryErr);
-      const batches=[];
-      for(let i=0;i<EAST_STATES.length;i+=4) batches.push(EAST_STATES.slice(i,i+4));
-      for(const batch of batches){
-        const settled=await Promise.allSettled(batch.map(s=>getJson('https://api.weather.gov/alerts/active?area='+s.code)));
-        settled.forEach(r=>{if(r.status==='fulfilled') features.push(...(r.value.features||[]))});
-      }
-      const seen=new Set();
-      features=features.filter(a=>{const id=a.id||a.properties?.id||a.properties?.['@id']||JSON.stringify(a.properties?.headline||'');if(seen.has(id))return false;seen.add(id);return true});
-    }
-    allEastAlerts=features.filter(coastFilter).sort((a,b)=>severityRank(b)-severityRank(a));
-    stateAlerts.forEach((_,k)=>stateAlerts.set(k,[]));
-    allEastAlerts.forEach(a=>extractStates(a).forEach(s=>stateAlerts.get(s)?.push(a)));
-    stateAlerts.forEach(v=>v.sort((a,b)=>severityRank(b)-severityRank(a)));
-    renderMetrics();renderStory();if(stateMarkerLayer)renderStateMarkers();
-    return true;
-  }catch(err){
-    console.warn('NWS alerts',err);
-    $('#storySummary').textContent='The NWS alerts feed is temporarily unavailable. Radar and point forecasts may still work.';
-    $('#stateStory').innerHTML='<div class="story-loading">Unable to load the NWS alert storyline right now. EastCast will retry automatically.</div>';
-    ['metricAlerts','metricWarnings','metricStates'].forEach(id=>$('#'+id).textContent='—');
-    return false;
-  }
-}
+  <section class="wrap section">
+    <div class="source-panel">
+      <div><div class="eyebrow">Data health</div><p>Core summaries are assembled server-side during the Pages build. Point forecasts remain live, on demand.</p></div>
+      <div class="source-health" id="sourceHealth"></div>
+    </div>
+  </section>
+</main>
 
-function renderMetrics(){
-  const warnings=allEastAlerts.filter(a=>alertType(a)==='warning').length;
-  const affected=EAST_STATES.filter(s=>stateAlerts.get(s.code).length).length;
-  $('#metricAlerts').textContent=allEastAlerts.length;
-  $('#metricWarnings').textContent=warnings;
-  $('#metricStates').textContent=affected;
-  const top=EAST_STATES.map(s=>({s,a:stateAlerts.get(s.code)})).filter(x=>x.a.length).sort((a,b)=>severityRank(b.a[0])-severityRank(a.a[0])||b.a.length-a.a.length).slice(0,3);
-  if(!top.length){$('#storySummary').textContent='No active NWS watches, warnings or advisories are currently mapped to the East Coast states in this dashboard.';return}
-  const names=top.map(x=>x.s.name).join(', ');
-  const warningCount=allEastAlerts.filter(a=>alertType(a)==='warning').length;
-  $('#storySummary').textContent=`${allEastAlerts.length} active NWS alert${allEastAlerts.length===1?'':'s'} touch the East Coast dashboard. ${warningCount?`${warningCount} are warnings. `:''}The strongest current signals are clustered around ${names}.`;
-}
+<footer>
+  <div class="wrap footer-inner">
+    <div><strong>EASTCAST</strong><br>Weather, told along the coast.</div>
+    <p>Public NOAA/NWS/WPC/NHC data. Not an emergency alerting service. For life-safety decisions, follow official local warnings and emergency management.</p>
+    <div>Snapshot updated <time id="lastUpdated">…</time></div>
+  </div>
+</footer>
 
-function stateNarrative(s,alerts){
-  if(!alerts.length) return {title:'No active NWS hazards',body:'No current NWS watch, warning or advisory is mapped to this state. Click for an official local forecast.',type:'quiet'};
-  const top=alerts[0],p=top.properties||{};
-  const ends=p.ends||p.expires||p.expiration;
-  const onset=p.onset||p.effective||p.sent;
-  let timing='';
-  if(onset||ends){timing=`Timing: ${onset?fmtTime(new Date(onset)):'now'}${ends?` → ${fmtTime(new Date(ends))}`:''}. `}
-  const more=alerts.length>1?` ${alerts.length-1} additional alert${alerts.length===2?' is':'s are'} active.`:'';
-  return {title:p.event||'Active NWS hazard',body:`${timing}${p.headline||p.description?.split('\n')[0]||'National Weather Service alert in effect.'}${more}`,type:alertType(top)};
-}
-
-function renderStory(filter='all'){
-  const html=EAST_STATES.map(s=>{
-    const alerts=stateAlerts.get(s.code)||[];const n=stateNarrative(s,alerts);const warnings=alerts.filter(a=>alertType(a)==='warning').length;
-    const hidden=filter==='active'&&!alerts.length||filter==='warning'&&!warnings;
-    const klass=`state-card ${alerts.length?'has-alert':''} ${warnings?'has-warning':''} ${hidden?'hidden':''}`;
-    return `<article class="${klass}" data-state="${s.code}" tabindex="0" role="button" aria-label="Show ${safe(s.name)} on map"><div class="state-id"><strong>${safe(s.name)}</strong><span>${safe(s.region)}</span></div><div class="state-copy"><strong>${safe(n.title)}</strong><p>${safe(n.body)}</p></div><div class="state-status"><b>${alerts.length}</b><span>active alert${alerts.length===1?'':'s'}</span></div></article>`
-  }).join('');
-  $('#stateStory').innerHTML=html;
-  $$('.state-card').forEach(card=>{
-    const go=()=>{const s=EAST_STATES.find(x=>x.code===card.dataset.state);if(s){map.flyTo([s.lat,s.lon],7,{duration:1});loadPointForecast(s.lat,s.lon)}};
-    card.addEventListener('click',go);card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})
-  });
-}
-
-function renderStateMarkers(){
-  if(!stateMarkerLayer) return;stateMarkerLayer.clearLayers();
-  EAST_STATES.forEach(s=>{
-    const alerts=stateAlerts.get(s.code)||[];const hasWarning=alerts.some(a=>alertType(a)==='warning');
-    const icon=L.divIcon({className:`state-marker ${alerts.length?'has-alert':''} ${hasWarning?'has-warning':''}`,html:s.code,iconSize:[30,30]});
-    const marker=L.marker([s.lat,s.lon],{icon,keyboard:true,title:s.name}).addTo(stateMarkerLayer);
-    marker.bindTooltip(`${s.name}: ${alerts.length} active NWS alert${alerts.length===1?'':'s'}`);
-    marker.on('click',()=>loadPointForecast(s.lat,s.lon));
-  });
-}
-
-async function loadPointForecast(lat,lon){
-  $('#forecastEmpty').hidden=true;$('#forecastContent').hidden=false;$('#forecastContent').innerHTML='<div class="story-loading">Loading official NWS forecast…</div>';
-  try{
-    const point=await getJson(`https://api.weather.gov/points/${lat.toFixed(4)},${lon.toFixed(4)}`);
-    const pp=point.properties||{};
-    const [forecast,alerts]=await Promise.all([
-      getJson(pp.forecast),
-      getJson(`https://api.weather.gov/alerts/active?point=${lat.toFixed(4)},${lon.toFixed(4)}`)
-    ]);
-    const city=pp.relativeLocation?.properties?.city||'Selected location';const state=pp.relativeLocation?.properties?.state||'';
-    const periods=(forecast.properties?.periods||[]).slice(0,5);
-    const alertList=(alerts.features||[]).slice(0,3);
-    $('#forecastContent').innerHTML=`
-      <div class="forecast-location"><h4>${safe(city)}${state?`, ${safe(state)}`:''}</h4><p>${lat.toFixed(3)}, ${lon.toFixed(3)} · NWS ${safe(pp.gridId||'')}</p></div>
-      ${alertList.map(a=>`<div class="point-alert"><strong>${safe(a.properties?.event||'Active alert')}</strong><br>${safe(a.properties?.headline||'NWS hazard in effect')}</div>`).join('')}
-      <div class="periods">${periods.map(p=>`<div class="period"><div class="period-top"><strong>${safe(p.name)}</strong><span class="temp">${safe(p.temperature)}°${safe(p.temperatureUnit)}</span></div><p>${safe(p.shortForecast)} · Wind ${safe(p.windSpeed)} ${safe(p.windDirection)}</p></div>`).join('')}</div>
-      <div class="forecast-source">Official National Weather Service point forecast. Click another location to update.</div>`;
-  }catch(err){
-    console.warn('Point forecast',err);
-    $('#forecastContent').innerHTML='<div class="story-loading">The NWS point forecast could not be loaded for this location. Offshore points and temporary NWS API interruptions can cause this.</div>';
-  }
-}
-
-const regionViews={
-  all:[[24.1,-83.5],[47.7,-66.1]],newengland:[[40.8,-74.0],[47.3,-66.3]],nyc:[[39.7,-75.3],[41.8,-71.6]],midatlantic:[[35.5,-78.8],[41.3,-73.0]],carolinas:[[31.8,-82.0],[36.9,-74.7]],southeast:[[24.3,-83.6],[33.2,-78.0]]
-};
-function wireControls(){
-  const radarImg=$('#radarGif');
-  radarImg.addEventListener('error',()=>{radarImg.style.display='none';$('#radarFallback').hidden=false});
-  radarImg.addEventListener('load',()=>{radarImg.style.display='block';$('#radarFallback').hidden=true});
-  $('#radarToggle').addEventListener('click',()=>{if(!map||!radarLayer)return;radarVisible=!radarVisible;$('#radarToggle').classList.toggle('active',radarVisible);radarVisible?radarLayer.addTo(map):map.removeLayer(radarLayer)});
-  $('#alertsToggle').addEventListener('click',()=>{if(!map||!warningLayer)return;alertsVisible=!alertsVisible;$('#alertsToggle').classList.toggle('active',alertsVisible);alertsVisible?warningLayer.addTo(map):map.removeLayer(warningLayer)});
-  $('#radarOpacity').addEventListener('input',e=>{if(radarLayer)radarLayer.setOpacity(Number(e.target.value))});
-  $('#regionSelect').addEventListener('change',e=>{if(map)map.fitBounds(regionViews[e.target.value],{padding:[14,14]})});
-  $('#locateBtn').addEventListener('click',()=>{if(!map)return;navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{map.flyTo([p.coords.latitude,p.coords.longitude],8);loadPointForecast(p.coords.latitude,p.coords.longitude)},()=>alert('Location access was not available.')):alert('Geolocation is not supported by this browser.')});
-  $('#fullscreenBtn').addEventListener('click',()=>{const el=$('.map-shell');if(document.fullscreenElement)document.exitFullscreen();else el.requestFullscreen?.()});
-  $('#refreshBtn').addEventListener('click',()=>refreshAll(true));
-  $$('.radar-tab').forEach(btn=>btn.addEventListener('click',()=>switchRadar(btn.dataset.radar)));
-  $$('.filter-chip').forEach(btn=>btn.addEventListener('click',()=>{$$('.filter-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderStory(btn.dataset.filter)}));
-}
-function switchRadar(region){
-  $$('.radar-tab').forEach(b=>b.classList.toggle('active',b.dataset.radar===region));
-  const title={NORTHEAST:'Northeast',MIDATLANTIC:'Mid-Atlantic',SOUTHEAST:'Southeast'}[region]||region;
-  $('#radarTitle').textContent=`${title} radar loop`;
-  $('#radarGif').alt=`Animated National Weather Service ${title} radar loop`;
-  const gif=$('#radarGif'); gif.style.display='block'; $('#radarFallback').hidden=true; gif.src=`${radarBase}${region}_loop.gif`;
-}
-function refreshRadar(){
-  const active=$('.radar-tab.active')?.dataset.radar||'NORTHEAST';
-  const gif=$('#radarGif'); gif.style.display='block'; $('#radarFallback').hidden=true; gif.src=`${radarBase}${active}_loop.gif`;
-  if(radarLayer){radarLayer.setParams({_eastcast:Date.now()});radarLayer.redraw()}
-}
-async function refreshAll(manual=false){
-  const btn=$('#refreshBtn');if(manual){btn.disabled=true;btn.textContent='↻ Refreshing'}
-  await Promise.all([loadAlerts(),loadMapWarnings()]);refreshRadar();
-  const now=new Date();$('#lastUpdated').textContent=fmtTime(now);
-  try{localStorage.setItem('eastcast:lastUpdated',now.toISOString())}catch{}
-  if(manual){btn.disabled=false;btn.textContent='↻ Refresh'}
-}
-function msToNextHour(){const n=new Date(),next=new Date(n);next.setHours(n.getHours()+1,0,0,0);return next-n}
-function scheduleTopOfHour(){setTimeout(async()=>{await refreshAll(false);scheduleTopOfHour()},msToNextHour()+1200)}
-function updateCountdown(){
-  const ms=msToNextHour(),m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000);
-  $('#metricRefresh').textContent=`${m}:${String(s).padStart(2,'0')}`;
-}
-
-window.addEventListener('DOMContentLoaded',async()=>{
-  wireControls();
-  try{initMap()}catch(err){
-    console.error('EastCast map startup',err);
-    $('#mapStatus').textContent='Interactive map could not start · live NWS story remains available';
-    $('#eastMap').innerHTML='<div style="height:100%;display:grid;place-items:center;padding:30px;text-align:center;color:#29495a;background:#d7e4e7"><div><strong style="display:block;color:#163445;font-size:18px;margin-bottom:6px">Map engine unavailable</strong><span style="color:#496b7a">Reload the page. EastCast will continue loading NWS alerts and radar independently.</span></div></div>';
-  }
-  await refreshAll(false);scheduleTopOfHour();updateCountdown();setInterval(updateCountdown,1000);
-});
-
-  </script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js'"></script>
+<script type="module" src="app.mjs"></script>
 </body>
 </html>

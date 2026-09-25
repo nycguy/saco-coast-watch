@@ -1219,7 +1219,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
   status.className='map-bad';document.getElementById('coastalMap').textContent='Interactive map unavailable. Verify your internet connection and try again.';return;
  }
  document.getElementById('coastalMap').replaceChildren();
- const L=window.L, map=L.map('coastalMap',{zoomControl:false,scrollWheelZoom:false,preferCanvas:true}).setView([43.47,-70.40],11);
+ const L=window.L, map=L.map('coastalMap',{zoomControl:false,scrollWheelZoom:false,preferCanvas:true}).setView([43.47,-70.40],12);
  L.control.zoom({position:'topright'}).addTo(map);
  L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
  // The former default USGS imagery/labels service returned only a subset of tiles
@@ -1265,7 +1265,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
   L.marker([c.lat,c.lng],{icon,title:c.name}).bindPopup(pop).addTo(cams);
  }
  basemapSelect.addEventListener('change',e=>activateBasemap(e.target.value));
- document.getElementById('mapHome').addEventListener('click',()=>map.flyTo([43.47,-70.40],11,{duration:.65}));
+ document.getElementById('mapHome').addEventListener('click',()=>map.flyTo([43.47,-70.40],12,{duration:.65}));
  [['showSurgeAlerts',surge],['showCoastalAlerts',coastal],['showCameras',cams]].forEach(([id,layer])=>document.getElementById(id).addEventListener('change',e=>e.target.checked?layer.addTo(map):map.removeLayer(layer)));
  const approved=new Set(['Storm Surge Watch','Storm Surge Warning','Coastal Flood Watch','Coastal Flood Warning','Coastal Flood Advisory']);
  const getColor=name=>name.startsWith('Storm Surge')?(name.endsWith('Warning')?'#df3e99':'#c89de9'):(name.endsWith('Warning')?'#f69b45':name.endsWith('Watch')?'#f1cb64':'#ffe3a0');

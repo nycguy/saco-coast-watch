@@ -26,7 +26,11 @@ def install_noaa_fixture(page):
             tide.append({"t":stamp(day+timedelta(hours=hour)),"v":f"{value+delta:.2f}"})
 
     now=datetime.now(timezone.utc).replace(second=0,microsecond=0)
-    obs=[{"t":stamp(now-timedelta(minutes=6)),"v":"8.45"}]
+    observed_values=[7.2,8.5,9.8,8.4,7.1,8.6,9.9,8.5,7.3]
+    obs=[]
+    for i,value in enumerate(observed_values):
+        t=now-timedelta(hours=24-i*3)
+        obs.append({"t":stamp(t),"v":f"{value:.2f}"})
     model=[]
     for h in range(0,73,3):
         t=now+timedelta(hours=h)
@@ -84,17 +88,26 @@ def assert_common(page):
     assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
     assert "NOAA OFS total-water peak" in section.inner_text()
 
-    # Water-level outlook intentionally omits low-tide troughs and uses untinted semantic flood colors.
+    # Water-level outlook uses high-water peaks only; low-tide curves are not rendered.
     chart_period=page.locator("#chartPeriod").inner_text()
-    assert "values below 6 ft hidden" in chart_period,chart_period
+    assert "high-water peaks only" in chart_period,chart_period
+    assert "low tides omitted" in chart_period,chart_period
+    flood_control=page.locator("label.check").filter(has=page.locator("#showFlood")).inner_text()
+    assert "Flood thresholds" in flood_control and "Flood zones" not in flood_control,flood_control
+
     y_labels=page.eval_on_selector_all("#chart .y-axis-label","els => els.map(el => Number(el.textContent))")
-    assert y_labels and min(y_labels)>=6,y_labels
-    assert 0 not in y_labels and 2 not in y_labels and 4 not in y_labels,y_labels
-    assert page.locator("#chart .low-tide-note").count()==1
-    zone_fills=page.eval_on_selector_all("#chart .flood-zone","els => els.map(el => el.getAttribute('fill'))")
-    assert zone_fills==["#FFFF00","#FFA500","#FF0000"],zone_fills
-    zone_names=page.eval_on_selector_all("#chart .flood-zone","els => els.map(el => el.getAttribute('data-zone'))")
-    assert zone_names==["minor","moderate","major"],zone_names
+    assert y_labels and min(y_labels)>=8,y_labels
+    assert page.locator("#chart path.obs, #chart path.pred, #chart path.ofs").count()==0
+    assert page.locator("#chart .short-observed-point").count()>=1
+    assert page.locator("#chart .short-tide-point").count()>=3
+    assert page.locator("#chart .short-model-point").count()>=3
+
+    threshold_fills=page.eval_on_selector_all("#chart .threshold-band","els => els.map(el => el.getAttribute('fill'))")
+    assert threshold_fills==["#FFFF00","#FFA500","#FF0000"],threshold_fills
+    threshold_names=page.eval_on_selector_all("#chart .threshold-band","els => els.map(el => el.getAttribute('data-threshold'))")
+    assert threshold_names==["minor","moderate","major"],threshold_names
+    threshold_labels=page.eval_on_selector_all("#chart .zone-label","els => els.map(el => el.textContent)")
+    assert threshold_labels==["MINOR FLOOD 12–13 FT","MODERATE FLOOD 13–14 FT","MAJOR FLOOD 14+ FT"],threshold_labels
 
     reference=page.locator(".threshold-reference")
     assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"

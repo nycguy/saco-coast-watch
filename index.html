@@ -27,6 +27,7 @@
 .chartbox svg .obs{stroke:var(--sea);stroke-width:4.5}.chartbox svg .pred{stroke:var(--sun);stroke-width:1.55;stroke-dasharray:8 7;opacity:.62}.chartbox svg .ofs{stroke:var(--purple);stroke-width:4;opacity:.98}
 .chartbox svg .daily-pred{stroke:var(--sun);stroke-width:2.4;opacity:.8}.chartbox svg .daily-ofs{stroke:var(--purple);stroke-width:3.8}
 .chartbox svg .peak-dot{fill:var(--purple);stroke:#081824;stroke-width:2}.chartbox svg .peak-dot.top{stroke:#fff;stroke-width:2.4}.chartbox svg .tide-dot{fill:var(--sun);stroke:#081824;stroke-width:1.6}
+.chartbox svg .short-observed-point{fill:var(--sea);stroke:#071824;stroke-width:2}.chartbox svg .short-tide-point{fill:var(--sun);stroke:#071824;stroke-width:2}.chartbox svg .short-model-point{fill:var(--purple);stroke:#071824;stroke-width:2}.chartbox svg .short-model-point.top{stroke:#fff;stroke-width:2.8}.chartbox svg .threshold-band{shape-rendering:crispEdges}.chartbox svg .short-series-label{font-size:10px;font-weight:850;paint-order:stroke;stroke:#081824;stroke-width:4px;stroke-linejoin:round}
 .chartbox svg .series-label{font-size:11px;font-weight:850;paint-order:stroke;stroke:#081824;stroke-width:4px;stroke-linejoin:round}.chartbox svg .peak-label{fill:#f0ceff;font-size:11px;font-weight:900;paint-order:stroke;stroke:#081824;stroke-width:4px}.chartbox svg .peak-sub{fill:#d7c4e3;font-size:9.5px;font-weight:750;paint-order:stroke;stroke:#081824;stroke-width:3px}.chartbox svg .zone-label{font-size:9.5px;font-weight:850;letter-spacing:.04em;opacity:.9}.chartbox svg .axis-note{font-size:9.5px;font-weight:750;opacity:.8}
 .tides-scroll{max-height:420px;overflow:auto}.tides-scroll thead{position:sticky;top:0;background:#112a3b;z-index:1}.tide-only-tag{background:#3e3430!important;color:#f6d8aa!important}
 .calendar-panel{padding:22px;margin-bottom:17px}.calendar-panel .eyebrow{margin-bottom:4px;color:#78e4dc}.calendar-explain{display:flex;flex-wrap:wrap;gap:9px 20px;margin:13px 0 11px;font-size:11px;color:#c6dae4}.calendar-key{display:inline-flex;align-items:center;gap:7px}.trend-key{width:20px;height:0;border-top:3px solid var(--sea);position:relative}.trend-key:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--sea);top:-5px;left:7px;border:1px solid #081824}.ofs-trend-key{width:20px;height:0;border-top:3px solid var(--purple);position:relative}.ofs-trend-key:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--purple);top:-5px;left:7px;border:1px solid #081824}.threshold-chip{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid}.minor-key{background:#FFFF0026;border-color:#FFFF00}.moderate-key{background:#FFA5002b;border-color:#FFA500}.major-key{background:#FF000030;border-color:#FF0000}
@@ -886,7 +887,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   </div>
   <p class="comparison-footnote" id="compareFootnote">Historical peaks are observed water levels. Current values are model guidance, not observed peaks or a prediction of damage in Saco. Portland's flood categories and local wave/runup effects must be considered separately.</p>
 </section>
-<div class="grid main-grid"><section class="panel chart-panel"><div class="panel-header"><div><h3>Water-level outlook</h3><div class="sub">Gauge observations · NOAA total-water guidance · astronomical tide</div></div><div class="controls" role="group" aria-label="Future outlook period"><button type="button" data-days="1" class="segment">24h</button><button type="button" data-days="3" class="segment active">72h</button><button type="button" data-days="7" class="segment">7d</button><button type="button" data-days="14" class="segment">14d</button><button type="button" data-days="30" class="segment">30d</button></div></div><div class="chart-headline" aria-live="polite"><strong id="chartHeadline">Connecting to NOAA model guidance…</strong><span id="chartHeadlineSub">Purple shading will show the model difference from the astronomical tide.</span></div><div class="chartbox"><svg id="chart" role="img" aria-label="Water levels in feet versus Eastern time" viewBox="0 0 920 360" preserveAspectRatio="none"><text x="460" y="180" text-anchor="middle">Connecting to NOAA…</text></svg><div id="tooltip" class="tooltip" hidden></div></div><div class="below-chart"><label class="check"><input type="checkbox" id="showFlood" checked>Flood zones</label><label class="check"><input type="checkbox" id="showModel" checked>Model guidance</label><span class="sub" id="chartPeriod">Past 24h · next 72h</span><button type="button" class="btn" id="exportBtn" aria-label="Download chart data as CSV">↓ CSV</button></div></section>
+<div class="grid main-grid"><section class="panel chart-panel"><div class="panel-header"><div><h3>Water-level outlook</h3><div class="sub">Observed and forecast high-water peaks · NOAA total-water guidance · astronomical tide</div></div><div class="controls" role="group" aria-label="Future outlook period"><button type="button" data-days="1" class="segment">24h</button><button type="button" data-days="3" class="segment active">72h</button><button type="button" data-days="7" class="segment">7d</button><button type="button" data-days="14" class="segment">14d</button><button type="button" data-days="30" class="segment">30d</button></div></div><div class="chart-headline" aria-live="polite"><strong id="chartHeadline">Connecting to NOAA model guidance…</strong><span id="chartHeadlineSub">Purple shading will show the model difference from the astronomical tide.</span></div><div class="chartbox"><svg id="chart" role="img" aria-label="Water levels in feet versus Eastern time" viewBox="0 0 920 360" preserveAspectRatio="none"><text x="460" y="180" text-anchor="middle">Connecting to NOAA…</text></svg><div id="tooltip" class="tooltip" hidden></div></div><div class="below-chart"><label class="check"><input type="checkbox" id="showFlood" checked>Flood thresholds</label><label class="check"><input type="checkbox" id="showModel" checked>Model guidance</label><span class="sub" id="chartPeriod">Past 24h · next 72h</span><button type="button" class="btn" id="exportBtn" aria-label="Download chart data as CSV">↓ CSV</button></div></section>
 <section class="panel side-panel threshold-reference" aria-labelledby="thresholdHeading"><div class="reference-head"><div><div class="eyebrow reference-eyebrow">Portland gauge reference</div><h3 id="thresholdHeading">Flood thresholds</h3></div><span class="reference-note">Used in chart above</span></div><p class="threshold-intro">National Weather Service categories for the <strong>Portland gauge</strong>. They are not property-level inundation measurements or Saco-specific road-closure thresholds.</p><div class="threshold-list" role="list" aria-label="Portland flood thresholds"><div class="threshold" role="listitem"><div class="rail minor"></div><div><strong>Minor flooding</strong><small>Low-lying coastal areas may flood</small></div><b>12.0 ft</b></div><div class="threshold" role="listitem"><div class="rail moderate"></div><div><strong>Moderate flooding</strong><small>More extensive coastal impacts</small></div><b>13.0 ft</b></div><div class="threshold" role="listitem"><div class="rail major"></div><div><strong>Major flooding</strong><small>Substantial coastal impacts possible</small></div><b>14.0 ft</b></div></div><details class="history-reference"><summary>January 2024 historical reference</summary><div class="history-reference-body"><p>Observed Portland gauge peaks from Maine's major coastal storms.</p><div class="compare"><div class="history"><small>January 10, 2024</small><strong>≈13.8 <span>ft</span></strong><span>Significant coastal flooding</span></div><div class="history"><small>January 13, 2024</small><strong>14.57 <span>ft</span></strong><span>Record water level</span></div></div><p class="side-note">A predicted astronomical tide below 12 ft does <strong>not</strong> rule out coastal flooding. Wind-driven surge, breaking waves, erosion and local topography can change the outcome, especially near Camp Ellis.</p><div class="history-link"><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.weather.gov/gyx/PortlandRecordTide">Read NWS January 2024 record report ↗</a></div></div></details></section></div>
 <section class="panel weather-panel" aria-labelledby="weatherHeading">
  <div class="section-head"><div><div class="eyebrow">Local storm conditions · Saco Bay coastal area</div><h3 id="weatherHeading">Wind and air temperature</h3><div class="weather-intro">Coastal-point forecasts are for the Ferry Beach / Saco Bay area. Offshore and coastal wind sensors are shown separately from nearby airport measurements; none are at the property. Gusts and shoreline exposure can differ locally.</div></div><a class="mini-link" id="weatherForecastLink" href="https://forecast.weather.gov/MapClick.php?lat=43.472&amp;lon=-70.385" target="_blank" rel="noopener noreferrer">Official coastal-point forecast ↗</a></div>
@@ -1256,89 +1257,85 @@ function dailyMax(series,from,to){
  const groups=new Map();for(const p of series){if(p.t<from||p.t>to)continue;const key=localParts(p.t).key;const old=groups.get(key);if(!old||p.v>old.v)groups.set(key,p);}
  return [...groups.values()].sort((a,b)=>a.t-b.t);
 }
+function ensurePoint(points,p,maxGap=2*3600000){
+ if(!p)return points;if(points.some(x=>Math.abs(x.t-p.t)<=maxGap))return points;
+ return [...points,p].sort((a,b)=>a.t-b.t);
+}
 const highSource=state.highs.length?state.highs:extractHighsFromCurve(state.pred);
 const dailyTides=dailyMax(highSource,current-30*60000,end);
 const dailyModels=dailyMax(futureModel,current-10*60000,end);
-const shortPoints=[...state.obs,...state.pred,...(state.showModel?state.model:[])].filter(d=>d.t>=start&&d.t<=end);
-const longPoints=[...dailyTides,...(state.showModel?dailyModels:[])];
-const visiblePoints=longMode?longPoints:shortPoints;
-const dataMax=Math.max(14,...visiblePoints.map(p=>p.v));
-const lo=6,hi=Math.max(15,Math.ceil((dataMax+.25)*2)/2),x=t=>margin.left+(t-start)/(end-start)*cw,y=v=>margin.top+(hi-v)/(hi-lo)*ch;
+const observedPeaks=localPeaks(state.obs,start,Math.min(current,end),4*3600000);
+const tidePeaks=localPeaks(state.pred,start,end,4*3600000);
+let modelPeaks=localPeaks(state.model,Math.max(current-10*60000,start),Math.min(end,current+72*3600000),4*3600000);
+modelPeaks=ensurePoint(modelPeaks,modelPeak);
+const visiblePeaks=longMode?[...dailyTides,...(state.showModel?dailyModels:[])]:[...observedPeaks,...tidePeaks,...(state.showModel?modelPeaks:[])];
+const peakValues=visiblePeaks.map(p=>p.v);
+const dataMin=peakValues.length?Math.min(...peakValues):9,dataMax=Math.max(14,...peakValues);
+const floorCandidate=Math.floor((dataMin-.75)*2)/2;
+const lo=Math.max(6,Math.min(11,floorCandidate)),hi=Math.max(15,Math.ceil((dataMax+.25)*2)/2);
+const x=t=>margin.left+(t-start)/(end-start)*cw,y=v=>margin.top+(hi-v)/(hi-lo)*ch;
 
-if(state.showModel&&futureModel.length)areaBetween(futureModel);
+const modelEnd=futureModel.length?futureModel.at(-1).t:current;
+if(!longMode&&end>modelEnd+20*60000){const sx=x(Math.max(current,modelEnd));el('rect',{x:sx,y:margin.top,width:Math.max(0,W-margin.right-sx),height:ch,fill:'#d6b4770b','clip-path':'url(#plotClip)'});if(W-margin.right-sx>135)el('text',{x:sx+8,y:H-margin.bottom-9,fill:'#d9bd89',class:'axis-note'},'TIDE ONLY · MODEL ENDS');}
+
 if(state.showFlood){
- const zones=[
-  {name:'minor',from:12,to:13,fill:'#FFFF00',text:'#071824',label:'MINOR 12–13 FT'},
-  {name:'moderate',from:13,to:14,fill:'#FFA500',text:'#071824',label:'MODERATE 13–14 FT'},
-  {name:'major',from:14,to:hi,fill:'#FF0000',text:'#FFFFFF',label:'MAJOR 14+ FT'}
+ const bands=[
+  {name:'minor',from:12,to:13,fill:'#FFFF00',text:'#071824',label:'MINOR FLOOD 12–13 FT'},
+  {name:'moderate',from:13,to:14,fill:'#FFA500',text:'#071824',label:'MODERATE FLOOD 13–14 FT'},
+  {name:'major',from:14,to:hi,fill:'#FF0000',text:'#FFFFFF',label:'MAJOR FLOOD 14+ FT'}
  ];
- for(const z of zones){if(hi<=z.from)continue;const top=Math.min(hi,z.to),yy=y(top),hh=Math.max(0,y(z.from)-yy);el('rect',{x:margin.left,y:yy,width:cw,height:hh,fill:z.fill,class:'flood-zone '+z.name,'data-zone':z.name,'clip-path':'url(#plotClip)'});if(hh>16)el('text',{x:W-margin.right-6,y:yy+Math.min(hh-4,14),'text-anchor':'end',fill:z.text,class:'zone-label'},z.label);}
+ for(const b of bands){if(hi<=b.from)continue;const top=Math.min(hi,b.to),bottom=Math.max(lo,b.from);if(top<=bottom)continue;const yy=y(top),hh=Math.max(0,y(bottom)-yy);el('rect',{x:margin.left,y:yy,width:cw,height:hh,fill:b.fill,class:'threshold-band '+b.name,'data-threshold':b.name,'clip-path':'url(#plotClip)'});if(hh>15)el('text',{x:W-margin.right-6,y:yy+Math.min(hh-4,14),'text-anchor':'end',fill:b.text,class:'zone-label'},b.label);}
 }
-for(let n=Math.ceil(lo/2)*2;n<=hi;n+=2){el('line',{x1:margin.left,x2:W-margin.right,y1:y(n),y2:y(n),class:'gridline'});el('text',{x:margin.left-11,y:y(n)+4,'text-anchor':'end',class:'y-axis-label'},String(n));}
-el('text',{x:margin.left+4,y:H-margin.bottom-8,class:'axis-note low-tide-note',fill:'#8fb1bf'},'HIGH-TIDE FOCUS · BELOW 6 FT HIDDEN');
+for(let n=Math.ceil(lo);n<=hi;n+=1){el('line',{x1:margin.left,x2:W-margin.right,y1:y(n),y2:y(n),class:'gridline'});el('text',{x:margin.left-11,y:y(n)+4,'text-anchor':'end',class:'y-axis-label'},String(n));}
+
 if(longMode){
  const dayStep=state.days<=7?1:state.days<=14?2:5,step=dayStep*86400000;
  for(let tick=current;tick<=end;tick+=step){const tx=x(tick);el('line',{x1:tx,x2:tx,y1:margin.top,y2:H-margin.bottom,class:'gridline'});el('text',{x:tx,y:H-14,'text-anchor':tick===current?'start':'middle'},fmt(tick,{month:'short',day:'numeric'}));}
- el('text',{x:margin.left+4,y:margin.top+13,class:'axis-note',fill:'#a7e5d8'},'DAILY HIGH-TIDE PEAKS');
+ el('text',{x:margin.left+4,y:margin.top+13,class:'axis-note',fill:'#a7e5d8'},'DAILY HIGH-WATER PEAKS');
 }else{
  const step=state.days<=1?6:12;
  for(let tick=Math.ceil(start/(step*3600000))*step*3600000;tick<=end;tick+=step*3600000){const tx=x(tick);el('line',{x1:tx,x2:tx,y1:margin.top,y2:H-margin.bottom,class:'gridline'});el('text',{x:tx,y:H-14,'text-anchor':'middle'},fmt(tick,{weekday:'short',hour:'numeric'}));}
  const nowX=x(current);el('line',{x1:nowX,x2:nowX,y1:margin.top,y2:H-margin.bottom,class:'now'});el('text',{x:nowX+5,y:margin.top+11,fill:'#dcf8ee'},'NOW');
 }
 
-const modelEnd=futureModel.length?futureModel.at(-1).t:current;
-if(!longMode&&end>modelEnd+20*60000){const sx=x(Math.max(current,modelEnd));el('rect',{x:sx,y:margin.top,width:Math.max(0,W-margin.right-sx),height:ch,fill:'#d6b4770b','clip-path':'url(#plotClip)'});if(W-margin.right-sx>135)el('text',{x:sx+8,y:H-margin.bottom-9,fill:'#d9bd89',class:'axis-note'},'TIDE ONLY · MODEL ENDS');}
-
-function path(series,cls,gapMinutes=45){let d='',last=null,count=0;for(const p of series){if(p.t<start||p.t>end)continue;if(p.v<lo){last=null;continue;}d+=(last&&p.t-last.t<=gapMinutes*60000?'L':'M')+x(p.t).toFixed(2)+','+y(p.v).toFixed(2)+' ';last=p;count++;}if(count>=2)el('path',{d,fill:'none',class:cls,'clip-path':'url(#plotClip)','stroke-linecap':'round','stroke-linejoin':'round'});}
-function areaBetween(modelSeries){
- const pairs=modelSeries.filter(p=>p.t>=Math.max(current,start)&&p.t<=end).map(m=>({m,p:nearest(state.pred,m.t,25*60000)})).filter(q=>q.p);
- if(pairs.length<2)return;
- let d='M'+pairs.map(q=>x(q.m.t).toFixed(2)+','+y(q.m.v).toFixed(2)).join(' L');
- d+=' L'+pairs.slice().reverse().map(q=>x(q.p.t).toFixed(2)+','+y(q.p.v).toFixed(2)).join(' L')+' Z';
- el('path',{d,fill:'#d9a3ff1e',stroke:'none','clip-path':'url(#plotClip)'});
-}
-function dot(p,cls,r=4){if(!p||p.t<start||p.t>end)return;el('circle',{cx:x(p.t),cy:y(p.v),r,class:cls,'clip-path':'url(#plotClip)'});}
-function labelAt(p,text,color,dy=0,anchor='start'){if(!p||p.t<start||p.t>end)return;let xx=x(p.t)+(anchor==='start'?8:-8);xx=Math.max(margin.left+4,Math.min(W-margin.right-4,xx));el('text',{x:xx,y:y(p.v)+dy,fill:color,'text-anchor':anchor,class:'series-label'},text);}
-function lastVisible(series){return series.filter(p=>p.t>=start&&p.t<=end).at(-1)||null;}
+function peakPath(points,cls){if(points.length<2)return;const d=points.map((p,i)=>(i?'L':'M')+x(p.t).toFixed(2)+','+y(p.v).toFixed(2)).join(' ');el('path',{d,fill:'none',class:cls,'clip-path':'url(#plotClip)','stroke-linecap':'round','stroke-linejoin':'round'});}
+function dot(p,cls,r=4,attrs={}){if(!p||p.t<start||p.t>end||p.v<lo||p.v>hi)return null;return el('circle',{cx:x(p.t),cy:y(p.v),r,class:cls,'clip-path':'url(#plotClip)',...attrs});}
+function labelAt(p,text,color,dy=0,anchor='start',cls='series-label'){if(!p||p.t<start||p.t>end||p.v<lo||p.v>hi)return;let xx=x(p.t)+(anchor==='start'?8:-8);xx=Math.max(margin.left+4,Math.min(W-margin.right-4,xx));el('text',{x:xx,y:y(p.v)+dy,fill:color,'text-anchor':anchor,class:cls},text);}
+function lastVisible(series){return series.filter(p=>p.t>=start&&p.t<=end&&p.v>=lo&&p.v<=hi).at(-1)||null;}
 
 if(longMode){
- path(dailyTides,'daily-pred',36*60);
- for(const p of dailyTides)dot(p,'tide-dot',3.8);
- if(state.showModel&&dailyModels.length){path(dailyModels,'daily-ofs',36*60);for(const p of dailyModels)dot(p,'peak-dot',4.8);}
- const tideLast=lastVisible(dailyTides);if(tideLast)labelAt(tideLast,'Daily tide peak','#f6cf6b',-9,'end');
- const modelLast=state.showModel?lastVisible(dailyModels):null;if(modelLast)labelAt(modelLast,'NOAA forecast','#d9a3ff',15,'end');
+ peakPath(dailyTides,'daily-pred');for(const p of dailyTides)dot(p,'tide-dot',4);
+ if(state.showModel&&dailyModels.length){peakPath(dailyModels,'daily-ofs');for(const p of dailyModels)dot(p,'peak-dot',4.8);}
+ const tideLast=lastVisible(dailyTides);if(tideLast)labelAt(tideLast,'Daily astronomical high','#f6cf6b',-9,'end');
+ const modelLast=state.showModel?lastVisible(dailyModels):null;if(modelLast)labelAt(modelLast,'NOAA model high','#d9a3ff',15,'end');
 }else{
- path(state.pred,'pred',35);if(state.showModel)path(state.model,'ofs',150);path(state.obs,'obs');
- const obsLast=lastVisible(state.obs);if(obsLast){dot(obsLast,'obs-marker',5.2);labelAt(obsLast,'Observed','#63eee0',-10,'start');}
- const predLast=lastVisible(state.pred);if(predLast)labelAt(predLast,'Astronomical tide','#f6cf6b',16,'end');
- const modelLast=state.showModel?lastVisible(state.model):null;if(modelLast)labelAt(modelLast,'NOAA total-water forecast','#d9a3ff',-11,'end');
+ for(const p of observedPeaks)dot(p,'short-observed-point',5,{ 'data-series':'observed-high' });
+ for(const p of tidePeaks)dot(p,'short-tide-point',4.5,{ 'data-series':'astronomical-high' });
+ if(state.showModel)for(const p of modelPeaks){const isTop=modelPeak&&p.t===modelPeak.t;dot(p,'short-model-point'+(isTop?' top':''),isTop?6.2:5,{ 'data-series':'noaa-model-high' });}
+ const obsLast=lastVisible(observedPeaks);if(obsLast)labelAt(obsLast,'Observed high','#63eee0',-11,'start','short-series-label');
+ const tideLast=lastVisible(tidePeaks);if(tideLast)labelAt(tideLast,'Astronomical high','#f6cf6b',17,'end','short-series-label');
+ const modelLast=state.showModel?lastVisible(modelPeaks):null;if(modelLast)labelAt(modelLast,'NOAA model high','#d9a3ff',-12,'end','short-series-label');
  if(state.showModel){
-  const peaks=localPeaks(state.model,Math.max(current,start),Math.min(end,current+72*3600000),5*3600000);
-  const top=peak(peaks,-Infinity,Infinity);
-  for(const p of peaks){
-   const isTop=top&&p.t===top.t;dot(p,'peak-dot'+(isTop?' top':''),isTop?6.2:4.6);
-   el('text',{x:x(p.t),y:y(p.v)-(isTop?15:11),'text-anchor':'middle',class:'peak-label'},fmtN(p.v)+"'");
-   if(isTop){el('text',{x:x(p.t),y:y(p.v)-3,'text-anchor':'middle',class:'peak-sub'},fmt(p.t,{weekday:'short',hour:'numeric'})+' ET');const tide=nearest(state.pred,p.t,25*60000);if(tide)el('text',{x:x(p.t),y:y(p.v)+17,'text-anchor':'middle',class:'peak-sub'},((p.v-tide.v)>=0?'+':'')+fmtN(p.v-tide.v)+' vs tide');}
-  }
+  for(const p of modelPeaks){const isTop=modelPeak&&p.t===modelPeak.t;el('text',{x:x(p.t),y:y(p.v)-(isTop?16:12),'text-anchor':'middle',class:'peak-label'},fmtN(p.v)+"'");if(isTop){el('text',{x:x(p.t),y:y(p.v)-3,'text-anchor':'middle',class:'peak-sub'},fmt(p.t,{weekday:'short',hour:'numeric'})+' ET');const tide=nearest(state.pred,p.t,25*60000);if(tide)el('text',{x:x(p.t),y:y(p.v)+18,'text-anchor':'middle',class:'peak-sub'},((p.v-tide.v)>=0?'+':'')+fmtN(p.v-tide.v)+' vs tide');}}
  }
 }
-if(!visiblePoints.length)el('text',{x:W/2,y:H/2,'text-anchor':'middle'},'No data available. Use the direct source links below.');
+if(!visiblePeaks.length)el('text',{x:W/2,y:H/2,'text-anchor':'middle'},'No high-water peaks available. Use the direct source links below.');
 
-const hoverTides=longMode?dailyTides:state.pred,hoverModels=longMode?dailyModels:state.model;
+const hoverObserved=longMode?[]:observedPeaks,hoverTides=longMode?dailyTides:tidePeaks,hoverModels=longMode?dailyModels:modelPeaks;
 const overlay=el('rect',{x:margin.left,y:margin.top,width:cw,height:ch,fill:'transparent','pointer-events':'all',style:'cursor:crosshair'});
 overlay.addEventListener('pointermove',event=>{
  const box=svg.getBoundingClientRect(),px=(event.clientX-box.left)/box.width*W,t=start+(px-margin.left)/cw*(end-start);
- const tol=longMode?(state.days>=30?18:state.days>=14?12:8)*3600000:18*60000;
- const o=longMode?null:nearest(state.obs,t,15*60000),p=nearest(hoverTides,t,tol),m=state.showModel?nearest(hoverModels,t,longMode?14*3600000:60*60000):null;
+ const tol=longMode?(state.days>=30?18:state.days>=14?12:8)*3600000:3*3600000;
+ const o=longMode?null:nearest(hoverObserved,t,tol),p=nearest(hoverTides,t,tol),m=state.showModel?nearest(hoverModels,t,tol):null;
  if(!o&&!p&&!m){tip.hidden=true;return;}
- const rows=(longMode?[['Daily tide peak',p],['NOAA model peak',m]]:[['Observed',o],['Astronomical tide',p],['NOAA total-water',m]]).filter(a=>a[1]);
+ const rows=(longMode?[['Daily astronomical high',p],['NOAA model high',m]]:[['Observed high',o],['Astronomical high',p],['NOAA model high',m]]).filter(a=>a[1]);
  tip.replaceChildren();const tm=document.createElement('time');tm.textContent=dayTime(t)+' ET';tip.append(tm);
  for(const [name,point] of rows){const row=document.createElement('div');row.className='ttrow';const n=document.createElement('span');n.textContent=name;const val=document.createElement('b');val.textContent=fmtN(point.v)+' ft';row.append(n,val);tip.append(row);}
  tip.hidden=false;const w=box.width,left=px/W*w;tip.style.left=Math.max(0,Math.min(w-228,left+12))+'px';tip.style.top=event.clientY-box.top>box.height/2?'9px':Math.max(0,box.height-110)+'px';
 });
 overlay.addEventListener('pointerleave',()=>tip.hidden=true);
-$('chart').setAttribute('aria-label',longMode?'Daily high-tide peaks in feet MLLW for the selected outlook period, with available NOAA model peaks and Portland flood zones':'High-tide-focused observed, astronomical tide, and NOAA total-water guidance in feet MLLW. Values below 6 feet are intentionally hidden; Portland flood zones are shown in yellow, orange, and red.');
-$('chartPeriod').textContent=longMode?'Next '+state.days+' days · daily high-tide peaks · NOAA model overlay where available · values below 6 ft hidden':'Past 24h · next '+(state.days===1?'24h':'72h')+' · high-tide focus · values below 6 ft hidden';
+$('chart').setAttribute('aria-label',longMode?'Daily high-water peaks in feet MLLW for the selected outlook period, with available NOAA model peaks and Portland flood threshold bands':'High-water peaks only: observed gauge highs, astronomical high tides, and NOAA total-water model highs in feet MLLW, with Portland flood threshold bands. Low-tide troughs are omitted.');
+$('chartPeriod').textContent=longMode?'Next '+state.days+' days · daily high-water peaks · NOAA model overlay where available':'Past 24h · next '+(state.days===1?'24h':'72h')+' · high-water peaks only · low tides omitted';
 }
 function updateNotice(){const missing=[];if(state.errors.observed)missing.push('live gauge');if(state.errors.predicted)missing.push('astronomical tide');if(state.errors.model)missing.push('model forecast');if(state.errors.alerts)missing.push('NWS alerts');if(state.errors.weatherObservation)missing.push('nearby measured weather');if(state.errors.weatherForecast)missing.push('coastal-point weather forecast');const recent=state.obs.at(-1);const stale=recent&&now()-recent.t>45*60000;const node=$('notice');if(!missing.length&&!stale){node.classList.add('hidden');return;}node.classList.remove('hidden');const lines=[];if(missing.length)lines.push('Some live feeds are unavailable: '+missing.join(', ')+'. A dash means no data, not zero risk.');if(stale)lines.push('The most recent gauge reading is '+relative(recent.t)+'; treat it as stale.');lines.push('Open the official NOAA/NWS links below for current conditions.');$('noticeText').textContent=lines.join(' ');}
 function updateClock(){$('currentClock').textContent=fmt(now(),{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});const o=state.obs.at(-1);const healthy=!!o&&now()-o.t<45*60000;$('liveDot').className='dot '+(healthy?'good':state.loading?'warn':'bad');$('liveText').textContent=state.loading?'Refreshing feeds':healthy?'Gauge current':o?'Gauge delayed':'Live data unavailable';if(state.lastSuccess)$('syncTime').textContent='Last successful data refresh '+relative(state.lastSuccess);}

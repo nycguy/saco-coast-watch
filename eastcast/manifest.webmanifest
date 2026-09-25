@@ -1,0 +1,10 @@
+{
+  "name":"EastCast - East Coast Weather",
+  "short_name":"EastCast",
+  "description":"Live East Coast weather storytelling and mapping from Florida to Maine.",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#06141e",
+  "theme_color":"#071a27",
+  "icons":[{"src":"favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

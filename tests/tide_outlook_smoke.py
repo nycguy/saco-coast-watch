@@ -75,7 +75,7 @@ def assert_common(page):
     assert page.locator("#tideTrend .ofs-trend-line").count()==1
     assert page.locator("#tideTrend .zone-label").count()==3
     labels=page.eval_on_selector_all("#tideTrend .zone-label","els => els.map(el => el.textContent)")
-    assert labels==["MINOR 12–13 FT","MODERATE 13–14 FT","MAJOR 14+ FT"],labels
+    assert labels==["Minor 12–13 ft","Moderate 13–14 ft","Major 14+ ft"],labels
 
     initial=page.locator("#tideTrendSelection").inner_text()
     assert "astronomical high 10.71 ft MLLW" in initial,initial
@@ -112,7 +112,22 @@ def assert_common(page):
     threshold_names=page.eval_on_selector_all("#chart .threshold-band","els => els.map(el => el.getAttribute('data-threshold'))")
     assert threshold_names==["minor","moderate","major"],threshold_names
     threshold_labels=page.eval_on_selector_all("#chart .zone-label","els => els.map(el => el.textContent)")
-    assert threshold_labels==["MINOR FLOOD 12–13 FT","MODERATE FLOOD 13–14 FT","MAJOR FLOOD 14+ FT"],threshold_labels
+    assert threshold_labels==["Minor flood 12–13 ft","Moderate flood 13–14 ft","Major flood 14+ ft"],threshold_labels
+    threshold_label_fills=page.eval_on_selector_all("#chart .zone-label","els => els.map(el => getComputedStyle(el).fill)")
+    assert threshold_label_fills==["rgb(7, 24, 36)","rgb(7, 24, 36)","rgb(255, 255, 255)"],threshold_label_fills
+
+    # App-wide readability: proper-case labels, higher contrast, and undistorted SVG text.
+    assert page.locator(".brand h1").inner_text().strip()=="Saco Coast Watch"
+    label_style=page.locator(".metric .label").first.evaluate("el => ({transform:getComputedStyle(el).textTransform,color:getComputedStyle(el).color,fontWeight:getComputedStyle(el).fontWeight})")
+    assert label_style["transform"]=="none",label_style
+    eyebrow_style=page.locator(".eyebrow").first.evaluate("el => ({transform:getComputedStyle(el).textTransform,letter:getComputedStyle(el).letterSpacing})")
+    assert eyebrow_style["transform"]=="none",eyebrow_style
+    th_style=page.locator("th").first.evaluate("el => ({transform:getComputedStyle(el).textTransform,color:getComputedStyle(el).color})")
+    assert th_style["transform"]=="none",th_style
+    chart_dims=page.locator("#chart").evaluate("el => ({cw:el.clientWidth,ch:el.clientHeight,vw:el.viewBox.baseVal.width,vh:el.viewBox.baseVal.height})")
+    rendered_ratio=chart_dims["cw"]/chart_dims["ch"]
+    view_ratio=chart_dims["vw"]/chart_dims["vh"]
+    assert abs(rendered_ratio-view_ratio)<0.03,(rendered_ratio,view_ratio,chart_dims)
 
     reference=page.locator(".threshold-reference")
     assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"

@@ -63,6 +63,7 @@ jobs:
           /tmp/saco-map-venv/bin/python -m playwright install chromium
           python3 -m http.server 8765 --directory dist > /tmp/saco-map-http.log 2>&1 &
           /tmp/saco-map-venv/bin/python tests/map_smoke.py
+          /tmp/saco-map-venv/bin/python tests/tide_outlook_smoke.py
           /tmp/saco-map-venv/bin/python tests/eastcast_smoke.py
       - name: Save map test screenshot
         if: always() && github.event_name == 'push'
@@ -71,6 +72,7 @@ jobs:
           name: dashboard-browser-test-images
           path: |
             map-smoke*.png
+            tide-outlook-smoke-*.png
             eastcast-smoke-*.png
           if-no-files-found: ignore
       - uses: actions/configure-pages@v5

@@ -57,5 +57,37 @@ class EastCastFetchTests(unittest.TestCase):
         self.assertEqual(c["states"],["MA"])
         self.assertEqual(c["ends"],"2026-09-25T20:00:00Z")
 
+    def test_parse_ndbc_latest_converts_units(self):
+        text = """#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP
+#yr mo dy hr mn degT m/s m/s m sec sec degT hPa degC degC degC
+26 09 25 11 00 045 10.0 15.0 2.0 8 7 090 1005.0 20.0 19.0 18.0
+"""
+        out=mod.parse_ndbc_latest(text)
+        self.assertAlmostEqual(out["wind_kt"],19.4,places=1)
+        self.assertAlmostEqual(out["gust_kt"],29.2,places=1)
+        self.assertAlmostEqual(out["wave_ft"],6.6,places=1)
+        self.assertEqual(out["dominant_period_s"],8.0)
+
+    def test_tide_departure_uses_nearest_prediction(self):
+        obs={"t":"2026-09-25 12:04","v":"11.20"}
+        preds=[
+            {"t":"2026-09-25 12:00","v":"10.50"},
+            {"t":"2026-09-25 12:06","v":"10.60"},
+        ]
+        self.assertEqual(mod.tide_departure(obs,preds),0.60)
+
+    def test_next_high_tide_finds_first_future_local_maximum(self):
+        now=mod.dt.datetime(2026,9,25,12,0,tzinfo=mod.dt.timezone.utc)
+        preds=[
+            {"t":"2026-09-25 12:00","v":"8.0"},
+            {"t":"2026-09-25 12:06","v":"8.5"},
+            {"t":"2026-09-25 12:12","v":"9.0"},
+            {"t":"2026-09-25 12:18","v":"8.7"},
+            {"t":"2026-09-25 18:00","v":"8.2"},
+        ]
+        high=mod.next_high_tide(preds,now)
+        self.assertEqual(high["time"],"2026-09-25T12:12:00Z")
+        self.assertEqual(high["ft"],9.0)
+
 if __name__ == "__main__":
     unittest.main()

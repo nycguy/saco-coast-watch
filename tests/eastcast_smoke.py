@@ -34,7 +34,7 @@ def main():
         page.locator('.map-mode[data-mode="cameras"]').click()
         assert "WebCOOS" in page.locator("#mapLayerStatus").inner_text()
 
-        page.locator('a[href="#radar-section"]').first.click()
+        page.locator('#radar-section').scroll_into_view_if_needed()
         page.wait_for_timeout(1200)
         radar_ok=page.eval_on_selector("#radarGif","el => el.complete && el.naturalWidth > 0")
         fallback_visible=page.locator("#radarFallback").is_visible()

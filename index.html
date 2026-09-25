@@ -20,9 +20,15 @@
 
 /* Storm-watching priorities: model total level first, history comparison second. */
 .model-hero{border-color:#bc9bea;background:linear-gradient(145deg,#382b51 0%,#1e3047 85%);box-shadow:inset 0 3px 0 #d9a3ff,0 15px 42px #00000016}
-.model-hero .number{color:#e5bdff}.model-hero .tag{background:#654477;color:#ffebff}.model-hero .label{color:#efddfb}
+.model-hero .number{color:#e5bdff}.model-hero .tag{background:#654477;color:#ffebff}.model-hero .label{color:#efddfb}.model-hero .peak-time{margin:3px 0 7px;color:#f2e7fb;font-weight:800;font-size:13px;letter-spacing:.01em}
 .comparison-panel{padding:20px 22px;margin-bottom:17px;border-color:#51617a;background:linear-gradient(115deg,#1c3049,#132b3c 65%)}
 .comparison-panel .section-head{align-items:center}.comparison-panel .eyebrow{font-size:10px;color:#dab4fd;margin-bottom:5px}
+.compare-peak{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:12px;margin:8px 0 16px;padding:15px 16px;border:1px solid #596f87;border-radius:12px;background:#0c2436}
+.compare-peak-part{min-width:0}.compare-peak-part+ .compare-peak-part{border-left:1px solid #3d5668;padding-left:16px}
+.compare-peak-label{display:block;color:#9fb8c7;text-transform:uppercase;letter-spacing:.12em;font-size:9px;font-weight:850;margin-bottom:4px}
+.compare-peak strong{display:block;color:#f1e4fa;font-size:clamp(20px,3vw,30px);line-height:1.13;font-variant-numeric:tabular-nums}
+.compare-peak .peak-time-value{font-size:clamp(17px,2.3vw,23px)}
+.compare-peak small{display:block;color:#b8cfdd;font-size:11px;line-height:1.45;margin-top:6px}
 .compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .compare-tile{background:#0a2232;border:1px solid #4b6073;border-radius:12px;padding:14px 16px;min-width:0}
 .compare-head{display:flex;justify-content:space-between;gap:9px;align-items:baseline;flex-wrap:wrap;color:#b8cfdd;font-size:12px}
@@ -31,7 +37,7 @@
 .compare-delta.below{color:#b7e27b}.compare-delta.above{color:#ff9ba7}.compare-delta.same{color:#ffcf52}
 .compare-sub,.comparison-footnote{font-size:12px;color:#adc7d6;line-height:1.5}
 .comparison-footnote{margin:12px 0 0}
-@media(max-width:720px){.compare-grid{grid-template-columns:1fr}.comparison-panel{padding:17px}}
+@media(max-width:720px){.compare-grid,.compare-peak{grid-template-columns:1fr}.compare-peak-part+ .compare-peak-part{border-left:0;border-top:1px solid #3d5668;padding-left:0;padding-top:12px}.comparison-panel{padding:17px}}
 
 /* Nearby measured weather and Saco Bay coastal-point forecasts. */
 .weather-panel{padding:21px 22px;margin:0 0 17px;border-color:#4b7780;background:linear-gradient(145deg,#183544,#112a3b 80%)}
@@ -824,7 +830,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
 <section class="metrics grid" aria-label="Current coastal metrics">
- <article class="panel metric model-hero"><div class="label">Forecast peak total water level <span class="tag">NEXT 72H · NOAA OFS</span></div><div class="number" id="modelValue">--<em> ft</em></div><p id="modelDetail">Looking for available NOAA model guidance…</p><p class="risk-label" id="modelRiskLabel" role="status">Checking forecast category</p></article>
+ <article class="panel metric model-hero"><div class="label">Forecast peak total water level <span class="tag">NEXT 72H · NOAA OFS</span></div><div class="number" id="modelValue">--<em> ft</em></div><p class="peak-time" id="modelPeakTime">Peak time unavailable</p><p id="modelDetail">Looking for available NOAA model guidance…</p><p class="risk-label" id="modelRiskLabel" role="status">Checking forecast category</p></article>
 <article class="panel metric"><div class="label">Observed water level <span class="tag" id="obsBadge">LIVE GAUGE</span></div><div class="number" id="observedValue">--<em> ft</em></div><p id="observedDetail">NOAA Portland · station 8418150</p></article>
  <article class="panel metric"><div class="label">Observed − normal tide <span class="tag">SURGE SIGNAL</span></div><div class="number" id="departureValue">--<em> ft</em></div><p id="departureDetail">Difference between the observed level and the predicted astronomical tide at the same time.</p></article>
  <article class="panel metric"><div class="label">Next high tide · baseline <span class="tag">TIDE ONLY</span></div><div class="number" id="nextHighValue">--<em> ft</em></div><p id="nextHighDetail">Loading next high tide…</p></article>
@@ -853,7 +859,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 
 <section class="panel comparison-panel" aria-labelledby="compareTitle">
-  <div class="section-head"><div><div class="eyebrow">Storm context · Portland station 8418150</div><h3 id="compareTitle">How the forecast peak compares with January 2024</h3><div class="sub" id="compareSummary">Checking NOAA model guidance for a peak water level in the next 72 hours.</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150" rel="noopener noreferrer" target="_blank">Official Portland flood dashboard ↗</a></div>
+  <div class="section-head"><div><div class="eyebrow">Storm context · Portland station 8418150</div><h3 id="compareTitle">How the forecast peak compares with January 2024</h3><div class="sub" id="compareSummary">Current NOAA model guidance for Portland station 8418150.</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150" rel="noopener noreferrer" target="_blank">Official Portland flood dashboard ↗</a></div>
+  <div class="compare-peak" aria-live="polite">
+    <div class="compare-peak-part"><span class="compare-peak-label">Forecast peak</span><strong id="comparePeakValue">-- ft MLLW</strong></div>
+    <div class="compare-peak-part"><span class="compare-peak-label">Peak date &amp; time</span><strong class="peak-time-value" id="comparePeakTime">Checking model guidance…</strong><small id="comparePeakUplift">Astronomical-tide comparison pending.</small></div>
+  </div>
   <div class="compare-grid" aria-live="polite">
     <div class="compare-tile"><div class="compare-head"><span>January 10, 2024</span><strong>≈13.80 ft MLLW</strong></div><div class="compare-delta" id="compareJan10">Waiting for model data</div><div class="compare-sub" id="compareJan10Detail">Comparison uses forecast peak total water level at Portland.</div></div>
     <div class="compare-tile"><div class="compare-head"><span>January 13, 2024</span><strong>14.57 ft MLLW</strong></div><div class="compare-delta" id="compareJan13">Waiting for model data</div><div class="compare-sub" id="compareJan13Detail">Comparison uses forecast peak total water level at Portland.</div></div>
@@ -1086,7 +1096,8 @@ function renderSummary(){const {latest,nextPeak,gaugeFresh,source}=currentStatus
 
  const modelCoverage=state.model.filter(p=>p.t>=now()).at(-1);const sameTimeTide=nextPeak?nearest(state.pred,nextPeak.t,18*60000):null;
  const uplift=nextPeak&&sameTimeTide?nextPeak.v-sameTimeTide.v:null;
- $('modelDetail').textContent=nextPeak?'Peak '+dayTime(nextPeak.t)+' ET · model checked '+(state.lastFetched.model?time(state.lastFetched.model)+' ET':'recently')+' · '+(uplift===null?'astronomical comparison unavailable':(uplift>=0?'+':'')+fmtN(uplift)+' ft vs tide-only at that time')+'. '+(modelCoverage&&modelCoverage.t<now()+70*3600000?'Guidance currently ends '+dayTime(modelCoverage.t)+' ET.':''):'Unavailable: no NOAA forecast peak. Astronomical tide is not a substitute.';
+ $('modelPeakTime').textContent=nextPeak?dayTime(nextPeak.t)+' ET':'Peak time unavailable';
+ $('modelDetail').textContent=nextPeak?'Model checked '+(state.lastFetched.model?time(state.lastFetched.model)+' ET':'recently')+' · '+(uplift===null?'astronomical comparison unavailable':(uplift>=0?'+':'')+fmtN(uplift)+' ft vs tide-only at that time')+'. '+(modelCoverage&&modelCoverage.t<now()+70*3600000?'Guidance currently ends '+dayTime(modelCoverage.t)+' ET.':''):'Unavailable: no NOAA forecast peak. Astronomical tide is not a substitute.';
  const statusPanel=$('statusHeading').closest('.status');
  const statusTitle=$('statusHeading'), desc=$('statusDescription'), icon=$('statusIcon');if(!source){applyRiskBand(statusPanel,'unavailable');statusTitle.textContent='Live flood status unavailable';desc.textContent='Neither a recent gauge reading nor near-term model guidance is available. Use the official NOAA and NWS links before making decisions.';icon.textContent='?';return;}
  const useModel=!!nextPeak&&(!gaugeFresh||nextPeak.v>latest.v),decision=useModel?nextPeak:latest;const value=decision.v,which=useModel?'Highest available NOAA model guidance':'Latest Portland observation';let level=value>=14?3:value>=13?2:value>=12?1:0;const context=useModel?'indicated by model guidance':'observed at Portland';statusTitle.textContent=level===3?'Major flood threshold '+context:level===2?'Moderate flood threshold '+context:level===1?'Minor flood threshold '+context:'Below the Portland minor flooding threshold';icon.textContent=level>0?'!':'✓';applyRiskBand(statusPanel,riskBand(value));desc.textContent=which+': '+fmtN(value)+' ft MLLW. '+(level?'Portland threshold conditions are '+(useModel?'suggested by model guidance, not confirmed by observation.':'met in a recent gauge observation.')+' ':'This does not rule out waves, erosion or flooding in Saco. ')+(gaugeFresh&&nextPeak?'Latest observed '+fmtN(latest.v)+' ft; highest model guidance '+fmtN(nextPeak.v)+' ft in the next 72 hours. ':'')+'See NWS alerts for locally expected impacts.';
@@ -1113,13 +1124,19 @@ function renderHistoricalComparison(){
  const highest=peak(future,-Infinity,Infinity),ending=future.at(-1);
  const summary=$('compareSummary'),foot=$('compareFootnote');
  if(!highest){
-   summary.textContent='No current model peak is available. Check NOAA directly; a tide-only height cannot be compared as a storm forecast.';
+   summary.textContent='No current NOAA model peak is available.';
+   $('comparePeakValue').textContent='Unavailable';
+   $('comparePeakTime').textContent='Peak time unavailable';
+   $('comparePeakUplift').textContent='A tide-only height is not being substituted for storm guidance.';
    for(const id of ['Jan10','Jan13']){$('compare'+id).textContent='Forecast unavailable';$('compare'+id).className='compare-delta';$('compare'+id+'Detail').textContent='Historical observed peak remains a reference, not a forecast.';}
    foot.textContent='These are historical Portland gauge observations; no current NOAA model forecast is being substituted or estimated.';return;
  }
  const predicted=nearest(state.pred,highest.t,18*60000);
  const uplift=predicted?highest.v-predicted.v:null;
- summary.textContent='NOAA model peak '+fmtN(highest.v)+' ft MLLW at '+dayTime(highest.t)+' ET · '+(uplift===null?'tide comparison unavailable':(uplift>=0?'+':'')+fmtN(uplift)+' ft versus astronomical tide at that time')+'.';
+ summary.textContent='Current NOAA model guidance for Portland station 8418150.';
+ $('comparePeakValue').textContent=fmtN(highest.v)+' ft MLLW';
+ $('comparePeakTime').textContent=dayTime(highest.t)+' ET';
+ $('comparePeakUplift').textContent=uplift===null?'Astronomical-tide comparison unavailable.':(uplift>=0?'+':'')+fmtN(uplift)+' ft versus astronomical tide at that time.';
  for(const mark of JAN2024){const diff=highest.v-mark.value,el=$('compare'+mark.date);el.className='compare-delta '+(Math.abs(diff)<.005?'same':diff<0?'below':'above');el.textContent=Math.abs(diff)<.005?'At the historical peak':fmtN(Math.abs(diff))+' ft '+(diff<0?'below':'above')+' the 2024 peak';$('compare'+mark.date+'Detail').textContent='Current modeled peak '+fmtN(highest.v)+' ft vs. observed '+fmtN(mark.value)+' ft (MLLW).';}
  foot.textContent='Peak uses available model points through '+dayTime(ending.t)+' ET'+(ending.t<now()+70*3600000?' (partial 72-hour coverage)':'')+'. Last retrieved '+(state.lastFetched.model?dayTime(state.lastFetched.model)+' ET':'time unavailable')+'; retrieval time is not model issuance time. The 2024 levels are observed Portland peaks, not damage thresholds; waves, runup and local conditions in Saco can produce different impacts.';
 }

@@ -31,6 +31,8 @@ jobs:
 
       - name: Run EastCast unit tests
         run: |
+          node --check eastcast/core.mjs
+          node --check eastcast/app.mjs
           node --test tests/eastcast_unit.mjs
           python3 -m unittest tests/test_fetch_eastcast.py
       - name: Assemble site
@@ -51,7 +53,7 @@ jobs:
           test -f dist/eastcast/core.mjs
           test -f dist/eastcast/style.css
           test -s dist/eastcast/data/snapshot.json
-          python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d"
+          python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d; assert len(d.get('coastal_pulse',[])) >= 4; assert d.get('sources',{}).get('coastal_pulse',{}).get('ok')"
 
       - name: Browser map smoke test before publishing
         if: github.event_name == 'push'

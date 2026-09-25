@@ -41,8 +41,12 @@ def main():
         page.locator('#radar-section').scroll_into_view_if_needed()
         page.wait_for_timeout(1200)
         radar_ok=page.eval_on_selector("#radarGif","el => el.complete && el.naturalWidth > 0")
-        fallback_visible=page.locator("#radarFallback").is_visible()
+        fallback_visible=page.locator("#radarOpen").is_visible()
         assert radar_ok or fallback_visible
+        if radar_ok:
+            gif_box=page.locator("#radarGif").bounding_box()
+            wrap_box=page.locator(".gif-wrap").bounding_box()
+            assert abs(gif_box["width"]-wrap_box["width"]) <= 2, f"radar gif does not fill container: {gif_box['width']} vs {wrap_box['width']}"
 
         overflow=page.evaluate("document.documentElement.scrollWidth - window.innerWidth")
         assert overflow <= 3, f"mobile horizontal overflow: {overflow}px"

@@ -84,6 +84,22 @@ def assert_common(page):
     assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
     assert "NOAA OFS total-water peak" in section.inner_text()
 
+    reference=page.locator(".threshold-reference")
+    assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"
+    assert reference.locator(".threshold").count()==3
+    rail_colors=reference.locator(".rail").evaluate_all("els => els.map(el => getComputedStyle(el).backgroundColor)")
+    assert rail_colors==["rgb(255, 255, 0)","rgb(255, 165, 0)","rgb(255, 0, 0)"],rail_colors
+    history=reference.locator(".history-reference")
+    assert not history.evaluate("el => el.open")
+    assert "January 2024 historical reference" in reference.inner_text()
+    collapsed_height=reference.bounding_box()["height"]
+    assert collapsed_height<360,f"threshold reference should stay compact when history is collapsed: {collapsed_height}px"
+    history.locator("summary").click()
+    assert history.evaluate("el => el.open")
+    assert reference.locator(".history").count()==2
+    history.locator("summary").click()
+    assert not history.evaluate("el => el.open")
+
     details=page.locator(".full-calendar")
     assert not details.evaluate("el => el.open")
     assert page.locator("#highTideCalendar .daytile").count()==30
@@ -105,6 +121,7 @@ def main():
         desktop_overflow=desktop.evaluate("document.documentElement.scrollWidth-window.innerWidth")
         assert desktop_overflow<=3,f"desktop horizontal overflow: {desktop_overflow}px"
         section.screenshot(path="tide-outlook-smoke-desktop.png")
+        desktop.locator(".threshold-reference").screenshot(path="tide-outlook-smoke-threshold-desktop.png")
         desktop.close()
 
         mobile=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=2)
@@ -117,6 +134,7 @@ def main():
         assert page_overflow<=3,f"mobile page overflow: {page_overflow}px"
         mobile.locator(".full-calendar summary").click()  # close full calendar for compact screenshot
         section.screenshot(path="tide-outlook-smoke-mobile.png")
+        mobile.locator(".threshold-reference").screenshot(path="tide-outlook-smoke-threshold-mobile.png")
         mobile.close()
 
         browser.close()

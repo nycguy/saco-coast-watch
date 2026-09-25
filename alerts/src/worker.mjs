@@ -16,7 +16,7 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"email-release",pilotBuild:"email-release-v1",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled:false,cronRequiresSetup:true});
+  return json({service:"saco-coastal-alerts",phase:"email-release",pilotBuild:"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled:false,cronRequiresSetup:true});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -418,6 +418,140 @@ function alertLegal(e,privacy){
  "<p>We store email, selected thresholds, confirmation and alert state in Cloudflare D1. Short-lived hashed IP addresses reduce abuse. Resend sends email messages. Unsubscribing stops emails but does not immediately delete records; contact support to request deletion. We do not collect phone numbers or sell subscription information.</p>":
  "<p>Emails are optional, best-effort custom threshold notices based on the Portland gauge, forecast model, offshore buoy and airport. These are not property-specific flooding forecasts or official emergency warnings. Consult the National Weather Service and local authorities for safety decisions. You may unsubscribe using links in messages.</p>");
 }
+
+function managementForm(e){
+ if(!liveAlerts(e))return publicPage(e,"Alert management paused","<p>Contact support for assistance.</p>",503);
+ return publicPage(e,"Manage your email alerts",
+  '<p>We will send a one-time management link to the address on your subscription.</p><form method="post" action="/alerts/manage/request">'+
+  '<label>Email <input type="email" name="email" required maxlength="254"></label>'+
+  '<div class="cf-turnstile" data-sitekey="'+escapeHtml(e.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div>'+
+  '<button type="submit">Send management link</button></form>');
+}
+async function managementRequest(req,e){
+ if(!liveAlerts(e))return publicPage(e,"Management paused","<p>Contact support.</p>",503);
+ const fd=await req.formData(),email=String(fd.get("email")||"").trim().toLowerCase();
+ if(!validAddress(email)||!await validateTurnstile(req,e,fd.get("cf-turnstile-response")))
+  return publicPage(e,"Invalid request","<p>Enter a valid email and complete human verification.</p>",400);
+ if(!await rateCheck(e,"manage-email:"+email))
+  return publicPage(e,"Please wait","<p>Request another link in ten minutes.</p>",429);
+ const sub=await e.DB.prepare("SELECT id,email FROM subscribers WHERE email=? AND email_confirmed=1 AND unsubscribed=0").bind(email).first();
+ if(sub){
+  const raw=await issueToken(e,email,"alerts-manage",{},1800,sub.id);
+  try{await sendEmail(e,email,"Manage your Saco Coast Watch email alerts",
+   "One-time management link (expires in 30 minutes):\n"+siteUrl(e)+"/alerts/manage/edit?token="+raw+
+   "\n\nIgnore this if you did not request it. Support: "+e.SUPPORT_EMAIL);}
+  catch(err){console.error("Management link send failed",String(err));return publicPage(e,"Email unavailable","<p>Please try again later.</p>",503);}
+ }
+ return publicPage(e,"Check your inbox","<p>If the address has an active subscription, a management link was sent.</p>");
+}
+async function managementEdit(req,e){
+ if(!liveAlerts(e))return publicPage(e,"Management paused","<p>Contact support.</p>",503);
+ const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String((await req.formData()).get("token")||"");
+ const t=await lookToken(e,raw,"alerts-manage");
+ if(!t)return publicPage(e,"Link expired","<p>Request another management link.</p>",400);
+ const sub=await e.DB.prepare("SELECT * FROM subscribers WHERE id=? AND email_confirmed=1 AND unsubscribed=0").bind(t.subscriber_id).first();
+ if(!sub)return publicPage(e,"Subscription not found","<p>Contact support.</p>",404);
+ let pref;try{pref=JSON.parse(sub.prefs_json);}catch(_){return publicPage(e,"Preferences unavailable","<p>Contact support.</p>",503);}
+ if(req.method==="GET"){
+  return publicPage(e,"Update your thresholds",
+   '<p>Subscribed email: '+escapeHtml(sub.email)+'</p><form method="post" action="/alerts/manage/edit">'+
+   '<input type="hidden" name="token" value="'+escapeHtml(raw)+'">'+
+   alertFields(pref.metrics)+'<button type="submit">Save thresholds</button></form>'+
+   '<p><a href="'+escapeHtml(await unsubscribeLink(e,sub))+'">Stop all alerts</a></p>');
+ }
+ const fd=await req.formData();let next;
+ try{next=thresholds(fd);}catch(err){return publicPage(e,"Invalid thresholds","<p>"+escapeHtml(err.message)+"</p>",400);}
+ if(!await takePublicToken(e,raw))return publicPage(e,"Link already used","<p>Request another management link.</p>",409);
+ await e.DB.prepare("UPDATE subscribers SET prefs_json=?,updated_at=? WHERE id=?")
+  .bind(JSON.stringify({...pref,metrics:next,channels:{email:true,push:false}}),stamp(),sub.id).run();
+ await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(sub.id).run();
+ return publicPage(e,"Thresholds saved","<p>Your new preferences are active. This management link can no longer be used.</p>");
+}
+async function liveEmailChecks(e){
+ if(!liveAlerts(e))return;
+ const t=stamp(),leaseKey=await hmac(e.TOKEN_SECRET,"scheduled-email-lease");
+ const lease=await e.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts WHERE request_limits.until_ts<?").bind(leaseKey,t+240,t).run();
+ if(lease.meta?.changes!==1)return;
+ let sent=0,errors=0;
+ try{
+  const [water,forecast,buoy,temp]=await Promise.allSettled([sourceObservedWater(),sourceForecastWater(),sourceBuoy(),sourceAirTemp()]);
+  const measurements={
+   waterObserved:water.status==="fulfilled"?water.value:null,
+   waterForecast:forecast.status==="fulfilled"?forecast.value:null,
+   wind:buoy.status==="fulfilled"?buoy.value.find(x=>x.metric==="wind"):null,
+   gust:buoy.status==="fulfilled"?buoy.value.find(x=>x.metric==="gust"):null,
+   tempHigh:temp.status==="fulfilled"?temp.value:null,
+   tempLow:temp.status==="fulfilled"?temp.value:null
+  };
+  for(const [metric,result] of Object.entries({water,forecast,buoy,temp}))
+   if(result.status==="rejected")console.warn("Source unavailable for alerts",metric,String(result.reason));
+  const startUtc=Math.floor(t/86400)*86400;
+  const quota=await e.DB.prepare("SELECT COUNT(*) AS total FROM tokens WHERE purpose='alerts-delivery-quota' AND used_at>=?").bind(startUtc).first();
+  let daily=Number(quota?.total||0);
+  // Bounded daily alert volume helps stay inside a free email allowance; confirmation
+  // and management emails also count toward provider limits and cannot be guaranteed.
+  const pageSize=75,maxScanned=1000;
+  let scanned=0,offset=0;
+  while(sent<8&&daily<60&&scanned<maxScanned){
+   const batch=await e.DB.prepare("SELECT * FROM subscribers WHERE email_confirmed=1 AND unsubscribed=0 ORDER BY id LIMIT ? OFFSET ?").bind(pageSize,offset).all();
+   const subs=batch.results||[];
+   if(!subs.length)break;
+   scanned+=subs.length;offset+=subs.length;
+   for(const sub of subs){
+    if(sent>=8||daily>=60)break;
+    let preferences;
+    try{preferences=JSON.parse(sub.prefs_json);}catch(_){continue;}
+    // Owner email pilot verified an address, but never opted in to real alerts.
+    if(!preferences.emailOptInAt||preferences.channels?.email!==true)continue;
+    for(const [metric,label,unit] of ALERTS){
+     if(sent>=8||daily>=60)break;
+     const requested=preferences.metrics?.[metric],m=measurements[metric];
+     if(!requested?.enabled||!m||!Number.isFinite(m.value))continue;
+     const old=await e.DB.prepare("SELECT active,last_sent FROM alert_state WHERE subscriber_id=? AND channel='email' AND metric=?").bind(sub.id,metric).first();
+     const previous=old?{active:old.active,lastSent:old.last_sent}:null;
+     const decision=decideAlert(previous,m.value,requested.threshold,metric,stamp());
+     if(!decision.send){
+      if(!old||old.active!==decision.active){
+       await e.DB.prepare("INSERT INTO alert_state(subscriber_id,channel,metric,active,last_sent) VALUES(?,'email',?,?,?) ON CONFLICT(subscriber_id,channel,metric) DO UPDATE SET active=excluded.active,last_sent=excluded.last_sent").bind(sub.id,metric,decision.active,decision.lastSent).run();
+      }
+      continue;
+     }
+     const body=[
+      "Your Saco Coast Watch custom threshold was reached.",
+      "",
+      "Condition: "+label,
+      "Reading/model value: "+m.value+" "+unit,
+      "Your selected threshold: "+requested.threshold+" "+unit,
+      "Reading or model peak time (UTC): "+m.time,
+      "Source: "+m.source,
+      metric==="waterForecast"?"This is MODEL GUIDANCE, not an observation.":"This is a recent observation.",
+      "",
+      "This is NOT an official NWS warning or a forecast of flood depth at your property. Follow NWS and local emergency guidance for safety decisions.",
+      "",
+      "Manage preferences: "+siteUrl(e)+"/alerts/manage",
+      "Stop all alert emails: "+await unsubscribeLink(e,sub),
+      "Support: "+e.SUPPORT_EMAIL
+     ].join("\n");
+     // Reserve quota first so an unexpected retry will not bypass daily limits.
+     await e.DB.prepare("INSERT INTO tokens(hash,subscriber_id,email,purpose,payload_json,expires_at,used_at) VALUES(?,?,?,?,?,?,?)").bind(
+       await digest(rawToken()),sub.id,null,"alerts-delivery-quota",JSON.stringify({metric}),t+2*86400,stamp()).run();
+     daily++;
+     try{
+      await sendEmail(e,sub.email,"Saco Coast Watch threshold reached: "+label,body);
+      sent++;
+      await e.DB.prepare("INSERT INTO alert_state(subscriber_id,channel,metric,active,last_sent) VALUES(?,'email',?,1,?) ON CONFLICT(subscriber_id,channel,metric) DO UPDATE SET active=1,last_sent=excluded.last_sent").bind(sub.id,metric,stamp()).run();
+     }catch(err){errors++;console.error("Email delivery failed for",metric,String(err));}
+    }
+   }
+   if(subs.length<pageSize)break;
+  }
+  await e.DB.prepare("DELETE FROM tokens WHERE expires_at<?").bind(stamp()-86400).run();
+  await e.DB.prepare("DELETE FROM request_limits WHERE until_ts<?").bind(stamp()-86400).run();
+  console.log("Coastal email check",JSON.stringify({sent,errors,scanned,daily}));
+ }finally{
+  await e.DB.prepare("UPDATE request_limits SET until_ts=? WHERE ip_hash=? AND until_ts=?").bind(stamp()-1,leaseKey,t+240).run();
+ }
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
@@ -428,6 +562,9 @@ export default{
       if(path==="/alerts/subscribe"&&req.method==="POST")return subscribeEmail(req,env);
       if(path==="/alerts/confirm"&&["GET","POST"].includes(req.method))return confirmEmail(req,env);
       if(path==="/alerts/unsubscribe"&&["GET","POST"].includes(req.method))return unsubscribeEmail(req,env);
+      if(path==="/alerts/manage"&&req.method==="GET")return managementForm(env);
+      if(path==="/alerts/manage/request"&&req.method==="POST")return managementRequest(req,env);
+      if(path==="/alerts/manage/edit"&&["GET","POST"].includes(req.method))return managementEdit(req,env);
       if(path==="/alerts/privacy"&&req.method==="GET")return alertLegal(env,true);
       if(path==="/alerts/terms"&&req.method==="GET")return alertLegal(env,false);
       if(path==="/pilot"&&req.method==="GET")return landing(req,env);
@@ -441,5 +578,5 @@ export default{
       return json({error:"Not found; public signup and notifications are disabled."},404);
     }catch(e){console.error("Pilot Worker error",String(e));return json({error:"Service temporarily unavailable"},503);}
   },
-  async scheduled(){/* Not enabled. No coastal alert notifications are sent. */}
+  async scheduled(_event,env,ctx){ctx.waitUntil(liveEmailChecks(env));}
 };

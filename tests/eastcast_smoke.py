@@ -21,6 +21,10 @@ def main():
         assert page.locator("#impactTimeline .timeline-card").count()==5
         assert page.locator("#stateStory .state-row").count()>=10
         assert page.locator("#outlookCards .outlook-card").count()>=4
+        assert page.locator("#coastalPulse .coastal-card").count()>=4
+        coastal_text=page.locator("#coastal-section").inner_text()
+        assert "Departure" in coastal_text
+        assert "not a storm-surge estimate" in coastal_text
 
         page.wait_for_function("document.querySelector('#eastMap .leaflet-pane') !== null",timeout=20000)
         assert page.locator("#eastMap .leaflet-pane").count()>=1

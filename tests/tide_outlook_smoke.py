@@ -84,6 +84,18 @@ def assert_common(page):
     assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
     assert "NOAA OFS total-water peak" in section.inner_text()
 
+    # Water-level outlook intentionally omits low-tide troughs and uses untinted semantic flood colors.
+    chart_period=page.locator("#chartPeriod").inner_text()
+    assert "values below 6 ft hidden" in chart_period,chart_period
+    y_labels=page.eval_on_selector_all("#chart .y-axis-label","els => els.map(el => Number(el.textContent))")
+    assert y_labels and min(y_labels)>=6,y_labels
+    assert 0 not in y_labels and 2 not in y_labels and 4 not in y_labels,y_labels
+    assert page.locator("#chart .low-tide-note").count()==1
+    zone_fills=page.eval_on_selector_all("#chart .flood-zone","els => els.map(el => el.getAttribute('fill'))")
+    assert zone_fills==["#FFFF00","#FFA500","#FF0000"],zone_fills
+    zone_names=page.eval_on_selector_all("#chart .flood-zone","els => els.map(el => el.getAttribute('data-zone'))")
+    assert zone_names==["minor","moderate","major"],zone_names
+
     reference=page.locator(".threshold-reference")
     assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"
     assert reference.locator(".threshold").count()==3

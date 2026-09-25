@@ -1263,17 +1263,19 @@ const shortPoints=[...state.obs,...state.pred,...(state.showModel?state.model:[]
 const longPoints=[...dailyTides,...(state.showModel?dailyModels:[])];
 const visiblePoints=longMode?longPoints:shortPoints;
 const dataMax=Math.max(14,...visiblePoints.map(p=>p.v));
-const lo=0,hi=Math.max(15,Math.ceil((dataMax+.25)*2)/2),x=t=>margin.left+(t-start)/(end-start)*cw,y=v=>margin.top+(hi-v)/(hi-lo)*ch;
+const lo=6,hi=Math.max(15,Math.ceil((dataMax+.25)*2)/2),x=t=>margin.left+(t-start)/(end-start)*cw,y=v=>margin.top+(hi-v)/(hi-lo)*ch;
 
+if(state.showModel&&futureModel.length)areaBetween(futureModel);
 if(state.showFlood){
  const zones=[
-  {from:12,to:13,fill:'#FFFF0017',text:'#FFFF00',label:'MINOR 12–13 FT'},
-  {from:13,to:14,fill:'#FFA5001C',text:'#FFA500',label:'MODERATE 13–14 FT'},
-  {from:14,to:hi,fill:'#FF000020',text:'#FF0000',label:'MAJOR 14+ FT'}
+  {name:'minor',from:12,to:13,fill:'#FFFF00',text:'#071824',label:'MINOR 12–13 FT'},
+  {name:'moderate',from:13,to:14,fill:'#FFA500',text:'#071824',label:'MODERATE 13–14 FT'},
+  {name:'major',from:14,to:hi,fill:'#FF0000',text:'#FFFFFF',label:'MAJOR 14+ FT'}
  ];
- for(const z of zones){if(hi<=z.from)continue;const top=Math.min(hi,z.to),yy=y(top),hh=Math.max(0,y(z.from)-yy);el('rect',{x:margin.left,y:yy,width:cw,height:hh,fill:z.fill,'clip-path':'url(#plotClip)'});if(hh>16)el('text',{x:W-margin.right-6,y:yy+Math.min(hh-4,14),'text-anchor':'end',fill:z.text,class:'zone-label'},z.label);}
+ for(const z of zones){if(hi<=z.from)continue;const top=Math.min(hi,z.to),yy=y(top),hh=Math.max(0,y(z.from)-yy);el('rect',{x:margin.left,y:yy,width:cw,height:hh,fill:z.fill,class:'flood-zone '+z.name,'data-zone':z.name,'clip-path':'url(#plotClip)'});if(hh>16)el('text',{x:W-margin.right-6,y:yy+Math.min(hh-4,14),'text-anchor':'end',fill:z.text,class:'zone-label'},z.label);}
 }
-for(let n=0;n<=hi;n+=2){el('line',{x1:margin.left,x2:W-margin.right,y1:y(n),y2:y(n),class:'gridline'});el('text',{x:margin.left-11,y:y(n)+4,'text-anchor':'end'},String(n));}
+for(let n=Math.ceil(lo/2)*2;n<=hi;n+=2){el('line',{x1:margin.left,x2:W-margin.right,y1:y(n),y2:y(n),class:'gridline'});el('text',{x:margin.left-11,y:y(n)+4,'text-anchor':'end',class:'y-axis-label'},String(n));}
+el('text',{x:margin.left+4,y:H-margin.bottom-8,class:'axis-note low-tide-note',fill:'#8fb1bf'},'HIGH-TIDE FOCUS · BELOW 6 FT HIDDEN');
 if(longMode){
  const dayStep=state.days<=7?1:state.days<=14?2:5,step=dayStep*86400000;
  for(let tick=current;tick<=end;tick+=step){const tx=x(tick);el('line',{x1:tx,x2:tx,y1:margin.top,y2:H-margin.bottom,class:'gridline'});el('text',{x:tx,y:H-14,'text-anchor':tick===current?'start':'middle'},fmt(tick,{month:'short',day:'numeric'}));}
@@ -1287,7 +1289,7 @@ if(longMode){
 const modelEnd=futureModel.length?futureModel.at(-1).t:current;
 if(!longMode&&end>modelEnd+20*60000){const sx=x(Math.max(current,modelEnd));el('rect',{x:sx,y:margin.top,width:Math.max(0,W-margin.right-sx),height:ch,fill:'#d6b4770b','clip-path':'url(#plotClip)'});if(W-margin.right-sx>135)el('text',{x:sx+8,y:H-margin.bottom-9,fill:'#d9bd89',class:'axis-note'},'TIDE ONLY · MODEL ENDS');}
 
-function path(series,cls,gapMinutes=45){let d='',last=null,count=0;for(const p of series){if(p.t<start||p.t>end)continue;d+=(last&&p.t-last.t<=gapMinutes*60000?'L':'M')+x(p.t).toFixed(2)+','+y(p.v).toFixed(2)+' ';last=p;count++;}if(count>=2)el('path',{d,fill:'none',class:cls,'clip-path':'url(#plotClip)','stroke-linecap':'round','stroke-linejoin':'round'});}
+function path(series,cls,gapMinutes=45){let d='',last=null,count=0;for(const p of series){if(p.t<start||p.t>end)continue;if(p.v<lo){last=null;continue;}d+=(last&&p.t-last.t<=gapMinutes*60000?'L':'M')+x(p.t).toFixed(2)+','+y(p.v).toFixed(2)+' ';last=p;count++;}if(count>=2)el('path',{d,fill:'none',class:cls,'clip-path':'url(#plotClip)','stroke-linecap':'round','stroke-linejoin':'round'});}
 function areaBetween(modelSeries){
  const pairs=modelSeries.filter(p=>p.t>=Math.max(current,start)&&p.t<=end).map(m=>({m,p:nearest(state.pred,m.t,25*60000)})).filter(q=>q.p);
  if(pairs.length<2)return;
@@ -1302,11 +1304,10 @@ function lastVisible(series){return series.filter(p=>p.t>=start&&p.t<=end).at(-1
 if(longMode){
  path(dailyTides,'daily-pred',36*60);
  for(const p of dailyTides)dot(p,'tide-dot',3.8);
- if(state.showModel&&dailyModels.length){areaBetween(futureModel);path(dailyModels,'daily-ofs',36*60);for(const p of dailyModels)dot(p,'peak-dot',4.8);}
+ if(state.showModel&&dailyModels.length){path(dailyModels,'daily-ofs',36*60);for(const p of dailyModels)dot(p,'peak-dot',4.8);}
  const tideLast=lastVisible(dailyTides);if(tideLast)labelAt(tideLast,'Daily tide peak','#f6cf6b',-9,'end');
  const modelLast=state.showModel?lastVisible(dailyModels):null;if(modelLast)labelAt(modelLast,'NOAA forecast','#d9a3ff',15,'end');
 }else{
- if(state.showModel)areaBetween(futureModel);
  path(state.pred,'pred',35);if(state.showModel)path(state.model,'ofs',150);path(state.obs,'obs');
  const obsLast=lastVisible(state.obs);if(obsLast){dot(obsLast,'obs-marker',5.2);labelAt(obsLast,'Observed','#63eee0',-10,'start');}
  const predLast=lastVisible(state.pred);if(predLast)labelAt(predLast,'Astronomical tide','#f6cf6b',16,'end');
@@ -1336,8 +1337,8 @@ overlay.addEventListener('pointermove',event=>{
  tip.hidden=false;const w=box.width,left=px/W*w;tip.style.left=Math.max(0,Math.min(w-228,left+12))+'px';tip.style.top=event.clientY-box.top>box.height/2?'9px':Math.max(0,box.height-110)+'px';
 });
 overlay.addEventListener('pointerleave',()=>tip.hidden=true);
-$('chart').setAttribute('aria-label',longMode?'Daily high-tide peaks in feet MLLW for the selected outlook period, with available NOAA model peaks and Portland flood zones':'Observed, astronomical tide, and NOAA total-water guidance in feet MLLW, with Portland flood zones');
-$('chartPeriod').textContent=longMode?'Next '+state.days+' days · daily high-tide peaks · NOAA model overlay where available':'Past 24h · next '+(state.days===1?'24h':'72h')+' · purple shading = model difference from tide-only';
+$('chart').setAttribute('aria-label',longMode?'Daily high-tide peaks in feet MLLW for the selected outlook period, with available NOAA model peaks and Portland flood zones':'High-tide-focused observed, astronomical tide, and NOAA total-water guidance in feet MLLW. Values below 6 feet are intentionally hidden; Portland flood zones are shown in yellow, orange, and red.');
+$('chartPeriod').textContent=longMode?'Next '+state.days+' days · daily high-tide peaks · NOAA model overlay where available · values below 6 ft hidden':'Past 24h · next '+(state.days===1?'24h':'72h')+' · high-tide focus · values below 6 ft hidden';
 }
 function updateNotice(){const missing=[];if(state.errors.observed)missing.push('live gauge');if(state.errors.predicted)missing.push('astronomical tide');if(state.errors.model)missing.push('model forecast');if(state.errors.alerts)missing.push('NWS alerts');if(state.errors.weatherObservation)missing.push('nearby measured weather');if(state.errors.weatherForecast)missing.push('coastal-point weather forecast');const recent=state.obs.at(-1);const stale=recent&&now()-recent.t>45*60000;const node=$('notice');if(!missing.length&&!stale){node.classList.add('hidden');return;}node.classList.remove('hidden');const lines=[];if(missing.length)lines.push('Some live feeds are unavailable: '+missing.join(', ')+'. A dash means no data, not zero risk.');if(stale)lines.push('The most recent gauge reading is '+relative(recent.t)+'; treat it as stale.');lines.push('Open the official NOAA/NWS links below for current conditions.');$('noticeText').textContent=lines.join(' ');}
 function updateClock(){$('currentClock').textContent=fmt(now(),{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});const o=state.obs.at(-1);const healthy=!!o&&now()-o.t<45*60000;$('liveDot').className='dot '+(healthy?'good':state.loading?'warn':'bad');$('liveText').textContent=state.loading?'Refreshing feeds':healthy?'Gauge current':o?'Gauge delayed':'Live data unavailable';if(state.lastSuccess)$('syncTime').textContent='Last successful data refresh '+relative(state.lastSuccess);}

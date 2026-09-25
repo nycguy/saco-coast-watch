@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic browser regression for the 14-day astronomical high-tide outlook."""
+"""Deterministic browser regression for the 14-day tide + NOAA OFS outlook."""
 from datetime import datetime, timedelta, timezone
 import json
 from playwright.sync_api import sync_playwright
@@ -62,6 +62,10 @@ def assert_common(page):
     assert page.locator("#tideOutlookMinorGap").inner_text().strip()=="1.29 ft below"
     assert page.locator("#tideTrend .tide-point").count()==14
     assert page.locator("#tideTrend .tide-value").count()==14
+    ofs_points=page.locator("#tideTrend .ofs-trend-point").count()
+    assert ofs_points>=3,f"expected NOAA OFS daily peaks for the available ~72h model window, got {ofs_points}"
+    assert page.locator("#tideTrend .ofs-trend-value").count()==ofs_points
+    assert page.locator("#tideTrend .ofs-trend-line").count()==1
     assert page.locator("#tideTrend .zone-label").count()==3
     labels=page.eval_on_selector_all("#tideTrend .zone-label","els => els.map(el => el.textContent)")
     assert labels==["MINOR 12–13 FT","MODERATE 13–14 FT","MAJOR 14+ FT"],labels
@@ -70,8 +74,12 @@ def assert_common(page):
     assert "10.71 ft MLLW" in initial and "high at" in initial,initial
     page.locator('#tideTrend .tide-hit[data-index="0"]').click()
     selected=page.locator("#tideTrendSelection").inner_text()
-    assert "9.84 ft MLLW" in selected and "high at" in selected,selected
+    assert "astronomical high 9.84 ft MLLW" in selected,selected
+    assert "NOAA OFS forecast peak" in selected,selected
+    assert "vs astronomical tide at that time" in selected,selected
     assert page.locator("#tideTrend .tide-point.selected").count()==1
+    assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
+    assert "NOAA OFS total-water peak" in section.inner_text()
 
     details=page.locator(".full-calendar")
     assert not details.evaluate("el => el.open")
@@ -112,7 +120,7 @@ def main():
 
     if errors:
         raise AssertionError("\n".join(errors))
-    print("PASS: 14-day tide trend, semantic bands, summaries, tap selection, 30-day expansion, desktop + mobile containment")
+    print("PASS: 14-day tide + NOAA OFS daily peaks, semantic bands, tap detail, 30-day expansion, desktop + mobile containment")
 
 if __name__=="__main__":
     main()

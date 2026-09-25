@@ -9,5 +9,9 @@ database_name = "saco-coastal-alerts"
 database_id = "459e72a7-98b1-4dd5-8bfd-8b406468e6bf"
 migrations_dir = "migrations"
 
-# Set runtime variables and secrets in Cloudflare's Worker Settings.
-# This staging Worker has no cron; scheduled alerts will be added only after testing.
+[triggers]
+crons = ["*/10 * * * *"]
+
+# Set LIVE_ALERTS=true and all runtime variables and secrets in Cloudflare Worker Settings.
+# Dashboard-based deployment also requires adding this Cron Trigger in Cloudflare UI.
+# This release sends EMAIL ONLY. Web Push remains disabled.

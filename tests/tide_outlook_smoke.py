@@ -30,8 +30,11 @@ def install_noaa_fixture(page):
     model=[]
     for h in range(0,73,3):
         t=now+timedelta(hours=h)
-        # Stable synthetic total-water guidance; not used for tide assertions.
+        # Stable synthetic total-water guidance.
         model.append({"t":stamp(t),"v":f"{9.2+1.4*((h%12)/12):.2f}"})
+        # Add a tide sample at the same timestamp so the chart can verify the
+        # model-vs-astronomical difference exactly as the real 6-minute feed does.
+        tide.append({"t":stamp(t),"v":f"{9.00+0.20*((h%12)/12):.2f}"})
 
     def handler(route):
         from urllib.parse import urlparse, parse_qs

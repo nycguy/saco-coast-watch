@@ -28,6 +28,11 @@ jobs:
         run: |
           node --check alerts/src/worker.mjs
           node --test alerts/test/*.test.mjs
+
+      - name: Run EastCast unit tests
+        run: |
+          node --test tests/eastcast_unit.mjs
+          python3 -m unittest tests/test_fetch_eastcast.py
       - name: Assemble site
         run: |
           mkdir -p dist/data
@@ -35,11 +40,18 @@ jobs:
           cp data/wind.json dist/data/wind.json
           cp data/coastal-alerts.json dist/data/coastal-alerts.json
           cp -R eastcast dist/eastcast
+          mkdir -p dist/eastcast/data
+          python3 scripts/fetch_eastcast.py --output dist/eastcast/data/snapshot.json
       - name: Verify EastCast is included in the Pages artifact
         run: |
           test -f dist/eastcast/index.html
           test -f dist/eastcast/favicon.svg
           test -f dist/eastcast/manifest.webmanifest
+          test -f dist/eastcast/app.mjs
+          test -f dist/eastcast/core.mjs
+          test -f dist/eastcast/style.css
+          test -s dist/eastcast/data/snapshot.json
+          python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d"
 
       - name: Browser map smoke test before publishing
         if: github.event_name == 'push'
@@ -49,12 +61,15 @@ jobs:
           /tmp/saco-map-venv/bin/python -m playwright install chromium
           python3 -m http.server 8765 --directory dist > /tmp/saco-map-http.log 2>&1 &
           /tmp/saco-map-venv/bin/python tests/map_smoke.py
+          /tmp/saco-map-venv/bin/python tests/eastcast_smoke.py
       - name: Save map test screenshot
         if: always() && github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: saco-map-test-image
-          path: map-smoke*.png
+          name: dashboard-browser-test-images
+          path: |
+            map-smoke*.png
+            eastcast-smoke-*.png
           if-no-files-found: ignore
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

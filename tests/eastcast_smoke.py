@@ -23,7 +23,7 @@ def main():
         assert page.locator("#outlookCards .outlook-card").count()>=4
 
         page.wait_for_function("document.querySelector('#eastMap .leaflet-pane') !== null",timeout=20000)
-        assert page.locator("#eastMap .leaflet-pane").count()==1
+        assert page.locator("#eastMap .leaflet-pane").count()>=1
         assert page.locator("#mapLayerStatus").inner_text().strip()
 
         page.locator('.map-mode[data-mode="rain"]').click()

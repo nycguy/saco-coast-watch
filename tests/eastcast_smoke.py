@@ -56,6 +56,23 @@ def main():
         desktop.wait_for_function("document.querySelector('#metricAlerts').textContent.trim() !== '…'",timeout=25000)
         desktop.wait_for_function("document.querySelector('#eastMap .leaflet-pane') !== null",timeout=20000)
         assert desktop.locator(".now-grid").bounding_box()["y"] < desktop.locator("#map-section").bounding_box()["y"]
+
+        # Desktop alignment regression checks.
+        now_box=desktop.locator(".now-grid").bounding_box()
+        metrics_box=desktop.locator(".metrics").bounding_box()
+        fav_box=desktop.locator("#favoritesStrip").bounding_box()
+        map_box=desktop.locator("#map-section").bounding_box()
+        for box in (metrics_box,fav_box,map_box):
+            assert abs(box["x"]-now_box["x"]) <= 2, f"desktop left-edge drift: {box['x']} vs {now_box['x']}"
+            assert abs(box["width"]-now_box["width"]) <= 2, f"desktop width drift: {box['width']} vs {now_box['width']}"
+        watch_box=desktop.locator(".watch-panel").bounding_box()
+        now_card_box=desktop.locator(".now-card").bounding_box()
+        assert watch_box["height"] < now_card_box["height"], "watch panel should not stretch to summary-card height"
+        h2_size=float(desktop.locator("#map-section .section-head h2").evaluate("el => parseFloat(getComputedStyle(el).fontSize)"))
+        assert h2_size <= 40.5, f"desktop section heading too large: {h2_size}px"
+        desktop_overflow=desktop.evaluate("document.documentElement.scrollWidth - window.innerWidth")
+        assert desktop_overflow <= 3, f"desktop horizontal overflow: {desktop_overflow}px"
+
         desktop.screenshot(path="eastcast-smoke-desktop.png",full_page=False)
         desktop.close()
 

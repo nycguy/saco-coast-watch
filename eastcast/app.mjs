@@ -187,7 +187,7 @@ function renderCoastalPulse(){
       <div class="coastal-foot"><span>Departure = observed water level minus NOAA astronomical tide prediction, not a storm-surge estimate.</span><span>Open local forecast ›</span></div>
     </button>`;
   }).join('');
-  $('#coastalPulse .coastal-card').forEach(b=>b.addEventListener('click',()=>focusLocation(+b.dataset.lat,+b.dataset.lon,b.dataset.name)));
+  $$('#coastalPulse .coastal-card').forEach(b=>b.addEventListener('click',()=>focusLocation(+b.dataset.lat,+b.dataset.lon,b.dataset.name)));
 }
 
 function renderStory(filter='all'){

@@ -16,7 +16,7 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v5",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
+  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v6",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -250,6 +250,58 @@ function pilotEngineCheck() {
     cases
   },cases.every(c=>c.pass)?200:500);
 }
+
+// Manually triggered, owner-only simulated message to verify end-to-end email sending.
+// This is not an automatic alert and does not modify subscription or alert history.
+function testAlertForm(env) {
+  if(!configured(env))return html("Email test unavailable","<p>Worker configuration is incomplete.</p>",503);
+  return html("Send a simulated alert email",
+    '<p><strong>TEST ONLY.</strong> This sends one clearly labeled example email to the verified site owner. It uses invented water-level data and does not activate storm alerts.</p>'+
+    '<form method="post" action="/pilot/test-alert-email">'+
+    '<div class="cf-turnstile" data-sitekey="'+escapeHtml(env.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div>'+
+    '<button type="submit">Send TEST email</button></form>'+
+    '<p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Return to Saco Coast Watch</a></p>');
+}
+async function sendSimulatedOwnerAlert(req,env) {
+  if(!configured(env))return html("Email test unavailable","<p>Worker configuration is incomplete.</p>",503);
+  const owner=env.SUPPORT_EMAIL.trim().toLowerCase();
+  const verified=await env.DB.prepare("SELECT id FROM subscribers WHERE email=? AND email_confirmed=1 AND unsubscribed=0").bind(owner).first();
+  if(!verified)return html("Email not verified","<p>Finish the owner email confirmation test before sending a simulated alert.</p>",403);
+  const form=await req.formData();
+  if(!await validateTurnstile(req,env,form.get("cf-turnstile-response")))
+    return html("Verification failed","<p>Go back and complete the Turnstile check before trying again.</p>",403);
+  const current=stamp(),ip=req.headers.get("CF-Connecting-IP")||"unknown";
+  const ipKey=await hmac(env.TOKEN_SECRET,"simulated-alert:ip:"+ip);
+  const emailKey=await hmac(env.TOKEN_SECRET,"simulated-alert:owner:"+owner);
+  const limits=await env.DB.prepare("SELECT ip_hash,until_ts FROM request_limits WHERE ip_hash IN (?,?)").bind(ipKey,emailKey).all();
+  if((limits.results||[]).some(row=>row.until_ts>current))
+    return html("Please wait","<p>A test email was requested recently. Try again in 10 minutes; no automated alert was enabled.</p>",429);
+  // Reserve the cooldown before calling Resend, limiting repeated sends on rapid retries.
+  await env.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts").bind(ipKey,current+600).run();
+  await env.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts").bind(emailKey,current+600).run();
+  const subject="[TEST ONLY] Saco Coast Watch simulated water-level threshold alert";
+  const message=[
+    "TEST ONLY — SIMULATED READING — NOT A REAL WEATHER OR FLOOD ALERT",
+    "",
+    "This is a one-time, owner-requested test of the email delivery system.",
+    "SIMULATED observed Portland water level: 13.0 ft MLLW.",
+    "SIMULATED threshold: 12.0 ft MLLW.",
+    "Simulated result: a new upward crossing would qualify for an email.",
+    "",
+    "The 13.0 ft figure is invented for testing. It is not a live NOAA reading.",
+    "No coastal warning or public signup has been activated. No ongoing notifications will be sent.",
+    "This message is not a flood prediction for Saco properties. Follow official NWS warnings for safety decisions.",
+    "",
+    "Questions: "+env.SUPPORT_EMAIL
+  ].join("\n");
+  try{
+    await sendEmail(env,owner,subject,message);
+  }catch(e){
+    console.error("Owner simulated alert delivery failed",String(e));
+    return html("Test email failed","<p>Resend did not accept this simulated message. Check the Worker logs and try again after the cooldown. No actual coastal alerts are active.</p>",503);
+  }
+  return html("Test email submitted","<p>Resend accepted the clearly labeled <strong>TEST ONLY</strong> message for delivery to the verified owner address. Check your inbox. Actual coastal alerts, public signup, and Web Push remain disabled.</p>");
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
@@ -260,6 +312,8 @@ export default{
       if(path==="/pilot/data"&&req.method==="GET")return pilotData();
       if(path==="/pilot/thresholds"&&req.method==="GET")return pilotThresholds();
       if(path==="/pilot/engine-check"&&req.method==="GET")return pilotEngineCheck();
+      if(path==="/pilot/test-alert-email"&&req.method==="GET")return testAlertForm(env);
+      if(path==="/pilot/test-alert-email"&&req.method==="POST")return sendSimulatedOwnerAlert(req,env);
       if(path==="/pilot/signup"&&req.method==="POST")return requestConfirmation(req,env);
       if(path==="/pilot/confirm"&&["GET","POST"].includes(req.method))return confirm(req,env);
       return json({error:"Not found; public signup and notifications are disabled."},404);

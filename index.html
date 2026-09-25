@@ -27,10 +27,11 @@
 .chartbox svg .peak-dot{fill:var(--purple);stroke:#081824;stroke-width:2}.chartbox svg .peak-dot.top{stroke:#fff;stroke-width:2.4}.chartbox svg .tide-dot{fill:var(--sun);stroke:#081824;stroke-width:1.6}
 .chartbox svg .series-label{font-size:11px;font-weight:850;paint-order:stroke;stroke:#081824;stroke-width:4px;stroke-linejoin:round}.chartbox svg .peak-label{fill:#f0ceff;font-size:11px;font-weight:900;paint-order:stroke;stroke:#081824;stroke-width:4px}.chartbox svg .peak-sub{fill:#d7c4e3;font-size:9.5px;font-weight:750;paint-order:stroke;stroke:#081824;stroke-width:3px}.chartbox svg .zone-label{font-size:9.5px;font-weight:850;letter-spacing:.04em;opacity:.9}.chartbox svg .axis-note{font-size:9.5px;font-weight:750;opacity:.8}
 .tides-scroll{max-height:420px;overflow:auto}.tides-scroll thead{position:sticky;top:0;background:#112a3b;z-index:1}.tide-only-tag{background:#3e3430!important;color:#f6d8aa!important}
-.calendar-panel{padding:22px;margin-bottom:17px}.calendar-explain{display:flex;flex-wrap:wrap;gap:12px 25px;margin-bottom:15px;font-size:12px;color:#c6dae4}.calendar-key{display:inline-flex;align-items:center;gap:7px}.calendar-chip{width:12px;height:12px;border-radius:4px;background:#214b50;border:1px solid #78d3d4}.threshold-chip{background:#604b29;border-color:#e2b66b}
-.tide-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.daytile{min-height:104px;border:1px solid #335263;background:#0c2231;border-radius:10px;padding:10px 10px 9px;display:flex;flex-direction:column;gap:3px}.daytile.elevated{background:linear-gradient(155deg,#204e50,#10343b);border-color:#5cbbb2}.daytile.tide-threshold{border-color:#e2b66b;background:linear-gradient(140deg,#4f402d,#18343a)}.daytile .daydate{font-size:11px;font-weight:800;color:#b9d4df}.daytile strong{font-size:21px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.daytile span{font-size:11px;color:#bdd1de}.daytile small{font-size:10px;font-weight:700;color:#8de5d4}.daytile small.at-threshold{color:#f9cb81}.daytile.no-tide{opacity:.57}.calendar-footnote{font-size:12px;color:#a7c1cf;margin:15px 0 0}
-@media(max-width:950px){.tide-calendar{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:620px){.tide-calendar{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-panel{padding:14px}.daytile{min-height:100px}.chart-panel{padding:15px 11px}.controls{width:100%}.segment{flex:1}}
-
+.calendar-panel{padding:22px;margin-bottom:17px}.calendar-panel .eyebrow{margin-bottom:4px;color:#78e4dc}.calendar-explain{display:flex;flex-wrap:wrap;gap:9px 20px;margin:13px 0 11px;font-size:11px;color:#c6dae4}.calendar-key{display:inline-flex;align-items:center;gap:7px}.trend-key{width:20px;height:0;border-top:3px solid var(--sea);position:relative}.trend-key:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--sea);top:-5px;left:7px;border:1px solid #081824}.threshold-chip{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid}.minor-key{background:#FFFF0026;border-color:#FFFF00}.moderate-key{background:#FFA5002b;border-color:#FFA500}.major-key{background:#FF000030;border-color:#FF0000}
+.tide-outlook-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:15px 0 4px}.tide-summary-item{border:1px solid #345466;border-radius:11px;padding:11px 12px;background:#0d2534;min-width:0}.tide-summary-item span{display:block;color:#9fb9c7;font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}.tide-summary-item strong{display:block;margin:4px 0 2px;color:#edf9fc;font-size:clamp(19px,2.5vw,26px);line-height:1.08;font-variant-numeric:tabular-nums}.tide-summary-item small{display:block;color:#b9d0dc;font-size:10px;line-height:1.35}
+.tide-trend-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border:1px solid #315162;border-radius:12px;background:#0b2230;scrollbar-width:thin}.tide-trend-scroll svg{display:block;width:100%;min-width:820px;height:auto;min-height:320px}.tide-trend-scroll svg text{font-family:inherit;fill:#a9c4d1}.tide-trend-scroll .gridline{stroke:#304c5b;stroke-width:1;stroke-dasharray:3 5}.tide-trend-scroll .threshold-line{stroke-width:1;stroke-dasharray:5 5;opacity:.8}.tide-trend-scroll .today-line{stroke:#d9fbf4;stroke-width:1.5;stroke-dasharray:5 5;opacity:.85}.tide-trend-scroll .tide-line{fill:none;stroke:var(--sea);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.tide-trend-scroll .tide-point{fill:var(--sea);stroke:#071824;stroke-width:2}.tide-trend-scroll .tide-point.selected{stroke:#fff;stroke-width:3}.tide-trend-scroll .tide-hit{fill:transparent;cursor:pointer;outline:none}.tide-trend-scroll .tide-value{fill:#dffbf6;font-size:11px;font-weight:850;paint-order:stroke;stroke:#0b2230;stroke-width:4px;stroke-linejoin:round}.tide-trend-scroll .date-label{fill:#b5cbd6;font-size:10px;font-weight:750}.tide-trend-scroll .zone-label{font-size:9.5px;font-weight:900;letter-spacing:.04em}.tide-trend-scroll .today-label{fill:#d9fbf4;font-size:9.5px;font-weight:900;letter-spacing:.08em}.tide-selection{margin:9px 1px 0;padding:9px 11px;border-radius:9px;background:#102c3a;color:#c9dfe8;font-size:11px;line-height:1.45;min-height:36px}
+.full-calendar{margin-top:15px;border-top:1px solid #315062;padding-top:12px}.full-calendar summary{cursor:pointer;color:#84e7ed;font-weight:800;font-size:12px;min-height:44px;display:flex;align-items:center;gap:7px}.full-calendar summary::-webkit-details-marker{display:none}.full-calendar summary:before{content:"＋";font-size:16px}.full-calendar[open] summary:before{content:"−"}.tide-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:10px}.daytile{min-height:94px;border:1px solid #335263;background:#0c2231;border-radius:10px;padding:10px 10px 9px;display:flex;flex-direction:column;gap:3px}.daytile.today{border-color:#71e1d6;box-shadow:inset 0 3px #23e6cb}.daytile.tide-threshold{border-color:#FFFF00;background:linear-gradient(140deg,#393916,#18343a)}.daytile .daydate{font-size:11px;font-weight:800;color:#b9d4df}.daytile strong{font-size:20px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.daytile span{font-size:11px;color:#bdd1de}.daytile small{font-size:10px;font-weight:700;color:#f6ed85}.daytile.no-tide{opacity:.57}.calendar-footnote{font-size:11px;color:#a7c1cf;margin:11px 0 0;line-height:1.5}
+@media(max-width:950px){.tide-calendar{grid-template-columns:repeat(5,minmax(0,1fr))}}@media(max-width:620px){.calendar-panel{padding:14px}.tide-outlook-summary{grid-template-columns:1fr 1fr}.tide-summary-item:first-child{grid-column:1/-1}.tide-trend-scroll svg{min-width:780px}.tide-calendar{grid-template-columns:repeat(2,minmax(0,1fr))}.daytile{min-height:92px}.chart-panel{padding:15px 11px}.controls{width:100%}.segment{flex:1}}
 /* Storm-watching priorities: model total level first, history comparison second. */
 .model-hero{border-color:#bc9bea;background:linear-gradient(145deg,#382b51 0%,#1e3047 85%);box-shadow:inset 0 3px 0 #d9a3ff,0 15px 42px #00000016}
 .model-hero .number{color:#e5bdff}.model-hero .tag{background:#654477;color:#ffebff}.model-hero .label{color:#efddfb}.model-hero .peak-time{margin:3px 0 7px;color:#f2e7fb;font-weight:800;font-size:13px;letter-spacing:.01em}
@@ -912,10 +913,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
  <p class="weather-note" id="weatherSourceNote">NWS hourly forecasts update as issued, not every minute. The webpage checks live readings every 60 seconds and the forecast every 10 minutes while open; NDBC wind snapshots refresh every five minutes through the local helper or the GitHub workflow. “Current” cards show the measurement time; stale data are marked or withheld.</p>
 </section>
 <section class="panel calendar-panel" aria-labelledby="calendarHeading">
-<div class="section-head"><div><h3 id="calendarHeading">30-day high-tide calendar</h3><div class="sub" id="calendarPeriod">Portland · daily highest predicted astronomical tide · Eastern time</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8418150" target="_blank" rel="noopener noreferrer">NOAA tide predictions ↗</a></div>
-<div class="calendar-explain"><span class="calendar-key"><i class="calendar-chip"></i>Higher tides relative to this 30-day period</span><span class="calendar-key"><i class="calendar-chip threshold-chip"></i>Tide-only height at or above Portland's minor flood level</span></div>
-<div id="highTideCalendar" class="tide-calendar" aria-live="polite"><div class="empty">Loading 30-day high-tide predictions…</div></div>
-<p class="calendar-footnote" id="calendarNote">Highlighting shows relative astronomical tide height, not an official coastal flood outlook. Wind, surge and waves can cause flooding at lower tides. Dates and times use America/New_York.</p>
+<div class="section-head"><div><div class="eyebrow">Astronomical tide · not a storm forecast</div><h3 id="calendarHeading">14-day high-tide outlook</h3><div class="sub" id="calendarPeriod">Portland · daily highest predicted astronomical tide · Eastern time</div></div><a class="mini-link" href="https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=8418150" target="_blank" rel="noopener noreferrer">NOAA tide predictions ↗</a></div>
+<div class="tide-outlook-summary" aria-live="polite">
+  <div class="tide-summary-item"><span>Highest next 14 days</span><strong id="tideOutlookPeak">--</strong><small id="tideOutlookPeakTime">Waiting for tide predictions</small></div>
+  <div class="tide-summary-item"><span>Change vs. today's high</span><strong id="tideOutlookChange">--</strong><small id="tideOutlookChangeNote">Daily astronomical high</small></div>
+  <div class="tide-summary-item"><span>Distance to Minor Flood</span><strong id="tideOutlookMinorGap">--</strong><small>Portland gauge · 12.0 ft MLLW</small></div>
+</div>
+<div class="calendar-explain"><span class="calendar-key"><i class="trend-key"></i>Daily highest astronomical tide</span><span class="calendar-key"><i class="threshold-chip minor-key"></i>Minor 12–13 ft</span><span class="calendar-key"><i class="threshold-chip moderate-key"></i>Moderate 13–14 ft</span><span class="calendar-key"><i class="threshold-chip major-key"></i>Major 14+ ft</span></div>
+<div class="tide-trend-scroll" id="tideTrendScroll">
+  <svg id="tideTrend" role="img" aria-label="Fourteen-day daily high-tide trend in feet MLLW with Portland flood threshold bands" viewBox="0 0 980 390" preserveAspectRatio="xMidYMid meet"><text x="490" y="195" text-anchor="middle">Loading 14-day high-tide outlook…</text></svg>
+</div>
+<div id="tideTrendSelection" class="tide-selection" aria-live="polite">Tap a tide point for its exact high-tide time.</div>
+<p class="calendar-footnote" id="tideOutlookNote">This is an astronomical tide outlook only. It excludes storm surge, wind, waves and runup; use the 72-hour Water-level outlook above for available NOAA total-water guidance.</p>
+<details class="full-calendar">
+  <summary>View full 30-day tide calendar</summary>
+  <div id="highTideCalendar" class="tide-calendar" aria-live="polite"><div class="empty">Loading 30-day high-tide predictions…</div></div>
+  <p class="calendar-footnote" id="calendarNote">Daily values are astronomical tide predictions for the Portland gauge, not an official coastal flood outlook.</p>
+</details>
 </section>
 <section class="panel coastal-map-panel" aria-labelledby="coastalMapHeading">
   <div class="coastal-map-head"><div><div class="eyebrow">Storm map · southern Maine</div><h3 id="coastalMapHeading">Coastal alerts &amp; live beach cameras</h3><p>Official active NWS coastal-flood and storm-surge watch/warning areas, plus links to nearby live shoreline cameras. Alert polygons show the affected forecast zones, <strong>not which individual properties will flood</strong>.</p></div>
@@ -1120,15 +1134,66 @@ const highs=highTides(),body=$('highTides');body.replaceChildren();$('highTidesP
 if(!highs.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=4;td.className='empty';td.textContent='No high tides available. Check the NOAA tide tables link.';tr.append(td);body.append(tr);return;}
 for(const tide of highs){const model=nearest(state.model,tide.t,45*60000);const label=model?(model.v>=14?'Major (model)':model.v>=13?'Moderate (model)':model.v>=12?'Minor (model)':'Below minor (model)'):'Tide only · no model';const row=document.createElement('tr');const cells=[dayTime(tide.t),fmtN(tide.v)+' ft',model?fmtN(model.v)+' ft':'—',label];cells.forEach((value,i)=>{const td=document.createElement('td');if(i===1||i===2){const b=document.createElement('b');b.textContent=value;td.append(b);}else if(i===3){const span=document.createElement('span');span.className='tabletag'+(model?'':' tide-only-tag');span.textContent=value;td.append(span);}else td.textContent=value;row.append(td);});body.append(row);}
 }
+function dailyHighTides(days=30){
+ const t=now(),start=localParts(t),startUTC=Date.UTC(start.year,start.month-1,start.day);
+ const highData=state.highs.length?state.highs:extractHighsFromCurve(state.pred);
+ const groups=new Map();
+ for(const high of highData){const k=localParts(high.t).key;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(high);}
+ return Array.from({length:days},(_,i)=>{
+   const d=new Date(startUTC+i*86400000),key=localParts(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),16)).key,arr=groups.get(key)||[];
+   return {date:d,key,peak:arr.reduce((a,b)=>!a||b.v>a.v?b:a,null),today:i===0};
+ });
+}
+function renderTideTrend(daily){
+ const svg=$('tideTrend'),selection=$('tideTrendSelection'),W=980,H=390,margin={top:48,right:28,bottom:62,left:50},cw=W-margin.left-margin.right,ch=H-margin.top-margin.bottom;
+ const ns='http://www.w3.org/2000/svg';svg.replaceChildren();
+ function el(tag,attrs={},content,parent=svg){const item=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))item.setAttribute(k,v);if(content!==undefined)item.textContent=content;parent.append(item);return item;}
+ const valid=daily.filter(d=>d.peak);if(!valid.length){el('text',{x:W/2,y:H/2,'text-anchor':'middle'},'No 14-day tide predictions available.');selection.textContent='NOAA astronomical tide predictions are currently unavailable.';return;}
+ const minValue=Math.min(...valid.map(d=>d.peak.v)),yMin=Math.max(0,Math.min(8,Math.floor((minValue-.35)*2)/2)),yMax=15;
+ const x=i=>margin.left+(daily.length===1?cw/2:i/(daily.length-1)*cw),y=v=>margin.top+(yMax-v)/(yMax-yMin)*ch;
+ const defs=el('defs'),clip=el('clipPath',{id:'tideTrendClip'},undefined,defs);el('rect',{x:margin.left,y:margin.top,width:cw,height:ch},undefined,clip);
+ const zones=[{from:12,to:13,fill:'#FFFF001d',text:'#FFFF00',label:'MINOR 12–13 FT'},{from:13,to:14,fill:'#FFA50024',text:'#FFA500',label:'MODERATE 13–14 FT'},{from:14,to:15,fill:'#FF000029',text:'#FF0000',label:'MAJOR 14+ FT'}];
+ for(const z of zones){const yy=y(z.to),hh=y(z.from)-yy;el('rect',{x:margin.left,y:yy,width:cw,height:hh,fill:z.fill,'clip-path':'url(#tideTrendClip)'});el('text',{x:W-margin.right-5,y:yy+13,'text-anchor':'end',fill:z.text,class:'zone-label'},z.label);}
+ for(let n=Math.ceil(yMin);n<=yMax;n++){el('line',{x1:margin.left,x2:W-margin.right,y1:y(n),y2:y(n),class:'gridline'});if(n%2===0||n>=12)el('text',{x:margin.left-10,y:y(n)+4,'text-anchor':'end','font-size':'10'},String(n));}
+ const todayX=x(0);el('line',{x1:todayX,x2:todayX,y1:margin.top,y2:H-margin.bottom,class:'today-line'});el('text',{x:todayX+5,y:margin.top+12,class:'today-label'},'TODAY');
+ let d='';for(let i=0;i<daily.length;i++){const p=daily[i].peak;if(!p)continue;d+=(d?' L':'M')+x(i).toFixed(2)+','+y(p.v).toFixed(2);}if(d)el('path',{d,class:'tide-line','clip-path':'url(#tideTrendClip)'});
+ function describe(day){if(!day.peak)return 'No tide data for '+fmt(day.date.getTime()+12*3600000,{weekday:'long',month:'long',day:'numeric',timeZone:'UTC'})+'.';const gap=THRESHOLDS[0].value-day.peak.v;return fmt(day.date.getTime()+12*3600000,{weekday:'long',month:'short',day:'numeric',timeZone:'UTC'})+' · '+fmtN(day.peak.v)+' ft MLLW · high at '+time(day.peak.t)+' ET · '+(gap>0?fmtN(gap)+' ft below Minor Flood':gap===0?'at Minor Flood level':fmtN(Math.abs(gap))+' ft above Minor Flood level')+'.';}
+ function selectPoint(index){svg.querySelectorAll('.tide-point').forEach(n=>n.classList.toggle('selected',Number(n.dataset.index)===index));selection.textContent=describe(daily[index]);}
+ for(let i=0;i<daily.length;i++){
+   const day=daily[i],xx=x(i),dateLabel=fmt(day.date.getTime()+12*3600000,{month:'short',day:'numeric',timeZone:'UTC'});
+   el('text',{x:xx,y:H-24,'text-anchor':'middle',class:'date-label'},dateLabel);
+   if(!day.peak)continue;
+   const yy=y(day.peak.v);el('circle',{cx:xx,cy:yy,r:5,class:'tide-point','data-index':i,'clip-path':'url(#tideTrendClip)'});
+   el('text',{x:xx,y:yy-12,'text-anchor':'middle',class:'tide-value'},fmtN(day.peak.v));
+   const hit=el('circle',{cx:xx,cy:yy,r:18,class:'tide-hit','data-index':i,tabindex:'0',role:'button','aria-label':describe(day)});
+   const activate=e=>{e.preventDefault();selectPoint(i);};
+   hit.addEventListener('click',activate);hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){activate(e);}});
+ }
+ const topIndex=daily.reduce((best,d,i)=>d.peak&&(!daily[best]?.peak||d.peak.v>daily[best].peak.v)?i:best,0);selectPoint(topIndex);
+}
 function renderCalendar(){
-const cal=$('highTideCalendar');cal.replaceChildren();const t=now();const start=localParts(t);const startUTC=Date.UTC(start.year,start.month-1,start.day);const end=t+30*86400000;
-const highData=state.highs.length?state.highs:extractHighsFromCurve(state.pred);
-const highs=highData.filter(x=>x.t>=t-86400000&&x.t<=end);
-const groups=new Map();for(const high of highs){const k=localParts(high.t).key;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(high);}
-const daily=Array.from({length:30},(_,i)=>{const d=new Date(startUTC+i*86400000);const k=localParts(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),16)).key;const arr=(groups.get(k)||[]).filter(x=>i>0||x.t>=t-30*60000);return {date:new Date(startUTC+i*86400000),key:k,peak:arr.reduce((a,b)=>!a||b.v>a.v?b:a,null)};});
-const values=daily.map(x=>x.peak?.v).filter(Number.isFinite).sort((a,b)=>a-b);const cutoff=values.length>=5?values[Math.floor(.8*(values.length-1))]:Infinity;
-for(const d of daily){const cell=document.createElement('div');cell.className='daytile'+(d.peak&&d.peak.v>=cutoff?' elevated':'')+(d.peak&&d.peak.v>=THRESHOLDS[0].value?' tide-threshold':'')+(!d.peak?' no-tide':'');const date=document.createElement('div');date.className='daydate';date.textContent=fmt(d.date.getTime()+12*3600000,{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});cell.append(date);const height=document.createElement('strong');height.textContent=d.peak?fmtN(d.peak.v)+' ft':'—';cell.append(height);const at=document.createElement('span');at.textContent=d.peak?'High at '+time(d.peak.t)+' ET':'No tide data';cell.append(at);if(d.peak&&d.peak.v>=cutoff){const flag=document.createElement('small');flag.textContent='Higher predicted tide';cell.append(flag);}if(d.peak&&d.peak.v>=THRESHOLDS[0].value){const flag=document.createElement('small');flag.className='at-threshold';flag.textContent='Tide-only ≥ minor gauge level';cell.append(flag);}cal.append(cell);}
-const count=daily.filter(x=>x.peak).length;$('calendarNote').textContent=(count===30?'All 30 days populated.':count+' of 30 days have tide data; open NOAA if dates are missing.')+(state.highs.length?' Peaks use NOAA high/low tide predictions.':' High-tide times are approximated from sampled astronomical tide predictions.')+(state.errors.longTide?' Long-range data feed is currently unavailable.':'')+' Higher-tide highlights mark approximately the top 20% of daily peaks within this displayed period, not official flooding predictions. Astronomical tides exclude storm surge, wind and waves.';
+ const daily=dailyHighTides(30),outlook=daily.slice(0,14),cal=$('highTideCalendar');cal.replaceChildren();
+ const valid=outlook.filter(d=>d.peak),top=valid.reduce((a,b)=>!a||b.peak.v>a.peak.v?b:a,null),today=daily[0]?.peak||null;
+ if(top){
+   $('tideOutlookPeak').textContent=fmtN(top.peak.v)+' ft';
+   $('tideOutlookPeakTime').textContent=fmt(top.date.getTime()+12*3600000,{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'})+' · '+time(top.peak.t)+' ET';
+   const gap=THRESHOLDS[0].value-top.peak.v;$('tideOutlookMinorGap').textContent=gap>0?fmtN(gap)+' ft below':gap===0?'At threshold':fmtN(Math.abs(gap))+' ft above';
+ }else{$('tideOutlookPeak').textContent='Unavailable';$('tideOutlookPeakTime').textContent='No 14-day tide predictions returned';$('tideOutlookMinorGap').textContent='--';}
+ if(top&&today){const diff=top.peak.v-today.v;$('tideOutlookChange').textContent=(diff>=0?'+':'')+fmtN(diff)+' ft';$('tideOutlookChangeNote').textContent='Highest 14-day tide vs. today’s '+fmtN(today.v)+' ft high';}
+ else{$('tideOutlookChange').textContent='--';$('tideOutlookChangeNote').textContent='Today’s daily high is unavailable';}
+ renderTideTrend(outlook);
+ for(const d of daily){
+   const cell=document.createElement('div');cell.className='daytile'+(d.today?' today':'')+(d.peak&&d.peak.v>=THRESHOLDS[0].value?' tide-threshold':'')+(!d.peak?' no-tide':'');
+   const date=document.createElement('div');date.className='daydate';date.textContent=fmt(d.date.getTime()+12*3600000,{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});cell.append(date);
+   const height=document.createElement('strong');height.textContent=d.peak?fmtN(d.peak.v)+' ft':'—';cell.append(height);
+   const at=document.createElement('span');at.textContent=d.peak?'High at '+time(d.peak.t)+' ET':'No tide data';cell.append(at);
+   if(d.today){const flag=document.createElement('small');flag.textContent='Today';cell.append(flag);}
+   if(d.peak&&d.peak.v>=THRESHOLDS[0].value){const flag=document.createElement('small');flag.textContent='Tide-only ≥ minor gauge level';cell.append(flag);}
+   cal.append(cell);
+ }
+ const count=daily.filter(x=>x.peak).length;
+ $('calendarNote').textContent=(count===30?'All 30 days populated.':count+' of 30 days have tide data; open NOAA if dates are missing.')+(state.highs.length?' Daily values use NOAA high/low tide predictions.':' Daily highs are approximated from sampled astronomical tide predictions.')+(state.errors.longTide?' The long-range tide feed is currently unavailable.':'')+' Astronomical tides exclude storm surge, wind, waves and runup.';
+ $('tideOutlookNote').textContent='This 14-day view shows astronomical tide timing only, not a 14-day storm or flood forecast. '+(state.errors.longTide?'Long-range NOAA tide data are partially unavailable. ':'')+'Use the 72-hour Water-level outlook above for available NOAA total-water guidance.';
 }
 function extractHighsFromCurve(p){const result=[];for(let i=1;i<p.length-1;i++){const a=p[i-1],b=p[i],c=p[i+1];if(b.t-a.t>32*60000||c.t-b.t>32*60000)continue;if(b.v>=a.v&&b.v>c.v&&(!result.length||b.t-result.at(-1).t>3*3600000))result.push(b);}return result;}
 

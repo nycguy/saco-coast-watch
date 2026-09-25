@@ -16,7 +16,7 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"owner-email-pilot",pilotBuild:"email-test-v6",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:false,ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:false,webPushEnabled:false,scheduledAlertsEnabled:false});
+  return json({service:"saco-coastal-alerts",phase:"email-release",pilotBuild:"email-release-v1",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled:false,cronRequiresSetup:true});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -302,12 +302,134 @@ async function sendSimulatedOwnerAlert(req,env) {
   }
   return html("Test email submitted","<p>Resend accepted the clearly labeled <strong>TEST ONLY</strong> message for delivery to the verified owner address. Check your inbox. Actual coastal alerts, public signup, and Web Push remain disabled.</p>");
 }
+
+// Public email release is gated; pilot-verified email alone does NOT imply alert consent.
+const ALERTS=[
+ ["waterObserved","Observed Portland water level","ft MLLW",12,0,30],
+ ["waterForecast","Forecast Portland peak in next 72 hours","ft MLLW",12,0,30],
+ ["wind","Offshore sustained wind","mph",30,0,180],
+ ["gust","Offshore wind gust","mph",45,0,220],
+ ["tempHigh","Portland airport temperature above","°F",90,-40,140],
+ ["tempLow","Portland airport temperature below","°F",32,-40,140]
+];
+const liveAlerts=e=>configured(e)&&e.LIVE_ALERTS==="true";
+const siteUrl=e=>e.WORKER_PUBLIC_URL.replace(/\/$/,"");
+function publicPage(e,title,body,status=200){return html(title,body+'<p><a href="'+escapeHtml(e.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p><p>Support: '+escapeHtml(e.SUPPORT_EMAIL)+'</p>',status);}
+function alertFields(values={}){
+ return ALERTS.map(([id,label,unit,def,low,high])=>{
+ const p=values[id]||{enabled:id==="waterObserved"||id==="waterForecast",threshold:def};
+ return '<label style="display:block;margin:14px 0"><input type="checkbox" name="'+id+'_enabled" '+(p.enabled?'checked':'')+'> '+escapeHtml(label)+' <input type="number" style="width:80px" name="'+id+'_threshold" min="'+low+'" max="'+high+'" step="0.1" value="'+escapeHtml(p.threshold)+'"> '+unit+'</label>';
+ }).join("");
+}
+function alertForm(e){
+ if(!liveAlerts(e))return publicPage(e,"Alerts not yet open","<p>The email notification service is being prepared.</p>",503);
+ return publicPage(e,"Subscribe to coastal email alerts",
+ '<p>Select custom thresholds for Portland gauge water level, offshore wind and airport temperature. Not a property-level flood prediction or official NWS warning. Notifications may be delayed or unavailable.</p>'+
+ '<form action="/alerts/subscribe" method="post"><label>Your email <input type="email" name="email" maxlength="254" required></label>'+alertFields()+
+ '<label><input type="checkbox" name="consent" required> I request emails about my selected thresholds and agree to the <a href="/alerts/terms">terms</a> and <a href="/alerts/privacy">privacy information</a>.</label>'+
+ '<div class="cf-turnstile" data-sitekey="'+escapeHtml(e.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div>'+
+ '<button type="submit">Email me a confirmation link</button></form><p><a href="/alerts/manage">Manage existing alerts</a></p><p>Browser push is not yet available.</p>');
+}
+function validAddress(s){return typeof s==="string"&&s.length<255&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);}
+function thresholds(form){
+ let selected=0,metrics={};
+ for(const [id,label,unit,def,low,high] of ALERTS){
+   const raw=String(form.get(id+"_threshold")??def).trim(),threshold=Number(raw);
+   if(!raw||!Number.isFinite(threshold)||threshold<low||threshold>high)throw Error("Invalid "+label+" threshold");
+   const enabled=form.get(id+"_enabled")==="on";
+   metrics[id]={enabled,threshold};if(enabled)selected++;
+ }
+ if(!selected)throw Error("Choose at least one threshold.");
+ return metrics;
+}
+async function rateCheck(e,tag){
+ const h=await hmac(e.TOKEN_SECRET,"alert-rate:"+tag),t=stamp();
+ const result=await e.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts WHERE request_limits.until_ts<?").bind(h,t+600,t).run();
+ return result.meta?.changes===1;
+}
+async function issueToken(e,email,purpose,payload,ttl=3600,id=null){
+ const raw=rawToken();
+ await e.DB.prepare("INSERT INTO tokens(hash,subscriber_id,email,purpose,payload_json,expires_at) VALUES(?,?,?,?,?,?)").bind(await digest(raw),id,email,purpose,JSON.stringify(payload),stamp()+ttl).run();
+ return raw;
+}
+async function lookToken(e,raw,purpose){
+ if(typeof raw!=="string"||!/^[a-f0-9]{64}$/.test(raw))return null;
+ return e.DB.prepare("SELECT * FROM tokens WHERE hash=? AND purpose=? AND used_at IS NULL AND expires_at>?").bind(await digest(raw),purpose,stamp()).first();
+}
+async function takePublicToken(e,raw){
+ const t=stamp(),result=await e.DB.prepare("UPDATE tokens SET used_at=? WHERE hash=? AND used_at IS NULL AND expires_at>?").bind(t,await digest(raw),t).run();
+ return result.meta?.changes===1;
+}
+async function subscribeEmail(req,e){
+ if(!liveAlerts(e))return publicPage(e,"Unavailable","<p>Signups are not open.</p>",503);
+ let form,metrics;
+ try{form=await req.formData();metrics=thresholds(form);}catch(err){return publicPage(e,"Invalid thresholds","<p>"+escapeHtml(err.message)+"</p>",400);}
+ const email=String(form.get("email")||"").trim().toLowerCase();
+ if(!validAddress(email)||form.get("consent")!=="on")return publicPage(e,"Invalid request","<p>Provide a valid email and consent to alerts.</p>",400);
+ if(!await validateTurnstile(req,e,form.get("cf-turnstile-response")))return publicPage(e,"Verification failed","<p>Please retry Turnstile.</p>",403);
+ const ip=req.headers.get("CF-Connecting-IP")||"unknown";
+ if(!await rateCheck(e,"signup-ip:"+ip)||!await rateCheck(e,"signup-email:"+email))return publicPage(e,"Please wait","<p>Try again in ten minutes.</p>",429);
+ const raw=await issueToken(e,email,"alerts-confirm",{metrics,requestedAt:stamp(),termsVersion:"2026-09"});
+ try{await sendEmail(e,email,"Confirm your Saco Coast Watch coastal email alerts",
+  "Confirm your requested custom threshold emails:\n"+siteUrl(e)+"/alerts/confirm?token="+raw+
+  "\n\nExpires in 1 hour. No alerts are sent until you confirm. This is not an official weather-warning service. Contact "+e.SUPPORT_EMAIL);}
+ catch(err){console.error("Confirmation send failed",String(err));return publicPage(e,"Email unavailable","<p>Try again later.</p>",503);}
+ return publicPage(e,"Check your inbox","<p>Follow the verification link to activate your chosen alerts.</p>");
+}
+async function confirmEmail(req,e){
+ if(!liveAlerts(e))return publicPage(e,"Unavailable","<p>Contact support.</p>",503);
+ const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String((await req.formData()).get("token")||"");
+ const row=await lookToken(e,raw,"alerts-confirm");
+ if(!row)return publicPage(e,"Invalid confirmation link","<p>Request a new signup link.</p>",400);
+ if(req.method==="GET")return publicPage(e,"Confirm coastal email alerts",
+  '<p>Activate email alerts for '+escapeHtml(row.email)+'?</p><form method="post" action="/alerts/confirm"><input type="hidden" name="token" value="'+escapeHtml(raw)+'"><button type="submit">Confirm and activate</button></form>');
+ let payload;try{payload=JSON.parse(row.payload_json);if(!payload.metrics||!payload.requestedAt)throw Error("Invalid");}catch(_){return publicPage(e,"Invalid link","<p>Request another.</p>",400);}
+ if(!await takePublicToken(e,raw))return publicPage(e,"Link already used","<p>Request another.</p>",409);
+ const now=stamp(),prefs=JSON.stringify({metrics:payload.metrics,channels:{email:true,push:false},emailOptInAt:now,termsVersion:payload.termsVersion});
+ const prior=await e.DB.prepare("SELECT id FROM subscribers WHERE email=?").bind(row.email).first();
+ if(prior){
+  await e.DB.prepare("UPDATE subscribers SET email_confirmed=1,unsubscribed=0,prefs_json=?,updated_at=? WHERE id=?").bind(prefs,now,prior.id).run();
+  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(prior.id).run();
+ }else{
+  await e.DB.prepare("INSERT INTO subscribers(id,email,email_confirmed,prefs_json,unsubscribed,created_at,updated_at) VALUES(?,?,?,?,?,?,?)").bind(crypto.randomUUID(),row.email,1,prefs,0,now,now).run();
+ }
+ return publicPage(e,"Email alerts activated","<p>Your selected thresholds are active for scheduled checks. Delivery is best effort, not an emergency warning system.</p>");
+}
+async function unsubscribeLink(e,s){
+ const sig=await hmac(e.TOKEN_SECRET,"unsub:"+s.id+":"+s.email);
+ return siteUrl(e)+"/alerts/unsubscribe?token="+s.id+"."+sig;
+}
+async function unsubscribeEmail(req,e){
+ if(!configured(e))return html("Unavailable","<p>Contact the site owner to stop alerts.</p>",503);
+ const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String((await req.formData()).get("token")||"");
+ const m=/^([a-f0-9-]{36})\.([a-f0-9]{64})$/.exec(raw||"");
+ if(!m)return publicPage(e,"Invalid link","<p>Contact support to unsubscribe.</p>",400);
+ const s=await e.DB.prepare("SELECT * FROM subscribers WHERE id=?").bind(m[1]).first();
+ if(!s||await hmac(e.TOKEN_SECRET,"unsub:"+s.id+":"+s.email)!==m[2])return publicPage(e,"Invalid link","<p>Contact support to unsubscribe.</p>",400);
+ if(req.method==="GET")return publicPage(e,"Stop coastal alerts",
+  '<p>Stop all alert emails to '+escapeHtml(s.email)+'?</p><form method="post" action="/alerts/unsubscribe"><input type="hidden" name="token" value="'+escapeHtml(raw)+'"><button type="submit">Stop alerts</button></form>');
+ await e.DB.prepare("UPDATE subscribers SET unsubscribed=1,email_confirmed=0,updated_at=? WHERE id=?").bind(stamp(),s.id).run();
+ await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=?").bind(s.id).run();
+ await e.DB.prepare("DELETE FROM push_subscriptions WHERE subscriber_id=?").bind(s.id).run();
+ return publicPage(e,"Unsubscribed","<p>Alerts to this address have been stopped.</p>");
+}
+function alertLegal(e,privacy){
+ return publicPage(e,privacy?"Privacy information":"Terms of email alerts",privacy?
+ "<p>We store email, selected thresholds, confirmation and alert state in Cloudflare D1. Short-lived hashed IP addresses reduce abuse. Resend sends email messages. Unsubscribing stops emails but does not immediately delete records; contact support to request deletion. We do not collect phone numbers or sell subscription information.</p>":
+ "<p>Emails are optional, best-effort custom threshold notices based on the Portland gauge, forecast model, offshore buoy and airport. These are not property-specific flooding forecasts or official emergency warnings. Consult the National Weather Service and local authorities for safety decisions. You may unsubscribe using links in messages.</p>");
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
     try{
       if(path==="/health"&&req.method==="GET")return health(env);
       if(path==="/"&&req.method==="GET")return json({service:"Saco Coast Watch Alerts",status:"Owner-only email pilot; no public signup or active coastal notifications",pilot:"/pilot"});
+      if(path==="/alerts"&&req.method==="GET")return alertForm(env);
+      if(path==="/alerts/subscribe"&&req.method==="POST")return subscribeEmail(req,env);
+      if(path==="/alerts/confirm"&&["GET","POST"].includes(req.method))return confirmEmail(req,env);
+      if(path==="/alerts/unsubscribe"&&["GET","POST"].includes(req.method))return unsubscribeEmail(req,env);
+      if(path==="/alerts/privacy"&&req.method==="GET")return alertLegal(env,true);
+      if(path==="/alerts/terms"&&req.method==="GET")return alertLegal(env,false);
       if(path==="/pilot"&&req.method==="GET")return landing(req,env);
       if(path==="/pilot/data"&&req.method==="GET")return pilotData();
       if(path==="/pilot/thresholds"&&req.method==="GET")return pilotThresholds();

@@ -41,6 +41,19 @@ WEBCAMS = [
     {"name":"Folly Beach","state":"SC","lat":32.66,"lon":-79.94,"url":"https://webcoos.org/cameras/folly6thavenue/","use":"Beach + surf conditions"},
 ]
 
+COASTAL_STATIONS = [
+    {"name":"Portland","state":"ME","lat":43.658,"lon":-70.244,"coops":"8418150","buoy":"44007"},
+    {"name":"Boston","state":"MA","lat":42.355,"lon":-71.052,"coops":"8443970","buoy":"44013"},
+    {"name":"New York Harbor","state":"NY","lat":40.700,"lon":-74.014,"coops":"8518750","buoy":"44065"},
+    {"name":"Atlantic City","state":"NJ","lat":39.355,"lon":-74.418,"coops":"8534720","buoy":"44091"},
+    {"name":"Hampton Roads","state":"VA","lat":36.947,"lon":-76.330,"coops":"8638610","buoy":"44014"},
+    {"name":"Outer Banks","state":"NC","lat":36.183,"lon":-75.747,"coops":"8651370","buoy":"41025"},
+    {"name":"Charleston","state":"SC","lat":32.782,"lon":-79.925,"coops":"8665530","buoy":"41004"},
+    {"name":"Northeast Florida","state":"FL","lat":30.398,"lon":-81.428,"coops":"8720218","buoy":"41009"},
+]
+COOPS_API = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
+NDBC_REALTIME = "https://www.ndbc.noaa.gov/data/realtime2/{station}.txt"
+
 def utcnow_iso() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
 
@@ -237,12 +250,162 @@ def fetch_ndfd_times():
     except Exception as exc:
         return {}, str(exc)
 
+
+def _num(value):
+    try:
+        x = float(value)
+        if not math.isfinite(x): return None
+        return x
+    except (TypeError, ValueError):
+        return None
+
+def _parse_coops_time(value):
+    if not value: return None
+    try:
+        return dt.datetime.strptime(value, "%Y-%m-%d %H:%M").replace(tzinfo=dt.timezone.utc)
+    except ValueError:
+        return None
+
+def parse_ndbc_latest(text):
+    """Parse the latest NDBC standard meteorological line and convert SI to public-facing units."""
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    header = next((ln for ln in lines if ln.startswith("#YY")), None)
+    data_line = next((ln for ln in lines if not ln.startswith("#")), None)
+    if not header or not data_line:
+        raise ValueError("NDBC standard meteorological text missing header or observation")
+    names = header.lstrip("#").split()
+    vals = data_line.split()
+    row = dict(zip(names, vals))
+    def val(name):
+        raw = row.get(name)
+        return None if raw in (None, "MM", "999", "999.0") else _num(raw)
+    year = int(row["YY"]); year += 2000 if year < 100 else 0
+    observed = dt.datetime(
+        year, int(row["MM"]), int(row["DD"]), int(row["hh"]), int(row["mm"]),
+        tzinfo=dt.timezone.utc
+    )
+    wspd = val("WSPD"); gst = val("GST"); wvht = val("WVHT")
+    return {
+        "observed_at": observed.isoformat().replace("+00:00","Z"),
+        "wind_dir_deg": val("WDIR"),
+        "wind_kt": round(wspd * 1.94384, 1) if wspd is not None else None,
+        "gust_kt": round(gst * 1.94384, 1) if gst is not None else None,
+        "wave_ft": round(wvht * 3.28084, 1) if wvht is not None else None,
+        "dominant_period_s": val("DPD"),
+        "mean_wave_dir_deg": val("MWD"),
+    }
+
+def tide_departure(observation, predictions):
+    """Return observed minus astronomical prediction in feet at the nearest forecast timestamp."""
+    obs_t = _parse_coops_time(observation.get("t") if observation else None)
+    obs_v = _num(observation.get("v") if observation else None)
+    if obs_t is None or obs_v is None or not predictions:
+        return None
+    candidates = []
+    for p in predictions:
+        t = _parse_coops_time(p.get("t"))
+        v = _num(p.get("v"))
+        if t is not None and v is not None:
+            candidates.append((abs((t-obs_t).total_seconds()), v))
+    if not candidates: return None
+    predicted = min(candidates, key=lambda x:x[0])[1]
+    return round(obs_v - predicted, 2)
+
+def next_high_tide(predictions, now=None):
+    """Find the first future local maximum in 6-minute NOAA tide predictions."""
+    now = now or dt.datetime.now(dt.timezone.utc)
+    pts = []
+    for p in predictions or []:
+        t = _parse_coops_time(p.get("t")); v = _num(p.get("v"))
+        if t is not None and v is not None:
+            pts.append((t,v))
+    pts.sort(key=lambda x:x[0])
+    for i in range(1, len(pts)-1):
+        t,v = pts[i]
+        if t > now and v > pts[i-1][1] and v >= pts[i+1][1]:
+            return {"time":t.isoformat().replace("+00:00","Z"),"ft":round(v,2)}
+    future = [(t,v) for t,v in pts if t > now]
+    if future:
+        t,v=max(future,key=lambda x:x[1])
+        return {"time":t.isoformat().replace("+00:00","Z"),"ft":round(v,2)}
+    return None
+
+def fetch_coastal_station(station):
+    result = dict(station)
+    result.update({
+        "water_level_ft":None,"water_level_time":None,"departure_ft":None,
+        "next_high_ft":None,"next_high_time":None,
+        "wave_ft":None,"wind_kt":None,"gust_kt":None,"wave_period_s":None,
+        "marine_time":None,"errors":[]
+    })
+    today = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d")
+    common = (
+        f"&station={station['coops']}&datum=MLLW&units=english&time_zone=gmt"
+        f"&application=EastCast&format=json"
+    )
+    predictions = []
+    try:
+        obs = fetch_json(COOPS_API + "?product=water_level&date=latest" + common)
+        row = (obs.get("data") or [None])[0]
+        if row:
+            result["water_level_ft"] = _num(row.get("v"))
+            t = _parse_coops_time(row.get("t"))
+            result["water_level_time"] = t.isoformat().replace("+00:00","Z") if t else None
+    except Exception as exc:
+        result["errors"].append("CO-OPS water level: "+str(exc))
+    try:
+        pred = fetch_json(
+            COOPS_API + f"?product=predictions&begin_date={today}&range=48&interval=6" + common
+        )
+        predictions = pred.get("predictions") or []
+        obs_for_delta = None
+        if result["water_level_time"] and result["water_level_ft"] is not None:
+            obs_for_delta = {
+                "t": dt.datetime.fromisoformat(result["water_level_time"].replace("Z","+00:00")).strftime("%Y-%m-%d %H:%M"),
+                "v": result["water_level_ft"],
+            }
+        result["departure_ft"] = tide_departure(obs_for_delta, predictions)
+        high = next_high_tide(predictions)
+        if high:
+            result["next_high_ft"] = high["ft"]; result["next_high_time"] = high["time"]
+    except Exception as exc:
+        result["errors"].append("CO-OPS prediction: "+str(exc))
+    try:
+        raw = fetch_bytes(NDBC_REALTIME.format(station=station["buoy"])).decode("utf-8","replace")
+        marine = parse_ndbc_latest(raw)
+        result["wave_ft"] = marine["wave_ft"]
+        result["wind_kt"] = marine["wind_kt"]
+        result["gust_kt"] = marine["gust_kt"]
+        result["wave_period_s"] = marine["dominant_period_s"]
+        result["marine_time"] = marine["observed_at"]
+    except Exception as exc:
+        result["errors"].append("NDBC: "+str(exc))
+    return result
+
+def fetch_coastal_pulse():
+    rows = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+        futures = [pool.submit(fetch_coastal_station, s) for s in COASTAL_STATIONS]
+        for fut in futures:
+            try:
+                rows.append(fut.result())
+            except Exception as exc:
+                rows.append({"name":"Unavailable station","errors":[str(exc)]})
+    order = {s["name"]:i for i,s in enumerate(COASTAL_STATIONS)}
+    rows.sort(key=lambda x:order.get(x.get("name"),999))
+    usable = sum(
+        1 for x in rows
+        if any(x.get(k) is not None for k in ("water_level_ft","departure_ft","wave_ft","wind_kt"))
+    )
+    return rows, {"ok":usable >= max(4, len(COASTAL_STATIONS)//2), "usable":usable, "total":len(rows)}
+
 def build_snapshot():
     generated = utcnow_iso()
     alerts, alert_errors = fetch_all_alerts()
     outlooks, outlook_errors = fetch_outlooks()
     tropical, tropical_error = fetch_tropical()
     ndfd_times, ndfd_error = fetch_ndfd_times()
+    coastal_pulse, coastal_status = fetch_coastal_pulse()
     alerts.sort(key=severity_score, reverse=True)
     summary = summarize_alerts(alerts)
     state_features = defaultdict(list)
@@ -253,6 +416,7 @@ def build_snapshot():
         "wpc_outlooks":{"ok":any(v.get("features") for v in outlooks.values()),"errors":outlook_errors},
         "nhc":{"ok":tropical_error is None,"error":tropical_error},
         "ndfd":{"ok":bool(ndfd_times),"error":ndfd_error},
+        "coastal_pulse":coastal_status,
     }
     return {
         "schema_version":2,
@@ -263,6 +427,7 @@ def build_snapshot():
         "outlooks":outlooks,
         "tropical":tropical,
         "ndfd_times":ndfd_times,
+        "coastal_pulse":coastal_pulse,
         "webcams":WEBCAMS,
         "sources":source_status,
     }

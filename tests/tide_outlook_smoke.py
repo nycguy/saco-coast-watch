@@ -104,7 +104,7 @@ def assert_common(page):
     assert page.locator("#chart path.pred").count()==0
     assert page.locator("#chart .short-tide-point").count()==0
     assert page.locator("#chart .short-model-point").count()>=3
-    chart_text=page.locator("#chart").inner_text()
+    chart_text=page.locator("#chart").text_content() or ""
     assert "Astronomical high" not in chart_text,chart_text
 
     threshold_fills=page.eval_on_selector_all("#chart .threshold-band","els => els.map(el => el.getAttribute('fill'))")

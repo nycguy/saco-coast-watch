@@ -479,8 +479,8 @@ function wire(){
     const r=b.dataset.radar;$('#radarTitle').textContent=b.textContent+' radar loop';
     const img=$('#radarGif');img.src='https://radar.weather.gov/ridge/standard/'+r+'_loop.gif';$('#radarOpen').href=img.src;
   }));
-  $('#radarGif').addEventListener('error',()=>{$('#radarGif').hidden=true;$('#radarFallback').hidden=false});
-  $('#radarGif').addEventListener('load',()=>{$('#radarGif').hidden=false;$('#radarFallback').hidden=true});
+  $('#radarGif').addEventListener('error',()=>{$('#radarGif').hidden=true;$('#radarOpen').style.display='block'});
+  $('#radarGif').addEventListener('load',()=>{$('#radarGif').hidden=false;$('#radarOpen').style.display='none'});
 }
 
 function scheduleTopOfHour(){

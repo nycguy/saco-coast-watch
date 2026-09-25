@@ -60,6 +60,7 @@ function renderAll(){
   renderChanges();
   renderWatchList();
   renderTimeline();
+  renderCoastalPulse();
   renderStory();
   renderOutlooks();
   renderTropical();
@@ -131,6 +132,61 @@ function renderTimeline(){
     currentHorizon=+b.dataset.horizon; syncTimeButtons(); applyMapMode();
     $('#map-section').scrollIntoView({behavior:'smooth',block:'start'});
   }));
+}
+
+
+function coastalAlertForState(code){
+  const list=snapshot.state_alerts?.[code]||[];
+  return list.find(x=>/storm surge|coastal flood/i.test(x.event||'')) ||
+         list.find(x=>/high surf|beach hazard|rip current/i.test(x.event||'')) || null;
+}
+
+function coastalSignal(row,alert){
+  let score=0;
+  if(alert){
+    const t=alertType(alert.event);
+    score+=t==='warning'?5:t==='watch'?3:2;
+  }
+  if(Number(row.departure_ft)>=1) score+=3; else if(Number(row.departure_ft)>=0.5) score+=2;
+  if(Number(row.wave_ft)>=10) score+=3; else if(Number(row.wave_ft)>=6) score+=2;
+  if(Number(row.gust_kt)>=40) score+=3; else if(Number(row.gust_kt)>=25) score+=2;
+  return score>=7?'high':score>=4?'elevated':score>=2?'watch':'normal';
+}
+
+function value(v,digits=1){
+  const n=Number(v); return Number.isFinite(n)?n.toFixed(digits):'—';
+}
+
+function renderCoastalPulse(){
+  const rows=snapshot.coastal_pulse||[];
+  const target=$('#coastalPulse');
+  if(!target) return;
+  if(!rows.length){
+    target.innerHTML='<div class="empty-card"><strong>Coastal observations temporarily unavailable</strong><span>EastCast will retry during the next data build.</span></div>';
+    return;
+  }
+  target.innerHTML=rows.map(row=>{
+    const alert=coastalAlertForState(row.state);
+    const signal=coastalSignal(row,alert);
+    const departure=Number(row.departure_ft);
+    const departureText=Number.isFinite(departure)?(departure>=0?'+':'')+departure.toFixed(2)+' ft':'—';
+    const gust=Number.isFinite(Number(row.gust_kt))?value(row.gust_kt)+' kt':'—';
+    const wind=Number.isFinite(Number(row.wind_kt))?value(row.wind_kt)+' kt':'—';
+    const marine=gust!=='—'?(wind+' / '+gust):wind;
+    const status=alert?.event || (signal==='high'?'Multiple elevated coastal signals':signal==='elevated'?'Elevated coastal conditions':signal==='watch'?'Worth watching':'No major coastal signal');
+    return `<button class="coastal-card ${signal}" data-lat="${row.lat}" data-lon="${row.lon}" data-name="${esc(row.name)}" type="button">
+      <div class="coastal-head"><span><strong>${esc(row.name)}</strong><small>${esc(row.state)} · NOAA CO-OPS ${esc(row.coops)} / NDBC ${esc(row.buoy)}</small></span><b class="coastal-status">${esc(status)}</b></div>
+      <div class="coastal-values">
+        <span><small>Water level</small><strong>${value(row.water_level_ft,2)} <em>ft MLLW</em></strong></span>
+        <span class="${Number.isFinite(departure)&&departure>=0.5?'emphasis':''}"><small>Departure</small><strong>${departureText}</strong></span>
+        <span><small>Next high</small><strong>${value(row.next_high_ft,2)} <em>ft</em></strong><i>${row.next_high_time?esc(fmt(row.next_high_time)):''}</i></span>
+        <span class="${Number(row.wave_ft)>=6?'emphasis':''}"><small>Offshore seas</small><strong>${value(row.wave_ft)} <em>ft</em></strong><i>${row.wave_period_s?value(row.wave_period_s,0)+' sec':''}</i></span>
+        <span class="${Number(row.gust_kt)>=25?'emphasis':''}"><small>Wind / gust</small><strong>${marine}</strong></span>
+      </div>
+      <div class="coastal-foot"><span>Departure = observed water level minus NOAA astronomical tide prediction, not a storm-surge estimate.</span><span>Open local forecast ›</span></div>
+    </button>`;
+  }).join('');
+  $('#coastalPulse .coastal-card').forEach(b=>b.addEventListener('click',()=>focusLocation(+b.dataset.lat,+b.dataset.lon,b.dataset.name)));
 }
 
 function renderStory(filter='all'){
@@ -210,7 +266,8 @@ function renderSourceHealth(){
   const s=snapshot.sources||{};
   const rows=[
     ['NWS alerts',s.nws_alerts?.ok],['WPC outlooks',s.wpc_outlooks?.ok],
-    ['NHC tropical',s.nhc?.ok],['NDFD forecast map',s.ndfd?.ok]
+    ['NHC tropical',s.nhc?.ok],['NDFD forecast map',s.ndfd?.ok],
+    ['Coastal gauges + buoys',s.coastal_pulse?.ok]
   ];
   $('#sourceHealth').innerHTML=rows.map(([n,ok])=>'<span class="'+(ok?'ok':'warn')+'"><i></i>'+esc(n)+'</span>').join('');
 }

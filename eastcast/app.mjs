@@ -242,11 +242,29 @@ function renderTropical(){
 
 function renderCameras(){
   const cams=snapshot.webcams||[];
-  $('#cameraGrid').innerHTML=cams.map(c=>`
-    <a class="camera-card" href="${esc(c.url)}" target="_blank" rel="noopener">
+  $('#cameraGrid').innerHTML=cams.map(c=>{
+    const source=c.source||'WebCOOS';
+    if(c.embed){
+      return `<article class="camera-card camera-featured">
+        <div class="camera-video">
+          <iframe src="${esc(c.embed)}" title="${esc(c.name)} live camera" loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+        <div class="camera-copy">
+          <span class="camera-live-badge"><i></i> Live</span>
+          <strong>${esc(c.name)}</strong>
+          <small>${esc(c.state)} · ${esc(c.use)} · ${esc(source)}</small>
+          <a href="${esc(c.url)}" target="_blank" rel="noopener">Open camera on YouTube ›</a>
+        </div>
+      </article>`;
+    }
+    return `<a class="camera-card" href="${esc(c.url)}" target="_blank" rel="noopener">
       <span class="camera-dot"></span><strong>${esc(c.name)}</strong>
-      <small>${esc(c.state)} · ${esc(c.use)}</small><em>Open WebCOOS ›</em>
-    </a>`).join('');
+      <small>${esc(c.state)} · ${esc(c.use)}</small><em>Open ${esc(source)} ›</em>
+    </a>`;
+  }).join('');
 }
 
 function getFavorites(){
@@ -356,9 +374,9 @@ function applyMapMode(){
     const g=L.layerGroup();
     (snapshot.webcams||[]).forEach(c=>{
       L.circleMarker([c.lat,c.lon],{radius:8,color:'#d6fff9',fillColor:'#20cfbd',fillOpacity:1,weight:2})
-        .bindPopup('<div class="map-pop"><strong>'+esc(c.name)+'</strong><p>'+esc(c.use)+'</p><a href="'+esc(c.url)+'" target="_blank" rel="noopener">Open WebCOOS camera ›</a></div>').addTo(g);
+        .bindPopup('<div class="map-pop"><strong>'+esc(c.name)+'</strong><p>'+esc(c.use)+'</p><a href="'+esc(c.url)+'" target="_blank" rel="noopener">Open live camera ›</a></div>').addTo(g);
     });
-    primaryLayer=g.addTo(map);status.textContent='Curated WebCOOS coastal cameras';return;
+    primaryLayer=g.addTo(map);status.textContent='Curated coastal cameras';return;
   }
 }
 

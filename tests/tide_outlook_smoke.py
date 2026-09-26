@@ -91,7 +91,7 @@ def assert_common(page):
     # Short-range water-level outlook restores continuous tide-cycle lines,
     # clips the lower part of each cycle, and does not plot astronomical tide.
     chart_period=page.locator("#chartPeriod").inner_text()
-    assert "observed + NOAA model lines" in chart_period,chart_period
+    assert "each forecast high aligned to exact ET time" in chart_period,chart_period
     assert "clipped below 8 ft" in chart_period,chart_period
     flood_control=page.locator("label.check").filter(has=page.locator("#showFlood")).inner_text()
     assert "Flood thresholds" in flood_control and "Flood zones" not in flood_control,flood_control

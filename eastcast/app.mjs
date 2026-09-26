@@ -376,7 +376,7 @@ function applyMapMode(){
       L.circleMarker([c.lat,c.lon],{radius:8,color:'#d6fff9',fillColor:'#20cfbd',fillOpacity:1,weight:2})
         .bindPopup('<div class="map-pop"><strong>'+esc(c.name)+'</strong><p>'+esc(c.use)+'</p><a href="'+esc(c.url)+'" target="_blank" rel="noopener">Open live camera ›</a></div>').addTo(g);
     });
-    primaryLayer=g.addTo(map);status.textContent='Curated coastal cameras';return;
+    primaryLayer=g.addTo(map);status.textContent='Curated coastal cameras · WebCOOS + Abellona live';return;
   }
 }
 

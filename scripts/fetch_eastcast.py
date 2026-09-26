@@ -33,6 +33,7 @@ NDFD_CAPS = "https://digital.weather.gov/ndfd/wms?service=WMS&request=GetCapabil
 NHC_CURRENT = "https://www.nhc.noaa.gov/CurrentStorms.json"
 
 WEBCAMS = [
+    {"name":"Abellona Inn, Old Orchard Beach","state":"ME","lat":43.514,"lon":-70.377,"url":"https://www.youtube.com/watch?v=HSQpqIWLViI","embed":"https://www.youtube.com/embed/HSQpqIWLViI","source":"Abellona Inn / YouTube Live","use":"Old Orchard Beach shoreline + surf conditions"},
     {"name":"Ferry Beach, Saco","state":"ME","lat":43.47,"lon":-70.38,"url":"https://webcoos.org/cameras/ferrybeach_north/","use":"Beach erosion + wave conditions"},
     {"name":"Westerly Town Beach","state":"RI","lat":41.31,"lon":-71.86,"url":"https://webcoos.org/cameras/westerly/","use":"Shoreline change + beach conditions"},
     {"name":"Hoboken Terminal","state":"NJ","lat":40.74,"lon":-74.03,"url":"https://webcoos.org/cameras/stevens_hoboken/","use":"Urban flooding + storm surge"},

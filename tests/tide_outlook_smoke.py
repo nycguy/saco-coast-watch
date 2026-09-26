@@ -115,6 +115,13 @@ def assert_common(page):
     assert threshold_labels==["Minor flood 12–13 ft","Moderate flood 13–14 ft","Major flood 14+ ft"],threshold_labels
     threshold_label_fills=page.eval_on_selector_all("#chart .zone-label","els => els.map(el => getComputedStyle(el).fill)")
     assert threshold_label_fills==["rgb(7, 24, 36)","rgb(7, 24, 36)","rgb(255, 255, 255)"],threshold_label_fills
+    peak_points=page.locator("#chart [data-series='noaa-model-high']").count()
+    peak_guides=page.locator("#chart [data-peak-guide='true']").count()
+    peak_ticks=page.locator("#chart [data-peak-tick='true']").count()
+    assert peak_points>=2,peak_points
+    assert peak_guides==peak_points,(peak_guides,peak_points)
+    assert peak_ticks==peak_points,(peak_ticks,peak_points)
+    assert "exact ET time" in page.locator("#chartPeriod").inner_text()
 
     # App-wide readability: proper-case labels, higher contrast, and undistorted SVG text.
     assert page.locator(".brand h1").inner_text().strip()=="Saco Coast Watch"

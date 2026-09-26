@@ -128,7 +128,7 @@
 .ferry-camera .ferry-pill{background:#174a48;color:#8ff9e3;border:1px solid #448a7d;padding:5px 10px;border-radius:100px;font-size:11px;font-weight:800}
 .ferry-camera .ferry-layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(225px,.8fr);gap:17px;align-items:stretch}
 .ferry-player{position:relative;aspect-ratio:16 / 9;min-height:210px;border:1px solid #426d80;border-radius:12px;background:radial-gradient(circle at 45% 85%,#206c76 0%,#123f53 43%,#0b2433 75%);overflow:hidden;display:grid;place-items:center}
-.ferry-player video{display:block;width:100%;height:100%;object-fit:contain;background:#081824}
+.ferry-player video,.ferry-player iframe{display:block;width:100%;height:100%;object-fit:contain;background:#081824;border:0}.abellona-camera{border-color:#4f8fc1;box-shadow:inset 0 3px #63b8ef}.abellona-camera .ferry-label{color:#9edaff}.abellona-camera .ferry-pill{background:#173f5b;color:#bfe5ff;border-color:#477da0}
 .ferry-player video[hidden],.ferry-player button[hidden]{display:none!important}
 .ferry-start{display:flex;flex-direction:column;align-items:center;gap:9px;justify-content:center;padding:15px;border:1px solid #6cc7c4;border-radius:12px;background:#092c3ad9;color:#fff;font:800 17px/1.35 system-ui;cursor:pointer}
 .ferry-start:hover,.ferry-start:focus-visible{background:#125062;outline:2px solid #a8fff3;outline-offset:3px}
@@ -916,6 +916,27 @@ td{color:#e6f1f6}
       <p>Watch the beach alongside NOAA water levels and coastal alerts. The camera is for visual context only, not a measurement of flood depth or wave height.</p>
       <p class="ferry-status" id="ferryStatus" role="status" aria-live="polite">Camera is ready. Select Watch Ferry Beach live to connect.</p>
       <a href="https://webcoos.org/cameras/ferrybeach_north/" target="_blank" rel="noopener noreferrer">Open official Ferry Beach camera ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="panel ferry-camera abellona-camera" aria-labelledby="abellonaLiveCamera">
+  <div class="ferry-head">
+    <div><div class="ferry-label">Coastal webcam · Old Orchard Beach</div><h3 id="abellonaLiveCamera">Abellona Inn · Live beach camera</h3><p>Old Orchard Beach shoreline view · Abellona Inn / YouTube Live</p></div>
+    <span class="ferry-pill">Live camera</span>
+  </div>
+  <div class="ferry-layout">
+    <div class="ferry-player">
+      <iframe src="https://www.youtube.com/embed/HSQpqIWLViI" title="Abellona Inn Old Orchard Beach live camera" loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+    <div class="ferry-side">
+      <strong>See live conditions farther north on Saco Bay</strong>
+      <p>Use the Abellona view with the Ferry Beach camera to compare surf, visibility and shoreline conditions across the bay. Camera imagery is visual context only, not a flood-depth or wave-height measurement.</p>
+      <p class="ferry-status">Live YouTube feed from the Abellona Inn in Old Orchard Beach.</p>
+      <a href="https://www.youtube.com/watch?v=HSQpqIWLViI" target="_blank" rel="noopener noreferrer">Open Abellona camera on YouTube ↗</a>
     </div>
   </div>
 </section>

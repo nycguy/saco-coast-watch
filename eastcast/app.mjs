@@ -497,8 +497,8 @@ function wire(){
     radarOpen.style.display='none';
     setTimeout(()=>{if(!radarImg.complete||radarImg.naturalWidth===0)radarOpen.style.display='block'},800);
   };
-  $('.radar-tab').forEach(b=>b.addEventListener('click',()=>{
-    $('.radar-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  $$('.radar-tab').forEach(b=>b.addEventListener('click',()=>{
+    $$('.radar-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
     const r=b.dataset.radar;$('#radarTitle').textContent=b.textContent+' radar loop';
     radarImg.hidden=false;radarImg.src='https://radar.weather.gov/ridge/standard/'+r+'_loop.gif';radarOpen.href=radarImg.src;armRadarFallback();
   }));

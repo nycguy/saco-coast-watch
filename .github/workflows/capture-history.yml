@@ -1,0 +1,95 @@
+name: Capture coastal history
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/history_core.py'
+      - 'scripts/capture_history.py'
+      - 'scripts/backfill_gomofs.py'
+      - 'tests/test_history_core.py'
+      - 'tests/test_capture_history.py'
+      - 'tests/test_fetch_briefing.py'
+      - '.github/workflows/capture-history.yml'
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: coastal-history-store
+  cancel-in-progress: false
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out application code
+        uses: actions/checkout@v4
+      - name: Check out durable history branch
+        uses: actions/checkout@v4
+        with:
+          ref: coastal-history
+          path: .history-store
+      - name: Run deterministic history tests
+        run: |
+          python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py
+      - name: Determine whether model archive backfill is needed
+        id: backfill
+        shell: bash
+        run: |
+          if python3 - <<'PY'
+          import json, pathlib, sys
+          p=pathlib.Path('.history-store/data/history/coastal-history.json')
+          if not p.exists(): sys.exit(1)
+          d=json.loads(p.read_text())
+          sys.exit(0 if ((d.get('backfill') or {}).get('model_archive') or {}).get('attempted_at') else 1)
+          PY
+          then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install NetCDF reader for one-time GoMOFS archive backfill
+        if: steps.backfill.outputs.needed == 'true'
+        run: python3 -m pip install --disable-pip-version-check netCDF4
+      - name: Reconstruct run-specific GoMOFS model cycles
+        if: steps.backfill.outputs.needed == 'true'
+        run: python3 scripts/backfill_gomofs.py --days 7 --output /tmp/gomofs-backfill.json
+      - name: Capture current coastal snapshot and historical source data
+        shell: bash
+        run: |
+          ARGS=()
+          if [ -s /tmp/gomofs-backfill.json ]; then
+            ARGS+=(--model-backfill /tmp/gomofs-backfill.json)
+          fi
+          python3 scripts/capture_history.py \
+            --history .history-store/data/history/coastal-history.json \
+            --recent-output /tmp/coastal-history-recent.json \
+            "\${ARGS[@]}"
+      - name: Validate durable history
+        run: |
+          python3 - <<'PY'
+          import json
+          p='.history-store/data/history/coastal-history.json'
+          d=json.load(open(p))
+          assert d['schema_version']==2
+          assert d['window_basis'].startswith('Fixed rolling windows')
+          assert d['thresholds_ft_mllw']=={'minor':12.0,'moderate':13.0,'major':14.0}
+          assert len(d.get('snapshots',[])) >= 1
+          assert 'water_observations_hourly' in (d.get('backfill') or {})
+          print('durable snapshots',len(d['snapshots']))
+          print('model archive',((d.get('backfill') or {}).get('model_archive') or {}).get('summary'))
+          PY
+      - name: Commit history to dedicated branch
+        shell: bash
+        run: |
+          cd .history-store
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/history/coastal-history.json
+          if git diff --cached --quiet; then
+            echo "No history change to commit"
+            exit 0
+          fi
+          git commit -m "Capture coastal history $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git pull --rebase origin coastal-history
+          git push origin HEAD:coastal-history

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-27T13:12:11Z",
+  "generated_at": "2026-09-27T13:20:55Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -888,7 +888,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-27T13:12:11Z",
+      "snapshot_at": "2026-09-27T13:20:55Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -900,8 +900,8 @@
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 6.68,
-        "latest_observed_at": "2026-09-27T13:06:00Z",
+        "latest_observed_ft": 6.96,
+        "latest_observed_at": "2026-09-27T13:12:00Z",
         "observed_24h_max_ft": 10.95,
         "observed_24h_max_time": "2026-09-27T03:48:00Z",
         "forecast_peak_24h_ft": 11.51,
@@ -932,10 +932,10 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-09-27T12:30:00Z",
-            "speed_mph": 24.6,
-            "gust_mph": 29.1,
-            "direction_deg": 30,
+            "observed_at": "2026-09-27T12:50:00Z",
+            "speed_mph": 22.4,
+            "gust_mph": 26.8,
+            "direction_deg": 20,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 31.3,
             "max_24h_gust_mph": 40.3
@@ -1033,7 +1033,7 @@
       "snapshot_count": 3,
       "max_observed_ft": 10.95,
       "max_forecast_peak_ft": 11.99,
-      "max_gust_mph": 29.1
+      "max_gust_mph": 26.8
     }
   ],
   "alert_events": [
@@ -4281,9 +4281,9 @@
       "nws_alerts": "success"
     },
     "model_archive": {
-      "attempted_at": "2026-09-27T13:10:11Z",
-      "period_start": "2026-09-20T13:10:11Z",
-      "period_end": "2026-09-27T13:10:11Z",
+      "attempted_at": "2026-09-27T13:20:50Z",
+      "period_start": "2026-09-20T13:20:50Z",
+      "period_end": "2026-09-27T13:20:50Z",
       "source": "NOAA CO-OPS GoMOFS run-specific station forecast archive",
       "summary": {
         "cycles_attempted": 28,

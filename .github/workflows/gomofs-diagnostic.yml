@@ -1,0 +1,32 @@
+name: Diagnose GoMOFS station file
+on:
+  push:
+    branches: [history-foundation-v2]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m pip install --disable-pip-version-check netCDF4
+      - name: Inspect one archived station forecast
+        run: |
+          python3 - <<'PY'
+          from netCDF4 import Dataset
+          url='https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t06z.20260926.stations.forecast.nc'
+          ds=Dataset(url)
+          print('DIMENSIONS', {k:len(v) for k,v in ds.dimensions.items()})
+          print('VARIABLE COUNT', len(ds.variables))
+          for name,v in ds.variables.items():
+              low=name.lower()
+              if any(x in low for x in ('station','xpos','ypos','lon','lat','time','zeta','rho','xi','eta','mask')):
+                  print('VAR',name,'dims=',v.dimensions,'shape=',v.shape,'units=',getattr(v,'units',None),'long_name=',getattr(v,'long_name',None),'standard_name=',getattr(v,'standard_name',None))
+                  if getattr(v,'ndim',0)==1 and v.shape and v.shape[0] < 500:
+                      try:
+                          vals=v[:]
+                          print('VALUES',name,repr(vals[:20]))
+                      except Exception as e: print('READERR',name,e)
+          print('GLOBAL KEYS', sorted(ds.ncattrs()))
+          ds.close()
+          PY

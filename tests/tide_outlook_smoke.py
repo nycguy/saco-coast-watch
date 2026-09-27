@@ -57,9 +57,32 @@ def install_noaa_fixture(page):
             route.continue_()
     page.route("**/api/prod/datagetter**",handler)
 
+    briefing={
+        "schema_version":1,
+        "generated_at":datetime.now(timezone.utc).isoformat().replace("+00:00","Z"),
+        "window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
+        "past_24h":{"text":"Over the past 24 hours, the Portland gauge remained below the Minor Flood threshold."},
+        "forecast_change_24h":{"text":"Compared with about 24 hours ago, the modeled 72-hour peak increased by 0.50 ft."},
+        "next_24h":{"text":"The next 24 hours remain focused on the midday high-water period."},
+        "next_72h":{"text":"The next 72 hours trend toward improving water levels after Monday."},
+        "local_pulse":{
+            "summary":"2 public local items found in the rolling public scan (1 news, 1 Reddit).",
+            "facebook_note":"Public Facebook posts are not included because reliable public indexing and access are inconsistent.",
+            "items":[
+                {"type":"news","source":"Local News","title":"Coastal conditions update for Saco and Biddeford","url":"https://example.com/news"},
+                {"type":"reddit","source":"Reddit","title":"Southern Maine shoreline discussion","url":"https://www.reddit.com/r/Maine/example"}
+            ]
+        },
+        "alerts":[],
+        "history":[],
+        "sources":{}
+    }
+    page.route("**/data/coastal-briefing.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(briefing)))
+
 def assert_common(page):
     page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
     page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
+    page.wait_for_function("document.querySelector('#briefPast').textContent.includes('past 24 hours')",timeout=10000)
     section=page.locator(".calendar-panel")
     section.scroll_into_view_if_needed()
     page.wait_for_timeout(300)
@@ -136,6 +159,28 @@ def assert_common(page):
     view_ratio=chart_dims["vw"]/chart_dims["vh"]
     assert abs(rendered_ratio-view_ratio)<0.03,(rendered_ratio,view_ratio,chart_dims)
 
+    # Fixed-window briefing stays compact and never depends on the visitor's previous app visit.
+    briefing=page.locator(".coastal-briefing")
+    assert briefing.count()==1
+    brief_text=briefing.inner_text()
+    assert "Fixed rolling windows" in brief_text
+    assert "last visit" in brief_text.lower()
+    assert "0.50 ft" in brief_text
+    assert "2 public local items" in brief_text
+    card_height=briefing.bounding_box()["height"]
+    assert card_height<330,f"briefing card should remain compact: {card_height}px"
+
+    page.locator("#briefOpen").click()
+    dialog=page.locator("#briefingDialog")
+    assert dialog.evaluate("el => el.open")
+    assert "Past 24 hours" in dialog.inner_text()
+    assert "What changed versus ~24 hours ago" in dialog.inner_text()
+    assert "Next 72 hours" in dialog.inner_text()
+    assert dialog.locator(".brief-pulse-item").count()==2
+    assert "Public Facebook posts are not included" in dialog.inner_text()
+    page.locator("#briefClose").click()
+    assert not dialog.evaluate("el => el.open")
+
     reference=page.locator(".threshold-reference")
     assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"
     assert reference.locator(".threshold").count()==3
@@ -193,7 +238,7 @@ def main():
 
     if errors:
         raise AssertionError("\n".join(errors))
-    print("PASS: 14-day tide + NOAA OFS daily peaks, semantic bands, tap detail, 30-day expansion, desktop + mobile containment")
+    print("PASS: tide/OFS outlook + fixed-window coastal briefing + modal + desktop/mobile containment")
 
 if __name__=="__main__":
     main()

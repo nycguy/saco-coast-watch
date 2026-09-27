@@ -12,7 +12,7 @@ STATION="8418150"
 POINT="43.48,-70.38"
 NDBC=("44007","WEXM1")
 LOCAL_TERMS=("saco","camp ellis","ferry beach","biddeford","biddeford pool","old orchard beach","scarborough")
-RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft")
+RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft")\nCOASTAL_TOPIC_TERMS=("coastal","surf","wave","flood","erosion","wind","gust","rain","storm","tide","ocean","shore","rip current","weather","marine","seawall","dune","inundation","splash over","power outage","closure","closed")
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"data"/"briefing-seed-history.json"
 
@@ -125,7 +125,7 @@ def parse_rss_time(v):
         t=email.utils.parsedate_to_datetime(v); return (t if t.tzinfo else t.replace(tzinfo=dt.timezone.utc)).astimezone(dt.timezone.utc)
     except Exception: return None
 def clean(v): return " ".join((v or "").replace("\n"," ").split())
-def relevant_local(text): return any(x in (text or "").lower() for x in LOCAL_TERMS)
+def relevant_local(text): return any(x in (text or "").lower() for x in LOCAL_TERMS)\ndef coastal_topic(text):\n    t=(text or "").lower()\n    for loc in LOCAL_TERMS: t=t.replace(loc," ")\n    return any(x in t for x in COASTAL_TOPIC_TERMS)
 def event_location(text):
     t=(text or "").lower()
     for name in ("Camp Ellis","Ferry Beach","Biddeford Pool","Old Orchard Beach","Scarborough","Biddeford","Saco"):
@@ -142,7 +142,7 @@ def google_news(days=7):
     root=ET.fromstring(fetch_bytes(url,"application/rss+xml, application/xml, text/xml")); out=[]
     for item in root.findall(".//item"):
         title=clean(item.findtext("title")); link=clean(item.findtext("link")); pub=parse_rss_time(item.findtext("pubDate")); source=clean(item.findtext("source")) or "Google News"
-        if not title or not link or not relevant_local(title): continue
+        if not title or not link or not relevant_local(title) or not coastal_topic(title): continue
         out.append({"published_at":hc.iso(pub),"source":source,"source_type":"news","location":event_location(title),"headline":title,"summary":title,"url":link,"event_category":event_category(title),"anecdotal":False})
     return out[:40]
 def reddit_events():
@@ -243,7 +243,7 @@ def update_history(path,model_backfill=None,now=None):
     backfill=existing.get("backfill") or initial_backfill(now,7)
     if model_doc:
         backfill["model_archive"]={"attempted_at":model_doc.get("attempted_at"),"period_start":model_doc.get("period_start"),"period_end":model_doc.get("period_end"),"source":model_doc.get("source"),"summary":model_doc.get("summary"),"errors":model_doc.get("errors") or []}
-    hist={"schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snapshots,"daily_rollups":hc.daily_rollups(snapshots,existing.get("daily_rollups") or []),"alert_events":hc.merge_events(existing.get("alert_events") or [],alert_changes),"local_events":hc.merge_events(existing.get("local_events") or [],local),"backfill":backfill,"provenance_notes":{"realtime":"Snapshots are captures of official source data at the listed snapshot time.","model_archive":"Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.","reconstructed_dashboard_snapshot":"Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.","observations":"Historical observations describe what happened, not what a model forecast beforehand.","community":"Reddit and other community reports are anecdotal unless independently verified.","facebook":"Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."}}
+    local=hc.merge_events(existing.get("local_events") or [],local)\n    local=[e for e in local if coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]\n    hist={"schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snapshots,"daily_rollups":hc.daily_rollups(snapshots,existing.get("daily_rollups") or []),"alert_events":hc.merge_events(existing.get("alert_events") or [],alert_changes),"local_events":local,"backfill":backfill,"provenance_notes":{"realtime":"Snapshots are captures of official source data at the listed snapshot time.","model_archive":"Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.","reconstructed_dashboard_snapshot":"Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.","observations":"Historical observations describe what happened, not what a model forecast beforehand.","community":"Reddit and other community reports are anecdotal unless independently verified.","facebook":"Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."}}
     Path(path).parent.mkdir(parents=True,exist_ok=True); Path(path).write_text(json.dumps(hist,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     return hist
 def compact_history(hist,days=7):

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-27T13:21:09Z",
+  "generated_at": "2026-09-27T13:43:56Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -888,7 +888,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-27T13:21:09Z",
+      "snapshot_at": "2026-09-27T13:43:56Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -900,8 +900,8 @@
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 6.96,
-        "latest_observed_at": "2026-09-27T13:12:00Z",
+        "latest_observed_ft": 8.05,
+        "latest_observed_at": "2026-09-27T13:36:00Z",
         "observed_24h_max_ft": 10.95,
         "observed_24h_max_time": "2026-09-27T03:48:00Z",
         "forecast_peak_24h_ft": 11.51,
@@ -932,16 +932,16 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-09-27T12:50:00Z",
-            "speed_mph": 22.4,
-            "gust_mph": 26.8,
-            "direction_deg": 20,
+            "observed_at": "2026-09-27T13:20:00Z",
+            "speed_mph": 24.6,
+            "gust_mph": 29.1,
+            "direction_deg": 30,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 31.3,
             "max_24h_gust_mph": 40.3
           },
           "WEXM1": {
-            "observed_at": "2026-09-27T12:00:00Z",
+            "observed_at": "2026-09-27T13:00:00Z",
             "speed_mph": 11.4,
             "gust_mph": null,
             "direction_deg": 10,
@@ -1033,7 +1033,7 @@
       "snapshot_count": 3,
       "max_observed_ft": 10.95,
       "max_forecast_peak_ft": 11.99,
-      "max_gust_mph": 26.8
+      "max_gust_mph": 29.1
     }
   ],
   "alert_events": [
@@ -1089,6 +1089,446 @@
     }
   ],
   "local_events": [
+    {
+      "published_at": "2023-11-28T08:00:00Z",
+      "source": "Maine Public",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Saco OKs Army Corps project agreement to address Camp Ellis erosion - Maine Public",
+      "summary": "Saco OKs Army Corps project agreement to address Camp Ellis erosion - Maine Public",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPenpOMldkZERTVUpIVlM4QWRyRURXY1RTYzU5X193aVZ4OUJxeEhyUGE1RFBISEhlbnFnZ1lKTEgxak8wT0djeHR0NDM1OHFTX25VUmFMVE9nQkdhaWlmNi1DdS10LXhmX2plUGNzY0xQVWhPX012TFFGd3R0V05zbklzVFVIUlhrOFdOUGI4c0tNRmViNVRtQl9hdy0zQUFrajFkOTh4WVIzOWFic0hDSnZHeXIxQTZpNVdyZ1B2SkFCaW1yMXRWR3Boaw?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-01-11T08:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "Work crews shore up seawall to protect Biddeford neighborhood - WMTW",
+      "summary": "Work crews shore up seawall to protect Biddeford neighborhood - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPclJPa1U4MmFDeUFkQXpGS3dlQWNjVU1UMG84dlMtX3FZbEo2cnQ0em1OWExVYm1sSjktQWEzZnBSbUc3cHUzZ1FmYjA3UDE0QW5jeTFoVVhBb3NTem5VYktBcXFtdjlYSEtfdDBnWEFQclhoMGdhVkxxR0dlX28wT21QOTFWLWlvcVNiVGJMSWd2NGFuS3lRSk1NaEY?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-01-13T08:00:00Z",
+      "source": "newscentermaine.com",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "STORM CENTER: Saco River, Biddeford - newscentermaine.com",
+      "summary": "STORM CENTER: Saco River, Biddeford - newscentermaine.com",
+      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQS0VyeUZnSmx2XzFjM0ota1JhUzd1ZURFQml6cHFrRDJjN0ZzaUQ2QmlyLV92WkZZak1lc1NtSGxXY0E1Z29yWnBHS3cwRDJRSEs2cnV3SUR0ZTE4LXpYS2JoTDJpVDU3U3Ayb0RKajRMVGpETF9NVWhSMDdwZkxOVEQ2dTBOcHZSNmdFSlpybFhXd1NzNzJLekFfOXhJRE8yQ2dYTV9zeXdlZ1lrbWtNUE9OTG1lbVJBdkMyUzg2YjlwalZUTUVVT0ZmX1BlcTQ?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-01-13T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Higgins Beach residents reel from historic storm damage in Scarborough - wgme.com",
+      "summary": "Higgins Beach residents reel from historic storm damage in Scarborough - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNLUdnY2YxQW5LcENMazAxX0Y0S0tfWTBiS3FYNllIOXVMTkllNF9CSkNOS202cS1EVnE4NkpiZmJKM2hVZF8xVjBMaXQ0UGx4QllYNjVyZjlFOXh6a0NJQnpuVFAtLUVYS3IzMUpLVE9DMXBQZ29pQVc4bDR1dnBYemI0WXFyTE5BYUFkUHNkSGVENEdqVUdBd255bGlFbUUtaGR2a1EwVEtYemVNY3I4UGtleE5aM0VFOG9jbHlIV1dpZzQ3bm40aXpVYnpXdE5PZmJkS3BTSDljN3dRX1E?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-01-15T08:00:00Z",
+      "source": "newscentermaine.com",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Old Orchard Beach residents brace for long recovery after severe flooding - newscentermaine.com",
+      "summary": "Old Orchard Beach residents brace for long recovery after severe flooding - newscentermaine.com",
+      "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQX291aENUT1JoVFBYNFBsZnR4QlQ0Z2dEU3lRWUJlcldrTlB3bXR1Mm1QeWlfSGNoSXNpX2phOW9CMFJmZDZ3dGhCaGY0aUowU2xidjFiTjlUV1FRQjd5aDE4ZjhCdzR0YU90OS1vLV9LdXRjLU9NbFpoYXhsMFpReTl2WXdZT3pQYkRjZzFXMW13OXU3NktESHdhekpWRnFGcTBDazR2MjFEVUUzYmlRLUFGSUhGaDNvYWdHenNOYkhiRWk5ZWY1d2N4czhvbi1DYWc?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-02-29T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - wgme.com",
+      "summary": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPZVQzR2lvU3VBbmVEakd3dno4bTJKZzZ1QzhKci1FZlQya1ZYNTRsZVBCZzRrRmdwc2dMZGZjQ1huLWdMVkhNTjdWN29EZTJndC0yR1VaOTBoNXhaM3FVa0xRZ2RzMjZjUDlNYlpUVW5HQUtmNWhWRldod2hxdXlNTW5Dc0hRTHBRVUxVQzltLWlOdVJ1ZWttREh2ZlB4c0YzQnAzc2pWdnRXN1YtLTk3MFRR?oc=5",
+      "event_category": "road impacts",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-03-10T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Scarborough residents face severe coastal flooding for third time this year - wgme.com",
+      "summary": "Scarborough residents face severe coastal flooding for third time this year - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRDZxcGJuT255ZFJWdEJPdE9XdEpkOTJEWXgwSkpJd3lrelM1blFxTlZDUXRBdDVKUGxJTS1sSFRwQmdrVDNUTHFjOFdiVnduMDBqNS00UGV2WTJYMTc5SWx5UnNhemtiNFhwbG1TQVFtNzVpRDd3Sm5rVm90STRFN1dKUVduemtNOUZZbERFT0hjeW5DVUozaEhRcnY0T3dHMFJZdTV3?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-03-20T07:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Scarborough residents frustrated by FEMA flood map update - wgme.com",
+      "summary": "Scarborough residents frustrated by FEMA flood map update - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPbEViQjBVOWZLZzYxbzNLd3VFQjBubXNsRGZuaDQ1NjAxdFpzMXVmbUdnY2FjSXJyN3oxNWxiX2hrTHVZVjU5UEJybF81Q1BaTDVPdm81OC1hQllOT1hneEdrYkVpcjNJWnptdnhtVEdRekVyem9Bd21xbWt6UXNUOVJWMEl4eTZUTGZxQkV3?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-06-27T07:00:00Z",
+      "source": "Maine Audubon",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2024-10-08T07:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - wgme.com",
+      "summary": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMioAJBVV95cUxQSFAtWEwyX0dZVG40NkIxQk5wTjVnVzU3UDhRTWlERWcxTEVVS3MxMENvWUJyVlFrUlNQTl9SS3oxeTI3dzNTMFNzV3dQaVR1ZEdtVUgwbU9odXF1LXRHdmN2aVQ5Tzl6aU5BQ0xWaVFiWXotREt1SEtqOC0xdDdIM1ZjaVhuOFc3dWpGUk92Q2JiLWM4T0tkN21yT1h5dHhrVVNCVmN1VHU5OTI3eGFjNi01bVUyU2pEYVJmUV9IX05zNC1rMnZBOGw3RmtwY0pZQkxuLVBTQV9tY3pXQlhLQm1IejVneVYyR0hrVVR3Z1RybC1WeVBIWmo5bnpkSWhKMnBNV3QyNVBMbWJHNjRyZWxFYjhQUmkzUDFVS2JyRXE?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-01-10T08:00:00Z",
+      "source": "Spectrum News",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "A year on, Saco’s Camp Ellis neighborhood bounces back from storm damage - Spectrum News",
+      "summary": "A year on, Saco’s Camp Ellis neighborhood bounces back from storm damage - Spectrum News",
+      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNRXRqQ1B3S292eG5iOXg3ZGFSckE5STd6VGNSRERsN2JVWFpLYlFySXMxamNDbzkycDN3clR2S0JhQ2d1VjNGWnNTcGMtckpiUk1kYlRZaVlzTEVLOTN3cTJOZWNIU3g5cUhLRzlrZVhKaG5oajNvWnozY2YtYzFlODJzWlhDTWF2b2w4NThrS2hNNzhLcGhfeWNicENrMnYxbldpVU5tU050ckI2TFROSEQ1OTlRUVlBc3R5bWdBWVM4Sm1YN0E?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-01-13T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Camp Ellis still rebuilding after last year's devastating storms - wgme.com",
+      "summary": "Camp Ellis still rebuilding after last year's devastating storms - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOdmtzbkktYTliU1h6RDFydHJwMHkyWHlIc1dHQXZDLXZKWUFHTG5zUmdXTTU4a0F2cEhRdHpUQTUyOTFxOEduUUtndFhwbjJKRzd2bFBHN29qWmcwMFhMZ0VwYU1aTnJWQ3RrRWhGUWM1LVk0ajdONVJlLTBaVld4OXBVYjM5V2hQZl9COS0xVnVFUkx6eFFfbVFyNV9sdGJ3UG5McFJlNnJSNGhvZnR5YVB1bG5IVlAtQzJsS245dVBiVFRvS1R4aXZWblB5TDBB?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-03-12T07:00:00Z",
+      "source": "une.edu",
+      "source_type": "news",
+      "location": "Biddeford Pool",
+      "headline": "UNE students aid Biddeford Pool Conservation Trust in coastal restoration - une.edu",
+      "summary": "UNE students aid Biddeford Pool Conservation Trust in coastal restoration - une.edu",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQazhGcDkxdDBsV2xiVXNmT1hFdF9FcGhqOUlsQ1AxVnFyUGFSSldxekI3LWhFbHFJcnRJTVhQeGdscUxmQ1UybER2VUlUTjJZUlNLTGlYblhGZVBXbmxnWjVtQkpPUnR0d1BrNDdjd2NoSDJoWVZYSzdteHBPSUhLbWpLNVhyQ0plNnpnOFNUTXJKeURSNk1xUTc1bThkUVdzS2c?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-05-16T07:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - wgme.com",
+      "summary": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMilgJBVV95cUxNdjZuZUlSLVY2OVVfd29wSTJIVHhNMGJLRms0MVVHR3J0TnczVnYwMzhvN1RfblAtWkFOeThGVzRQX1RvTFRJRDlsR1R4Ym1YSVFKRHlMQ0dFWXVuNzVnSHNVM2NHLWdBd1g0MG4xUUR6aktHRy0tbFYzM2hTTEpIUHRmWmFmUEU3RE1uY3hvTENRN05CdnNXeUdycl9seGlldDdRcmFGY2Q0SzUycmh5OHlxeksyWjZfcm5GZ3N5RVBRTXhzdjh1d3R4UWVfSmRFdW5iQkpndnNHd211bGhwekVDbVZGM1hEcFR6bGszZ1RjaUFOS3BlTC1TUEJPZnVVdnVGa1loaFZnTkM1RHQ2cU9SSkE3dw?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-05-16T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Camp Ellis gets millions for new jetty and to rehabilitate shoreline - WMTW",
+      "summary": "Camp Ellis gets millions for new jetty and to rehabilitate shoreline - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQcm94Q0RVcmFFTVNhcGRRX00zRFJ2emRUemVDVzMzeWNIbi1ESy1WdGR3X0pmYUpFekJxTW9TNHZhTy1XQ2ZVRVh2SkRuaTF3alRrWEFfM2dlTm5zTDBMcFJmdkxlSVlhZmoteE9aTjJGR1ZPcHpqUjRsTGdvWUs0cWxwYkZZeE53WExSYVE1RDB3bm4zbVlpREJaMUttVFFGeWtGVll3a1JlZw?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-09-09T07:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Scarborough discusses storm resiliency plan for Pine Point Beach - wgme.com",
+      "summary": "Scarborough discusses storm resiliency plan for Pine Point Beach - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQRDl2eHZNRmk4NThUR3AwNTRHNGxnZHI3ZFJQMlhKejhBeU8xMUt4cTZMR0gyNktkUk9HQmdld2xMTGVDZzlyRnNjd3AxZE41UUM5dUhtUHROdGVYc01xV3B5eG1yQW5pZll0QVhaVERDUW5vM2xVcTZJU1JPZ2VielY4YzRZNGU2MUtkcnFpc3V6N3NRVkI2dlZn?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-10-01T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Scarborough launches second drone flight to assess beach erosion - WMTW",
+      "summary": "Scarborough launches second drone flight to assess beach erosion - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPZjBLb0NMTzFSbHdOUG9IdjBIUUZEV1ZYTTdwTEJORmgtakw0Qm9BRGNqTnQwTmRIZ294eVYtbDIxajgzTXh4RWpOdTc4OHRaUmhBNl9zWDdGSmlDb2RFSGcxSjF6X1JLM3dQNjB3ZzFPUVNPMkIwLU1hSnVXQkFTcVp2RjBsWENVTDNSVVNSRFZSS1RINzBlT0g3RDlUZk9zY2tjTw?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-10-07T07:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Saco discusses future storm preparation - wgme.com",
+      "summary": "Saco discusses future storm preparation - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPeXBBZ2RCVi1UZm5iNnlsaTBuNWZXTVZxaFNDR0hDR1l3UEZVTkhBX211bmhIVldFU0Vnck9rMno3Q2lISjdtTDBzbzFjeFJteml5WU93bmZ1ZmtTQlNHU3dkaUwwVWwxQmVhQU9US3JOb0p1cThrRnc1eXlYQXVjWk5Ed3NPc1hQNS1GcjQxWFROYzZxNXR1aHJzeTNwbzRoVlpnQjdVc1gyZ2hmS1h0eFBtRjdwTUNQcTVUeV9mS3RJbi0zeEVpTHM1d1Y?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2025-11-03T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - wgme.com",
+      "summary": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPeVpDLV9DM1EtQjlvNFRCSWRDbzBBeW1DdlI3SU0tX2xlQXNzYzA4UkszWGFsd3M3SGJZYUVQLUMzV0FDYm12aUdpLV9acTVQY29yLUtYOUFGeVczV1VCSlR0aW5KT3pmeUs4Tzk0bUFSQThOOFFaWklINi1EWWxncXNxTzZXYk53UzFSV1RwRG83V3drZ1VfenBsanBGWFBid0c1MFpJSHFLcVF2NUlUOXQzR1ZsUzJMbGZLYmNidUYxUTZyWU0tNy05VjF5X3Nma2JUUlZZa2dFVlU4bFROUjN1LUJsNVE3VzRyTG00Yw?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-01-05T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - wgme.com",
+      "summary": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxPdlg2UEdvd2hPTUk0SHZBTXJ1d1ltXy1VenBvOUgyOEUwN1g3MTM1N0RFbWdabG9mUTFaaEw2MUk2U2QzaVJmVnZzcE1HeDB6ZmQ2TWo1R2pJMmVEN3dYRVJUanNyUGRJazhYWlhUVExfbDJEal9PNU5IcE4wNHVvU0dfQkZaOEVvb2VNa1c5WlUyd3I5WjduWWFtYWpUYU9jRXJBSzBfT1VnNjByS3haT05leERxT1NscDJXdUxPMDJkTExaRWpNVHN1NzlhaVRnV1hIV24wY1VISWt0TzZoQS00ZWhsVlpIbUd5eXFR?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-01-12T08:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Old Orchard Beach dune restoration project underway 2 years after devastating coastal storms - WMTW",
+      "summary": "Old Orchard Beach dune restoration project underway 2 years after devastating coastal storms - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNSHVCRTFsSVVpdnJfVjVCZ1NfUTNLT29hZ0QxcnJsZ2d3Y1RtdWVpcDhaV3BSdDlSM283dHZGLVk2RW5xSlRTcTFZVEE0eS1JNHhkNXdEYzVnOUtNMDZiNUU5UGNFTXlSR2xuOWpidnN4VjF3SnFIM0pfdkdDQUJ0djBMMExCYVEySFF1VWx6MXp2UzZORFE?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-01-25T08:00:00Z",
+      "source": "newscentermaine.com",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "STORM CENTER: Biddeford reaches 11 inches of snow - newscentermaine.com",
+      "summary": "STORM CENTER: Biddeford reaches 11 inches of snow - newscentermaine.com",
+      "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxQWkVQYWNjTk8zaUxybXZVQmphSTdqd2ZhY3Blb1RVYS1OUWZfNjFVRFBOZXlJMUVuSjllSnBmYkllNVNKdnROanN2VThSTGIta0NwQzM1NGRMZE9lamc1d1Y1WUtjUGxTZnBuS1AwVWhpd3dYYWs1TG5LWmF5aEdBbm5TNVlqeThOTm5icGFuSlk2cW9DSWFlZXE5eTV6OGdkcFR3S28zeXhtSDZlRDFFVkZKTlZDeUlxcDFnWDQ0TG1veUxQYlVkSE1tbTZuNmtjbm50ZE83MXJaM1NKNTlJRW5FcWZGSkNmTWlodA?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-01-26T08:00:00Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Car flips in Scarborough amid winter storm conditions - wgme.com",
+      "summary": "Car flips in Scarborough amid winter storm conditions - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPZ1VkT0k5NzFDTkVsNkRUU3dGV0hkeUFwTnBDbFNBZGZWQjlsX1hCcWVHT0tXWmZGMm5UcG9KS0pKT19PTFVlZzZLR1FpVXhhUThqY0x2cU4xRFg3a3A5LU90dm5pdC12dUdQSkRGM1V5RGlJdmd1R21BNERXQnFwTXFEWUtHMHYt?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-02-23T08:00:00Z",
+      "source": "newscentermaine.com",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "STORM CENTER: Live from Camp Ellis - newscentermaine.com",
+      "summary": "STORM CENTER: Live from Camp Ellis - newscentermaine.com",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxOYks1UFQybDBNWTk5MzBvaFVXTlh3RFF1UzMwNEtYNVFseXl4b3RXV1RMYjFYSDlEdi0yeEJEUGpGTlJIM1VNNENyeS0wb0I2TnVVdWJVXzQ1VmtrQkN1cS1lUUlPMVJnS3ZFa1dfRmh2d0tlcmVMOXpvOWJlTGNSVktNemN3Wk04UTlZRlRUN2NtXzVldUtuN0FQY1VmRWUtUnllU2JWSDkyRnBBNmxjNS1lcVRtOHBNdHdZamxtUUx5VWRLTXBsZG5ROA?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-03-04T08:00:00Z",
+      "source": "newscentermaine.com",
+      "source_type": "news",
+      "location": "Scarborough",
+      "headline": "Crews knock down Scarborough house fire during storm - newscentermaine.com",
+      "summary": "Crews knock down Scarborough house fire during storm - newscentermaine.com",
+      "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxQWURpcXctd21lMmNGaTRlTkpwSjV5SmE3LWhrY0oxWTU0dVdVQXVGc1BhWXc0cG1HZXJFOXRrSEtXSGhmbGs0V2F0WXdVVFlvZDVIcDA5bDJDMlE0dGE3ZGFPc1NzNnF0alRONzNGWnA4ZDNKcDlvX3oxNlpZNkFpTHRJblBzallqWnMxYUxlZzhPT1NGbjhzaS11UTNtZUhKQnJjYVJLdVZZODdZWFVkc3Qxd0cyWF9uQW9lWmpDY0pvQ1FDR3dibUtJcGtqc0JnRG9LY0lSLTVQSjREc3Bzbk5rNFdtMm8?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-03-10T07:00:00Z",
+      "source": "Spectrum News",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Saco to begin work on breakwater jetty to protect Camp Ellis shoreline - Spectrum News",
+      "summary": "Saco to begin work on breakwater jetty to protect Camp Ellis shoreline - Spectrum News",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPcS1ZUHVFdGNaVTJmZFZhU0loLWdDZkpRZVMxOG1lMXJMVmxsUFlHUktiNE42c3phTFluNlRkbERCbGplME84cE4xYjl4Umg5MnZXLXNpbXJEWkhiZ0VZSEU3dTJCMVRrUVRseHBfRk95TGVIVDAtV3lKRl92Mk13UWNIZ1I0VmFKTDdJbDB3YXNBWTdsbmJDYVZtU3ZlWVltdERTOGx5QXIzZWJib3VQR0IxY2hYQUFicWhKZkwwb1JLOFk?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-03-17T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Flood Watch for the Maine mountains and a flood warning for the Saco River - WMTW",
+      "summary": "Flood Watch for the Maine mountains and a flood warning for the Saco River - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOLWZpVVozY2p6OUVUekhTZHhPcGtzR2M5dmRhVUpwMUdZX21QNUExT05jUUI1OTgxZ3FRT0pMUUN4aDNvNlpGV3NMbWl3ZHhDVHdfQ2FTMnlUVEFkVDM1LVk5b0FzaVZnSzJzV3pnUXRoWGFseUgyb3ZWdVVqVU56aW1wVjJaSEIxck1Fa1Y2aXFNS0MwN2tsb25QNA?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-04-21T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "UNE dune grass research project is helping to restore Biddeford, Maine's beaches - WMTW",
+      "summary": "UNE dune grass research project is helping to restore Biddeford, Maine's beaches - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNUFlUOHRfaWtjS2U2dk95SnUxSTQ5MjZkRDNYUjRsTE9JSXdXM1Y1bjhVZlFZVUxSUlFGWTlVNmsxWW9LQ2xsTGJ3aXF3ZVV2TmZ6blVxUHM1ZHYxQTRRNGFLd0NfRVN5MjQ5aF9TRFpnZGg5N3JhUk1NTjE0R1BmYWF0SlQ3bzN6RUtWVEtfLTFoOGhjTWhtVjIzUW1YdDM1Tk1CQjJPdWFvOEk?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-05-15T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Flooding underway along the Saco River as rain continues to fall - WMTW",
+      "summary": "Flooding underway along the Saco River as rain continues to fall - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNV1JOeGJVdmh6MDkwaGZvSUZHV0dWd0dXQU1ScEs0WmlKcmwyY2xEOUJka2otQnBkcXE5SFk3Vk1zMWdJVzJxUS1iZ1VVX0gzclhrNllXM2dEYmRINXBuZnh5ZDBfOUR6RW15b0w3NHFZckV5R0JvUWVOaUdEdWl5Q2N0N0I?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-05-15T15:28:38Z",
+      "source": "wgme.com",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Heavy rainfall causes flooding along Saco River - wgme.com",
+      "summary": "Heavy rainfall causes flooding along Saco River - wgme.com",
+      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxOUHdBVG5GZFdtd01va0JLY2lOZUFVOG44SnFEeldQMUtBR1U3M0E3ZTFSTjZ2enFUZy1WaDRIZDgxbUdwUmhwbmQxaVpGV1hXOTZ3TDJYZmNxMlNsXzJ0RVN2M3h5Mko4TTlhOEhsZjZROVBLN3VaY3BGdE1XQXdQbUx4OHVQWTlBaHlLNFdtVnhTYmVyclUxaVVKT1NGaGNnWm1YbHByMkczNnFxX0hNZHNmLU5JbGRuYzBnTzE2TkNLQ0lhTW9MUS1n?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-05-29T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Flood warning issued for Saco River in Fryeburg-Conway area, covering parts of Maine and New Hampshire - WMTW",
+      "summary": "Flood warning issued for Saco River in Fryeburg-Conway area, covering parts of Maine and New Hampshire - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQUE9DS0hWc1Q4WE5DUThCeG4tSDJmV3NacmctUHkxZzYxMVBlRUtDb3JfOGpkaGdPUmxfR3VRdEJzdXR3ckxxSXVlN0wyeHpfUXBHRER6RjJLNUR1NkZudU1aTTQ1Q2k4M04xeEx3cU1mRGRrMU1UalFXWlRvWjktWTFsQjhnOE1FRGc?oc=5",
+      "event_category": "flooding",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-06-11T07:00:00Z",
+      "source": "94.9 HOM",
+      "source_type": "news",
+      "location": "Ferry Beach",
+      "headline": "Family Fun At Saco's Ferry Beach During Low Tide - 94.9 HOM",
+      "summary": "Family Fun At Saco's Ferry Beach During Low Tide - 94.9 HOM",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9PQ0hlTDZoOUJmdEJzWWVpRFFEandObWZxQVVnUDlMS1kxUTFQdW5RZnBkR2hpRm9HVy0tOGRUWlg3SlM4ZFBreXlqLUtKSk9uTzdxVUtnVmlBa2J6eUNBUENDQUM?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-06-30T07:00:00Z",
+      "source": "Maine Morning Star",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOcHBRU1E1RzlrRmVjOXk1aFR2a1plMEJrOHJyMGJYLTVGVXM0Q19ZMmhGTS1fTG9vRlpEc1JKWGtGOFRBdWhleDJYMHV6a3ZFM2lYWlo2T1BWNnhXeGNtUDl6aGV3OXAteHRhU0hTczFCVS1MWWlGOVRwVkNMc08talNtMVRycXdDZW1IZzVkREhwV1dHak80bDNid3FMQ192ZGt4UVc3N2liZXBPWDZiLTBDSmswSHVDakY4ZA?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-07-01T07:00:00Z",
+      "source": "DredgeWire",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - DredgeWire",
+      "summary": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - DredgeWire",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOb3BkUmtmNE1GbTBKR2xEZE5vTm1rVlhOUnRiRWNEc1RPN3RVUEpkMlhGcjdJbFBvRnRDMG1JZ09zQjhXRzJ1YVlXQVB3RVVQTzJIcmtkWHZfaFhBTHlGV2EwZnctb3hoZDB5OUZrczlwTmtJdDIyQ1BkRUJhYk15ZFNMWmpUelM5WmFKYkgtQWZkZzkzeDZsZjBnVVBwTjQ1R09OUEIybVdEZTdwQ2Z0UW1hWVhzYTBnSDZz?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-07-08T07:00:00Z",
+      "source": "une.edu",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "UNE partners in Biddeford community exhibition bridging coastal science and art - une.edu",
+      "summary": "UNE partners in Biddeford community exhibition bridging coastal science and art - une.edu",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPemdfcWhyWXE5U1JNSmwzYXhuNnRlMmg2NkRKWFozeTRKc25PMUpMREE5QW9fUWp2VXpoX2haQjA1ODJkVTFXZ2lnNVZiV2cxRUFQaFdITUlJd2sxaGNNbG9Qbnd2alo5MS11cFBGNlhOUTJuMldBdG5JRzRkajEyUFRPNFY4RDYwM0JqS1VSUXlMWDR5Nl8xeTk3RXNCVUhSZFM0eWczQzF5Zw?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-07-13T07:00:00Z",
+      "source": "pressherald.com",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - pressherald.com",
+      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - pressherald.com",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNVTZXdEp4QjFqYzZfRnN3M1FtWXRiMXlqSlBpR2hjNTNFVnY1Z19fTjVBSlBHSWlNX2RyM000WGc4eGNZMnFsUjI5VVNiVWYzZHVvb3IwZjRrQ3JDejhSMnVuRFFmUkQxUUN6VXZrR0NlMVdoeHVteHJPMTdUX1hBcHlZSUZMTFhJWE92cjJxVjAxVGZickVySHJFdUxYNDY5X2FmNTVuX2lFLUNqSHNIMUVDM3YxdUE?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-07-14T07:00:00Z",
+      "source": "Honolulu Star-Advertiser",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "Protesters rally a day after fatal ICE shooting in coastal Maine town of Biddeford - Honolulu Star-Advertiser",
+      "summary": "Protesters rally a day after fatal ICE shooting in coastal Maine town of Biddeford - Honolulu Star-Advertiser",
+      "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOb05RMjZ4SWV4aFdjTy1qVWZ1d01wR2xoUFhHN25kT3NxcWIxeWpOWExuS2FSd2tKSm1POFdLc2NuS2NFcW5MUFRPNzVFRkVTVjNqMHRvWE02OHdXZmZ3eTkzZXgwcGtYajNhWEZVSFJBVFlrSEduZUE2UUw1azNkR3M1R0ttZ1BsajVqUURQRDBnVzF1TVVQVHdyUGptYTViTjU0RWVnOXRKRWU5WDhPMGtnQjVyazg4X05MbHJxZnIyY0RJM1dqb1hZeExQUGdFd25oOVRB?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-07-14T07:00:00Z",
+      "source": "facebook.com",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "The New York Times. . A federal ICE agent shot and killed a person in a vehicle on Monday in the coastal city of Biddeford, Maine. People took to the streets to protest. Read more: https://nyti.ms/4yjmlgj - facebook.com",
+      "summary": "The New York Times. . A federal ICE agent shot and killed a person in a vehicle on Monday in the coastal city of Biddeford, Maine. People took to the streets to protest. Read more: https://nyti.ms/4yjmlgj - facebook.com",
+      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQX3BpQ0NUV0ZYZEpzb1I3MEJxSTlTajdPOXFiQXBsNktSdkZlNkVqQ3B2QjctM2lKT1ByT1BWcUlGYlZvaEV2czB0dHhINUtRZVVsbXZfa0RvVHZ0djZ2dUxSNnI1ck5ZMmp2NkpjbU5RcTVEdzlFSVVBNU1Mc3RTeW04Q1U2X0xlejNKVlhWdGIxNVF3d0dUU3dsTGdrcUZvT2JHX0NCR1dqMDJoc21DUkpod09ueFY3alQ3LURpQ0JYYXdLNnN1VkZhOG9DTGh0WmprRQ?oc=5",
+      "event_category": "road impacts",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-07-24T07:00:00Z",
+      "source": "Maine Public",
+      "source_type": "news",
+      "location": "Camp Ellis",
+      "headline": "Will a new spur jetty curb erosion in Camp Ellis, Saco? - Maine Public",
+      "summary": "Will a new spur jetty curb erosion in Camp Ellis, Saco? - Maine Public",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQaGRCa0pGYmNfZXo4SlktcFVKSWNfOVdxRTc1Mm5RU2lObEhWelJPZENBbzJJUHJjeVdHOGstZENSQVV1b191MFBUZVNKcjhRYXlia3hUNlJwUmNhcGgzZFZvYi1POXZ3R0M4UGxBSGpOZHNQM05HT2ZNSkxVNG5CdC1tTWxiUU1wUWx6Z1pSdGFjWndzbmt1by13OXhBcTB2YXc?oc=5",
+      "event_category": "erosion",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-11T07:00:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Massachusetts couple injured after wind gust topples light pole in Old Orchard Beach - WMTW",
+      "summary": "Massachusetts couple injured after wind gust topples light pole in Old Orchard Beach - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNcFFBNE83TUExazRfVFBkWHhaRWdzT3VLOHNEM3JRWXdFQXZEbFV0SGZhSWJlc01XZ05sX2VZc3V3c3k2N01Wa3hsQ3hXd2FBY1U2ZkZDUDlxNnVwQ1Y5aE1kNlh0akFqbVZ3NjgwTVE3Q0I0ekNVVWdnbk1ZMVVJaHkxRWtpUkJTcV9qaVRwaw?oc=5",
+      "event_category": "wind",
+      "anecdotal": false
+    },
     {
       "published_at": "2026-09-23T15:50:07Z",
       "source": "sacobaynews.com",

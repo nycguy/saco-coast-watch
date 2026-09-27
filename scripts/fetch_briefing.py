@@ -28,6 +28,7 @@ NOAA="https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
 STATION="8418150"
 PUBLISHED="https://nycguy.github.io/saco-coast-watch/data/coastal-briefing.json"
 POINT="43.48,-70.38"
+SEED_PATH=Path(__file__).resolve().parents[1]/"data"/"briefing-seed-history.json"
 MINOR=12.0
 LOCAL_TERMS=("saco","biddeford","old orchard","scarborough","camp ellis","ferry beach")
 
@@ -181,6 +182,58 @@ def current_alerts():
 def load_previous():
     return safe_json(PUBLISHED) or {}
 
+def load_seed():
+    try:
+        return json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+def merge_history(seed_rows, previous_rows, current_record, now):
+    """Merge reconstructed seed snapshots, previously published snapshots, and the current live snapshot."""
+    by_time={}
+    for row in list(seed_rows or [])+list(previous_rows or []):
+        t=parse_iso(row.get("generated_at"))
+        if not t or now-t > dt.timedelta(days=7) or t-now > dt.timedelta(hours=1):
+            continue
+        by_time[iso(t)]={**row,"generated_at":iso(t)}
+    current_t=parse_iso(current_record.get("generated_at")) or now
+    # Replace the most recent live record if it is within 45 minutes; otherwise append.
+    recent=[(parse_iso(v.get("generated_at")),k) for k,v in by_time.items()]
+    recent=[x for x in recent if x[0]]
+    if recent:
+        last_t,last_key=max(recent,key=lambda x:x[0])
+        if abs((current_t-last_t).total_seconds()) < 45*60 and by_time[last_key].get("source")!="reconstructed_dashboard_snapshot":
+            by_time.pop(last_key,None)
+    by_time[iso(current_t)]={**current_record,"generated_at":iso(current_t)}
+    rows=sorted(by_time.values(),key=lambda r:parse_iso(r.get("generated_at")) or now)
+    return rows[-256:]
+
+def choose_baseline(history, target, tolerance_hours=7):
+    rows=[r for r in history if parse_iso(r.get("generated_at")) and r.get("model_peak_ft") is not None]
+    if not rows:
+        return None
+    prior=min(rows,key=lambda r:abs((parse_iso(r["generated_at"])-target).total_seconds()))
+    if abs((parse_iso(prior["generated_at"])-target).total_seconds()) > tolerance_hours*3600:
+        return None
+    return prior
+
+def daily_observed_peaks(rows):
+    try:
+        from zoneinfo import ZoneInfo
+        tz=ZoneInfo("America/New_York")
+    except Exception:
+        tz=dt.timezone.utc
+    days={}
+    for t,v in rows:
+        key=t.astimezone(tz).date().isoformat()
+        old=days.get(key)
+        if old is None or v>old[1]:
+            days[key]=(t,v)
+    out=[]
+    for key,(t,v) in sorted(days.items()):
+        out.append({"date":key,"peak_ft":round(v,2),"peak_time":iso(t)})
+    return out
+
 def refresh_local_pulse(prev):
     now=now_utc()
     previous=(prev.get("local_pulse") or {})
@@ -204,9 +257,15 @@ def refresh_local_pulse(prev):
 def build():
     now=now_utc()
     prev=load_previous()
+    seed=load_seed()
 
-    # NOAA observed water levels for the past 24h.
-    observed=decode_rows(safe_json(noaa_url("water_level",date="recent")) or {})
+    # NOAA observed water levels. Pull several days so the history dataset contains
+    # actual daily gauge peaks in addition to reconstructed forecast snapshots.
+    obs_begin=(now-dt.timedelta(days=4)).strftime("%Y%m%d")
+    obs_end=now.strftime("%Y%m%d")
+    observed=decode_rows(safe_json(noaa_url("water_level",begin_date=obs_begin,end_date=obs_end)) or {})
+    if not observed:
+        observed=decode_rows(safe_json(noaa_url("water_level",date="recent")) or {})
     obs24=[p for p in observed if p[0]>=now-dt.timedelta(hours=24)]
     observed_peak=max(obs24,key=lambda x:x[1]) if obs24 else None
 
@@ -227,45 +286,31 @@ def build():
         "model_peak_time":iso(p72[0]) if p72 else None,
         "next24_peak_ft":round(p24[1],2) if p24 else None,
         "next24_peak_time":iso(p24[0]) if p24 else None,
+        "alerts":sorted({a.get("event") for a in alerts if a.get("event")}),
+        "source":"live_noaa_ofs_snapshot",
+        "confidence":"live",
     }
-    history=[]
-    for r in prev.get("history") or []:
-        t=parse_iso(r.get("generated_at"))
-        if t and now-t <= dt.timedelta(hours=54):
-            history.append(r)
-    history.sort(key=lambda x: parse_iso(x.get("generated_at")) or now)
-
-    if not history:
-        history=[current_record]
-    else:
-        last_t=parse_iso(history[-1].get("generated_at"))
-        if last_t and now-last_t<dt.timedelta(minutes=45):
-            history[-1]=current_record
-        else:
-            history.append(current_record)
-    history=history[-80:]
-
-    target=now-dt.timedelta(hours=24)
-    prior=None
-    if history:
-        candidates=[r for r in history if parse_iso(r.get("generated_at"))]
-        if candidates:
-            prior=min(candidates,key=lambda r:abs((parse_iso(r["generated_at"])-target).total_seconds()))
-            if abs((parse_iso(prior["generated_at"])-target).total_seconds())>7*3600:
-                prior=None
+    history=merge_history(seed.get("forecast_snapshots") or [],prev.get("history") or [],current_record,now)
+    prior=choose_baseline(history,now-dt.timedelta(hours=24),7)
+    prior48=choose_baseline(history,now-dt.timedelta(hours=48),9)
 
     change=None
     if prior and p72 and prior.get("model_peak_ft") is not None:
         old=float(prior["model_peak_ft"])
         old_t=parse_iso(prior.get("model_peak_time"))
+        old_alerts=set(prior.get("alerts") or [])
+        new_alerts=set(current_record.get("alerts") or [])
         change={
             "baseline_at":prior["generated_at"],
+            "baseline_source":prior.get("source"),
             "peak_delta_ft":round(p72[1]-old,2),
             "previous_peak_ft":round(old,2),
             "current_peak_ft":round(p72[1],2),
             "previous_peak_time":iso(old_t) if old_t else None,
             "current_peak_time":iso(p72[0]),
             "time_shift_minutes":round((p72[0]-old_t).total_seconds()/60) if old_t else None,
+            "alerts_added":sorted(new_alerts-old_alerts),
+            "alerts_removed":sorted(old_alerts-new_alerts),
         }
 
     news_items=[x for x in local.get("items",[]) if x.get("type")=="news"]
@@ -283,12 +328,16 @@ def build():
     if change:
         d=change["peak_delta_ft"]
         direction="increased" if d>0 else "decreased" if d<0 else "held steady"
-        forecast_change=f"Compared with the NOAA model snapshot about 24 hours ago, the 72-hour peak has {direction}"
+        forecast_change=f"Compared with the Saco Coast Watch NOAA model snapshot about 24 hours ago, the 72-hour peak has {direction}"
         if d: forecast_change+=f" by {abs(d):.2f} ft"
         forecast_change+=f", from {change['previous_peak_ft']:.2f} to {change['current_peak_ft']:.2f} ft MLLW."
         if change.get("time_shift_minutes"):
             mins=change["time_shift_minutes"]; hours=abs(mins)/60
             forecast_change+=f" Peak timing shifted about {hours:.1f} hours {'later' if mins>0 else 'earlier'}."
+        if change.get("alerts_added"):
+            forecast_change+=" Newly active alert type"+("s" if len(change["alerts_added"])!=1 else "")+": "+", ".join(change["alerts_added"])+"."
+        if change.get("alerts_removed"):
+            forecast_change+=" No longer active: "+", ".join(change["alerts_removed"])+"."
     else:
         forecast_change="A 24-hour forecast-change baseline is still being established from stored NOAA model snapshots."
 
@@ -314,12 +363,29 @@ def build():
         local_summary+=" ("+", ".join(parts)+")"
     local_summary+=". Facebook is not included because reliable public indexing is inconsistent."
 
+    change48=None
+    if prior48 and p72 and prior48.get("model_peak_ft") is not None:
+        old48=float(prior48["model_peak_ft"])
+        old48_t=parse_iso(prior48.get("model_peak_time"))
+        change48={
+            "baseline_at":prior48["generated_at"],
+            "baseline_source":prior48.get("source"),
+            "peak_delta_ft":round(p72[1]-old48,2),
+            "previous_peak_ft":round(old48,2),
+            "current_peak_ft":round(p72[1],2),
+            "previous_peak_time":iso(old48_t) if old48_t else None,
+            "current_peak_time":iso(p72[0]),
+            "time_shift_minutes":round((p72[0]-old48_t).total_seconds()/60) if old48_t else None,
+        }
+
     return {
         "schema_version":1,
         "generated_at":iso(now),
         "window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
         "past_24h":{"text":past,"observed_peak_ft":round(observed_peak[1],2) if observed_peak else None,"observed_peak_time":iso(observed_peak[0]) if observed_peak else None},
         "forecast_change_24h":{"text":forecast_change,"comparison":change},
+        "forecast_change_48h":{"comparison":change48},
+        "observed_daily_peaks":daily_observed_peaks(observed),
         "next_24h":{"text":next24,"peak_ft":round(p24[1],2) if p24 else None,"peak_time":iso(p24[0]) if p24 else None},
         "next_72h":{"text":next72,"peak_ft":round(p72[1],2) if p72 else None,"peak_time":iso(p72[0]) if p72 else None},
         "local_pulse":{"summary":local_summary,**local},
@@ -337,11 +403,27 @@ def build():
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--output",default="data/coastal-briefing.json")
+    ap.add_argument("--history-output",default="data/coastal-history.json")
     args=ap.parse_args()
     data=build()
     out=Path(args.output); out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"Wrote {out}: {data['generated_at']} / {len(data['local_pulse'].get('items',[]))} public local items")
+    history_out=Path(args.history_output); history_out.parent.mkdir(parents=True,exist_ok=True)
+    history_payload={
+        "schema_version":1,
+        "generated_at":data["generated_at"],
+        "forecast_snapshots":data.get("history") or [],
+        "observed_daily_peaks":data.get("observed_daily_peaks") or [],
+        "forecast_change_24h":data.get("forecast_change_24h"),
+        "forecast_change_48h":data.get("forecast_change_48h"),
+        "provenance":{
+            "live_snapshots":"NOAA CO-OPS OFS total-water guidance captured by Saco Coast Watch.",
+            "seed_snapshots":"Reconstructed from Saco Coast Watch dashboard screenshots and explicitly marked reconstructed_dashboard_snapshot.",
+            "observations":"NOAA CO-OPS Portland station 8418150 water-level observations."
+        }
+    }
+    history_out.write_text(json.dumps(history_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"Wrote {out} and {history_out}: {data['generated_at']} / {len(data['history'])} forecast snapshots")
 
 if __name__=="__main__":
     main()

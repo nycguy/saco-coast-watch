@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-27T13:20:55Z",
+  "generated_at": "2026-09-27T13:21:09Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -888,7 +888,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-27T13:20:55Z",
+      "snapshot_at": "2026-09-27T13:21:09Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -1039,6 +1039,48 @@
   "alert_events": [
     {
       "change_type": "issued",
+      "event": "Small Craft Advisory",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3b1056ad52a650e501e2abff2a45d651e74187c7.001.1",
+      "at": "2026-09-22T14:22:00-04:00",
+      "source": "NWS historical alert product",
+      "source_type": "official_alert",
+      "headline": "Small Craft Advisory issued September 22 at 2:22PM EDT until September 24 at 8:00PM EDT by NWS Gray ME",
+      "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM"
+    },
+    {
+      "change_type": "extended",
+      "event": "Small Craft Advisory",
+      "previous_event": "Small Craft Advisory",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1d6b9a497580daf8cdb5a9cc21bb90446b2dd161.003.1",
+      "at": "2026-09-23T02:22:00-04:00",
+      "source": "NWS historical alert product",
+      "source_type": "official_alert",
+      "headline": "Small Craft Advisory issued September 23 at 2:22AM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+      "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM"
+    },
+    {
+      "change_type": "issued",
+      "event": "Gale Watch",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.2",
+      "at": "2026-09-23T14:34:00-04:00",
+      "source": "NWS historical alert product",
+      "source_type": "official_alert",
+      "headline": "Gale Watch issued September 23 at 2:34PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+      "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM"
+    },
+    {
+      "change_type": "upgraded",
+      "event": "Gale Warning",
+      "previous_event": "Gale Watch",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.3",
+      "at": "2026-09-24T02:23:00-04:00",
+      "source": "NWS historical alert product",
+      "source_type": "official_alert",
+      "headline": "Gale Warning issued September 24 at 2:23AM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+      "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM"
+    },
+    {
+      "change_type": "issued",
       "event": "Gale Warning",
       "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b9ad9a121eaebb4772d88bfd94b1fa3efcdd7be0.002.1",
       "at": "2026-09-27T02:37:00-04:00",
@@ -1049,11 +1091,11 @@
   "local_events": [
     {
       "published_at": "2026-09-23T15:50:07Z",
-      "source": "Saco Bay News",
+      "source": "sacobaynews.com",
       "source_type": "news",
       "location": "Old Orchard Beach",
-      "headline": "Old Orchard Beach Fall Fest cancelled due to weather - Saco Bay News",
-      "summary": "Old Orchard Beach Fall Fest cancelled due to weather - Saco Bay News",
+      "headline": "Old Orchard Beach Fall Fest cancelled due to weather - sacobaynews.com",
+      "summary": "Old Orchard Beach Fall Fest cancelled due to weather - sacobaynews.com",
       "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQMk01alVCSHZWTXRlYW5iTmhtME8wZzNQVjl0VjJWWjlJa2drcEdKenY0Q3pVeEpMeTliWGtZS2NwTXcxRzNwRXVCODJPUWpUT2tVQ1NiYnhLZFRjbW1OSG85SlBPbV9XdmhZNGhncnlpc21lcEdmVURYT3FIUENUbVJ2aERSNHM?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

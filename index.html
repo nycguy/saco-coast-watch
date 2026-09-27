@@ -129,10 +129,14 @@
 .ferry-camera .ferry-layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(225px,.8fr);gap:17px;align-items:stretch}
 .ferry-player{position:relative;aspect-ratio:16 / 9;min-height:210px;border:1px solid #426d80;border-radius:12px;background:radial-gradient(circle at 45% 85%,#206c76 0%,#123f53 43%,#0b2433 75%);overflow:hidden;display:grid;place-items:center}
 .ferry-player video,.ferry-player iframe{display:block;width:100%;height:100%;object-fit:contain;background:#081824;border:0}.abellona-camera{border-color:#4f8fc1;box-shadow:inset 0 3px #63b8ef}.abellona-camera .ferry-label{color:#9edaff}.abellona-camera .ferry-pill{background:#173f5b;color:#bfe5ff;border-color:#477da0}
-.ferry-player video[hidden],.ferry-player button[hidden]{display:none!important}
-.ferry-start{display:flex;flex-direction:column;align-items:center;gap:9px;justify-content:center;padding:15px;border:1px solid #6cc7c4;border-radius:12px;background:#092c3ad9;color:#fff;font:800 17px/1.35 system-ui;cursor:pointer}
+.ferry-player video[hidden],.ferry-player iframe[hidden],.camera-preview[hidden],.ferry-player button[hidden]{display:none!important}
+.camera-preview{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 45% 85%,#206c76 0%,#123f53 43%,#0b2433 75%)}
+.camera-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camera-preview:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#07182412 38%,#071824c2 100%);pointer-events:none}
+.ferry-start{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:9px;justify-content:center;padding:15px;border:1px solid #6cc7c4;border-radius:12px;background:#092c3ad9;color:#fff;font:800 17px/1.35 system-ui;cursor:pointer;box-shadow:0 8px 28px #0007}
 .ferry-start:hover,.ferry-start:focus-visible{background:#125062;outline:2px solid #a8fff3;outline-offset:3px}
 .ferry-play-icon{display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:#18b5ac;color:#061e28;font-size:30px}
+.camera-preview-time{position:absolute;z-index:2;left:10px;bottom:9px;max-width:calc(100% - 20px);padding:5px 8px;border-radius:7px;background:#071824cf;color:#d8edf5;font-size:10.5px;font-weight:750;letter-spacing:.01em}
 .ferry-side{display:flex;flex-direction:column;justify-content:center;gap:13px;color:#bbd5e0}
 .ferry-side strong{color:#edfbff;font-size:16px}
 .ferry-side p{margin:0;font-size:12px;line-height:1.6}
@@ -919,13 +923,17 @@ td{color:#e6f1f6}
   </div>
   <div class="ferry-layout">
     <div class="ferry-player">
-      <button class="ferry-start" type="button" id="ferryStart" aria-label="Start Ferry Beach live video"><span class="ferry-play-icon" aria-hidden="true">▶</span>Watch Ferry Beach live<span style="font-size:11px;font-weight:500;color:#b7d6df">Tap to start video · sound muted initially</span></button>
+      <div class="camera-preview" id="ferryPreview">
+        <img id="ferryPreviewImage" hidden alt="Latest Ferry Beach shoreline camera preview for visual coastal context">
+        <button class="ferry-start" type="button" id="ferryStart" aria-label="Start Ferry Beach live video"><span class="ferry-play-icon" aria-hidden="true">▶</span>Watch Ferry Beach live<span style="font-size:11px;font-weight:500;color:#b7d6df">Latest preview shown first · tap for live video</span></button>
+        <span class="camera-preview-time" id="ferryPreviewTime">Loading latest shoreline preview…</span>
+      </div>
       <video id="ferryVideo" hidden controls playsinline muted preload="none" aria-label="Live Ferry Beach north-facing webcam"></video>
     </div>
     <div class="ferry-side">
       <strong>See current surf and shoreline conditions</strong>
       <p>Watch the beach alongside NOAA water levels and coastal alerts. The camera is for visual context only, not a measurement of flood depth or wave height.</p>
-      <p class="ferry-status" id="ferryStatus" role="status" aria-live="polite">Camera is ready. Select Watch Ferry Beach live to connect.</p>
+      <p class="ferry-status" id="ferryStatus" role="status" aria-live="polite">Loading the latest Ferry Beach preview.</p>
       <a href="https://webcoos.org/cameras/ferrybeach_north/" target="_blank" rel="noopener noreferrer">Open official Ferry Beach camera ↗</a>
     </div>
   </div>
@@ -938,7 +946,12 @@ td{color:#e6f1f6}
   </div>
   <div class="ferry-layout">
     <div class="ferry-player">
-      <iframe src="https://www.youtube.com/embed/HSQpqIWLViI" title="Abellona Inn Old Orchard Beach live camera" loading="lazy"
+      <div class="camera-preview" id="abellonaPreview">
+        <img id="abellonaPreviewImage" hidden alt="Latest Abellona Inn Old Orchard Beach camera preview for visual coastal context">
+        <button class="ferry-start" type="button" id="abellonaStart" aria-label="Start Abellona Inn live beach camera"><span class="ferry-play-icon" aria-hidden="true">▶</span>Watch Old Orchard Beach live<span style="font-size:11px;font-weight:500;color:#b7d6df">Latest preview shown first · tap for live video</span></button>
+        <span class="camera-preview-time" id="abellonaPreviewTime">Loading latest shoreline preview…</span>
+      </div>
+      <iframe id="abellonaFrame" hidden data-src="https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&amp;mute=1" title="Abellona Inn Old Orchard Beach live camera" loading="lazy"
         referrerpolicy="strict-origin-when-cross-origin"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen></iframe>
@@ -946,7 +959,7 @@ td{color:#e6f1f6}
     <div class="ferry-side">
       <strong>See live conditions farther north on Saco Bay</strong>
       <p>Use the Abellona view with the Ferry Beach camera to compare surf, visibility and shoreline conditions across the bay. Camera imagery is visual context only, not a flood-depth or wave-height measurement.</p>
-      <p class="ferry-status">Live YouTube feed from the Abellona Inn in Old Orchard Beach.</p>
+      <p class="ferry-status" id="abellonaStatus" role="status" aria-live="polite">Loading the latest Old Orchard Beach preview.</p>
       <a href="https://www.youtube.com/watch?v=HSQpqIWLViI" target="_blank" rel="noopener noreferrer">Open Abellona camera on YouTube ↗</a>
     </div>
   </div>
@@ -972,7 +985,7 @@ td{color:#e6f1f6}
   <div class="brief-row"><b>Past 24h</b><span id="briefPast">Building the latest coastal briefing…</span></div>
   <div class="brief-row"><b>Forecast change</b><span id="briefChange">Comparing with the model snapshot from about 24 hours ago…</span></div>
   <div class="brief-row"><b>Next 24h</b><span id="briefNext">Loading NOAA guidance…</span></div>
-  <div class="brief-row"><b>Local pulse</b><span id="briefPulse">Checking public local reporting…</span></div>
+  <div class="brief-row"><b>Local weather reports</b><span id="briefPulse">Checking weather-related local reporting…</span></div>
  </div>
  <div class="brief-actions"><span class="brief-updated" id="briefUpdated">Briefing update pending</span><button class="brief-open" id="briefOpen" type="button">Read full briefing ›</button></div>
 </section>
@@ -1038,13 +1051,13 @@ td{color:#e6f1f6}
 </main>
 <dialog class="briefing-dialog" id="briefingDialog" aria-labelledby="briefModalTitle">
  <div class="brief-modal">
-  <div class="brief-modal-head"><div><h2 id="briefModalTitle">Southern Maine coastal briefing</h2><p id="briefModalUpdated">Fixed rolling windows · NOAA / NWS / public local reporting</p></div><button class="brief-close" id="briefClose" type="button" aria-label="Close coastal briefing">×</button></div>
+  <div class="brief-modal-head"><div><h2 id="briefModalTitle">Southern Maine coastal briefing</h2><p id="briefModalUpdated">Fixed rolling windows · NOAA / NWS / weather-related local reporting</p></div><button class="brief-close" id="briefClose" type="button" aria-label="Close coastal briefing">×</button></div>
   <section class="brief-section"><h4>Past 24 hours</h4><p id="briefFullPast">Briefing is loading.</p></section>
   <section class="brief-section"><h4>What changed versus ~24 hours ago</h4><p id="briefFullChange">Forecast comparison is loading.</p></section>
   <section class="brief-section"><h4>Next 24 hours</h4><p id="briefFull24">NOAA guidance is loading.</p></section>
   <section class="brief-section"><h4>Next 72 hours</h4><p id="briefFull72">NOAA guidance is loading.</p></section>
-  <section class="brief-section"><h4>Local pulse · public reporting</h4><p id="briefFullPulse">Public local reporting is loading.</p><div class="brief-pulse-list" id="briefPulseList"></div></section>
-  <div class="brief-source-note" id="briefSourceNote">Community and news items are contextual, not official observations. Public Facebook posts are not reliably indexed and are not represented as a complete scan.</div>
+  <section class="brief-section"><h4>Local Weather &amp; Coastal Reports</h4><p id="briefFullPulse">Weather-related local reporting is loading.</p><div class="brief-pulse-list" id="briefPulseList"></div></section>
+  <div class="brief-source-note" id="briefSourceNote">Only weather and coastal-condition reports are retained here. Community items are anecdotal, not official observations. Public Facebook posts are not reliably indexed and are not represented as a complete scan.</div>
  </div>
 </dialog>
 <footer class="footer"><div class="shell footin"><span>Independent dashboard using NOAA / NWS public data. Not affiliated with, endorsed by, or a substitute for NOAA or emergency management.</span><span>Station 8418150 · ft MLLW · America/New_York · Automatically checks for updates every 60 seconds while active</span></div></footer>
@@ -1456,7 +1469,7 @@ $('chartPeriod').textContent=longMode?'Next '+state.days+' days · daily high-wa
 function briefShort(text,max=130){const s=String(text||'').trim();return s.length<=max?s:s.slice(0,max-1).trimEnd()+'…';}
 function renderBriefing(){
  const b=state.briefing;
- if(!b){if(state.briefingError){$('briefPast').textContent='Briefing temporarily unavailable.';$('briefChange').textContent='NOAA chart remains available above.';$('briefNext').textContent='Use the live water-level outlook above.';$('briefPulse').textContent='Public local scan unavailable.';$('briefUpdated').textContent='Briefing feed unavailable';}return;}
+ if(!b){if(state.briefingError){$('briefPast').textContent='Briefing temporarily unavailable.';$('briefChange').textContent='NOAA chart remains available above.';$('briefNext').textContent='Use the live water-level outlook above.';$('briefPulse').textContent='Weather-related local scan unavailable.';$('briefUpdated').textContent='Briefing feed unavailable';}return;}
  $('briefPast').textContent=briefShort(b.past_24h?.text);
  $('briefChange').textContent=briefShort(b.forecast_change_24h?.text);
  $('briefNext').textContent=briefShort(b.next_24h?.text);
@@ -1468,15 +1481,15 @@ function renderBriefing(){
  $('briefFull24').textContent=b.next_24h?.text||'Next-24-hour guidance unavailable.';
  $('briefFull72').textContent=b.next_72h?.text||'Next-72-hour guidance unavailable.';
  $('briefFullPulse').textContent=b.local_pulse?.summary||'No public local items were returned.';
- $('briefModalUpdated').textContent=(Number.isFinite(generated)?'Updated '+dayTime(generated)+' ET · ':'')+'Fixed rolling windows · NOAA / NWS / public local reporting';
+ $('briefModalUpdated').textContent=(Number.isFinite(generated)?'Updated '+dayTime(generated)+' ET · ':'')+'Fixed rolling windows · NOAA / NWS / weather-related local reporting';
  const list=$('briefPulseList');list.replaceChildren();
  for(const item of (b.local_pulse?.items||[]).slice(0,8)){
   const a=document.createElement('a');a.className='brief-pulse-item';a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';
-  const small=document.createElement('small');small.textContent=(item.type==='reddit'?'Community report · Reddit':'Local news · '+(item.source||'Public source'));
+  const small=document.createElement('small');small.textContent=(item.type==='reddit'?'Anecdotal weather report · Reddit':'Weather/coastal report · '+(item.source||'Public source'));
   const span=document.createElement('span');span.textContent=item.title||'Open source';
   a.append(small,span);list.append(a);
  }
- $('briefSourceNote').textContent=(b.local_pulse?.facebook_note||'Public Facebook posts are not included because reliable public indexing and access are inconsistent.')+' Community/news items are contextual and are not official NOAA/NWS observations.';
+ $('briefSourceNote').textContent=(b.local_pulse?.facebook_note||'Public Facebook posts are not included because reliable public indexing and access are inconsistent.')+' Only weather/coastal-condition items are retained. Community items are anecdotal and are not official NOAA/NWS observations.';
 }
 async function loadBriefing(){
  try{state.briefing=await getJSON('data/coastal-briefing.json?t='+Date.now(),12000);state.briefingError=null;}
@@ -1623,65 +1636,122 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
 
 
 <script>
-/* HLS playback: native on Safari, hls.js on browsers without native HLS.
-   Load only when the visitor requests video; no stream bandwidth on page load. */
+/* Lightweight current-condition previews are generated during the Pages build.
+   The app preloads those same-origin images on launch; live streams start only on request. */
 (function(){
   'use strict';
   const stream='https://stage-ams.srv.axds.co/stream/adaptive/neracoos/ferrybeach_north/hls.m3u8';
-  const button=document.getElementById('ferryStart');
-  const video=document.getElementById('ferryVideo');
-  const status=document.getElementById('ferryStatus');
-  if(!button||!video||!status)return;
+  const ferryButton=document.getElementById('ferryStart');
+  const ferryPreview=document.getElementById('ferryPreview');
+  const ferryVideo=document.getElementById('ferryVideo');
+  const ferryStatus=document.getElementById('ferryStatus');
+  const abellonaButton=document.getElementById('abellonaStart');
+  const abellonaPreview=document.getElementById('abellonaPreview');
+  const abellonaFrame=document.getElementById('abellonaFrame');
+  const abellonaStatus=document.getElementById('abellonaStatus');
   let hls=null,started=false;
-  function message(text,isWarning){
-    status.textContent=text;
-    status.classList.toggle('warn',Boolean(isWarning));
+
+  function etTime(value){
+    const t=Date.parse(value||'');
+    if(!Number.isFinite(t))return 'recently';
+    return new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit',month:'short',day:'numeric'}).format(new Date(t))+' ET';
   }
-  function unavailable(){
-    message('Camera stream unavailable here. Try the official camera page using the link below.',true);
-    video.pause();
+  function setStatus(node,text,isWarning){
+    if(!node)return;
+    node.textContent=text;
+    node.classList.toggle('warn',Boolean(isWarning));
   }
-  function playWhenReady(){
-    video.play().catch(()=>{
-      message('Stream loaded. Press Play on the video to begin.',false);
+  function preloadPreview(cam,imgId,timeId,statusId,liveNode){
+    const img=document.getElementById(imgId),time=document.getElementById(timeId),status=document.getElementById(statusId);
+    if(!img||!time)return Promise.resolve();
+    if(!cam||cam.status!=='ok'||!cam.image){
+      time.textContent='Latest preview unavailable · live camera remains available';
+      if(!liveNode||liveNode.hidden)setStatus(status,'Latest still image is unavailable. You can still open the live camera.',true);
+      return Promise.resolve();
+    }
+    return new Promise(resolve=>{
+      const probe=new Image();
+      probe.decoding='async';
+      probe.onload=()=>{
+        img.src=probe.src;img.hidden=false;
+        time.textContent='Latest preview fetched '+etTime(cam.fetched_at);
+        if(!liveNode||liveNode.hidden)setStatus(status,'Latest camera preview loaded. Tap Watch live for the video stream.',false);
+        resolve();
+      };
+      probe.onerror=()=>{
+        time.textContent='Latest preview could not load · live camera remains available';
+        if(!liveNode||liveNode.hidden)setStatus(status,'Latest still image could not load. You can still open the live camera.',true);
+        resolve();
+      };
+      const sep=cam.image.includes('?')?'&':'?';
+      probe.src=cam.image+sep+'v='+encodeURIComponent(cam.fetched_at||Date.now());
     });
   }
-  video.addEventListener('playing',()=>message('Live camera playing · stream may be delayed.',false));
-  video.addEventListener('waiting',()=>message('Loading live video…',false));
-  video.addEventListener('error',unavailable);
-  button.addEventListener('click',()=>{
-    if(started)return;
-    started=true;
-    button.hidden=true;
-    video.hidden=false;
-    message('Connecting to Ferry Beach live stream…',false);
-    if(video.canPlayType('application/vnd.apple.mpegurl')){
-      video.src=stream;
-      video.load();
-      playWhenReady();
-      return;
+  async function loadWebcamPreviews(){
+    try{
+      const r=await fetch('data/webcams/webcams.json?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok)throw Error('preview manifest HTTP '+r.status);
+      const m=await r.json();
+      await Promise.all([
+        preloadPreview(m.cameras?.ferry_beach,'ferryPreviewImage','ferryPreviewTime','ferryStatus',ferryVideo),
+        preloadPreview(m.cameras?.abellona,'abellonaPreviewImage','abellonaPreviewTime','abellonaStatus',abellonaFrame)
+      ]);
+    }catch(err){
+      console.warn('Saco Coast Watch webcam previews:',err);
+      const ft=document.getElementById('ferryPreviewTime'),at=document.getElementById('abellonaPreviewTime');
+      if(ft)ft.textContent='Latest preview unavailable · live camera remains available';
+      if(at)at.textContent='Latest preview unavailable · live camera remains available';
+      if(ferryVideo?.hidden)setStatus(ferryStatus,'Latest still image is unavailable. You can still open the live camera.',true);
+      if(abellonaFrame?.hidden)setStatus(abellonaStatus,'Latest still image is unavailable. You can still open the live camera.',true);
     }
-    function connect(){
-      if(!window.Hls||!window.Hls.isSupported()){
-        message('This browser cannot play the HLS feed. Use the official camera link below.',true);
-        return;
+  }
+  function ferryUnavailable(){
+    if(hls){hls.destroy();hls=null;}
+    setStatus(ferryStatus,'Camera stream unavailable here. The latest still preview remains available.',true);
+    try{ferryVideo.pause();}catch(_err){}
+    ferryVideo.hidden=true;
+    if(ferryPreview)ferryPreview.hidden=false;
+    started=false;
+  }
+  function playWhenReady(){
+    ferryVideo.play().catch(()=>setStatus(ferryStatus,'Stream loaded. Press Play on the video to begin.',false));
+  }
+  if(ferryButton&&ferryVideo&&ferryStatus){
+    ferryVideo.addEventListener('playing',()=>setStatus(ferryStatus,'Live camera playing · stream may be delayed.',false));
+    ferryVideo.addEventListener('waiting',()=>setStatus(ferryStatus,'Loading live video…',false));
+    ferryVideo.addEventListener('error',ferryUnavailable);
+    ferryButton.addEventListener('click',()=>{
+      if(started)return;
+      started=true;
+      if(ferryPreview)ferryPreview.hidden=true;
+      ferryVideo.hidden=false;
+      setStatus(ferryStatus,'Connecting to Ferry Beach live stream…',false);
+      if(ferryVideo.canPlayType('application/vnd.apple.mpegurl')){
+        ferryVideo.src=stream;ferryVideo.load();playWhenReady();return;
       }
-      hls=new window.Hls({liveSyncDurationCount:3,enableWorker:true});
-      hls.on(window.Hls.Events.MANIFEST_PARSED,playWhenReady);
-      hls.on(window.Hls.Events.ERROR,(_event,data)=>{
-        if(data&&data.fatal)unavailable();
-      });
-      hls.loadSource(stream);
-      hls.attachMedia(video);
-    }
-    if(window.Hls){connect();return;}
-    const loader=document.createElement('script');
-    loader.src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js';
-    loader.async=true;
-    loader.onload=connect;
-    loader.onerror=()=>message('Video player could not load. Use the official camera link below.',true);
-    document.head.appendChild(loader);
-  });
+      function connect(){
+        if(!window.Hls||!window.Hls.isSupported()){ferryUnavailable();return;}
+        hls=new window.Hls({liveSyncDurationCount:3,enableWorker:true});
+        hls.on(window.Hls.Events.MANIFEST_PARSED,playWhenReady);
+        hls.on(window.Hls.Events.ERROR,(_event,data)=>{if(data&&data.fatal)ferryUnavailable();});
+        hls.loadSource(stream);hls.attachMedia(ferryVideo);
+      }
+      if(window.Hls){connect();return;}
+      const loader=document.createElement('script');
+      loader.src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js';loader.async=true;loader.onload=connect;
+      loader.onerror=ferryUnavailable;document.head.appendChild(loader);
+    });
+  }
+  if(abellonaButton&&abellonaFrame){
+    abellonaButton.addEventListener('click',()=>{
+      if(abellonaPreview)abellonaPreview.hidden=true;
+      abellonaFrame.hidden=false;
+      if(!abellonaFrame.getAttribute('src'))abellonaFrame.src=abellonaFrame.dataset.src||'';
+      setStatus(abellonaStatus,'Connecting to the Abellona Inn live YouTube camera…',false);
+    });
+  }
+  loadWebcamPreviews();
+  setInterval(()=>{if(!document.hidden)loadWebcamPreviews();},5*60*1000);
   window.addEventListener('pagehide',()=>{if(hls)hls.destroy();});
 })();
 </script>

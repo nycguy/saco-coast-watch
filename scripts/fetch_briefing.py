@@ -83,7 +83,7 @@ def build_payload(current,hist,now=None):
     latest_stored=max((s for s in stored if hc.parse_iso(s.get("snapshot_at"))),key=lambda s:hc.parse_iso(s["snapshot_at"]),default=None)
     live_alert_changes=hc.diff_alerts((latest_stored or {}).get("alerts") or [],current.get("alerts") or [],now) if latest_stored else []
     alert_changes=hc.merge_events(_recent(hist.get("alert_events"),"at",now,24),live_alert_changes,100)
-    local24=_recent(hist.get("local_events"),"published_at",now,24)
+    local24=[e for e in _recent(hist.get("local_events"),"published_at",now,24) if ch.coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]
     if alert_changes:
         labels=[f"{e.get('event') or 'Alert'} {e.get('change_type','changed')}" for e in alert_changes[-4:]]
         past+=" NWS alert changes: "+"; ".join(labels)+"."
@@ -122,12 +122,17 @@ def build_payload(current,hist,now=None):
     if fc.get("next72_max_precip_probability_pct") is not None: next72+=f" Maximum hourly precipitation probability in the 72-hour guidance is {fc['next72_max_precip_probability_pct']:.0f}%."
 
     local_items=[]
-    for e in sorted(hist.get("local_events") or [],key=lambda x:hc.parse_iso(x.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)[:12]:
+    candidates=sorted(hist.get("local_events") or [],key=lambda x:hc.parse_iso(x.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
+    for e in candidates:
+        if not ch.coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or "")): continue
         local_items.append({"type":"reddit" if e.get("source")=="Reddit" else "news","source":e.get("source"),"title":e.get("headline") or e.get("summary"),"url":e.get("url"),"published_at":e.get("published_at"),"location":e.get("location"),"event_category":e.get("event_category"),"anecdotal":e.get("anecdotal",False)})
+        if len(local_items)>=12: break
     community=sum(1 for e in local_items if e.get("anecdotal")); officialish=len(local_items)-community
-    local_summary=f"{len(local_items)} public local item{'s' if len(local_items)!=1 else ''} retained in the recent coastal scan"
-    if local_items: local_summary+=f" ({officialish} news/other public, {community} community)"
-    local_summary+=". Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent."
+    if local_items:
+        local_summary=f"{len(local_items)} weather/coastal public report{'s' if len(local_items)!=1 else ''} retained in the recent scan ({officialish} news/other public, {community} community)."
+    else:
+        local_summary="No weather-related local reports were retained in the recent coastal scan."
+    local_summary+=" Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent."
 
     backfill=hist.get("backfill") or {}; daily=backfill.get("water_observed_daily_peaks") or []
     merged_hist={**hist,"generated_at":hc.iso(now),"snapshots":snaps}
@@ -145,7 +150,7 @@ def build_payload(current,hist,now=None):
         "current_snapshot":current,
         "history":_legacy_history(snaps),
         "history_compact":compact,
-        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts and hourly forecast","ndbc":"NDBC 44007 and WEXM1 observations","news":"Public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
+        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts and hourly forecast","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
     }
 
 def main():

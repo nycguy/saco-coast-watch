@@ -13,7 +13,7 @@ POINT="43.48,-70.38"
 NDBC=("44007","WEXM1")
 LOCAL_TERMS=("saco","camp ellis","ferry beach","biddeford","biddeford pool","old orchard beach","scarborough")
 RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft")
-COASTAL_TOPIC_TERMS=("coastal","surf","wave","flood","erosion","wind","gust","rain","storm","tide","ocean","shore","rip current","weather","marine","seawall","dune","inundation","splash over","power outage","closure","closed")
+WEATHER_TOPIC_PATTERNS=(r"\bcoastal\b",r"\bsurf\b",r"\bwaves?\b",r"\bswells?\b",r"\bflood(?:ing|ed|s)?\b",r"\beros(?:ion|ive|ing)\b",r"\bwinds?\b",r"\bgust(?:s|ing|ed)?\b",r"\brain(?:fall|ing|ed|s)?\b",r"\bstorm(?:s|y)?\b",r"\btides?\b",r"\bocean\b",r"\bshore(?:line)?\b",r"\brip currents?\b",r"\bweather\b",r"\bmarine\b",r"\bseawalls?\b",r"\bdunes?\b",r"\binundat(?:ion|ed|ing)\b",r"\bsplash[- ]?over\b",r"\boverwash\b",r"\bhigh water\b",r"\brough seas?\b")
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"data"/"briefing-seed-history.json"
 
@@ -129,8 +129,8 @@ def clean(v): return " ".join((v or "").replace("\n"," ").split())
 def relevant_local(text): return any(x in (text or "").lower() for x in LOCAL_TERMS)
 def coastal_topic(text):
     t=(text or "").lower()
-    for loc in LOCAL_TERMS: t=t.replace(loc," ")
-    return any(x in t for x in COASTAL_TOPIC_TERMS)
+    for loc in sorted(LOCAL_TERMS,key=len,reverse=True): t=t.replace(loc," ")
+    return any(re.search(pattern,t) for pattern in WEATHER_TOPIC_PATTERNS)
 def event_location(text):
     t=(text or "").lower()
     for name in ("Camp Ellis","Ferry Beach","Biddeford Pool","Old Orchard Beach","Scarborough","Biddeford","Saco"):
@@ -142,7 +142,7 @@ def event_category(text):
         if any(w in t for w in words): return cat
     return "coastal conditions"
 def google_news(days=7):
-    q='(Saco OR Biddeford OR "Biddeford Pool" OR "Old Orchard Beach" OR Scarborough OR "Camp Ellis" OR "Ferry Beach") Maine (coastal OR surf OR flood OR wind OR erosion OR beach) when:%dd'%days
+    q='(Saco OR Biddeford OR "Biddeford Pool" OR "Old Orchard Beach" OR Scarborough OR "Camp Ellis" OR "Ferry Beach") Maine (coastal OR surf OR flood OR flooding OR wind OR erosion OR storm OR tide OR waves OR rain OR weather OR marine OR overwash) when:%dd'%days
     url="https://news.google.com/rss/search?"+urllib.parse.urlencode({"q":q,"hl":"en-US","gl":"US","ceid":"US:en"})
     root=ET.fromstring(fetch_bytes(url,"application/rss+xml, application/xml, text/xml")); out=[]
     for item in root.findall(".//item"):
@@ -156,7 +156,7 @@ def reddit_events():
     root=ET.fromstring(fetch_bytes(url,"application/atom+xml, application/xml, text/xml")); ns={"a":"http://www.w3.org/2005/Atom"}; out=[]
     for e in root.findall("a:entry",ns):
         title=clean(e.findtext("a:title",default="",namespaces=ns)); le=e.find("a:link",ns); link=(le.attrib.get("href") if le is not None else "") or ""; pub=hc.parse_iso(e.findtext("a:updated",default="",namespaces=ns))
-        if not title or not link or not relevant_local(title): continue
+        if not title or not link or not relevant_local(title) or not coastal_topic(title): continue
         out.append({"published_at":hc.iso(pub),"source":"Reddit","source_type":"community","location":event_location(title),"headline":title,"summary":title,"url":link,"event_category":event_category(title),"anecdotal":True,"verification_note":"Public community report; not an official observation."})
     return out[:30]
 

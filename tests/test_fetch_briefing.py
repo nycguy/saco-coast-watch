@@ -11,6 +11,17 @@ class BriefingTests(unittest.TestCase):
   d=f.build_payload(cur,hist,now); c=d['forecast_change_24h']['comparison']
   self.assertEqual(c['peak_delta_ft'],0.47); self.assertEqual(c['current_threshold_margins_ft']['minor'],0.18)
   self.assertIn('shrank by 0.47 ft',d['forecast_change_24h']['text']); self.assertIn('never based on a visitor',d['window_basis'])
+ def test_local_pulse_excludes_non_weather_events(self):
+  now=dt.datetime(2026,9,27,12,tzinfo=UTC)
+  cur={'snapshot_at':'2026-09-27T12:00:00Z','water':{'forecast_peak_72h_ft':11.8,'forecast_peak_72h_time':'2026-09-28T16:00:00Z'},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}
+  hist={'schema_version':2,'generated_at':'2026-09-27T11:00:00Z','snapshots':[],'alert_events':[],'local_events':[
+   {'published_at':'2026-09-27T10:00:00Z','source':'Local News','headline':'Old Orchard Beach football wins showdown with Old Town','summary':'Old Orchard Beach football wins showdown with Old Town','url':'https://example.test/sports'},
+   {'published_at':'2026-09-27T09:00:00Z','source':'Local News','headline':'Camp Ellis sees high surf and coastal flooding','summary':'Camp Ellis sees high surf and coastal flooding','url':'https://example.test/weather'}
+  ],'backfill':{},'daily_rollups':[]}
+  d=f.build_payload(cur,hist,now)
+  self.assertEqual(len(d['local_pulse']['items']),1)
+  self.assertIn('high surf',d['local_pulse']['items'][0]['title'])
+  self.assertIn('1 weather/coastal public report',d['local_pulse']['summary'])
  def test_unavailable_baseline_does_not_infer(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   cur={'snapshot_at':'2026-09-27T12:00:00Z','water':{'forecast_peak_72h_ft':11.8,'forecast_peak_72h_time':'2026-09-28T16:00:00Z'},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}

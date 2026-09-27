@@ -13,6 +13,11 @@ class CaptureTests(unittest.TestCase):
   ft=11.82; self.assertEqual(c.hc.threshold_margins(ft),{'minor':0.18,'moderate':1.18,'major':2.18})
  def test_local_classification(self):
   t='Camp Ellis road closed after high surf and flooding'; self.assertEqual(c.event_location(t),'Camp Ellis'); self.assertEqual(c.event_category(t),'flooding')
+ def test_weather_topic_rejects_general_local_events(self):
+  for title in ('Monmouth Academy Girls Varsity Soccer @ Old Orchard Beach','Biddeford Primary School celebrates new wing','Old Orchard Beach football wins showdown with Old Town','Local Flavor: Biddeford arcade reopening and burger night'):
+   self.assertFalse(c.coastal_topic(title),title)
+  self.assertTrue(c.coastal_topic('Camp Ellis road closed after high surf and coastal flooding'))
+  self.assertTrue(c.coastal_topic('Old Orchard Beach sees rough seas and gusty winds'))
  def test_compact_history_filters_old(self):
   hist={'generated_at':'2026-09-27T12:00:00Z','window_basis':'fixed','station':'8418150','thresholds_ft_mllw':{},'snapshots':[{'snapshot_at':'2026-09-10T12:00:00Z'},{'snapshot_at':'2026-09-27T11:00:00Z'}],'daily_rollups':[],'alert_events':[],'local_events':[],'backfill':{},'provenance_notes':{}}
   self.assertEqual(len(c.compact_history(hist,7)['snapshots']),1)

@@ -30,7 +30,7 @@ jobs:
       - name: Retrieve coastal-flood and storm-surge alerts
         run: python3 scripts/fetch_coastal_alerts.py
       - name: Test coastal history and briefing logic
-        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py
+        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_fetch_webcam_snapshots.py
       - name: Build fixed-window coastal briefing
         run: python3 scripts/fetch_briefing.py --history-input .history-store/data/history/coastal-history.json --output data/coastal-briefing.json --history-output data/coastal-history.json
       - name: Validate alert thresholds and backend syntax
@@ -43,6 +43,15 @@ jobs:
           node --check eastcast/app.mjs
           node --test tests/eastcast_unit.mjs
           python3 -m unittest tests/test_fetch_eastcast.py
+      - name: Capture current coastal webcam previews
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+          mkdir -p dist/data/webcams
+          python3 scripts/fetch_webcam_snapshots.py --output-dir dist/data/webcams
       - name: Assemble site
         run: |
           mkdir -p dist/data
@@ -65,6 +74,7 @@ jobs:
           test -s dist/eastcast/data/snapshot.json
           test -s dist/data/coastal-briefing.json
           test -s dist/data/coastal-history.json
+          test -s dist/data/webcams/webcams.json
           python3 - <<'PY'
           import json
           b=json.load(open('dist/data/coastal-briefing.json'))
@@ -74,6 +84,13 @@ jobs:
           assert h['schema_version']==2
           assert h['thresholds_ft_mllw']=={'minor':12.0,'moderate':13.0,'major':14.0}
           assert len(h.get('snapshots',[]))>=1
+          w=json.load(open('dist/data/webcams/webcams.json'))
+          assert w['schema_version']==1
+          assert set(w.get('cameras',{}))=={'ferry_beach','abellona'}
+          for cam in w['cameras'].values():
+              assert cam.get('status') in ('ok','unavailable')
+              if cam.get('status')=='ok':
+                  assert cam.get('image')
           PY
           python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d; assert len(d.get('coastal_pulse',[])) >= 4; assert d.get('sources',{}).get('coastal_pulse',{}).get('ok')"
       - name: Browser map smoke test before publishing

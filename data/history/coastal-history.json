@@ -1,0 +1,3802 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-09-27T13:05:43Z",
+  "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
+  "station": "8418150",
+  "thresholds_ft_mllw": {
+    "minor": 12.0,
+    "moderate": 13.0,
+    "major": 14.0
+  },
+  "retention": {
+    "detailed_snapshots_days": 30,
+    "older_history": "daily_rollups"
+  },
+  "snapshots": [
+    {
+      "snapshot_at": "2026-09-25T02:59:00Z",
+      "snapshot_kind": "reconstructed_dashboard_snapshot",
+      "provenance": {
+        "forecast": "reconstructed_dashboard_snapshot",
+        "note": "Recovered from a Saco Coast Watch dashboard capture; not a NOAA forecast archive record."
+      },
+      "water": {
+        "forecast_peak_72h_ft": 11.29,
+        "forecast_peak_72h_time": "2026-09-27T16:00:00Z",
+        "threshold_margins_ft": {
+          "minor": 0.71,
+          "moderate": 1.71,
+          "major": 2.71
+        }
+      },
+      "alerts": [],
+      "confidence": "high"
+    },
+    {
+      "snapshot_at": "2026-09-25T17:20:00Z",
+      "snapshot_kind": "reconstructed_dashboard_snapshot",
+      "provenance": {
+        "forecast": "reconstructed_dashboard_snapshot",
+        "note": "Recovered from a Saco Coast Watch dashboard capture; not a NOAA forecast archive record."
+      },
+      "water": {
+        "forecast_peak_72h_ft": 11.38,
+        "forecast_peak_72h_time": "2026-09-28T04:18:00Z",
+        "threshold_margins_ft": {
+          "minor": 0.62,
+          "moderate": 1.62,
+          "major": 2.62
+        }
+      },
+      "alerts": [],
+      "confidence": "high"
+    },
+    {
+      "snapshot_at": "2026-09-26T12:22:00Z",
+      "snapshot_kind": "reconstructed_dashboard_snapshot",
+      "provenance": {
+        "forecast": "reconstructed_dashboard_snapshot",
+        "note": "Recovered from a Saco Coast Watch dashboard capture; not a NOAA forecast archive record."
+      },
+      "water": {
+        "forecast_peak_72h_ft": 11.88,
+        "forecast_peak_72h_time": "2026-09-28T16:36:00Z",
+        "threshold_margins_ft": {
+          "minor": 0.12,
+          "moderate": 1.12,
+          "major": 2.12
+        }
+      },
+      "alerts": [
+        {
+          "event": "High Surf Advisory"
+        },
+        {
+          "event": "Coastal Flood Advisory"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "snapshot_at": "2026-09-27T13:05:43Z",
+      "snapshot_kind": "realtime",
+      "provenance": {
+        "forecast": "live_noaa_ofs_capture",
+        "observations": "NOAA CO-OPS station 8418150",
+        "astronomical_tide": "NOAA CO-OPS predictions",
+        "marine": "NDBC realtime2",
+        "alerts": "NWS API active alerts",
+        "weather_forecast": "NWS hourly point forecast"
+      },
+      "water": {
+        "station": "8418150",
+        "latest_observed_ft": 6.39,
+        "latest_observed_at": "2026-09-27T13:00:00Z",
+        "observed_24h_max_ft": 10.95,
+        "observed_24h_max_time": "2026-09-27T03:48:00Z",
+        "forecast_peak_24h_ft": 11.51,
+        "forecast_peak_24h_time": "2026-09-28T04:18:00Z",
+        "forecast_peak_72h_ft": 11.94,
+        "forecast_peak_72h_time": "2026-09-28T16:36:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.4,
+        "threshold_margins_ft": {
+          "minor": 0.06,
+          "moderate": 1.06,
+          "major": 2.06
+        }
+      },
+      "forecast_conditions": {
+        "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+        "next24_max_sustained_wind_mph": 25.0,
+        "next72_max_sustained_wind_mph": 25.0,
+        "next24_max_precip_probability_pct": 92,
+        "next72_max_precip_probability_pct": 92,
+        "next24_summaries": [
+          "Light Rain Likely",
+          "Light Rain",
+          "Chance Light Rain",
+          "Chance Rain Showers"
+        ]
+      },
+      "marine": {
+        "stations": {
+          "44007": {
+            "observed_at": "2026-09-27T12:30:00Z",
+            "speed_mph": 24.6,
+            "gust_mph": 29.1,
+            "direction_deg": 30,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
+            "max_24h_speed_mph": 31.3,
+            "max_24h_gust_mph": 40.3
+          },
+          "WEXM1": {
+            "observed_at": "2026-09-27T12:00:00Z",
+            "speed_mph": 11.4,
+            "gust_mph": null,
+            "direction_deg": 10,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
+            "max_24h_speed_mph": 17.2,
+            "max_24h_gust_mph": null
+          }
+        }
+      },
+      "alerts": [
+        {
+          "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b9ad9a121eaebb4772d88bfd94b1fa3efcdd7be0.002.1",
+          "event": "Gale Warning",
+          "severity": "Moderate",
+          "certainty": "Likely",
+          "urgency": "Expected",
+          "sent": "2026-09-27T02:37:00-04:00",
+          "effective": "2026-09-27T02:37:00-04:00",
+          "onset": "2026-09-27T02:37:00-04:00",
+          "expires": "2026-09-27T16:45:00-04:00",
+          "ends": "2026-09-27T20:00:00-04:00",
+          "headline": "Gale Warning issued September 27 at 2:37AM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+          "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+          "message_type": "Update",
+          "references": [
+            {
+              "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9ee70c9bfbcded8f893e95457b22aad19533a720.002.1",
+              "identifier": "urn:oid:2.49.0.1.840.0.9ee70c9bfbcded8f893e95457b22aad19533a720.002.1",
+              "sender": "w-nws.webmaster@noaa.gov",
+              "sent": "2026-09-26T14:19:00-04:00"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "daily_rollups": [
+    {
+      "date": "2026-09-25",
+      "snapshot_count": 2,
+      "max_observed_ft": null,
+      "max_forecast_peak_ft": 11.38,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-26",
+      "snapshot_count": 1,
+      "max_observed_ft": null,
+      "max_forecast_peak_ft": 11.88,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-27",
+      "snapshot_count": 1,
+      "max_observed_ft": 10.95,
+      "max_forecast_peak_ft": 11.94,
+      "max_gust_mph": 29.1
+    }
+  ],
+  "alert_events": [
+    {
+      "change_type": "issued",
+      "event": "Gale Warning",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b9ad9a121eaebb4772d88bfd94b1fa3efcdd7be0.002.1",
+      "at": "2026-09-27T02:37:00-04:00",
+      "source": "NWS snapshot comparison",
+      "source_type": "official_alert"
+    }
+  ],
+  "local_events": [
+    {
+      "published_at": "2022-10-27T14:20:46Z",
+      "source": "Reddit",
+      "source_type": "community",
+      "location": "Saco",
+      "headline": "SacoMaine",
+      "summary": "SacoMaine",
+      "url": "https://www.reddit.com/r/SacoMaine/",
+      "event_category": "coastal conditions",
+      "anecdotal": true,
+      "verification_note": "Public community report; not an official observation."
+    },
+    {
+      "published_at": "2024-02-09T20:14:09Z",
+      "source": "Reddit",
+      "source_type": "community",
+      "location": "Saco",
+      "headline": "Saco_Maine",
+      "summary": "Saco_Maine",
+      "url": "https://www.reddit.com/r/Saco_Maine/",
+      "event_category": "coastal conditions",
+      "anecdotal": true,
+      "verification_note": "Public community report; not an official observation."
+    },
+    {
+      "published_at": "2024-10-30T00:26:21Z",
+      "source": "Reddit",
+      "source_type": "community",
+      "location": "Old Orchard Beach",
+      "headline": "Everything Old Orchard Beach!",
+      "summary": "Everything Old Orchard Beach!",
+      "url": "https://www.reddit.com/r/OldOrchardBeach/",
+      "event_category": "coastal conditions",
+      "anecdotal": true,
+      "verification_note": "Public community report; not an official observation."
+    },
+    {
+      "published_at": "2026-09-21T07:00:00Z",
+      "source": "Legacy obituary",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Ronald R. Zehner Obituary (2026) - Old Orchard Beach, ME - Cote Funeral Home - Saco - Legacy obituary",
+      "summary": "Ronald R. Zehner Obituary (2026) - Old Orchard Beach, ME - Cote Funeral Home - Saco - Legacy obituary",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPWUdNc2I1bDFKRG5YOGxyMEthREF6UGFZWE5GYURsZ280ZEktQmpBdnREa3pVQXIwdWthZW5WRG1WZXVmVXNTUDNYYkpvbU50X1RWWDBWNjJqZnRacnNTaENSSVN4N3FOSC1xZGNGMTBpZjItQXdKb1lTbTV3bXZ5S2tn?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-21T11:00:14Z",
+      "source": "Mainebiz",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Fries, pizza, arcade games: Summer shines on businesses in Old Orchard Beach - Mainebiz",
+      "summary": "Fries, pizza, arcade games: Summer shines on businesses in Old Orchard Beach - Mainebiz",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOelhacllpMTRRTjBBUWZnSVhuVVQ3V3BZZWRZeXFXRjNhQnctdjhmZ2V4cm1PbUxDd2xfVWRxZ0thQWRzc0d5NU0wQlVTTklfSkVZZm5tUWQwd2tZeTROVDRCQ1pEcmNoT2wzTnNXY1NGN0FxZlJNclFkTGE5OXlIbmJIcXhNelV2S1FDNmRPNlk2RFhUSzNlQkU2OW51OHY3cmt2ZVh3?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-21T21:15:46Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Local Spotlight: Ann Tracy - Saco Bay News",
+      "summary": "Local Spotlight: Ann Tracy - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFAtcF82QmVOM0Y5c09PTmhKVl9ZVzZRV0FmQmZCUzlKeEtzTWlJSE14c3p2eWJnakVUV0RWaDNLT0hSVW9RS3pwX09YOHd2c1pqeWQtcHJXZEkwZlp0RkQtOUZtaw?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-22T00:25:59Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Rare 1-in-100-million ‘ghost’ lobster named Casper informs DNA research at University of New England - Saco Bay News",
+      "summary": "Rare 1-in-100-million ‘ghost’ lobster named Casper informs DNA research at University of New England - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxObFFRZkUxbmFuSUQyN2REcEhCZHZqbERzbWNMZmlVRHhGOUFkN2h1aTVrOVp1RXJPMG1ZTnprUndSWWdwWGpyNjVkeWdYTDdKWVhHQnhUS29FY0VweVl4Rk1yU1RlMWxIR3F1ZC1BX1RqV3RSQVVkOWRzN1RmT2xicHJwd0Utb05zbEdTU19nNThzR3B3eWN4XzVDaEpvNGcwSjZiVWFwYV9rVHdMelI5UGhLV081bll2S3lz?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-22T03:23:35Z",
+      "source": "Reddit",
+      "source_type": "community",
+      "location": "Biddeford",
+      "headline": "Any recommendations for independent Massage Therapists between Saco/Biddeford and Portland?",
+      "summary": "Any recommendations for independent Massage Therapists between Saco/Biddeford and Portland?",
+      "url": "https://www.reddit.com/r/Maine/comments/1wmy8ev/any_recommendations_for_independent_massage/",
+      "event_category": "coastal conditions",
+      "anecdotal": true,
+      "verification_note": "Public community report; not an official observation."
+    },
+    {
+      "published_at": "2026-09-22T18:38:36Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "Recreation committee backs shared-use plan for Biddeford community center - Saco Bay News",
+      "summary": "Recreation committee backs shared-use plan for Biddeford community center - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNX1NDQXYyWFY0R0VTLWtYZFplRUpQaGtPdF92VWwwZ213a0xQcG96b2NlMjExUDRtMnR0akh2eDg3S1dGX2NTanJnd0dFa2VxbnZicVJXZUh6NW8teUlZOGRsRW9ibnI2OW11bW8zaTRrUURyRVM0TENOd1oxYVNfZmFpX1NkaHdGYWwxVTR0bXRpcXBJbnYtNnhBeDZZeVk1bGc?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-22T19:47:28Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "Fashion Soirée 2026 brings Fashion, classic cars and live entertainment together for a cause - Saco Bay News",
+      "summary": "Fashion Soirée 2026 brings Fashion, classic cars and live entertainment together for a cause - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNX2toWjFDd29mSExkQWtXczNlT1liVXUwb1h5MGl1X0R0cFBjaWFHakxHTGRMNS1SYWtsLVdtaDZCN2k4MFNZNU1lVnZ0c2Zfci04OHh2ZE5iUzNnU0FWYk91aGdyV0JfNXFGZGwwNGdrampFTlRZdWhmY0VKQlZoN3VHbERDVEhoTl8xOUlGaVhqTXJNNGM3WGRMU1NleVdDZEhPQkU4RnhIV1VJVWhPUldUbw?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-22T20:32:30Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Saco",
+      "headline": "UNE launches ‘Founders Fireside Chats’ to connect community with entrepreneurs and innovators - Saco Bay News",
+      "summary": "UNE launches ‘Founders Fireside Chats’ to connect community with entrepreneurs and innovators - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPN3M0cC1hOFZKTkVtdENBZGRYeXkwZjFGODdfWWdDbEkya1QxQXd2ZnZHTGZaVTE2N0ZLb3AyZElsOUVReFZSOEttMHFScWZTUEVvNjc0SUJ3NTl6R1FaRjBXbzNYTFNWbUZEMnl3OFVVLWxDTVRucW9aY1FPUlJPblRPMHdRQ2czQUdPVlhrS3BscXFEcU1HQkVBNnFaNnNjU0pqV3ZyRmZxQ2wwV3FmYTVYcjEydW5hbkRR?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-23T15:50:07Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Old Orchard Beach Fall Fest cancelled due to weather - Saco Bay News",
+      "summary": "Old Orchard Beach Fall Fest cancelled due to weather - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQMk01alVCSHZWTXRlYW5iTmhtME8wZzNQVjl0VjJWWjlJa2drcEdKenY0Q3pVeEpMeTliWGtZS2NwTXcxRzNwRXVCODJPUWpUT2tVQ1NiYnhLZFRjbW1OSG85SlBPbV9XdmhZNGhncnlpc21lcEdmVURYT3FIUENUbVJ2aERSNHM?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-24T12:00:12Z",
+      "source": "92.9 The Ticket",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "TICKET TV: Old Orchard Beach Seagulls Visit Old Town Coyotes in Varsity Football - 92.9 The Ticket",
+      "summary": "TICKET TV: Old Orchard Beach Seagulls Visit Old Town Coyotes in Varsity Football - 92.9 The Ticket",
+      "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE8tUlBBd0NIVnhyeEd0TTV6cnh4bF9GOGtzUmtOb1ZhSklGZ1NTWTRMOThYcnVxZHNRYXEwZjN2WXJFa1hhaThPeW1XYlVFVXlsZ2hJTWZsWHl6ZkpCWXl1OUh3?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-25T01:09:09Z",
+      "source": "The Portland Press Herald",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "High schools Thursday: Old Orchard Beach football wins showdown with Old Town - The Portland Press Herald",
+      "summary": "High schools Thursday: Old Orchard Beach football wins showdown with Old Town - The Portland Press Herald",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNMmxqM2ZhNkwzajRnLWVNd3pVbHhiWGtOR1ZMM01LTlBlcXhXTm9zMHI4TVdIV09YZmczRUg1WFZDRHpTd05rUDdycm1sSUY4UWcxa3MzN3docnhkdkFZcHl3Z0Z1S3NFUHFEVWtqZTdoLU1VWXRHWGlkOG90UF94UDBVUDdLU0lyR3B1M0JNVE5hM3JLYVhtNUYwRjdVUC12MEtQTEFURjZ5d1h2R0phTUtwd0I1UmM?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-25T02:26:00Z",
+      "source": "WMTW",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Old Orchard Beach and Winthrop football teams win - WMTW",
+      "summary": "Old Orchard Beach and Winthrop football teams win - WMTW",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPRDRPVklId2NUY3dJellBRHlxYkRNZ1dLTG9UM0RTbVA2QzFxZmV0ZVIxejhtVWFoUUZmcVBFOVdDOFhqbXFUeHBGOU5aQkdoWFJsSThseW9QUFE5N0o2NDlHT1ZzS2tGeGNWU2x1MUF6elBpd1A3bnRxbUtMYTN0eWo3QUNFMHZxaEs1eVRRMG8?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-25T02:28:00Z",
+      "source": "foxbangor.com",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Old Orchard Beach outlasts Old Town in a hard fought battle - foxbangor.com",
+      "summary": "Old Orchard Beach outlasts Old Town in a hard fought battle - foxbangor.com",
+      "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxOQTI5TU1OTDVyWTQydVpGZVJFQ2RwOXFyVnBReS11SGRodHRjY25GejBZa1kzY3ZZQ0VTX0o2Wm5EYl9tMlR0WlVoUjBINXVQRGVPSjRoQXl4aldoRW40UmVOZVY0dXhnaFdoY29HTUw1TzFmQ283Q2Y2RFNZREZSNDQ4OEppeUxpdTMwbU5yQTd1dWV0RlQ4eUsya2FpaVU3cVJVQkhvelVsV1VGWWJ3RVdkOUhqTGNwLXpmTFBHQkFtNlpueGlkTFVicUtpcUNBYWZteUhUNlJrZzk5VEZYY3NFZlloeFFQcXBCM3RIaXc2WTRM?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-25T04:01:46Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Biddeford",
+      "headline": "Biddeford Primary School celebrates new wing with a ribbon cutting ceremony - Saco Bay News",
+      "summary": "Biddeford Primary School celebrates new wing with a ribbon cutting ceremony - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNd0tadjlJRWo5SV83RkZOZldWYjRRc3R2a09MZV9LcHVucU9sbU4yNlFsdnU2SEhRMXRJb3NObkhsdmc0UkhZM1BlaFRURElqQkRJTGZQbjZ0a0hyaWNfUy1sVUgxZ1NuaDlCR2tTY1FEZ1dNMUYtVE0wNFdtVDFWeEhFQnc1VUpRQl9wTWNvTWxTNmY0TEV4TVB2QWszWEZ1dzhkbjRR?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-25T19:53:41Z",
+      "source": "Saco Bay News",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Local Flavor: Biddeford arcade reopening, Biddeford accolades, and Old Orchard Beach burger night - Saco Bay News",
+      "summary": "Local Flavor: Biddeford arcade reopening, Biddeford accolades, and Old Orchard Beach burger night - Saco Bay News",
+      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNWWFYQWwtQnZEaGk1YjdzRTFpQjhFQmExQmkwTjBMZ093clNFN0QyREVrV1YwSmdKcnczQVZMUnFGcHNVcXN0Mzl5WFVBb2wxYUJCaEZSWVRaN01aci1qTDFDVW0wTTdWZk5lWmhSY2JlYU92ZU50STJjdEtPd2ZBSWp3UDVfR1VZZGhWUVpsMjJBc1oyV2lVdmZoVlBCV0Z1VDhmbUs0bGNMV3JLYWlnOHVGeGxpZXVJMGhwUnZrMA?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    },
+    {
+      "published_at": "2026-09-27T08:45:30Z",
+      "source": "maxpreps.com",
+      "source_type": "news",
+      "location": "Old Orchard Beach",
+      "headline": "Monmouth Academy Girls Varsity Soccer @ Old Orchard Beach - maxpreps.com",
+      "summary": "Monmouth Academy Girls Varsity Soccer @ Old Orchard Beach - maxpreps.com",
+      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNWjV2OVhJY3hPQURCUVdjdGxOMEVKTHN3NDROT0oxWXFfNWNjQUQ1OWZlN1VEeEl1Ni1BM29kNGk5TjlqbjhmMGFYX1kzb1VCcjl2LTRUQ1EtOUhqMGhlT1BIQVpvVTlLWU1IR25aMTBCRzk3ZEpmZlFDUWk4ZFcycF9RMXRiOWxXZ3MtSnYyR0xZM195LVNsVDdWQlBnLUFIVEZ4b0pqa2pZc2ZzTVFfLXJmVG1NNF91LTdMMGR2RW03ejZOdHl2d0dWdk1yWFE?oc=5",
+      "event_category": "coastal conditions",
+      "anecdotal": false
+    }
+  ],
+  "backfill": {
+    "period_start": "2026-09-20T13:05:43Z",
+    "period_end": "2026-09-27T13:05:43Z",
+    "water_observations_hourly": [
+      {
+        "observed_at": "2026-09-20T13:30:00Z",
+        "water_level_ft": 5.881
+      },
+      {
+        "observed_at": "2026-09-20T14:30:00Z",
+        "water_level_ft": 4.543
+      },
+      {
+        "observed_at": "2026-09-20T15:30:00Z",
+        "water_level_ft": 3.493
+      },
+      {
+        "observed_at": "2026-09-20T16:30:00Z",
+        "water_level_ft": 2.958
+      },
+      {
+        "observed_at": "2026-09-20T17:30:00Z",
+        "water_level_ft": 3.204
+      },
+      {
+        "observed_at": "2026-09-20T18:30:00Z",
+        "water_level_ft": 4.087
+      },
+      {
+        "observed_at": "2026-09-20T19:30:00Z",
+        "water_level_ft": 5.465
+      },
+      {
+        "observed_at": "2026-09-20T20:30:00Z",
+        "water_level_ft": 6.984
+      },
+      {
+        "observed_at": "2026-09-20T21:30:00Z",
+        "water_level_ft": 8.329
+      },
+      {
+        "observed_at": "2026-09-20T22:30:00Z",
+        "water_level_ft": 9.1
+      },
+      {
+        "observed_at": "2026-09-20T23:30:00Z",
+        "water_level_ft": 9.228
+      },
+      {
+        "observed_at": "2026-09-21T00:30:00Z",
+        "water_level_ft": 8.575
+      },
+      {
+        "observed_at": "2026-09-21T01:30:00Z",
+        "water_level_ft": 7.161
+      },
+      {
+        "observed_at": "2026-09-21T02:30:00Z",
+        "water_level_ft": 5.435
+      },
+      {
+        "observed_at": "2026-09-21T03:30:00Z",
+        "water_level_ft": 3.831
+      },
+      {
+        "observed_at": "2026-09-21T04:30:00Z",
+        "water_level_ft": 2.718
+      },
+      {
+        "observed_at": "2026-09-21T05:30:00Z",
+        "water_level_ft": 2.203
+      },
+      {
+        "observed_at": "2026-09-21T06:30:00Z",
+        "water_level_ft": 2.361
+      },
+      {
+        "observed_at": "2026-09-21T07:30:00Z",
+        "water_level_ft": 3.355
+      },
+      {
+        "observed_at": "2026-09-21T08:30:00Z",
+        "water_level_ft": 4.785
+      },
+      {
+        "observed_at": "2026-09-21T09:30:00Z",
+        "water_level_ft": 6.262
+      },
+      {
+        "observed_at": "2026-09-21T10:30:00Z",
+        "water_level_ft": 7.394
+      },
+      {
+        "observed_at": "2026-09-21T11:30:00Z",
+        "water_level_ft": 7.879
+      },
+      {
+        "observed_at": "2026-09-21T12:30:00Z",
+        "water_level_ft": 7.925
+      },
+      {
+        "observed_at": "2026-09-21T13:30:00Z",
+        "water_level_ft": 7.079
+      },
+      {
+        "observed_at": "2026-09-21T14:30:00Z",
+        "water_level_ft": 5.714
+      },
+      {
+        "observed_at": "2026-09-21T15:30:00Z",
+        "water_level_ft": 4.323
+      },
+      {
+        "observed_at": "2026-09-21T16:30:00Z",
+        "water_level_ft": 3.089
+      },
+      {
+        "observed_at": "2026-09-21T17:30:00Z",
+        "water_level_ft": 2.525
+      },
+      {
+        "observed_at": "2026-09-21T18:30:00Z",
+        "water_level_ft": 2.666
+      },
+      {
+        "observed_at": "2026-09-21T19:30:00Z",
+        "water_level_ft": 3.568
+      },
+      {
+        "observed_at": "2026-09-21T20:30:00Z",
+        "water_level_ft": 4.94
+      },
+      {
+        "observed_at": "2026-09-21T21:30:00Z",
+        "water_level_ft": 6.57
+      },
+      {
+        "observed_at": "2026-09-21T22:30:00Z",
+        "water_level_ft": 8.001
+      },
+      {
+        "observed_at": "2026-09-21T23:30:00Z",
+        "water_level_ft": 8.749
+      },
+      {
+        "observed_at": "2026-09-22T00:30:00Z",
+        "water_level_ft": 8.821
+      },
+      {
+        "observed_at": "2026-09-22T01:30:00Z",
+        "water_level_ft": 8.178
+      },
+      {
+        "observed_at": "2026-09-22T02:30:00Z",
+        "water_level_ft": 6.728
+      },
+      {
+        "observed_at": "2026-09-22T03:30:00Z",
+        "water_level_ft": 5.045
+      },
+      {
+        "observed_at": "2026-09-22T04:30:00Z",
+        "water_level_ft": 3.407
+      },
+      {
+        "observed_at": "2026-09-22T05:30:00Z",
+        "water_level_ft": 2.141
+      },
+      {
+        "observed_at": "2026-09-22T06:30:00Z",
+        "water_level_ft": 1.856
+      },
+      {
+        "observed_at": "2026-09-22T07:30:00Z",
+        "water_level_ft": 2.213
+      },
+      {
+        "observed_at": "2026-09-22T08:30:00Z",
+        "water_level_ft": 3.106
+      },
+      {
+        "observed_at": "2026-09-22T09:30:00Z",
+        "water_level_ft": 4.772
+      },
+      {
+        "observed_at": "2026-09-22T10:30:00Z",
+        "water_level_ft": 6.324
+      },
+      {
+        "observed_at": "2026-09-22T11:30:00Z",
+        "water_level_ft": 7.479
+      },
+      {
+        "observed_at": "2026-09-22T12:30:00Z",
+        "water_level_ft": 8.194
+      },
+      {
+        "observed_at": "2026-09-22T13:30:00Z",
+        "water_level_ft": 8.02
+      },
+      {
+        "observed_at": "2026-09-22T14:30:00Z",
+        "water_level_ft": 7.239
+      },
+      {
+        "observed_at": "2026-09-22T15:30:00Z",
+        "water_level_ft": 5.734
+      },
+      {
+        "observed_at": "2026-09-22T16:30:00Z",
+        "water_level_ft": 4.119
+      },
+      {
+        "observed_at": "2026-09-22T17:30:00Z",
+        "water_level_ft": 2.981
+      },
+      {
+        "observed_at": "2026-09-22T18:30:00Z",
+        "water_level_ft": 2.289
+      },
+      {
+        "observed_at": "2026-09-22T19:30:00Z",
+        "water_level_ft": 2.518
+      },
+      {
+        "observed_at": "2026-09-22T20:30:00Z",
+        "water_level_ft": 3.414
+      },
+      {
+        "observed_at": "2026-09-22T21:30:00Z",
+        "water_level_ft": 4.94
+      },
+      {
+        "observed_at": "2026-09-22T22:30:00Z",
+        "water_level_ft": 6.78
+      },
+      {
+        "observed_at": "2026-09-22T23:30:00Z",
+        "water_level_ft": 8.092
+      },
+      {
+        "observed_at": "2026-09-23T00:30:00Z",
+        "water_level_ft": 8.87
+      },
+      {
+        "observed_at": "2026-09-23T01:30:00Z",
+        "water_level_ft": 8.873
+      },
+      {
+        "observed_at": "2026-09-23T02:30:00Z",
+        "water_level_ft": 7.915
+      },
+      {
+        "observed_at": "2026-09-23T03:30:00Z",
+        "water_level_ft": 6.416
+      },
+      {
+        "observed_at": "2026-09-23T04:30:00Z",
+        "water_level_ft": 4.526
+      },
+      {
+        "observed_at": "2026-09-23T05:30:00Z",
+        "water_level_ft": 2.758
+      },
+      {
+        "observed_at": "2026-09-23T06:30:00Z",
+        "water_level_ft": 1.613
+      },
+      {
+        "observed_at": "2026-09-23T07:30:00Z",
+        "water_level_ft": 1.232
+      },
+      {
+        "observed_at": "2026-09-23T08:30:00Z",
+        "water_level_ft": 1.81
+      },
+      {
+        "observed_at": "2026-09-23T09:30:00Z",
+        "water_level_ft": 3.168
+      },
+      {
+        "observed_at": "2026-09-23T10:30:00Z",
+        "water_level_ft": 4.874
+      },
+      {
+        "observed_at": "2026-09-23T11:30:00Z",
+        "water_level_ft": 6.606
+      },
+      {
+        "observed_at": "2026-09-23T12:30:00Z",
+        "water_level_ft": 7.856
+      },
+      {
+        "observed_at": "2026-09-23T13:30:00Z",
+        "water_level_ft": 8.398
+      },
+      {
+        "observed_at": "2026-09-23T14:30:00Z",
+        "water_level_ft": 8.171
+      },
+      {
+        "observed_at": "2026-09-23T15:30:00Z",
+        "water_level_ft": 7.062
+      },
+      {
+        "observed_at": "2026-09-23T16:30:00Z",
+        "water_level_ft": 5.327
+      },
+      {
+        "observed_at": "2026-09-23T17:30:00Z",
+        "water_level_ft": 3.631
+      },
+      {
+        "observed_at": "2026-09-23T18:30:00Z",
+        "water_level_ft": 2.285
+      },
+      {
+        "observed_at": "2026-09-23T19:30:00Z",
+        "water_level_ft": 1.737
+      },
+      {
+        "observed_at": "2026-09-23T20:30:00Z",
+        "water_level_ft": 2.256
+      },
+      {
+        "observed_at": "2026-09-23T21:30:00Z",
+        "water_level_ft": 3.427
+      },
+      {
+        "observed_at": "2026-09-23T22:30:00Z",
+        "water_level_ft": 5.176
+      },
+      {
+        "observed_at": "2026-09-23T23:30:00Z",
+        "water_level_ft": 7.167
+      },
+      {
+        "observed_at": "2026-09-24T00:30:00Z",
+        "water_level_ft": 8.627
+      },
+      {
+        "observed_at": "2026-09-24T01:30:00Z",
+        "water_level_ft": 9.27
+      },
+      {
+        "observed_at": "2026-09-24T02:30:00Z",
+        "water_level_ft": 9.031
+      },
+      {
+        "observed_at": "2026-09-24T03:30:00Z",
+        "water_level_ft": 7.948
+      },
+      {
+        "observed_at": "2026-09-24T04:30:00Z",
+        "water_level_ft": 6.075
+      },
+      {
+        "observed_at": "2026-09-24T05:30:00Z",
+        "water_level_ft": 3.919
+      },
+      {
+        "observed_at": "2026-09-24T06:30:00Z",
+        "water_level_ft": 2.098
+      },
+      {
+        "observed_at": "2026-09-24T07:30:00Z",
+        "water_level_ft": 1.101
+      },
+      {
+        "observed_at": "2026-09-24T08:30:00Z",
+        "water_level_ft": 0.986
+      },
+      {
+        "observed_at": "2026-09-24T09:30:00Z",
+        "water_level_ft": 1.842
+      },
+      {
+        "observed_at": "2026-09-24T10:30:00Z",
+        "water_level_ft": 3.489
+      },
+      {
+        "observed_at": "2026-09-24T11:30:00Z",
+        "water_level_ft": 5.409
+      },
+      {
+        "observed_at": "2026-09-24T12:30:00Z",
+        "water_level_ft": 7.259
+      },
+      {
+        "observed_at": "2026-09-24T13:30:00Z",
+        "water_level_ft": 8.45
+      },
+      {
+        "observed_at": "2026-09-24T14:30:00Z",
+        "water_level_ft": 8.758
+      },
+      {
+        "observed_at": "2026-09-24T15:30:00Z",
+        "water_level_ft": 8.174
+      },
+      {
+        "observed_at": "2026-09-24T16:30:00Z",
+        "water_level_ft": 6.662
+      },
+      {
+        "observed_at": "2026-09-24T17:30:00Z",
+        "water_level_ft": 4.73
+      },
+      {
+        "observed_at": "2026-09-24T18:30:00Z",
+        "water_level_ft": 2.817
+      },
+      {
+        "observed_at": "2026-09-24T19:30:00Z",
+        "water_level_ft": 1.465
+      },
+      {
+        "observed_at": "2026-09-24T20:30:00Z",
+        "water_level_ft": 1.258
+      },
+      {
+        "observed_at": "2026-09-24T21:30:00Z",
+        "water_level_ft": 2.039
+      },
+      {
+        "observed_at": "2026-09-24T22:30:00Z",
+        "water_level_ft": 3.552
+      },
+      {
+        "observed_at": "2026-09-24T23:30:00Z",
+        "water_level_ft": 5.757
+      },
+      {
+        "observed_at": "2026-09-25T00:30:00Z",
+        "water_level_ft": 7.85
+      },
+      {
+        "observed_at": "2026-09-25T01:30:00Z",
+        "water_level_ft": 9.159
+      },
+      {
+        "observed_at": "2026-09-25T02:30:00Z",
+        "water_level_ft": 9.615
+      },
+      {
+        "observed_at": "2026-09-25T03:30:00Z",
+        "water_level_ft": 9.185
+      },
+      {
+        "observed_at": "2026-09-25T04:30:00Z",
+        "water_level_ft": 7.83
+      },
+      {
+        "observed_at": "2026-09-25T05:30:00Z",
+        "water_level_ft": 5.674
+      },
+      {
+        "observed_at": "2026-09-25T06:30:00Z",
+        "water_level_ft": 3.398
+      },
+      {
+        "observed_at": "2026-09-25T07:30:00Z",
+        "water_level_ft": 1.777
+      },
+      {
+        "observed_at": "2026-09-25T08:30:00Z",
+        "water_level_ft": 1.154
+      },
+      {
+        "observed_at": "2026-09-25T09:30:00Z",
+        "water_level_ft": 1.498
+      },
+      {
+        "observed_at": "2026-09-25T10:30:00Z",
+        "water_level_ft": 2.804
+      },
+      {
+        "observed_at": "2026-09-25T11:30:00Z",
+        "water_level_ft": 4.851
+      },
+      {
+        "observed_at": "2026-09-25T12:30:00Z",
+        "water_level_ft": 7.108
+      },
+      {
+        "observed_at": "2026-09-25T13:30:00Z",
+        "water_level_ft": 8.821
+      },
+      {
+        "observed_at": "2026-09-25T14:30:00Z",
+        "water_level_ft": 9.71
+      },
+      {
+        "observed_at": "2026-09-25T15:30:00Z",
+        "water_level_ft": 9.569
+      },
+      {
+        "observed_at": "2026-09-25T16:30:00Z",
+        "water_level_ft": 8.457
+      },
+      {
+        "observed_at": "2026-09-25T17:30:00Z",
+        "water_level_ft": 6.511
+      },
+      {
+        "observed_at": "2026-09-25T18:30:00Z",
+        "water_level_ft": 4.201
+      },
+      {
+        "observed_at": "2026-09-25T19:30:00Z",
+        "water_level_ft": 2.39
+      },
+      {
+        "observed_at": "2026-09-25T20:30:00Z",
+        "water_level_ft": 1.373
+      },
+      {
+        "observed_at": "2026-09-25T21:30:00Z",
+        "water_level_ft": 1.524
+      },
+      {
+        "observed_at": "2026-09-25T22:30:00Z",
+        "water_level_ft": 2.735
+      },
+      {
+        "observed_at": "2026-09-25T23:30:00Z",
+        "water_level_ft": 4.68
+      },
+      {
+        "observed_at": "2026-09-26T00:30:00Z",
+        "water_level_ft": 7.052
+      },
+      {
+        "observed_at": "2026-09-26T01:30:00Z",
+        "water_level_ft": 9.218
+      },
+      {
+        "observed_at": "2026-09-26T02:30:00Z",
+        "water_level_ft": 10.278
+      },
+      {
+        "observed_at": "2026-09-26T03:30:00Z",
+        "water_level_ft": 10.389
+      },
+      {
+        "observed_at": "2026-09-26T04:30:00Z",
+        "water_level_ft": 9.49
+      },
+      {
+        "observed_at": "2026-09-26T05:30:00Z",
+        "water_level_ft": 7.607
+      },
+      {
+        "observed_at": "2026-09-26T06:30:00Z",
+        "water_level_ft": 5.287
+      },
+      {
+        "observed_at": "2026-09-26T07:30:00Z",
+        "water_level_ft": 3.007
+      },
+      {
+        "observed_at": "2026-09-26T08:30:00Z",
+        "water_level_ft": 1.636
+      },
+      {
+        "observed_at": "2026-09-26T09:30:00Z",
+        "water_level_ft": 1.468
+      },
+      {
+        "observed_at": "2026-09-26T10:30:00Z",
+        "water_level_ft": 2.315
+      },
+      {
+        "observed_at": "2026-09-26T11:30:00Z",
+        "water_level_ft": 4.008
+      },
+      {
+        "observed_at": "2026-09-26T12:30:00Z",
+        "water_level_ft": 6.416
+      },
+      {
+        "observed_at": "2026-09-26T13:30:00Z",
+        "water_level_ft": 8.726
+      },
+      {
+        "observed_at": "2026-09-26T14:30:00Z",
+        "water_level_ft": 10.123
+      },
+      {
+        "observed_at": "2026-09-26T15:30:00Z",
+        "water_level_ft": 10.615
+      },
+      {
+        "observed_at": "2026-09-26T16:30:00Z",
+        "water_level_ft": 10.038
+      },
+      {
+        "observed_at": "2026-09-26T17:30:00Z",
+        "water_level_ft": 8.286
+      },
+      {
+        "observed_at": "2026-09-26T18:30:00Z",
+        "water_level_ft": 6.006
+      },
+      {
+        "observed_at": "2026-09-26T19:30:00Z",
+        "water_level_ft": 3.434
+      },
+      {
+        "observed_at": "2026-09-26T20:30:00Z",
+        "water_level_ft": 1.659
+      },
+      {
+        "observed_at": "2026-09-26T21:30:00Z",
+        "water_level_ft": 1.183
+      },
+      {
+        "observed_at": "2026-09-26T22:30:00Z",
+        "water_level_ft": 1.56
+      },
+      {
+        "observed_at": "2026-09-26T23:30:00Z",
+        "water_level_ft": 3.266
+      },
+      {
+        "observed_at": "2026-09-27T00:30:00Z",
+        "water_level_ft": 5.809
+      },
+      {
+        "observed_at": "2026-09-27T01:30:00Z",
+        "water_level_ft": 8.335
+      },
+      {
+        "observed_at": "2026-09-27T02:30:00Z",
+        "water_level_ft": 10.127
+      },
+      {
+        "observed_at": "2026-09-27T03:30:00Z",
+        "water_level_ft": 10.852
+      },
+      {
+        "observed_at": "2026-09-27T04:30:00Z",
+        "water_level_ft": 10.566
+      },
+      {
+        "observed_at": "2026-09-27T05:30:00Z",
+        "water_level_ft": 9.346
+      },
+      {
+        "observed_at": "2026-09-27T06:30:00Z",
+        "water_level_ft": 6.879
+      },
+      {
+        "observed_at": "2026-09-27T07:30:00Z",
+        "water_level_ft": 4.218
+      },
+      {
+        "observed_at": "2026-09-27T08:30:00Z",
+        "water_level_ft": 2.216
+      },
+      {
+        "observed_at": "2026-09-27T09:30:00Z",
+        "water_level_ft": 1.176
+      },
+      {
+        "observed_at": "2026-09-27T10:30:00Z",
+        "water_level_ft": 1.37
+      },
+      {
+        "observed_at": "2026-09-27T11:30:00Z",
+        "water_level_ft": 2.741
+      },
+      {
+        "observed_at": "2026-09-27T12:30:00Z",
+        "water_level_ft": 5.015
+      },
+      {
+        "observed_at": "2026-09-27T13:00:00Z",
+        "water_level_ft": 6.393
+      }
+    ],
+    "water_observed_daily_peaks": [
+      {
+        "date": "2026-09-20",
+        "peak_ft": 9.267,
+        "peak_time": "2026-09-20T23:18:00Z"
+      },
+      {
+        "date": "2026-09-21",
+        "peak_ft": 8.906,
+        "peak_time": "2026-09-21T00:00:00Z"
+      },
+      {
+        "date": "2026-09-22",
+        "peak_ft": 8.939,
+        "peak_time": "2026-09-22T00:00:00Z"
+      },
+      {
+        "date": "2026-09-23",
+        "peak_ft": 8.978,
+        "peak_time": "2026-09-23T01:06:00Z"
+      },
+      {
+        "date": "2026-09-24",
+        "peak_ft": 9.323,
+        "peak_time": "2026-09-24T01:42:00Z"
+      },
+      {
+        "date": "2026-09-25",
+        "peak_ft": 9.743,
+        "peak_time": "2026-09-25T14:54:00Z"
+      },
+      {
+        "date": "2026-09-26",
+        "peak_ft": 10.615,
+        "peak_time": "2026-09-26T15:30:00Z"
+      },
+      {
+        "date": "2026-09-27",
+        "peak_ft": 10.953,
+        "peak_time": "2026-09-27T03:48:00Z"
+      }
+    ],
+    "marine_hourly": {
+      "44007": [
+        {
+          "observed_at": "2026-09-20T13:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 160
+        },
+        {
+          "observed_at": "2026-09-20T14:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 170
+        },
+        {
+          "observed_at": "2026-09-20T15:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 160
+        },
+        {
+          "observed_at": "2026-09-20T16:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 6.7,
+          "direction_deg": 160
+        },
+        {
+          "observed_at": "2026-09-20T17:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 160
+        },
+        {
+          "observed_at": "2026-09-20T18:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 17.9,
+          "direction_deg": 180
+        },
+        {
+          "observed_at": "2026-09-20T19:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 130
+        },
+        {
+          "observed_at": "2026-09-20T20:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-20T21:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-20T22:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 17.9,
+          "direction_deg": 140
+        },
+        {
+          "observed_at": "2026-09-20T23:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 6.7,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-21T00:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 13.4,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-21T01:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-21T02:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-21T03:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-21T04:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 15.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T05:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-21T06:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-21T07:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T08:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T09:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T10:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T11:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 20.1,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-21T12:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 20.1,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T13:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T14:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-21T15:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T16:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-21T17:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 6.7,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-21T18:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-21T19:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 4.5,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-21T20:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 170
+        },
+        {
+          "observed_at": "2026-09-21T21:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 6.7,
+          "direction_deg": 210
+        },
+        {
+          "observed_at": "2026-09-21T22:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 250
+        },
+        {
+          "observed_at": "2026-09-21T23:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 290
+        },
+        {
+          "observed_at": "2026-09-22T00:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T01:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T02:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 22.4,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-22T03:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-22T04:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 24.6,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-22T05:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-22T06:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T07:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 26.8,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T08:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T09:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 24.6,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T10:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 24.6,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-22T11:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 22.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-22T12:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T13:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-22T14:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-22T15:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T16:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 13.4,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-22T17:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-22T18:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 6.7,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-22T19:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 140
+        },
+        {
+          "observed_at": "2026-09-22T20:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 6.7,
+          "direction_deg": 120
+        },
+        {
+          "observed_at": "2026-09-22T21:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 110
+        },
+        {
+          "observed_at": "2026-09-22T22:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-22T23:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 110
+        },
+        {
+          "observed_at": "2026-09-23T00:50:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": 4.5,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-23T01:50:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": 4.5,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T02:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-23T03:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-23T04:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-23T05:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T06:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T07:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-23T08:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T09:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-23T10:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T11:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-23T12:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T13:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T14:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 20.1,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-23T15:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-23T16:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 70
+        },
+        {
+          "observed_at": "2026-09-23T17:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-23T18:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 15.7,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-23T19:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-23T20:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-23T21:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-23T22:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-23T23:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 13.4,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-24T00:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 13.4,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-24T01:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-24T02:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 8.9,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-24T03:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-24T04:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-24T05:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-24T06:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-24T07:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-24T08:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-24T09:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-24T10:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-24T11:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T12:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T13:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T14:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T15:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-24T16:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T17:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 11.2,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-24T18:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-24T19:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 8.9,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-24T20:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-24T21:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 8.9,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-24T22:50:00Z",
+          "speed_mph": 4.5,
+          "gust_mph": 6.7,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-24T23:50:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": 6.7,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-25T00:50:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": 6.7,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-25T01:50:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": 6.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T02:50:00Z",
+          "speed_mph": 6.7,
+          "gust_mph": 8.9,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T03:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T04:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 15.7,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T05:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T06:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T07:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T08:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T09:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 20.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T10:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T11:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 22.4,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T12:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T13:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T14:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 17.9,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T15:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 15.7,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T16:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-25T17:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 24.6,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-25T18:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-25T19:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-25T20:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-25T21:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 13.4,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-25T22:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 11.2,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T23:50:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 13.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T00:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 15.7,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T01:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 17.9,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-26T02:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 13.4,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T03:50:00Z",
+          "speed_mph": 11.2,
+          "gust_mph": 15.7,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T04:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T05:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 24.6,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-26T06:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-26T07:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-26T08:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T09:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 20.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T10:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T11:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 26.8,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T12:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T13:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 24.6,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T14:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T15:50:00Z",
+          "speed_mph": 17.9,
+          "gust_mph": 22.4,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T16:50:00Z",
+          "speed_mph": 15.7,
+          "gust_mph": 20.1,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-26T17:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 24.6,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T18:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 17.9,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T19:50:00Z",
+          "speed_mph": 13.4,
+          "gust_mph": 20.1,
+          "direction_deg": 70
+        },
+        {
+          "observed_at": "2026-09-26T20:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 26.8,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-26T21:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 29.1,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-26T22:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-26T23:50:00Z",
+          "speed_mph": 20.1,
+          "gust_mph": 26.8,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-27T00:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 26.8,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-27T01:50:00Z",
+          "speed_mph": 29.1,
+          "gust_mph": 38.0,
+          "direction_deg": 50
+        },
+        {
+          "observed_at": "2026-09-27T02:50:00Z",
+          "speed_mph": 26.8,
+          "gust_mph": 33.6,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-27T03:50:00Z",
+          "speed_mph": 29.1,
+          "gust_mph": 38.0,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-27T04:50:00Z",
+          "speed_mph": 29.1,
+          "gust_mph": 35.8,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-27T05:50:00Z",
+          "speed_mph": 26.8,
+          "gust_mph": 33.6,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T06:50:00Z",
+          "speed_mph": 24.6,
+          "gust_mph": 29.1,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T07:50:00Z",
+          "speed_mph": 26.8,
+          "gust_mph": 31.3,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T08:50:00Z",
+          "speed_mph": 24.6,
+          "gust_mph": 29.1,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T09:50:00Z",
+          "speed_mph": 24.6,
+          "gust_mph": 29.1,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-27T10:50:00Z",
+          "speed_mph": 24.6,
+          "gust_mph": 31.3,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T11:50:00Z",
+          "speed_mph": 22.4,
+          "gust_mph": 29.1,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T12:30:00Z",
+          "speed_mph": 24.6,
+          "gust_mph": 29.1,
+          "direction_deg": 30
+        }
+      ],
+      "WEXM1": [
+        {
+          "observed_at": "2026-09-20T13:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 120
+        },
+        {
+          "observed_at": "2026-09-20T14:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 160
+        },
+        {
+          "observed_at": "2026-09-20T15:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 160
+        },
+        {
+          "observed_at": "2026-09-20T16:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 150
+        },
+        {
+          "observed_at": "2026-09-20T17:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 140
+        },
+        {
+          "observed_at": "2026-09-20T18:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 140
+        },
+        {
+          "observed_at": "2026-09-20T19:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 110
+        },
+        {
+          "observed_at": "2026-09-20T20:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 110
+        },
+        {
+          "observed_at": "2026-09-20T21:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 110
+        },
+        {
+          "observed_at": "2026-09-20T22:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-20T23:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-21T00:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T01:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-21T02:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-21T03:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-21T04:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-21T05:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-21T06:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-21T07:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-21T08:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-21T09:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-21T10:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-21T11:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-21T12:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-21T13:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-21T14:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-21T15:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-21T16:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-21T17:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-21T18:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 130
+        },
+        {
+          "observed_at": "2026-09-21T19:45:00Z",
+          "speed_mph": 1.1,
+          "gust_mph": null,
+          "direction_deg": 150
+        },
+        {
+          "observed_at": "2026-09-21T20:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 130
+        },
+        {
+          "observed_at": "2026-09-21T21:45:00Z",
+          "speed_mph": 0.0,
+          "gust_mph": null,
+          "direction_deg": null
+        },
+        {
+          "observed_at": "2026-09-21T22:00:00Z",
+          "speed_mph": 1.1,
+          "gust_mph": null,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-21T23:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 280
+        },
+        {
+          "observed_at": "2026-09-22T00:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-22T01:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-22T02:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-22T03:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-22T04:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-22T05:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-22T06:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T07:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-22T08:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T09:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T10:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T11:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-22T12:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-22T13:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-22T14:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-22T15:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-22T16:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-22T17:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-22T18:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-22T19:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-22T20:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 110
+        },
+        {
+          "observed_at": "2026-09-22T21:45:00Z",
+          "speed_mph": 1.1,
+          "gust_mph": null,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-22T22:45:00Z",
+          "speed_mph": 0.0,
+          "gust_mph": null,
+          "direction_deg": null
+        },
+        {
+          "observed_at": "2026-09-22T23:45:00Z",
+          "speed_mph": 0.0,
+          "gust_mph": null,
+          "direction_deg": null
+        },
+        {
+          "observed_at": "2026-09-23T00:45:00Z",
+          "speed_mph": 1.1,
+          "gust_mph": null,
+          "direction_deg": 310
+        },
+        {
+          "observed_at": "2026-09-23T01:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 310
+        },
+        {
+          "observed_at": "2026-09-23T02:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-23T03:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 310
+        },
+        {
+          "observed_at": "2026-09-23T04:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-23T05:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-23T06:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-23T07:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-23T08:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-23T09:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-23T10:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-23T11:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-23T12:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-23T13:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-23T14:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-23T15:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-23T16:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-23T17:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 60
+        },
+        {
+          "observed_at": "2026-09-23T18:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-23T19:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-23T20:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-23T21:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-23T22:45:00Z",
+          "speed_mph": 0.0,
+          "gust_mph": null,
+          "direction_deg": null
+        },
+        {
+          "observed_at": "2026-09-23T23:45:00Z",
+          "speed_mph": 0.0,
+          "gust_mph": null,
+          "direction_deg": null
+        },
+        {
+          "observed_at": "2026-09-24T00:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T01:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-24T02:45:00Z",
+          "speed_mph": 3.4,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-24T03:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T04:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T05:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T06:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T07:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T08:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T09:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T10:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T11:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-24T12:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-24T13:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-24T14:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-24T15:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-24T16:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-24T17:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-24T18:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 80
+        },
+        {
+          "observed_at": "2026-09-24T19:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 90
+        },
+        {
+          "observed_at": "2026-09-24T20:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 100
+        },
+        {
+          "observed_at": "2026-09-24T21:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 70
+        },
+        {
+          "observed_at": "2026-09-24T22:45:00Z",
+          "speed_mph": 1.1,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-24T23:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 310
+        },
+        {
+          "observed_at": "2026-09-25T00:45:00Z",
+          "speed_mph": 1.1,
+          "gust_mph": null,
+          "direction_deg": 310
+        },
+        {
+          "observed_at": "2026-09-25T01:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 300
+        },
+        {
+          "observed_at": "2026-09-25T02:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-25T03:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-25T04:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-25T05:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 320
+        },
+        {
+          "observed_at": "2026-09-25T06:45:00Z",
+          "speed_mph": 2.2,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-25T07:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-25T08:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-25T09:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 330
+        },
+        {
+          "observed_at": "2026-09-25T10:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-25T11:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 350
+        },
+        {
+          "observed_at": "2026-09-25T12:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 340
+        },
+        {
+          "observed_at": "2026-09-25T13:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-25T14:45:00Z",
+          "speed_mph": 9.2,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T15:45:00Z",
+          "speed_mph": 9.2,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T16:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-25T17:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-25T18:45:00Z",
+          "speed_mph": 10.3,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T19:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T20:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T21:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-25T22:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-25T23:45:00Z",
+          "speed_mph": 4.7,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-26T00:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-26T01:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T02:45:00Z",
+          "speed_mph": 5.8,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T03:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T04:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T05:45:00Z",
+          "speed_mph": 10.3,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T06:45:00Z",
+          "speed_mph": 10.3,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T07:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T08:45:00Z",
+          "speed_mph": 9.2,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T09:45:00Z",
+          "speed_mph": 6.9,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-26T10:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-26T11:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-26T12:45:00Z",
+          "speed_mph": 10.3,
+          "gust_mph": null,
+          "direction_deg": 360
+        },
+        {
+          "observed_at": "2026-09-26T13:45:00Z",
+          "speed_mph": 9.2,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T14:45:00Z",
+          "speed_mph": 12.8,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T15:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T16:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-26T17:45:00Z",
+          "speed_mph": 12.8,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T18:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-26T19:45:00Z",
+          "speed_mph": 12.8,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T20:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 40
+        },
+        {
+          "observed_at": "2026-09-26T21:45:00Z",
+          "speed_mph": 9.2,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T22:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-26T23:45:00Z",
+          "speed_mph": 10.3,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T00:45:00Z",
+          "speed_mph": 8.1,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T01:45:00Z",
+          "speed_mph": 15.0,
+          "gust_mph": null,
+          "direction_deg": 30
+        },
+        {
+          "observed_at": "2026-09-27T02:45:00Z",
+          "speed_mph": 13.9,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-27T03:45:00Z",
+          "speed_mph": 15.0,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T04:45:00Z",
+          "speed_mph": 15.0,
+          "gust_mph": null,
+          "direction_deg": 20
+        },
+        {
+          "observed_at": "2026-09-27T05:45:00Z",
+          "speed_mph": 12.8,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T06:45:00Z",
+          "speed_mph": 13.9,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T07:45:00Z",
+          "speed_mph": 13.9,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T08:45:00Z",
+          "speed_mph": 12.8,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T09:45:00Z",
+          "speed_mph": 10.3,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T10:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T11:45:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 10
+        },
+        {
+          "observed_at": "2026-09-27T12:00:00Z",
+          "speed_mph": 11.4,
+          "gust_mph": null,
+          "direction_deg": 10
+        }
+      ]
+    },
+    "marine_daily": {
+      "44007": [
+        {
+          "date": "2026-09-20",
+          "max_speed_mph": 11.2,
+          "max_gust_mph": 22.4
+        },
+        {
+          "date": "2026-09-21",
+          "max_speed_mph": 17.9,
+          "max_gust_mph": 22.4
+        },
+        {
+          "date": "2026-09-22",
+          "max_speed_mph": 22.4,
+          "max_gust_mph": 26.8
+        },
+        {
+          "date": "2026-09-23",
+          "max_speed_mph": 17.9,
+          "max_gust_mph": 22.4
+        },
+        {
+          "date": "2026-09-24",
+          "max_speed_mph": 15.7,
+          "max_gust_mph": 20.1
+        },
+        {
+          "date": "2026-09-25",
+          "max_speed_mph": 20.1,
+          "max_gust_mph": 24.6
+        },
+        {
+          "date": "2026-09-26",
+          "max_speed_mph": 24.6,
+          "max_gust_mph": 33.6
+        },
+        {
+          "date": "2026-09-27",
+          "max_speed_mph": 31.3,
+          "max_gust_mph": 40.3
+        }
+      ],
+      "WEXM1": [
+        {
+          "date": "2026-09-20",
+          "max_speed_mph": 5.8,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-21",
+          "max_speed_mph": 6.9,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-22",
+          "max_speed_mph": 8.1,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-23",
+          "max_speed_mph": 9.2,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-24",
+          "max_speed_mph": 9.2,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-25",
+          "max_speed_mph": 11.4,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-26",
+          "max_speed_mph": 13.9,
+          "max_gust_mph": null
+        },
+        {
+          "date": "2026-09-27",
+          "max_speed_mph": 17.2,
+          "max_gust_mph": null
+        }
+      ]
+    },
+    "nws_alert_products": [
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3b1056ad52a650e501e2abff2a45d651e74187c7.001.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-22T14:22:00-04:00",
+        "effective": "2026-09-22T14:22:00-04:00",
+        "onset": "2026-09-23T11:00:00-04:00",
+        "expires": "2026-09-23T04:30:00-04:00",
+        "ends": "2026-09-24T20:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 22 at 2:22PM EDT until September 24 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Alert",
+        "references": []
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1d6b9a497580daf8cdb5a9cc21bb90446b2dd161.003.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-23T02:22:00-04:00",
+        "effective": "2026-09-23T02:22:00-04:00",
+        "onset": "2026-09-23T11:00:00-04:00",
+        "expires": "2026-09-23T16:30:00-04:00",
+        "ends": "2026-09-25T08:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 23 at 2:22AM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.3b1056ad52a650e501e2abff2a45d651e74187c7.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.3b1056ad52a650e501e2abff2a45d651e74187c7.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-22T14:22:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-23T14:34:00-04:00",
+        "effective": "2026-09-23T14:34:00-04:00",
+        "onset": "2026-09-23T14:34:00-04:00",
+        "expires": "2026-09-24T05:00:00-04:00",
+        "ends": "2026-09-25T08:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 23 at 2:34PM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.1d6b9a497580daf8cdb5a9cc21bb90446b2dd161.003.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.1d6b9a497580daf8cdb5a9cc21bb90446b2dd161.003.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T02:22:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.2",
+        "event": "Gale Watch",
+        "severity": "Moderate",
+        "certainty": "Possible",
+        "urgency": "Future",
+        "sent": "2026-09-23T14:34:00-04:00",
+        "effective": "2026-09-23T14:34:00-04:00",
+        "onset": "2026-09-25T08:00:00-04:00",
+        "expires": "2026-09-24T05:00:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Watch issued September 23 at 2:34PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Alert",
+        "references": []
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6be589018ec832841b56e67f34776395b4ced102.001.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-23T19:10:00-04:00",
+        "effective": "2026-09-23T19:10:00-04:00",
+        "onset": "2026-09-23T19:10:00-04:00",
+        "expires": "2026-09-24T09:15:00-04:00",
+        "ends": "2026-09-25T08:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 23 at 7:10PM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T14:34:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6be589018ec832841b56e67f34776395b4ced102.001.2",
+        "event": "Gale Watch",
+        "severity": "Moderate",
+        "certainty": "Possible",
+        "urgency": "Future",
+        "sent": "2026-09-23T19:10:00-04:00",
+        "effective": "2026-09-23T19:10:00-04:00",
+        "onset": "2026-09-25T08:00:00-04:00",
+        "expires": "2026-09-24T09:15:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Watch issued September 23 at 7:10PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.2",
+            "identifier": "urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.2",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T14:34:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.2",
+        "event": "Gale Watch",
+        "severity": "Moderate",
+        "certainty": "Observed",
+        "urgency": "Past",
+        "sent": "2026-09-24T02:23:00-04:00",
+        "effective": "2026-09-24T02:23:00-04:00",
+        "onset": "2026-09-25T08:00:00-04:00",
+        "expires": "2026-09-24T02:38:17-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "The Gale Watch has been replaced. Please see the latest information from NWS Gray ME on this developing situation.",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Cancel",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.2",
+            "identifier": "urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.2",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T14:34:00-04:00"
+          },
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6be589018ec832841b56e67f34776395b4ced102.001.2",
+            "identifier": "urn:oid:2.49.0.1.840.0.6be589018ec832841b56e67f34776395b4ced102.001.2",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T19:10:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.3",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-24T02:23:00-04:00",
+        "effective": "2026-09-24T02:23:00-04:00",
+        "onset": "2026-09-25T20:00:00-04:00",
+        "expires": "2026-09-24T16:30:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 24 at 2:23AM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Alert",
+        "references": []
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-24T02:23:00-04:00",
+        "effective": "2026-09-24T02:23:00-04:00",
+        "onset": "2026-09-24T02:23:00-04:00",
+        "expires": "2026-09-24T16:30:00-04:00",
+        "ends": "2026-09-25T08:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 24 at 2:23AM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.88e9a1d948531f6b470863eb7f2144f355a8d285.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T14:34:00-04:00"
+          },
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6be589018ec832841b56e67f34776395b4ced102.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.6be589018ec832841b56e67f34776395b4ced102.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-23T19:10:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d956b35653533b7d9cee5debb49b38dc550175f7.001.2",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-24T14:21:00-04:00",
+        "effective": "2026-09-24T14:21:00-04:00",
+        "onset": "2026-09-25T20:00:00-04:00",
+        "expires": "2026-09-25T04:30:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 24 at 2:21PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.3",
+            "identifier": "urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.3",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-24T02:23:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d956b35653533b7d9cee5debb49b38dc550175f7.001.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-24T14:21:00-04:00",
+        "effective": "2026-09-24T14:21:00-04:00",
+        "onset": "2026-09-24T14:21:00-04:00",
+        "expires": "2026-09-25T04:30:00-04:00",
+        "ends": "2026-09-25T08:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 24 at 2:21PM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.50f49eb9fd2ca2d4cf4802ec110202104e6afb9e.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-24T02:23:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.463b8af9beea19cc7acbf76989fe72fd3a444ec2.001.2",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-25T02:26:00-04:00",
+        "effective": "2026-09-25T02:26:00-04:00",
+        "onset": "2026-09-25T20:00:00-04:00",
+        "expires": "2026-09-25T16:30:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 25 at 2:26AM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d956b35653533b7d9cee5debb49b38dc550175f7.001.2",
+            "identifier": "urn:oid:2.49.0.1.840.0.d956b35653533b7d9cee5debb49b38dc550175f7.001.2",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-24T14:21:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.463b8af9beea19cc7acbf76989fe72fd3a444ec2.001.1",
+        "event": "Small Craft Advisory",
+        "severity": "Minor",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-25T02:26:00-04:00",
+        "effective": "2026-09-25T02:26:00-04:00",
+        "onset": "2026-09-25T02:26:00-04:00",
+        "expires": "2026-09-25T16:30:00-04:00",
+        "ends": "2026-09-25T08:00:00-04:00",
+        "headline": "Small Craft Advisory issued September 25 at 2:26AM EDT until September 25 at 8:00AM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d956b35653533b7d9cee5debb49b38dc550175f7.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.d956b35653533b7d9cee5debb49b38dc550175f7.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-24T14:21:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2c439020d7ed09b299d0d89cce273f7c1183d773.001.1",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-25T14:26:00-04:00",
+        "effective": "2026-09-25T14:26:00-04:00",
+        "onset": "2026-09-26T02:00:00-04:00",
+        "expires": "2026-09-26T05:00:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 25 at 2:26PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.463b8af9beea19cc7acbf76989fe72fd3a444ec2.001.2",
+            "identifier": "urn:oid:2.49.0.1.840.0.463b8af9beea19cc7acbf76989fe72fd3a444ec2.001.2",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-25T02:26:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0f58bcc743a9ffcf758b22a688be75b1d6647c33.002.1",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-26T02:22:00-04:00",
+        "effective": "2026-09-26T02:22:00-04:00",
+        "onset": "2026-09-26T02:22:00-04:00",
+        "expires": "2026-09-26T16:30:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 26 at 2:22AM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2c439020d7ed09b299d0d89cce273f7c1183d773.001.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.2c439020d7ed09b299d0d89cce273f7c1183d773.001.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-25T14:26:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9ee70c9bfbcded8f893e95457b22aad19533a720.002.1",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-26T14:19:00-04:00",
+        "effective": "2026-09-26T14:19:00-04:00",
+        "onset": "2026-09-26T14:19:00-04:00",
+        "expires": "2026-09-27T04:30:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 26 at 2:19PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0f58bcc743a9ffcf758b22a688be75b1d6647c33.002.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.0f58bcc743a9ffcf758b22a688be75b1d6647c33.002.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-26T02:22:00-04:00"
+          }
+        ]
+      },
+      {
+        "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b9ad9a121eaebb4772d88bfd94b1fa3efcdd7be0.002.1",
+        "event": "Gale Warning",
+        "severity": "Moderate",
+        "certainty": "Likely",
+        "urgency": "Expected",
+        "sent": "2026-09-27T02:37:00-04:00",
+        "effective": "2026-09-27T02:37:00-04:00",
+        "onset": "2026-09-27T02:37:00-04:00",
+        "expires": "2026-09-27T16:45:00-04:00",
+        "ends": "2026-09-27T20:00:00-04:00",
+        "headline": "Gale Warning issued September 27 at 2:37AM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+        "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+        "message_type": "Update",
+        "references": [
+          {
+            "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.9ee70c9bfbcded8f893e95457b22aad19533a720.002.1",
+            "identifier": "urn:oid:2.49.0.1.840.0.9ee70c9bfbcded8f893e95457b22aad19533a720.002.1",
+            "sender": "w-nws.webmaster@noaa.gov",
+            "sent": "2026-09-26T14:19:00-04:00"
+          }
+        ]
+      }
+    ],
+    "attempts": {
+      "water": "success",
+      "marine_44007": "success",
+      "marine_WEXM1": "success",
+      "nws_alerts": "success"
+    },
+    "model_archive": {
+      "attempted_at": "2026-09-27T13:05:40Z",
+      "period_start": "2026-09-20T13:05:40Z",
+      "period_end": "2026-09-27T13:05:40Z",
+      "source": "NOAA CO-OPS GoMOFS run-specific station forecast archive",
+      "summary": {
+        "cycles_attempted": 28,
+        "cycles_reconstructed": 0,
+        "cycles_unavailable": 28
+      },
+      "errors": [
+        {
+          "model_cycle_at": "2026-09-20T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/20/gomofs.t18z.20260920.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-21T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t00z.20260921.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-21T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t06z.20260921.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-21T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t12z.20260921.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-21T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t18z.20260921.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-22T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t00z.20260922.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-22T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t06z.20260922.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-22T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t12z.20260922.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-22T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t18z.20260922.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-23T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t00z.20260923.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-23T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t06z.20260923.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-23T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t12z.20260923.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-23T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t18z.20260923.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-24T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t00z.20260924.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-24T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t06z.20260924.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-24T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t12z.20260924.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-24T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t18z.20260924.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-25T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t00z.20260925.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-25T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t06z.20260925.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-25T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t12z.20260925.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-25T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t18z.20260925.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-26T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t00z.20260926.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-26T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t06z.20260926.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-26T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t12z.20260926.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-26T18:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t18z.20260926.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-27T00:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t00z.20260927.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-27T06:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t06z.20260927.stations.forecast.nc",
+          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
+        },
+        {
+          "model_cycle_at": "2026-09-27T12:00:00Z",
+          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t12z.20260927.stations.forecast.nc",
+          "error": "[Errno -90] NetCDF: file not found: 'https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t12z.20260927.stations.forecast.nc'"
+        }
+      ]
+    }
+  },
+  "provenance_notes": {
+    "realtime": "Snapshots are captures of official source data at the listed snapshot time.",
+    "model_archive": "Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.",
+    "reconstructed_dashboard_snapshot": "Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.",
+    "observations": "Historical observations describe what happened, not what a model forecast beforehand.",
+    "community": "Reddit and other community reports are anecdotal unless independently verified.",
+    "facebook": "Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."
+  }
+}

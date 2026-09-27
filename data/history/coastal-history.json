@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-27T13:05:43Z",
+  "generated_at": "2026-09-27T13:12:11Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -13,6 +13,546 @@
     "older_history": "daily_rollups"
   },
   "snapshots": [
+    {
+      "snapshot_at": "2026-09-20T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-20T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/20/gomofs.t18z.20260920.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.26,
+        "forecast_peak_24h_time": "2026-09-20T23:00:00Z",
+        "forecast_peak_72h_ft": 9.3,
+        "forecast_peak_72h_time": "2026-09-23T00:48:00Z",
+        "astronomical_tide_at_peak_ft": 9.0,
+        "model_uplift_ft": 0.3,
+        "threshold_margins_ft": {
+          "minor": 2.7,
+          "moderate": 3.7,
+          "major": 4.7
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-21T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-21T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t00z.20260921.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 8.84,
+        "forecast_peak_24h_time": "2026-09-21T23:54:00Z",
+        "forecast_peak_72h_ft": 9.35,
+        "forecast_peak_72h_time": "2026-09-23T00:48:00Z",
+        "astronomical_tide_at_peak_ft": 9.0,
+        "model_uplift_ft": 0.35,
+        "threshold_margins_ft": {
+          "minor": 2.65,
+          "moderate": 3.65,
+          "major": 4.65
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-21T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-21T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t06z.20260921.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 8.8,
+        "forecast_peak_24h_time": "2026-09-21T23:48:00Z",
+        "forecast_peak_72h_ft": 9.84,
+        "forecast_peak_72h_time": "2026-09-24T01:36:00Z",
+        "astronomical_tide_at_peak_ft": 9.33,
+        "model_uplift_ft": 0.51,
+        "threshold_margins_ft": {
+          "minor": 2.16,
+          "moderate": 3.16,
+          "major": 4.16
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-21T12:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-21T12:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t12z.20260921.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 8.79,
+        "forecast_peak_24h_time": "2026-09-21T23:48:00Z",
+        "forecast_peak_72h_ft": 9.8,
+        "forecast_peak_72h_time": "2026-09-24T01:30:00Z",
+        "astronomical_tide_at_peak_ft": 9.31,
+        "model_uplift_ft": 0.49,
+        "threshold_margins_ft": {
+          "minor": 2.2,
+          "moderate": 3.2,
+          "major": 4.2
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-21T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-21T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t18z.20260921.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 8.87,
+        "forecast_peak_24h_time": "2026-09-21T23:48:00Z",
+        "forecast_peak_72h_ft": 9.81,
+        "forecast_peak_72h_time": "2026-09-24T01:30:00Z",
+        "astronomical_tide_at_peak_ft": 9.31,
+        "model_uplift_ft": 0.5,
+        "threshold_margins_ft": {
+          "minor": 2.19,
+          "moderate": 3.19,
+          "major": 4.19
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-22T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-22T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t00z.20260922.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.13,
+        "forecast_peak_24h_time": "2026-09-23T00:00:00Z",
+        "forecast_peak_72h_ft": 9.81,
+        "forecast_peak_72h_time": "2026-09-24T01:30:00Z",
+        "astronomical_tide_at_peak_ft": 9.31,
+        "model_uplift_ft": 0.5,
+        "threshold_margins_ft": {
+          "minor": 2.19,
+          "moderate": 3.19,
+          "major": 4.19
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-22T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-22T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t06z.20260922.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.36,
+        "forecast_peak_24h_time": "2026-09-23T00:42:00Z",
+        "forecast_peak_72h_ft": 10.19,
+        "forecast_peak_72h_time": "2026-09-25T02:18:00Z",
+        "astronomical_tide_at_peak_ft": 9.62,
+        "model_uplift_ft": 0.57,
+        "threshold_margins_ft": {
+          "minor": 1.81,
+          "moderate": 2.81,
+          "major": 3.81
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-22T12:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-22T12:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t12z.20260922.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.43,
+        "forecast_peak_24h_time": "2026-09-23T00:42:00Z",
+        "forecast_peak_72h_ft": 10.19,
+        "forecast_peak_72h_time": "2026-09-25T02:18:00Z",
+        "astronomical_tide_at_peak_ft": 9.62,
+        "model_uplift_ft": 0.57,
+        "threshold_margins_ft": {
+          "minor": 1.81,
+          "moderate": 2.81,
+          "major": 3.81
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-22T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-22T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t18z.20260922.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.39,
+        "forecast_peak_24h_time": "2026-09-23T00:42:00Z",
+        "forecast_peak_72h_ft": 10.15,
+        "forecast_peak_72h_time": "2026-09-25T02:18:00Z",
+        "astronomical_tide_at_peak_ft": 9.62,
+        "model_uplift_ft": 0.53,
+        "threshold_margins_ft": {
+          "minor": 1.85,
+          "moderate": 2.85,
+          "major": 3.85
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-23T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-23T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t00z.20260923.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.43,
+        "forecast_peak_24h_time": "2026-09-23T00:42:00Z",
+        "forecast_peak_72h_ft": 10.12,
+        "forecast_peak_72h_time": "2026-09-25T14:48:00Z",
+        "astronomical_tide_at_peak_ft": 9.35,
+        "model_uplift_ft": 0.77,
+        "threshold_margins_ft": {
+          "minor": 1.88,
+          "moderate": 2.88,
+          "major": 3.88
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-23T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-23T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t06z.20260923.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.78,
+        "forecast_peak_24h_time": "2026-09-24T01:30:00Z",
+        "forecast_peak_72h_ft": 10.87,
+        "forecast_peak_72h_time": "2026-09-26T03:00:00Z",
+        "astronomical_tide_at_peak_ft": 9.84,
+        "model_uplift_ft": 1.03,
+        "threshold_margins_ft": {
+          "minor": 1.13,
+          "moderate": 2.13,
+          "major": 3.13
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-23T12:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-23T12:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t12z.20260923.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.86,
+        "forecast_peak_24h_time": "2026-09-24T01:36:00Z",
+        "forecast_peak_72h_ft": 10.65,
+        "forecast_peak_72h_time": "2026-09-26T03:00:00Z",
+        "astronomical_tide_at_peak_ft": 9.84,
+        "model_uplift_ft": 0.81,
+        "threshold_margins_ft": {
+          "minor": 1.35,
+          "moderate": 2.35,
+          "major": 3.35
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-23T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-23T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t18z.20260923.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.83,
+        "forecast_peak_24h_time": "2026-09-24T01:30:00Z",
+        "forecast_peak_72h_ft": 10.75,
+        "forecast_peak_72h_time": "2026-09-26T15:24:00Z",
+        "astronomical_tide_at_peak_ft": 9.82,
+        "model_uplift_ft": 0.93,
+        "threshold_margins_ft": {
+          "minor": 1.25,
+          "moderate": 2.25,
+          "major": 3.25
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-24T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-24T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t00z.20260924.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 9.84,
+        "forecast_peak_24h_time": "2026-09-24T01:30:00Z",
+        "forecast_peak_72h_ft": 10.83,
+        "forecast_peak_72h_time": "2026-09-26T03:00:00Z",
+        "astronomical_tide_at_peak_ft": 9.84,
+        "model_uplift_ft": 0.99,
+        "threshold_margins_ft": {
+          "minor": 1.17,
+          "moderate": 2.17,
+          "major": 3.17
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-24T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-24T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t06z.20260924.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.07,
+        "forecast_peak_24h_time": "2026-09-25T02:24:00Z",
+        "forecast_peak_72h_ft": 11.35,
+        "forecast_peak_72h_time": "2026-09-27T03:36:00Z",
+        "astronomical_tide_at_peak_ft": 9.97,
+        "model_uplift_ft": 1.38,
+        "threshold_margins_ft": {
+          "minor": 0.65,
+          "moderate": 1.65,
+          "major": 2.65
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-24T12:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-24T12:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t12z.20260924.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.07,
+        "forecast_peak_24h_time": "2026-09-25T02:18:00Z",
+        "forecast_peak_72h_ft": 11.2,
+        "forecast_peak_72h_time": "2026-09-27T03:36:00Z",
+        "astronomical_tide_at_peak_ft": 9.97,
+        "model_uplift_ft": 1.23,
+        "threshold_margins_ft": {
+          "minor": 0.8,
+          "moderate": 1.8,
+          "major": 2.8
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-24T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-24T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t18z.20260924.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.04,
+        "forecast_peak_24h_time": "2026-09-25T02:18:00Z",
+        "forecast_peak_72h_ft": 11.34,
+        "forecast_peak_72h_time": "2026-09-27T16:00:00Z",
+        "astronomical_tide_at_peak_ft": 10.23,
+        "model_uplift_ft": 1.11,
+        "threshold_margins_ft": {
+          "minor": 0.66,
+          "moderate": 1.66,
+          "major": 2.66
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-25T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-25T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t00z.20260925.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.07,
+        "forecast_peak_24h_time": "2026-09-25T02:24:00Z",
+        "forecast_peak_72h_ft": 11.23,
+        "forecast_peak_72h_time": "2026-09-27T16:00:00Z",
+        "astronomical_tide_at_peak_ft": 10.23,
+        "model_uplift_ft": 1.0,
+        "threshold_margins_ft": {
+          "minor": 0.77,
+          "moderate": 1.77,
+          "major": 2.77
+        }
+      }
+    },
     {
       "snapshot_at": "2026-09-25T02:59:00Z",
       "snapshot_kind": "reconstructed_dashboard_snapshot",
@@ -33,6 +573,66 @@
       "confidence": "high"
     },
     {
+      "snapshot_at": "2026-09-25T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-25T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t06z.20260925.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.62,
+        "forecast_peak_24h_time": "2026-09-26T02:48:00Z",
+        "forecast_peak_72h_ft": 11.54,
+        "forecast_peak_72h_time": "2026-09-28T04:24:00Z",
+        "astronomical_tide_at_peak_ft": 10.01,
+        "model_uplift_ft": 1.53,
+        "threshold_margins_ft": {
+          "minor": 0.46,
+          "moderate": 1.46,
+          "major": 2.46
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-25T12:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-25T12:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t12z.20260925.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.76,
+        "forecast_peak_24h_time": "2026-09-26T03:00:00Z",
+        "forecast_peak_72h_ft": 11.43,
+        "forecast_peak_72h_time": "2026-09-28T04:18:00Z",
+        "astronomical_tide_at_peak_ft": 10.0,
+        "model_uplift_ft": 1.43,
+        "threshold_margins_ft": {
+          "minor": 0.57,
+          "moderate": 1.57,
+          "major": 2.57
+        }
+      }
+    },
+    {
       "snapshot_at": "2026-09-25T17:20:00Z",
       "snapshot_kind": "reconstructed_dashboard_snapshot",
       "provenance": {
@@ -50,6 +650,126 @@
       },
       "alerts": [],
       "confidence": "high"
+    },
+    {
+      "snapshot_at": "2026-09-25T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-25T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t18z.20260925.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.79,
+        "forecast_peak_24h_time": "2026-09-26T15:24:00Z",
+        "forecast_peak_72h_ft": 11.88,
+        "forecast_peak_72h_time": "2026-09-28T16:42:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.34,
+        "threshold_margins_ft": {
+          "minor": 0.12,
+          "moderate": 1.12,
+          "major": 2.12
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-26T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-26T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t00z.20260926.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 10.87,
+        "forecast_peak_24h_time": "2026-09-26T15:24:00Z",
+        "forecast_peak_72h_ft": 11.86,
+        "forecast_peak_72h_time": "2026-09-28T16:42:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.32,
+        "threshold_margins_ft": {
+          "minor": 0.14,
+          "moderate": 1.14,
+          "major": 2.14
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-26T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-26T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t06z.20260926.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 11.21,
+        "forecast_peak_24h_time": "2026-09-27T03:48:00Z",
+        "forecast_peak_72h_ft": 11.94,
+        "forecast_peak_72h_time": "2026-09-28T16:42:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.4,
+        "threshold_margins_ft": {
+          "minor": 0.06,
+          "moderate": 1.06,
+          "major": 2.06
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-26T12:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-26T12:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t12z.20260926.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 11.14,
+        "forecast_peak_24h_time": "2026-09-27T03:42:00Z",
+        "forecast_peak_72h_ft": 11.88,
+        "forecast_peak_72h_time": "2026-09-28T16:42:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.34,
+        "threshold_margins_ft": {
+          "minor": 0.12,
+          "moderate": 1.12,
+          "major": 2.12
+        }
+      }
     },
     {
       "snapshot_at": "2026-09-26T12:22:00Z",
@@ -78,7 +798,97 @@
       "confidence": "high"
     },
     {
-      "snapshot_at": "2026-09-27T13:05:43Z",
+      "snapshot_at": "2026-09-26T18:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-26T18:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t18z.20260926.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 11.57,
+        "forecast_peak_24h_time": "2026-09-27T16:00:00Z",
+        "forecast_peak_72h_ft": 11.88,
+        "forecast_peak_72h_time": "2026-09-28T16:42:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.34,
+        "threshold_margins_ft": {
+          "minor": 0.12,
+          "moderate": 1.12,
+          "major": 2.12
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-27T00:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-27T00:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t00z.20260927.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 11.58,
+        "forecast_peak_24h_time": "2026-09-27T16:06:00Z",
+        "forecast_peak_72h_ft": 11.92,
+        "forecast_peak_72h_time": "2026-09-28T16:36:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.38,
+        "threshold_margins_ft": {
+          "minor": 0.08,
+          "moderate": 1.08,
+          "major": 2.08
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-27T06:00:00Z",
+      "snapshot_kind": "backfill_model_cycle",
+      "model_cycle_at": "2026-09-27T06:00:00Z",
+      "provenance": {
+        "forecast": "NOAA CO-OPS archived GoMOFS station forecast NetCDF",
+        "archive_url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t06z.20260927.stations.forecast.nc",
+        "datum_conversion": "GoMOFS zeta converted from model MSL reference to MLLW with Portland MSL-to-MLLW datum offset.",
+        "station_selection": {
+          "target_station": "8418150",
+          "target_lat": 43.65806,
+          "target_lon": -70.24417,
+          "model_station_lat": 43.626993,
+          "model_station_lon": -70.209507
+        }
+      },
+      "water": {
+        "forecast_peak_24h_ft": 11.56,
+        "forecast_peak_24h_time": "2026-09-28T04:18:00Z",
+        "forecast_peak_72h_ft": 11.99,
+        "forecast_peak_72h_time": "2026-09-28T16:42:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.45,
+        "threshold_margins_ft": {
+          "minor": 0.01,
+          "moderate": 1.01,
+          "major": 2.01
+        }
+      }
+    },
+    {
+      "snapshot_at": "2026-09-27T13:12:11Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -90,8 +900,8 @@
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 6.39,
-        "latest_observed_at": "2026-09-27T13:00:00Z",
+        "latest_observed_ft": 6.68,
+        "latest_observed_at": "2026-09-27T13:06:00Z",
         "observed_24h_max_ft": 10.95,
         "observed_24h_max_time": "2026-09-27T03:48:00Z",
         "forecast_peak_24h_ft": 11.51,
@@ -170,24 +980,59 @@
   ],
   "daily_rollups": [
     {
-      "date": "2026-09-25",
-      "snapshot_count": 2,
+      "date": "2026-09-20",
+      "snapshot_count": 1,
       "max_observed_ft": null,
-      "max_forecast_peak_ft": 11.38,
+      "max_forecast_peak_ft": 9.3,
       "max_gust_mph": null
     },
     {
-      "date": "2026-09-26",
-      "snapshot_count": 1,
+      "date": "2026-09-21",
+      "snapshot_count": 4,
+      "max_observed_ft": null,
+      "max_forecast_peak_ft": 9.84,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-22",
+      "snapshot_count": 4,
+      "max_observed_ft": null,
+      "max_forecast_peak_ft": 10.19,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-23",
+      "snapshot_count": 4,
+      "max_observed_ft": null,
+      "max_forecast_peak_ft": 10.87,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-24",
+      "snapshot_count": 4,
+      "max_observed_ft": null,
+      "max_forecast_peak_ft": 11.35,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-25",
+      "snapshot_count": 6,
       "max_observed_ft": null,
       "max_forecast_peak_ft": 11.88,
       "max_gust_mph": null
     },
     {
-      "date": "2026-09-27",
-      "snapshot_count": 1,
-      "max_observed_ft": 10.95,
+      "date": "2026-09-26",
+      "snapshot_count": 5,
+      "max_observed_ft": null,
       "max_forecast_peak_ft": 11.94,
+      "max_gust_mph": null
+    },
+    {
+      "date": "2026-09-27",
+      "snapshot_count": 3,
+      "max_observed_ft": 10.95,
+      "max_forecast_peak_ft": 11.99,
       "max_gust_mph": 29.1
     }
   ],
@@ -203,131 +1048,6 @@
   ],
   "local_events": [
     {
-      "published_at": "2022-10-27T14:20:46Z",
-      "source": "Reddit",
-      "source_type": "community",
-      "location": "Saco",
-      "headline": "SacoMaine",
-      "summary": "SacoMaine",
-      "url": "https://www.reddit.com/r/SacoMaine/",
-      "event_category": "coastal conditions",
-      "anecdotal": true,
-      "verification_note": "Public community report; not an official observation."
-    },
-    {
-      "published_at": "2024-02-09T20:14:09Z",
-      "source": "Reddit",
-      "source_type": "community",
-      "location": "Saco",
-      "headline": "Saco_Maine",
-      "summary": "Saco_Maine",
-      "url": "https://www.reddit.com/r/Saco_Maine/",
-      "event_category": "coastal conditions",
-      "anecdotal": true,
-      "verification_note": "Public community report; not an official observation."
-    },
-    {
-      "published_at": "2024-10-30T00:26:21Z",
-      "source": "Reddit",
-      "source_type": "community",
-      "location": "Old Orchard Beach",
-      "headline": "Everything Old Orchard Beach!",
-      "summary": "Everything Old Orchard Beach!",
-      "url": "https://www.reddit.com/r/OldOrchardBeach/",
-      "event_category": "coastal conditions",
-      "anecdotal": true,
-      "verification_note": "Public community report; not an official observation."
-    },
-    {
-      "published_at": "2026-09-21T07:00:00Z",
-      "source": "Legacy obituary",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "Ronald R. Zehner Obituary (2026) - Old Orchard Beach, ME - Cote Funeral Home - Saco - Legacy obituary",
-      "summary": "Ronald R. Zehner Obituary (2026) - Old Orchard Beach, ME - Cote Funeral Home - Saco - Legacy obituary",
-      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPWUdNc2I1bDFKRG5YOGxyMEthREF6UGFZWE5GYURsZ280ZEktQmpBdnREa3pVQXIwdWthZW5WRG1WZXVmVXNTUDNYYkpvbU50X1RWWDBWNjJqZnRacnNTaENSSVN4N3FOSC1xZGNGMTBpZjItQXdKb1lTbTV3bXZ5S2tn?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-21T11:00:14Z",
-      "source": "Mainebiz",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "Fries, pizza, arcade games: Summer shines on businesses in Old Orchard Beach - Mainebiz",
-      "summary": "Fries, pizza, arcade games: Summer shines on businesses in Old Orchard Beach - Mainebiz",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOelhacllpMTRRTjBBUWZnSVhuVVQ3V3BZZWRZeXFXRjNhQnctdjhmZ2V4cm1PbUxDd2xfVWRxZ0thQWRzc0d5NU0wQlVTTklfSkVZZm5tUWQwd2tZeTROVDRCQ1pEcmNoT2wzTnNXY1NGN0FxZlJNclFkTGE5OXlIbmJIcXhNelV2S1FDNmRPNlk2RFhUSzNlQkU2OW51OHY3cmt2ZVh3?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-21T21:15:46Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Saco",
-      "headline": "Local Spotlight: Ann Tracy - Saco Bay News",
-      "summary": "Local Spotlight: Ann Tracy - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFAtcF82QmVOM0Y5c09PTmhKVl9ZVzZRV0FmQmZCUzlKeEtzTWlJSE14c3p2eWJnakVUV0RWaDNLT0hSVW9RS3pwX09YOHd2c1pqeWQtcHJXZEkwZlp0RkQtOUZtaw?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-22T00:25:59Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Saco",
-      "headline": "Rare 1-in-100-million ‘ghost’ lobster named Casper informs DNA research at University of New England - Saco Bay News",
-      "summary": "Rare 1-in-100-million ‘ghost’ lobster named Casper informs DNA research at University of New England - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxObFFRZkUxbmFuSUQyN2REcEhCZHZqbERzbWNMZmlVRHhGOUFkN2h1aTVrOVp1RXJPMG1ZTnprUndSWWdwWGpyNjVkeWdYTDdKWVhHQnhUS29FY0VweVl4Rk1yU1RlMWxIR3F1ZC1BX1RqV3RSQVVkOWRzN1RmT2xicHJwd0Utb05zbEdTU19nNThzR3B3eWN4XzVDaEpvNGcwSjZiVWFwYV9rVHdMelI5UGhLV081bll2S3lz?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-22T03:23:35Z",
-      "source": "Reddit",
-      "source_type": "community",
-      "location": "Biddeford",
-      "headline": "Any recommendations for independent Massage Therapists between Saco/Biddeford and Portland?",
-      "summary": "Any recommendations for independent Massage Therapists between Saco/Biddeford and Portland?",
-      "url": "https://www.reddit.com/r/Maine/comments/1wmy8ev/any_recommendations_for_independent_massage/",
-      "event_category": "coastal conditions",
-      "anecdotal": true,
-      "verification_note": "Public community report; not an official observation."
-    },
-    {
-      "published_at": "2026-09-22T18:38:36Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Biddeford",
-      "headline": "Recreation committee backs shared-use plan for Biddeford community center - Saco Bay News",
-      "summary": "Recreation committee backs shared-use plan for Biddeford community center - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNX1NDQXYyWFY0R0VTLWtYZFplRUpQaGtPdF92VWwwZ213a0xQcG96b2NlMjExUDRtMnR0akh2eDg3S1dGX2NTanJnd0dFa2VxbnZicVJXZUh6NW8teUlZOGRsRW9ibnI2OW11bW8zaTRrUURyRVM0TENOd1oxYVNfZmFpX1NkaHdGYWwxVTR0bXRpcXBJbnYtNnhBeDZZeVk1bGc?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-22T19:47:28Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Saco",
-      "headline": "Fashion Soirée 2026 brings Fashion, classic cars and live entertainment together for a cause - Saco Bay News",
-      "summary": "Fashion Soirée 2026 brings Fashion, classic cars and live entertainment together for a cause - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNX2toWjFDd29mSExkQWtXczNlT1liVXUwb1h5MGl1X0R0cFBjaWFHakxHTGRMNS1SYWtsLVdtaDZCN2k4MFNZNU1lVnZ0c2Zfci04OHh2ZE5iUzNnU0FWYk91aGdyV0JfNXFGZGwwNGdrampFTlRZdWhmY0VKQlZoN3VHbERDVEhoTl8xOUlGaVhqTXJNNGM3WGRMU1NleVdDZEhPQkU4RnhIV1VJVWhPUldUbw?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-22T20:32:30Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Saco",
-      "headline": "UNE launches ‘Founders Fireside Chats’ to connect community with entrepreneurs and innovators - Saco Bay News",
-      "summary": "UNE launches ‘Founders Fireside Chats’ to connect community with entrepreneurs and innovators - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPN3M0cC1hOFZKTkVtdENBZGRYeXkwZjFGODdfWWdDbEkya1QxQXd2ZnZHTGZaVTE2N0ZLb3AyZElsOUVReFZSOEttMHFScWZTUEVvNjc0SUJ3NTl6R1FaRjBXbzNYTFNWbUZEMnl3OFVVLWxDTVRucW9aY1FPUlJPblRPMHdRQ2czQUdPVlhrS3BscXFEcU1HQkVBNnFaNnNjU0pqV3ZyRmZxQ2wwV3FmYTVYcjEydW5hbkRR?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
       "published_at": "2026-09-23T15:50:07Z",
       "source": "Saco Bay News",
       "source_type": "news",
@@ -335,83 +1055,6 @@
       "headline": "Old Orchard Beach Fall Fest cancelled due to weather - Saco Bay News",
       "summary": "Old Orchard Beach Fall Fest cancelled due to weather - Saco Bay News",
       "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQMk01alVCSHZWTXRlYW5iTmhtME8wZzNQVjl0VjJWWjlJa2drcEdKenY0Q3pVeEpMeTliWGtZS2NwTXcxRzNwRXVCODJPUWpUT2tVQ1NiYnhLZFRjbW1OSG85SlBPbV9XdmhZNGhncnlpc21lcEdmVURYT3FIUENUbVJ2aERSNHM?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-24T12:00:12Z",
-      "source": "92.9 The Ticket",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "TICKET TV: Old Orchard Beach Seagulls Visit Old Town Coyotes in Varsity Football - 92.9 The Ticket",
-      "summary": "TICKET TV: Old Orchard Beach Seagulls Visit Old Town Coyotes in Varsity Football - 92.9 The Ticket",
-      "url": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE8tUlBBd0NIVnhyeEd0TTV6cnh4bF9GOGtzUmtOb1ZhSklGZ1NTWTRMOThYcnVxZHNRYXEwZjN2WXJFa1hhaThPeW1XYlVFVXlsZ2hJTWZsWHl6ZkpCWXl1OUh3?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-25T01:09:09Z",
-      "source": "The Portland Press Herald",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "High schools Thursday: Old Orchard Beach football wins showdown with Old Town - The Portland Press Herald",
-      "summary": "High schools Thursday: Old Orchard Beach football wins showdown with Old Town - The Portland Press Herald",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNMmxqM2ZhNkwzajRnLWVNd3pVbHhiWGtOR1ZMM01LTlBlcXhXTm9zMHI4TVdIV09YZmczRUg1WFZDRHpTd05rUDdycm1sSUY4UWcxa3MzN3docnhkdkFZcHl3Z0Z1S3NFUHFEVWtqZTdoLU1VWXRHWGlkOG90UF94UDBVUDdLU0lyR3B1M0JNVE5hM3JLYVhtNUYwRjdVUC12MEtQTEFURjZ5d1h2R0phTUtwd0I1UmM?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-25T02:26:00Z",
-      "source": "WMTW",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "Old Orchard Beach and Winthrop football teams win - WMTW",
-      "summary": "Old Orchard Beach and Winthrop football teams win - WMTW",
-      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPRDRPVklId2NUY3dJellBRHlxYkRNZ1dLTG9UM0RTbVA2QzFxZmV0ZVIxejhtVWFoUUZmcVBFOVdDOFhqbXFUeHBGOU5aQkdoWFJsSThseW9QUFE5N0o2NDlHT1ZzS2tGeGNWU2x1MUF6elBpd1A3bnRxbUtMYTN0eWo3QUNFMHZxaEs1eVRRMG8?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-25T02:28:00Z",
-      "source": "foxbangor.com",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "Old Orchard Beach outlasts Old Town in a hard fought battle - foxbangor.com",
-      "summary": "Old Orchard Beach outlasts Old Town in a hard fought battle - foxbangor.com",
-      "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxOQTI5TU1OTDVyWTQydVpGZVJFQ2RwOXFyVnBReS11SGRodHRjY25GejBZa1kzY3ZZQ0VTX0o2Wm5EYl9tMlR0WlVoUjBINXVQRGVPSjRoQXl4aldoRW40UmVOZVY0dXhnaFdoY29HTUw1TzFmQ283Q2Y2RFNZREZSNDQ4OEppeUxpdTMwbU5yQTd1dWV0RlQ4eUsya2FpaVU3cVJVQkhvelVsV1VGWWJ3RVdkOUhqTGNwLXpmTFBHQkFtNlpueGlkTFVicUtpcUNBYWZteUhUNlJrZzk5VEZYY3NFZlloeFFQcXBCM3RIaXc2WTRM?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-25T04:01:46Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Biddeford",
-      "headline": "Biddeford Primary School celebrates new wing with a ribbon cutting ceremony - Saco Bay News",
-      "summary": "Biddeford Primary School celebrates new wing with a ribbon cutting ceremony - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNd0tadjlJRWo5SV83RkZOZldWYjRRc3R2a09MZV9LcHVucU9sbU4yNlFsdnU2SEhRMXRJb3NObkhsdmc0UkhZM1BlaFRURElqQkRJTGZQbjZ0a0hyaWNfUy1sVUgxZ1NuaDlCR2tTY1FEZ1dNMUYtVE0wNFdtVDFWeEhFQnc1VUpRQl9wTWNvTWxTNmY0TEV4TVB2QWszWEZ1dzhkbjRR?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-25T19:53:41Z",
-      "source": "Saco Bay News",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "Local Flavor: Biddeford arcade reopening, Biddeford accolades, and Old Orchard Beach burger night - Saco Bay News",
-      "summary": "Local Flavor: Biddeford arcade reopening, Biddeford accolades, and Old Orchard Beach burger night - Saco Bay News",
-      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNWWFYQWwtQnZEaGk1YjdzRTFpQjhFQmExQmkwTjBMZ093clNFN0QyREVrV1YwSmdKcnczQVZMUnFGcHNVcXN0Mzl5WFVBb2wxYUJCaEZSWVRaN01aci1qTDFDVW0wTTdWZk5lWmhSY2JlYU92ZU50STJjdEtPd2ZBSWp3UDVfR1VZZGhWUVpsMjJBc1oyV2lVdmZoVlBCV0Z1VDhmbUs0bGNMV3JLYWlnOHVGeGxpZXVJMGhwUnZrMA?oc=5",
-      "event_category": "coastal conditions",
-      "anecdotal": false
-    },
-    {
-      "published_at": "2026-09-27T08:45:30Z",
-      "source": "maxpreps.com",
-      "source_type": "news",
-      "location": "Old Orchard Beach",
-      "headline": "Monmouth Academy Girls Varsity Soccer @ Old Orchard Beach - maxpreps.com",
-      "summary": "Monmouth Academy Girls Varsity Soccer @ Old Orchard Beach - maxpreps.com",
-      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNWjV2OVhJY3hPQURCUVdjdGxOMEVKTHN3NDROT0oxWXFfNWNjQUQ1OWZlN1VEeEl1Ni1BM29kNGk5TjlqbjhmMGFYX1kzb1VCcjl2LTRUQ1EtOUhqMGhlT1BIQVpvVTlLWU1IR25aMTBCRzk3ZEpmZlFDUWk4ZFcycF9RMXRiOWxXZ3MtSnYyR0xZM195LVNsVDdWQlBnLUFIVEZ4b0pqa2pZc2ZzTVFfLXJmVG1NNF91LTdMMGR2RW03ejZOdHl2d0dWdk1yWFE?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     }
@@ -3638,151 +4281,16 @@
       "nws_alerts": "success"
     },
     "model_archive": {
-      "attempted_at": "2026-09-27T13:05:40Z",
-      "period_start": "2026-09-20T13:05:40Z",
-      "period_end": "2026-09-27T13:05:40Z",
+      "attempted_at": "2026-09-27T13:10:11Z",
+      "period_start": "2026-09-20T13:10:11Z",
+      "period_end": "2026-09-27T13:10:11Z",
       "source": "NOAA CO-OPS GoMOFS run-specific station forecast archive",
       "summary": {
         "cycles_attempted": 28,
-        "cycles_reconstructed": 0,
-        "cycles_unavailable": 28
+        "cycles_reconstructed": 27,
+        "cycles_unavailable": 1
       },
       "errors": [
-        {
-          "model_cycle_at": "2026-09-20T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/20/gomofs.t18z.20260920.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-21T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t00z.20260921.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-21T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t06z.20260921.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-21T12:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t12z.20260921.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-21T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/21/gomofs.t18z.20260921.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-22T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t00z.20260922.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-22T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t06z.20260922.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-22T12:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t12z.20260922.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-22T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/22/gomofs.t18z.20260922.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-23T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t00z.20260923.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-23T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t06z.20260923.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-23T12:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t12z.20260923.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-23T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/23/gomofs.t18z.20260923.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-24T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t00z.20260924.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-24T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t06z.20260924.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-24T12:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t12z.20260924.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-24T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/24/gomofs.t18z.20260924.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-25T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t00z.20260925.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-25T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t06z.20260925.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-25T12:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t12z.20260925.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-25T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/25/gomofs.t18z.20260925.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-26T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t00z.20260926.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-26T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t06z.20260926.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-26T12:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t12z.20260926.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-26T18:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/26/gomofs.t18z.20260926.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-27T00:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t00z.20260927.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
-        {
-          "model_cycle_at": "2026-09-27T06:00:00Z",
-          "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t06z.20260927.stations.forecast.nc",
-          "error": "station lon/lat variables missing; variables=ntimes,ndtfast,dt,dtfast,dstart,nHIS,ndefHIS,nRST,nSTA,Falpha,Fbeta,Fgamma,nl_tnu2,nl_visc2,LuvSponge,LtracerSponge,Akt_bak,Akv_bak,Akk_bak,Akp_bak,rdrg,rdrg2,Zob,Zos,gls_p,gls_m,gls_n,gls_cmu0,gls_c1,gls_c2,gls_c3m,gls_c3p,gls_sigk,gls_sigp,gls_Kmin,gls_"
-        },
         {
           "model_cycle_at": "2026-09-27T12:00:00Z",
           "url": "https://opendap.co-ops.nos.noaa.gov/thredds/dodsC/NOAA/GOMOFS/MODELS/2026/09/27/gomofs.t12z.20260927.stations.forecast.nc",

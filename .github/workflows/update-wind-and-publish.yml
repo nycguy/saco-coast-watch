@@ -30,7 +30,7 @@ jobs:
       - name: Retrieve coastal-flood and storm-surge alerts
         run: python3 scripts/fetch_coastal_alerts.py
       - name: Test coastal history and briefing logic
-        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_fetch_webcam_snapshots.py
+        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_fetch_webcam_snapshots.py tests/test_frontend_architecture.py
       - name: Build fixed-window coastal briefing
         run: python3 scripts/fetch_briefing.py --history-input .history-store/data/history/coastal-history.json --output data/coastal-briefing.json --history-output data/coastal-history.json
       - name: Validate alert thresholds and backend syntax
@@ -56,6 +56,8 @@ jobs:
         run: |
           mkdir -p dist/data
           cp index.html dist/index.html
+          cp -R css dist/css
+          cp -R js dist/js
           cp data/wind.json dist/data/wind.json
           cp data/coastal-alerts.json dist/data/coastal-alerts.json
           cp data/coastal-briefing.json dist/data/coastal-briefing.json
@@ -74,6 +76,8 @@ jobs:
           test -s dist/eastcast/data/snapshot.json
           test -s dist/data/coastal-briefing.json
           test -s dist/data/coastal-history.json
+          test -s dist/css/app.css
+          for f in config marine data weather water-levels alerts chart briefing app map webcams; do test -s "dist/js/$f.js"; done
           test -s dist/data/webcams/webcams.json
           python3 - <<'PY'
           import json

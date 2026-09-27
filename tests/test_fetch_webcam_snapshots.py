@@ -37,10 +37,11 @@ class WebcamSnapshotTests(unittest.TestCase):
   self.assertNotIn('data-src="https://www.youtube.com/embed/HSQpqIWLViI',html)
  def test_markup_autoplays_muted_ferry_live_player(self):
   html=(ROOT/'index.html').read_text(encoding='utf-8')
+  webcams=(ROOT/'js'/'webcams.js').read_text(encoding='utf-8')
   self.assertIn('id="ferryVideo" controls autoplay playsinline muted preload="auto"',html)
   self.assertNotIn('id="ferryStart"',html)
-  self.assertIn('connectFerryLive();',html)
-  self.assertIn('application/vnd.apple.mpegurl',html)
+  self.assertIn('connectFerryLive();',webcams)
+  self.assertIn('application/vnd.apple.mpegurl',webcams)
  def test_camera_entry_marks_source_unavailable_without_fake_image(self):
   with tempfile.TemporaryDirectory() as td:
    dest=pathlib.Path(td)/'failed.jpg'

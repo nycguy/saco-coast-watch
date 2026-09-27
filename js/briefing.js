@@ -29,4 +29,5 @@ async function loadBriefing(){
  try{state.briefing=await getJSON('data/coastal-briefing.json?t='+Date.now(),12000);state.briefingError=null;}
  catch(err){state.briefingError=String(err?.message||err);console.warn('Saco Coast Watch briefing:',err);}
  renderBriefing();
+ if(typeof renderCoastalIntelligence==='function')renderCoastalIntelligence();
 }

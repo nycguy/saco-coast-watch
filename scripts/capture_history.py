@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse, datetime as dt, email.utils, json, math, re, urllib.parse, urllib.request, xml.etree.ElementTree as ET
 from pathlib import Path
 import history_core as hc
+import fetch_hazards as fh
 
 UA="SacoCoastWatch/2.0 (public coastal dashboard; github.com/nycguy/saco-coast-watch)"
 TIMEOUT=24
@@ -12,8 +13,8 @@ STATION="8418150"
 POINT="43.48,-70.38"
 NDBC=("44007","WEXM1")
 LOCAL_TERMS=("saco","camp ellis","ferry beach","biddeford","biddeford pool","old orchard beach","scarborough")
-RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft")
-WEATHER_TOPIC_PATTERNS=(r"\bcoastal\b",r"\bsurf\b",r"\bwaves?\b",r"\bswells?\b",r"\bflood(?:ing|ed|s)?\b",r"\beros(?:ion|ive|ing)\b",r"\bwinds?\b",r"\bgust(?:s|ing|ed)?\b",r"\brain(?:fall|ing|ed|s)?\b",r"\bstorm(?:s|y)?\b",r"\btides?\b",r"\bocean\b",r"\bshore(?:line)?\b",r"\brip currents?\b",r"\bweather\b",r"\bmarine\b",r"\bseawalls?\b",r"\bdunes?\b",r"\binundat(?:ion|ed|ing)\b",r"\bsplash[- ]?over\b",r"\boverwash\b",r"\bhigh water\b",r"\brough seas?\b")
+RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft","winter","blizzard","snow","ice","hurricane","tropical","freeze","cold","rain")
+WEATHER_TOPIC_PATTERNS=(r"\bcoastal\b",r"\bsurf\b",r"\bwaves?\b",r"\bswells?\b",r"\bflood(?:ing|ed|s)?\b",r"\beros(?:ion|ive|ing)\b",r"\bwinds?\b",r"\bgust(?:s|ing|ed)?\b",r"\brain(?:fall|ing|ed|s)?\b",r"\bstorm(?:s|y)?\b",r"\btides?\b",r"\bocean\b",r"\bshore(?:line)?\b",r"\brip currents?\b",r"\bweather\b",r"\bmarine\b",r"\bseawalls?\b",r"\bdunes?\b",r"\binundat(?:ion|ed|ing)\b",r"\bsplash[- ]?over\b",r"\boverwash\b",r"\bhigh water\b",r"\brough seas?\b",r"\bsnow(?:fall|ing|ed|s)?\b",r"\bblizzard\b",r"\bhurricane\b",r"\btropical storm\b",r"\bfreezing rain\b",r"\bice storm\b")
 STORM_THRESHOLDS={"residual_ft":0.75,"wave_ft":6.0,"wind_mph":25.0,"gust_mph":35.0}
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"data"/"briefing-seed-history.json"
@@ -202,9 +203,13 @@ def storm_reasons(snapshot):
     if wind is not None and wind>=STORM_THRESHOLDS["wind_mph"]: reasons.append(f"Buoy 44007 sustained wind is {wind:.0f} mph")
     for alert in (snapshot or {}).get("alerts") or []:
         event=(alert.get("event") or "").strip()
-        if event and re.search(r"coastal|high surf|storm surge|flood|gale|storm warning|high wind",event,re.I):
+        if event and re.search(r"coastal|high surf|storm surge|flood|gale|storm warning|high wind|winter|blizzard|snow|ice|hurricane|tropical",event,re.I):
             reasons.append("Active NWS "+event)
             break
+    for mode in ((snapshot or {}).get("hazards") or {}).get("active_modes") or []:
+        label=(mode or {}).get("label")
+        if label and not any(label.lower() in item.lower() for item in reasons):
+            reasons.append("Adaptive focus: "+label)
     return reasons
 
 def current_snapshot(now=None):
@@ -234,8 +239,10 @@ def current_snapshot(now=None):
         except Exception as exc: marine[station]={"error":str(exc)[:200]}
     try: forecast=summarize_forecast(nws_hourly_forecast(),now)
     except Exception as exc: forecast={"source":None,"error":str(exc)[:200]}
+    try: hazards=fh.build_snapshot(now)
+    except Exception as exc: hazards={"schema_version":1,"generated_at":hc.iso(now),"active_modes":[],"error":str(exc)[:220]}
     p72ft=round(p72[1],2) if p72 else None; astroft=round(astro[1],2) if astro else None
-    snapshot={"snapshot_at":hc.iso(now),"snapshot_kind":"realtime","provenance":{"forecast":"live_noaa_ofs_capture","observations":"NOAA CO-OPS station 8418150","astronomical_tide":"NOAA CO-OPS predictions","marine":"NDBC realtime2","alerts":"NWS API active alerts","weather_forecast":"NWS hourly point forecast"},"water":{"station":STATION,"latest_observed_ft":round(latest[1],2) if latest else None,"latest_observed_at":hc.iso(latest[0]) if latest else None,"observed_24h_max_ft":round(obs24[1],2) if obs24 else None,"observed_24h_max_time":hc.iso(obs24[0]) if obs24 else None,"residual_current_ft":round(residual_latest[1],2) if residual_latest else None,"residual_current_at":hc.iso(residual_latest[0]) if residual_latest else None,"residual_24h_max_ft":round(residual24[1],2) if residual24 else None,"residual_24h_max_time":hc.iso(residual24[0]) if residual24 else None,"forecast_peak_24h_ft":round(p24[1],2) if p24 else None,"forecast_peak_24h_time":hc.iso(p24[0]) if p24 else None,"forecast_peak_72h_ft":p72ft,"forecast_peak_72h_time":hc.iso(p72[0]) if p72 else None,"astronomical_tide_at_peak_ft":astroft,"model_uplift_ft":round(p72ft-astroft,2) if p72ft is not None and astroft is not None else None,"threshold_margins_ft":hc.threshold_margins(p72ft)},"forecast_conditions":forecast,"marine":{"stations":marine},"alerts":alerts}
+    snapshot={"snapshot_at":hc.iso(now),"snapshot_kind":"realtime","provenance":{"forecast":"live_noaa_ofs_capture","observations":"NOAA CO-OPS station 8418150","astronomical_tide":"NOAA CO-OPS predictions","marine":"NDBC realtime2","alerts":"NWS API active alerts","weather_forecast":"NWS hourly point forecast","hazards":"NWS forecast grid + NHC CurrentStorms and GIS products"},"water":{"station":STATION,"latest_observed_ft":round(latest[1],2) if latest else None,"latest_observed_at":hc.iso(latest[0]) if latest else None,"observed_24h_max_ft":round(obs24[1],2) if obs24 else None,"observed_24h_max_time":hc.iso(obs24[0]) if obs24 else None,"residual_current_ft":round(residual_latest[1],2) if residual_latest else None,"residual_current_at":hc.iso(residual_latest[0]) if residual_latest else None,"residual_24h_max_ft":round(residual24[1],2) if residual24 else None,"residual_24h_max_time":hc.iso(residual24[0]) if residual24 else None,"forecast_peak_24h_ft":round(p24[1],2) if p24 else None,"forecast_peak_24h_time":hc.iso(p24[0]) if p24 else None,"forecast_peak_72h_ft":p72ft,"forecast_peak_72h_time":hc.iso(p72[0]) if p72 else None,"astronomical_tide_at_peak_ft":astroft,"model_uplift_ft":round(p72ft-astroft,2) if p72ft is not None and astroft is not None else None,"threshold_margins_ft":hc.threshold_margins(p72ft)},"forecast_conditions":forecast,"hazards":hazards,"marine":{"stations":marine},"alerts":alerts}
     reasons=storm_reasons(snapshot)
     snapshot["storm_mode"]={"active":bool(reasons),"reasons":reasons,"basis":"Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."}
     return snapshot

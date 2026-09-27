@@ -42,4 +42,13 @@ class BriefingTests(unittest.TestCase):
   titles=[x['title'] for x in d['impact_timeline']]
   self.assertTrue(any('residual' in x.lower() for x in titles))
   self.assertTrue(any('wave' in x.lower() for x in titles))
+ def test_event_briefing_compares_winter_guidance(self):
+  now=dt.datetime(2026,1,10,12,tzinfo=UTC)
+  old={'snapshot_at':'2026-01-09T12:00:00Z','water':{'forecast_peak_72h_ft':11.0},'hazards':{'winter':{'snowfall_72h_in':5.0},'rain':{'qpf_72h_in':1.0},'wind':{'max_gust_72h_mph':35}},'alerts':[]}
+  cur={'snapshot_at':'2026-01-10T12:00:00Z','water':{'forecast_peak_72h_ft':11.2,'forecast_peak_24h_ft':11.1},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[],'hazards':{'active_modes':[{'code':'winter','label':'Winter Storm'}],'severity':{'level':'orange'},'winter':{'snowfall_24h_in':6.0,'snowfall_72h_in':9.0,'precip_transition_24h':'Snow'},'rain':{'qpf_72h_in':1.2},'wind':{'max_gust_24h_mph':40,'max_gust_72h_mph':45},'cold':{'min_temp_24h_f':22}}}
+  hist={'schema_version':2,'generated_at':'2026-01-10T11:00:00Z','snapshots':[old],'alert_events':[],'local_events':[],'backfill':{},'daily_rollups':[]}
+  data=f.build_payload(cur,hist,now)
+  self.assertTrue(data['event_briefing']['active'])
+  self.assertEqual(data['event_briefing']['title'],'Winter Storm Briefing')
+  self.assertIn('increased by 4.0 in',data['event_briefing']['change_text'])
 if __name__=='__main__': unittest.main()

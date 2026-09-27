@@ -57,6 +57,53 @@ def _legacy_history(snaps):
         out.append({"generated_at":s.get("snapshot_at"),"model_peak_ft":w.get("forecast_peak_72h_ft"),"model_peak_time":w.get("forecast_peak_72h_time"),"next24_peak_ft":w.get("forecast_peak_24h_ft"),"next24_peak_time":w.get("forecast_peak_24h_time"),"alerts":sorted({a.get("event") for a in s.get("alerts") or [] if a.get("event")}),"source":p.get("forecast") or s.get("snapshot_kind")})
     return out
 
+
+def _event_briefing(current,baseline,now):
+    hazards=current.get("hazards") or {}
+    modes=hazards.get("active_modes") or []
+    codes=[mode.get("code") for mode in modes if mode.get("code")]
+    if not codes:
+        return {"active":False,"title":"Coastal Briefing","modes":[],"severity":hazards.get("severity") or {},"summary":"","change_text":"","next24_text":"","next72_text":""}
+    title="Event Briefing"
+    if "tropical" in codes: title="Tropical Cyclone Briefing"
+    elif "winter" in codes and "coastal_flood" in codes: title="Winter Coastal Storm Briefing"
+    elif "winter" in codes: title="Winter Storm Briefing"
+    elif "coastal_flood" in codes: title="Coastal Flood Briefing"
+    elif "heavy_rain" in codes: title="Heavy Rain Briefing"
+    elif "high_wind" in codes: title="High Wind Briefing"
+    elif "extreme_cold" in codes: title="Extreme Cold Briefing"
+    labels=[mode.get("label") for mode in modes if mode.get("label")]
+    summary="Active focus: "+", ".join(labels)+"."
+    next24=[]; next72=[]
+    winter=hazards.get("winter") or {}; rain=hazards.get("rain") or {}; wind=hazards.get("wind") or {}; cold=hazards.get("cold") or {}; tropical=hazards.get("tropical") or {}
+    if "winter" in codes:
+        if winter.get("snowfall_24h_in") is not None: next24.append(f"NWS grid snowfall guidance totals {winter['snowfall_24h_in']:.1f} in in the next 24 hours")
+        if winter.get("snowfall_72h_in") is not None: next72.append(f"NWS grid snowfall guidance totals {winter['snowfall_72h_in']:.1f} in in the next 72 hours")
+        if winter.get("precip_transition_24h"): next24.append("precipitation type: "+winter["precip_transition_24h"])
+    if "heavy_rain" in codes:
+        if rain.get("qpf_24h_in") is not None: next24.append(f"NWS grid precipitation guidance totals {rain['qpf_24h_in']:.1f} in in the next 24 hours")
+        if rain.get("qpf_72h_in") is not None: next72.append(f"NWS grid precipitation guidance totals {rain['qpf_72h_in']:.1f} in in the next 72 hours")
+    if "high_wind" in codes or "winter" in codes or "tropical" in codes:
+        if wind.get("max_gust_24h_mph") is not None: next24.append(f"peak NWS hourly gust guidance is {wind['max_gust_24h_mph']:.0f} mph")
+        if wind.get("max_gust_72h_mph") is not None: next72.append(f"peak NWS hourly gust guidance is {wind['max_gust_72h_mph']:.0f} mph")
+    if "extreme_cold" in codes and cold.get("min_temp_24h_f") is not None: next24.append(f"minimum NWS hourly temperature guidance is {cold['min_temp_24h_f']:.0f}°F")
+    if "tropical" in codes and tropical.get("storms"):
+        storm=tropical["storms"][0]
+        summary+=f" NHC is tracking {storm.get('label') or storm.get('name') or 'a tropical cyclone'}"
+        if storm.get("min_forecast_track_distance_mi") is not None: summary+=f", with the nearest current NHC forecast-track point about {storm['min_forecast_track_distance_mi']:.0f} miles from Saco Bay."
+        else: summary+="."
+    changes=[]; previous=(baseline or {}).get("hazards") or {}
+    def add_delta(label,current_value,previous_value,unit,minimum=.05):
+        if current_value is None or previous_value is None: return
+        delta=float(current_value)-float(previous_value)
+        if abs(delta)<minimum: return
+        changes.append(f"{label} {'increased' if delta>0 else 'decreased'} by {abs(delta):.1f} {unit}, from {float(previous_value):.1f} to {float(current_value):.1f} {unit}")
+    add_delta("NWS 72-hour snowfall guidance",winter.get("snowfall_72h_in"),(previous.get("winter") or {}).get("snowfall_72h_in"),"in")
+    add_delta("NWS 72-hour precipitation guidance",rain.get("qpf_72h_in"),(previous.get("rain") or {}).get("qpf_72h_in"),"in")
+    add_delta("Peak NWS 72-hour gust guidance",wind.get("max_gust_72h_mph"),(previous.get("wind") or {}).get("max_gust_72h_mph"),"mph",1)
+    change_text=("Compared with the stored guidance nearest 24 hours ago, "+"; ".join(changes)+".") if changes else ""
+    return {"active":True,"title":title,"modes":modes,"severity":hazards.get("severity") or {},"summary":summary,"change_text":change_text,"next24_text":(". ".join(next24)+".") if next24 else "No additional event-specific 24-hour metric is available.","next72_text":(". ".join(next72)+".") if next72 else "No additional event-specific 72-hour metric is available."}
+
 def _forecast_evolution(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     points=[]
@@ -131,6 +178,7 @@ def build_payload(current,hist,now=None):
     evolution=_forecast_evolution(snaps,current,now)
     timeline=_impact_timeline(current,alert_changes,local24,now)
     storm_mode=current.get("storm_mode") or {"active":bool(ch.storm_reasons(current)),"reasons":ch.storm_reasons(current),"basis":"Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."}
+    event_briefing=_event_briefing(current,baseline,now)
 
     if alert_changes:
         labels=[f"{e.get('event') or 'Alert'} {e.get('change_type','changed')}" for e in alert_changes[-4:]]
@@ -152,6 +200,7 @@ def build_payload(current,hist,now=None):
         forecast_change+=f" Risk is {'increasing' if d>0 else 'decreasing' if d<0 else 'little changed'} on this water-level measure."
     else:
         forecast_change="An authentic forecast snapshot close enough to 24 hours ago is not available yet; no forecast-change value is being inferred from later observations."
+    if event_briefing.get("change_text"): forecast_change+=" "+event_briefing["change_text"]
 
     if peak24 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak24)
@@ -168,6 +217,9 @@ def build_payload(current,hist,now=None):
     fc=current.get("forecast_conditions") or {}
     if fc.get("next24_max_sustained_wind_mph") is not None: next24+=f" NWS hourly guidance reaches about {fc['next24_max_sustained_wind_mph']:.0f} mph sustained wind in this period."
     if fc.get("next72_max_precip_probability_pct") is not None: next72+=f" Maximum hourly precipitation probability in the 72-hour guidance is {fc['next72_max_precip_probability_pct']:.0f}%."
+    if event_briefing.get("active"):
+        next24+=" "+event_briefing.get("next24_text","")
+        next72+=" "+event_briefing.get("next72_text","")
 
     local_items=[]
     candidates=sorted(hist.get("local_events") or [],key=lambda x:hc.parse_iso(x.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
@@ -192,7 +244,9 @@ def build_payload(current,hist,now=None):
         "forecast_change_48h":{"comparison":change48},
         "forecast_evolution":evolution,
         "storm_mode":storm_mode,
+        "event_briefing":event_briefing,
         "impact_timeline":timeline,
+        "impact_timeline_next24":((current.get("hazards") or {}).get("hourly") or []),
         "observed_daily_peaks":daily,
         "next_24h":{"text":next24,"peak_ft":peak24,"peak_time":w.get("forecast_peak_24h_time")},
         "next_72h":{"text":next72,"peak_ft":peak72,"peak_time":w.get("forecast_peak_72h_time")},
@@ -201,7 +255,7 @@ def build_payload(current,hist,now=None):
         "current_snapshot":current,
         "history":_legacy_history(snaps),
         "history_compact":compact,
-        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts and hourly forecast","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
+        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts, hourly forecast and forecast grid","nhc":"National Hurricane Center CurrentStorms and GIS products","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
     }
 
 def main():

@@ -51,7 +51,7 @@
   }
  }));
  activateBasemap('streets');
- const surge=L.layerGroup().addTo(map), coastal=L.layerGroup().addTo(map), cams=L.layerGroup().addTo(map);
+ const surge=L.layerGroup().addTo(map), coastal=L.layerGroup().addTo(map), tropical=L.layerGroup().addTo(map), cams=L.layerGroup().addTo(map);let tropicalBounds=null;
  for(const c of cameras){
   const icon=L.divIcon({html:'<div class="cam-pin" aria-hidden="true">▣</div>',className:'',iconSize:[29,29],iconAnchor:[14,14]});
   const pop=document.createElement('div');pop.className='map-pop';
@@ -62,7 +62,7 @@
  }
  basemapSelect.addEventListener('change',e=>activateBasemap(e.target.value));
  document.getElementById('mapHome').addEventListener('click',()=>map.flyTo([43.47,-70.40],12,{duration:.65}));
- [['showSurgeAlerts',surge],['showCoastalAlerts',coastal],['showCameras',cams]].forEach(([id,layer])=>document.getElementById(id).addEventListener('change',e=>e.target.checked?layer.addTo(map):map.removeLayer(layer)));
+ [['showSurgeAlerts',surge],['showCoastalAlerts',coastal],['showCameras',cams]].forEach(([id,layer])=>document.getElementById(id).addEventListener('change',e=>e.target.checked?layer.addTo(map):map.removeLayer(layer)));const tropicalToggle=document.getElementById('showTropicalTrack');tropicalToggle.addEventListener('change',e=>{if(e.target.checked){tropical.addTo(map);if(tropicalBounds?.isValid())map.fitBounds(tropicalBounds.pad(.12));}else map.removeLayer(tropical);});document.getElementById('mapStormTrack').addEventListener('click',()=>{if(tropicalBounds?.isValid())map.fitBounds(tropicalBounds.pad(.12));});
  const approved=new Set(['Storm Surge Watch','Storm Surge Warning','Coastal Flood Watch','Coastal Flood Warning','Coastal Flood Advisory']);
  const getColor=name=>name.startsWith('Storm Surge')?(name.endsWith('Warning')?'#df3e99':'#c89de9'):(name.endsWith('Warning')?'#f69b45':name.endsWith('Watch')?'#f1cb64':'#ffe3a0');
  async function updateAlertMap(){
@@ -99,7 +99,29 @@
    status.className='map-bad';
   }
  }
- updateAlertMap();setInterval(()=>{if(!document.hidden)updateAlertMap()},60*1000);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateAlertMap()});
+
+ async function updateTropicalMap(){
+  const node=document.getElementById('mapTropicalStatus'),button=document.getElementById('mapStormTrack');
+  try{
+   const response=await fetch('data/hazards.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('Tropical feed HTTP '+response.status);
+   const json=await response.json(),storms=json?.tropical?.storms||[];tropical.clearLayers();tropicalBounds=null;const pts=[];
+   for(const storm of storms){
+    const cone=Array.isArray(storm.cone)?storm.cone:[],track=Array.isArray(storm.track)?storm.track:[];
+    if(cone.length>=3){L.polygon(cone,{color:'#dc3545',weight:1.5,fillColor:'#f28c28',fillOpacity:.12,interactive:false}).addTo(tropical);pts.push(...cone);}
+    if(track.length>=2){L.polyline(track,{color:'#dc3545',weight:3,opacity:.9}).addTo(tropical);pts.push(...track);}
+    if(Number.isFinite(Number(storm.latitude))&&Number.isFinite(Number(storm.longitude))){
+     const icon=L.divIcon({html:'<div class="tropical-center-pin" aria-hidden="true">◎</div>',className:'',iconSize:[28,28],iconAnchor:[14,14]});
+     const pop=document.createElement('div');pop.className='map-pop';const strong=document.createElement('strong');strong.textContent=storm.label||storm.name||'Tropical cyclone';pop.append(strong);
+     const p=document.createElement('p');p.textContent=Number.isFinite(Number(storm.min_forecast_track_distance_mi))?'Nearest NHC forecast-track point is about '+Math.round(storm.min_forecast_track_distance_mi)+' miles from Saco Bay.':'NHC track-distance estimate unavailable.';pop.append(p);
+     if(/^https:\/\//i.test(storm.forecast_graphics_url||'')){const a=document.createElement('a');a.href=storm.forecast_graphics_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open NHC graphics ↗';pop.append(a);}
+     L.marker([Number(storm.latitude),Number(storm.longitude)],{icon,title:storm.label||storm.name||'Tropical cyclone'}).bindPopup(pop).addTo(tropical);pts.push([Number(storm.latitude),Number(storm.longitude)]);
+    }
+   }
+   if(pts.length)tropicalBounds=L.latLngBounds(pts);
+   button.hidden=!storms.length;node.textContent=storms.length?storms.length+' locally relevant NHC tropical track'+(storms.length===1?'':'s')+' available':'No NHC tropical track is close enough to activate local tropical focus';node.className='map-good';
+  }catch(err){tropical.clearLayers();tropicalBounds=null;button.hidden=true;node.textContent='NHC tropical layer unavailable. '+(err?.message||'');node.className='map-bad';}
+ }
+ updateAlertMap();updateTropicalMap();setInterval(()=>{if(!document.hidden){updateAlertMap();updateTropicalMap();}},60*1000);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateAlertMap();updateTropicalMap();}});
  window.addEventListener('resize',()=>map.invalidateSize());
 })();

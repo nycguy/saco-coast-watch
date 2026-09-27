@@ -5,10 +5,12 @@ on:
     paths:
       - 'scripts/history_core.py'
       - 'scripts/capture_history.py'
+      - 'scripts/fetch_hazards.py'
       - 'scripts/backfill_gomofs.py'
       - 'scripts/archive_ferry_camera.py'
       - 'tests/test_history_core.py'
       - 'tests/test_capture_history.py'
+      - 'tests/test_fetch_hazards.py'
       - 'tests/test_fetch_briefing.py'
       - 'tests/test_archive_ferry_camera.py'
       - 'tests/test_fetch_wind.py'
@@ -34,7 +36,7 @@ jobs:
           path: .history-store
       - name: Run deterministic history tests
         run: |
-          python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_archive_ferry_camera.py tests/test_fetch_wind.py
+          python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_hazards.py tests/test_fetch_briefing.py tests/test_archive_ferry_camera.py tests/test_fetch_wind.py
       - name: Determine whether model archive backfill is needed
         id: backfill
         shell: bash

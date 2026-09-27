@@ -34,4 +34,7 @@ class CaptureTests(unittest.TestCase):
   reasons=c.storm_reasons(snap)
   self.assertTrue(any('residual' in x.lower() for x in reasons))
   self.assertTrue(any('wave' in x.lower() for x in reasons))
+ def test_storm_reasons_include_adaptive_mode(self):
+  snap={'water':{},'marine':{'stations':{}},'alerts':[],'hazards':{'active_modes':[{'code':'winter','label':'Winter Storm'}]}}
+  self.assertTrue(any('Winter Storm' in x for x in c.storm_reasons(snap)))
 if __name__=='__main__': unittest.main()

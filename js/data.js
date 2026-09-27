@@ -44,5 +44,5 @@ function forecastPeriod(p){
  const begin=Date.parse(p.startTime||''),end=Date.parse(p.endTime||'');
  if(!Number.isFinite(begin)||!Number.isFinite(end)||end<=begin)return null;
  const t=Number(p.temperature),temp=Number.isFinite(t)?(p.temperatureUnit==='C'?t*9/5+32:t):null;
- return {t:begin,end,wind:parseWindSpeed(p.windSpeed),gust:typeof p.windGust?.value==='number'&&Number.isFinite(p.windGust.value)?(String(p.windGust.unitCode||'').includes('km_h')?p.windGust.value*.621371:p.windGust.value):null,dir:String(p.windDirection||'—'),temp};
+ const pop=Number(p.probabilityOfPrecipitation?.value);return {t:begin,end,wind:parseWindSpeed(p.windSpeed),gust:typeof p.windGust?.value==='number'&&Number.isFinite(p.windGust.value)?(String(p.windGust.unitCode||'').includes('km_h')?p.windGust.value*.621371:String(p.windGust.unitCode||'').includes('m_s')?p.windGust.value*2.236936:p.windGust.value):null,dir:String(p.windDirection||'—'),temp,pop:Number.isFinite(pop)?pop:null,summary:String(p.shortForecast||'')};
 }

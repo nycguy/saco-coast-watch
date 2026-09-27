@@ -22,8 +22,8 @@ function renderWeather(){
   (state.lastFetched.weatherForecast?' · checked '+time(state.lastFetched.weatherForecast)+' ET':''):
   'NWS hourly forecast unavailable'+(state.errors.weatherForecast?' · '+state.errors.weatherForecast:'');
  const body=$('weatherRows');body.replaceChildren();const next=active.filter(x=>x.t<now()+24*3600000).slice(0,24);
- if(!next.length){const row=document.createElement('tr'),td=document.createElement('td');td.colSpan=5;td.className='muted';td.textContent='Hourly forecast unavailable. Use the official NWS forecast link.';row.append(td);body.append(row);return;}
- for(const x of next){const row=document.createElement('tr');const vals=[dayTime(x.t)+' ET',Number.isFinite(x.wind)?Math.round(x.wind):'—',Number.isFinite(x.gust)?Math.round(x.gust):'—',x.dir,Number.isFinite(x.temp)?Math.round(x.temp):'—'];vals.forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===1)td.className='wx-wind';if(i===2)td.className='wx-gust';if(i===4)td.className='wx-temp';row.append(td);});body.append(row);}
+ if(!next.length){const row=document.createElement('tr'),td=document.createElement('td');td.colSpan=7;td.className='muted';td.textContent='Hourly forecast unavailable. Use the official NWS forecast link.';row.append(td);body.append(row);return;}
+ for(const x of next){const row=document.createElement('tr');const vals=[dayTime(x.t)+' ET',Number.isFinite(x.wind)?Math.round(x.wind):'—',Number.isFinite(x.gust)?Math.round(x.gust):'—',x.dir,Number.isFinite(x.temp)?Math.round(x.temp):'—',x.summary||'—',Number.isFinite(x.pop)?Math.round(x.pop)+'%':'—'];vals.forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===1)td.className='wx-wind';if(i===2)td.className='wx-gust';if(i===4)td.className='wx-temp';if(i===5)td.className='wx-summary';row.append(td);});body.append(row);}
 }
 async function loadWeather(){
  if(!shouldFetch('weatherObservation',60*1000)&&!shouldFetch('weatherForecast',10*60000))return;

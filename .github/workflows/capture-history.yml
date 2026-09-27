@@ -64,7 +64,7 @@ jobs:
           python3 scripts/capture_history.py \
             --history .history-store/data/history/coastal-history.json \
             --recent-output /tmp/coastal-history-recent.json \
-            "\${ARGS[@]}"
+            "${ARGS[@]}"
       - name: Validate durable history
         run: |
           python3 - <<'PY'

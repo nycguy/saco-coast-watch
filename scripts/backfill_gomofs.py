@@ -62,8 +62,8 @@ def read_cycle(url,cycle_at,offset_ft,predictions):
     try:
         z=ds.variables.get("zeta")
         if z is None: raise RuntimeError("zeta variable missing")
-        lonv=_coord_var(ds,("lon","longitude","station_lon","lon_station")); latv=_coord_var(ds,("lat","latitude","station_lat","lat_station"))
-        if lonv is None or latv is None: raise RuntimeError("station lon/lat variables missing")
+        lonv=_coord_var(ds,("lon","longitude","station_lon","lon_station","Xpos","xpos")); latv=_coord_var(ds,("lat","latitude","station_lat","lat_station","Ypos","ypos"))
+        if lonv is None or latv is None: raise RuntimeError("station lon/lat variables missing; variables=" + ",".join(ds.variables.keys()))
         lons=np.asarray(lonv[:],dtype=float).reshape(-1); lats=np.asarray(latv[:],dtype=float).reshape(-1)
         if len(lons)!=len(lats): raise RuntimeError("station coordinate lengths differ")
         idx=int(np.nanargmin((lats-LAT)**2+((lons-LON)*math.cos(math.radians(LAT)))**2))

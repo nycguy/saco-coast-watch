@@ -246,6 +246,8 @@ def update_history(path,model_backfill=None,now=None):
     try: local.extend(reddit_events())
     except Exception: pass
     backfill=existing.get("backfill") or initial_backfill(now,7)
+    historical_alert_changes=hc.alert_events_from_products(backfill.get("nws_alert_products") or [])
+    alert_changes=hc.merge_events(historical_alert_changes,alert_changes)
     if model_doc:
         backfill["model_archive"]={"attempted_at":model_doc.get("attempted_at"),"period_start":model_doc.get("period_start"),"period_end":model_doc.get("period_end"),"source":model_doc.get("source"),"summary":model_doc.get("summary"),"errors":model_doc.get("errors") or []}
     local=hc.merge_events(existing.get("local_events") or [],local)

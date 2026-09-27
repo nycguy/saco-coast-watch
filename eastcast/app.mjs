@@ -492,13 +492,19 @@ function wire(){
   $('#refreshBtn').addEventListener('click',async()=>{const b=$('#refreshBtn');b.disabled=true;b.textContent='Refreshing…';try{await loadSnapshot(true)}finally{b.disabled=false;b.textContent='↻ Refresh'}});
   $('#shareBtn').addEventListener('click',shareSnapshot);
   $$('.story-filter').forEach(b=>b.addEventListener('click',()=>{$$('.story-filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderStory(b.dataset.filter)}));
-  $$('.radar-tab').forEach(b=>b.addEventListener('click',()=>{
-    $$('.radar-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  const radarImg=$('#radarGif'),radarOpen=$('#radarOpen');
+  const armRadarFallback=()=>{
+    radarOpen.style.display='none';
+    setTimeout(()=>{if(!radarImg.complete||radarImg.naturalWidth===0)radarOpen.style.display='block'},800);
+  };
+  $('.radar-tab').forEach(b=>b.addEventListener('click',()=>{
+    $('.radar-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
     const r=b.dataset.radar;$('#radarTitle').textContent=b.textContent+' radar loop';
-    const img=$('#radarGif');img.src='https://radar.weather.gov/ridge/standard/'+r+'_loop.gif';$('#radarOpen').href=img.src;
+    radarImg.hidden=false;radarImg.src='https://radar.weather.gov/ridge/standard/'+r+'_loop.gif';radarOpen.href=radarImg.src;armRadarFallback();
   }));
-  $('#radarGif').addEventListener('error',()=>{$('#radarGif').hidden=true;$('#radarOpen').style.display='block'});
-  $('#radarGif').addEventListener('load',()=>{$('#radarGif').hidden=false;$('#radarOpen').style.display='none'});
+  radarImg.addEventListener('error',()=>{radarImg.hidden=true;radarOpen.style.display='block'});
+  radarImg.addEventListener('load',()=>{radarImg.hidden=false;radarOpen.style.display='none'});
+  armRadarFallback();
 }
 
 function scheduleTopOfHour(){

@@ -1,429 +1,157 @@
 #!/usr/bin/env python3
-"""Build a fixed-window Saco Coast Watch coastal briefing.
-
-The briefing never depends on a visitor's last app visit. It uses:
-- rolling past 24 hours of observed Portland gauge data,
-- current NOAA OFS guidance for the next 24/72 hours,
-- a stored public snapshot history to compare today's forecast with ~24 hours ago,
-- current NWS coastal alerts,
-- public local-news and Reddit search feeds refreshed at most every 3 hours.
-
-Facebook is intentionally not scraped because public indexing/access is unreliable.
-"""
+"""Build the fixed-window Saco Coast Watch Coastal Briefing from durable history."""
 from __future__ import annotations
-
-import argparse
-import datetime as dt
-import email.utils
-import json
-import math
-import urllib.parse
-import urllib.request
-import xml.etree.ElementTree as ET
+import argparse, datetime as dt, json, urllib.request
 from pathlib import Path
+import history_core as hc
+import capture_history as ch
 
-UA="SacoCoastWatch/1.0 (public coastal dashboard; github.com/nycguy/saco-coast-watch)"
-TIMEOUT=18
-NOAA="https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"
-STATION="8418150"
-PUBLISHED="https://nycguy.github.io/saco-coast-watch/data/coastal-briefing.json"
-POINT="43.48,-70.38"
-SEED_PATH=Path(__file__).resolve().parents[1]/"data"/"briefing-seed-history.json"
-MINOR=12.0
-LOCAL_TERMS=("saco","biddeford","old orchard","scarborough","camp ellis","ferry beach")
+PUBLISHED_HISTORY="https://nycguy.github.io/saco-coast-watch/data/coastal-history.json"
 
-def now_utc():
-    return dt.datetime.now(dt.timezone.utc)
-
-def iso(t):
-    return t.astimezone(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
-
-def parse_iso(v):
-    if not v: return None
-    try: return dt.datetime.fromisoformat(str(v).replace("Z","+00:00")).astimezone(dt.timezone.utc)
-    except Exception: return None
-
-def fetch_bytes(url, accept="*/*"):
-    req=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":accept})
-    with urllib.request.urlopen(req,timeout=TIMEOUT) as r:
-        return r.read()
-
-def fetch_json(url):
-    return json.loads(fetch_bytes(url,"application/json, application/geo+json").decode("utf-8"))
-
-def safe_json(url):
-    try: return fetch_json(url)
-    except Exception: return None
-
-def num(v):
+def _load_json(path):
+    try: return json.loads(Path(path).read_text(encoding="utf-8"))
+    except Exception: return {}
+def _fetch_json(url):
     try:
-        x=float(v)
-        return x if math.isfinite(x) else None
-    except Exception: return None
-
-def noaa_url(product, **extra):
-    q={"station":STATION,"product":product,"datum":"MLLW","units":"english","time_zone":"gmt",
-       "format":"json","application":"SacoCoastWatchBriefing"}
-    q.update(extra)
-    return NOAA+"?"+urllib.parse.urlencode(q)
-
-def parse_noaa_time(v):
-    if not v: return None
-    try:
-        return dt.datetime.strptime(v,"%Y-%m-%d %H:%M").replace(tzinfo=dt.timezone.utc)
-    except Exception:
-        return None
-
-def decode_rows(data):
-    rows=[]
-    if isinstance(data,dict):
-        for key in ("data","predictions","ofs_water_level","forecast"):
-            if isinstance(data.get(key),list):
-                rows=data[key]; break
-    out=[]
-    for r in rows:
-        t=parse_noaa_time(r.get("t") or r.get("time"))
-        v=num(r.get("v") if "v" in r else r.get("value"))
-        if t and v is not None: out.append((t,v))
-    return sorted(out)
-
-def peak(rows, start, end):
-    pts=[p for p in rows if start <= p[0] <= end]
-    return max(pts,key=lambda x:x[1]) if pts else None
-
-def fmt_ft(v):
-    return f"{v:.2f}" if v is not None else "—"
-
-def fmt_et(t):
+        req=urllib.request.Request(url,headers={"User-Agent":ch.UA,"Accept":"application/json"})
+        with urllib.request.urlopen(req,timeout=12) as r: return json.load(r)
+    except Exception: return {}
+def _legacy_snapshot(r):
+    ft=r.get("model_peak_ft")
+    return {"snapshot_at":r.get("generated_at"),"snapshot_kind":"reconstructed_dashboard_snapshot" if r.get("source")=="reconstructed_dashboard_snapshot" else "realtime","provenance":{"forecast":r.get("source")},"water":{"forecast_peak_72h_ft":ft,"forecast_peak_72h_time":r.get("model_peak_time"),"forecast_peak_24h_ft":r.get("next24_peak_ft"),"forecast_peak_24h_time":r.get("next24_peak_time"),"threshold_margins_ft":hc.threshold_margins(ft)},"alerts":[{"event":e} for e in r.get("alerts") or []]}
+def normalize_history(doc,now=None):
+    now=now or ch.now_utc()
+    if doc.get("schema_version")==2 and isinstance(doc.get("snapshots"),list): return doc
+    snaps=[_legacy_snapshot(r) for r in doc.get("forecast_snapshots") or doc.get("history") or []]
+    return {"schema_version":2,"generated_at":doc.get("generated_at") or hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":ch.STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snaps,"daily_rollups":[],"alert_events":[],"local_events":[],"backfill":{"water_observed_daily_peaks":doc.get("observed_daily_peaks") or []},"provenance_notes":{}}
+def load_history(path=None,now=None):
+    doc=_load_json(path) if path else {}
+    if not doc: doc=_fetch_json(PUBLISHED_HISTORY)
+    hist=normalize_history(doc,now)
+    if not hist.get("snapshots"): hist["snapshots"]=ch.seed_snapshots()
+    return hist
+def fmt_ft(v): return f"{v:.2f}" if v is not None else "—"
+def fmt_time(v):
+    t=hc.parse_iso(v)
     if not t: return "time unavailable"
     try:
         from zoneinfo import ZoneInfo
-        z=t.astimezone(ZoneInfo("America/New_York"))
-        return z.strftime("%a, %b %-d at %-I:%M %p ET")
-    except Exception:
-        return t.strftime("%a, %b %d at %I:%M %p UTC")
-
-def parse_rss_time(v):
-    if not v: return None
-    try:
-        t=email.utils.parsedate_to_datetime(v)
-        if t.tzinfo is None: t=t.replace(tzinfo=dt.timezone.utc)
-        return t.astimezone(dt.timezone.utc)
-    except Exception: return None
-
-def clean_title(v):
-    return " ".join((v or "").replace("\n"," ").split())
-
-def relevant(text):
-    t=(text or "").lower()
-    return any(term in t for term in LOCAL_TERMS)
-
-def google_news():
-    query='(Saco OR Biddeford OR "Old Orchard Beach" OR Scarborough OR "Camp Ellis" OR "Ferry Beach") Maine coastal when:1d'
-    url="https://news.google.com/rss/search?"+urllib.parse.urlencode({
-        "q":query,"hl":"en-US","gl":"US","ceid":"US:en"
-    })
-    root=ET.fromstring(fetch_bytes(url,"application/rss+xml, application/xml, text/xml"))
+        z=t.astimezone(ZoneInfo("America/New_York")); return z.strftime("%a, %b %-d at %-I:%M %p ET")
+    except Exception: return t.strftime("%a, %b %d at %I:%M %p UTC")
+def _baseline_name(row):
+    source=((row.get("provenance") or {}).get("forecast") or row.get("source") or "stored forecast snapshot").lower()
+    if "archived gomofs" in source or "archive" in source: return "archived NOAA GoMOFS model cycle"
+    if "reconstructed" in source: return "reconstructed Saco Coast Watch dashboard snapshot"
+    if "live_noaa" in source or "ofs" in source: return "captured NOAA OFS model snapshot"
+    return "stored forecast snapshot"
+def _recent(events,key,now,hours=24):
+    cutoff=now-dt.timedelta(hours=hours); out=[]
+    for e in events or []:
+        t=hc.parse_iso(e.get(key))
+        if t and t>=cutoff: out.append(e)
+    return out
+def _legacy_history(snaps):
     out=[]
-    cutoff=now_utc()-dt.timedelta(hours=30)
-    for item in root.findall(".//item"):
-        title=clean_title(item.findtext("title"))
-        link=clean_title(item.findtext("link"))
-        pub=parse_rss_time(item.findtext("pubDate"))
-        source=clean_title(item.findtext("source")) or "Google News"
-        if not title or not link or (pub and pub<cutoff): continue
-        if not relevant(title): continue
-        out.append({"type":"news","source":source,"title":title,"url":link,"published_at":iso(pub) if pub else None})
-        if len(out)>=8: break
+    for s in snaps:
+        w=s.get("water") or {}; p=s.get("provenance") or {}
+        out.append({"generated_at":s.get("snapshot_at"),"model_peak_ft":w.get("forecast_peak_72h_ft"),"model_peak_time":w.get("forecast_peak_72h_time"),"next24_peak_ft":w.get("forecast_peak_24h_ft"),"next24_peak_time":w.get("forecast_peak_24h_time"),"alerts":sorted({a.get("event") for a in s.get("alerts") or [] if a.get("event")}),"source":p.get("forecast") or s.get("snapshot_kind")})
     return out
 
-def reddit_feed():
-    q='"Saco" Maine OR Biddeford Maine OR "Old Orchard Beach" Maine OR "Camp Ellis" OR "Ferry Beach" Maine'
-    url="https://www.reddit.com/search.rss?"+urllib.parse.urlencode({"q":q,"sort":"new","t":"day"})
-    root=ET.fromstring(fetch_bytes(url,"application/atom+xml, application/xml, text/xml"))
-    ns={"a":"http://www.w3.org/2005/Atom"}
-    out=[]
-    cutoff=now_utc()-dt.timedelta(hours=30)
-    for e in root.findall("a:entry",ns):
-        title=clean_title(e.findtext("a:title",default="",namespaces=ns))
-        link_el=e.find("a:link",ns)
-        link=(link_el.attrib.get("href") if link_el is not None else "") or ""
-        pub_txt=e.findtext("a:updated",default="",namespaces=ns)
-        pub=parse_iso(pub_txt)
-        if not title or not link or (pub and pub<cutoff): continue
-        if not relevant(title): continue
-        out.append({"type":"reddit","source":"Reddit","title":title,"url":link,"published_at":iso(pub) if pub else None})
-        if len(out)>=6: break
-    return out
+def build_payload(current,hist,now=None):
+    now=now or hc.parse_iso(current.get("snapshot_at")) or ch.now_utc()
+    stored=hist.get("snapshots") or []
+    snaps=hc.merge_snapshots(stored,[current],now,30)
+    baseline=hc.choose_baseline(snaps,now-dt.timedelta(hours=24),3.1)
+    baseline48=hc.choose_baseline(snaps,now-dt.timedelta(hours=48),3.1)
+    change=hc.compare_forecast(current,baseline); change48=hc.compare_forecast(current,baseline48)
+    wind_change=hc.compare_wind(current,baseline)
+    w=current.get("water") or {}; peak24=w.get("forecast_peak_24h_ft"); peak72=w.get("forecast_peak_72h_ft")
 
-def dedupe(items):
-    seen=set(); out=[]
-    for x in items:
-        key=(x.get("title") or "").lower()
-        if not key or key in seen: continue
-        seen.add(key); out.append(x)
-    return out
-
-def current_alerts():
-    data=safe_json(f"https://api.weather.gov/alerts/active?point={POINT}") or {}
-    rows=[]
-    for f in data.get("features") or []:
-        p=f.get("properties") or {}
-        event=p.get("event") or "NWS alert"
-        if not any(k in event.lower() for k in ("coastal","surf","rip current","storm surge","flood","wind")):
-            continue
-        rows.append({
-            "event":event,"headline":p.get("headline"),"area":p.get("areaDesc"),
-            "ends":p.get("ends") or p.get("expires"),
-            "url":f.get("id") or p.get("@id")
-        })
-    return rows[:8]
-
-def load_previous():
-    return safe_json(PUBLISHED) or {}
-
-def load_seed():
-    try:
-        return json.loads(SEED_PATH.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
-
-def merge_history(seed_rows, previous_rows, current_record, now):
-    """Merge reconstructed seed snapshots, previously published snapshots, and the current live snapshot."""
-    by_time={}
-    for row in list(seed_rows or [])+list(previous_rows or []):
-        t=parse_iso(row.get("generated_at"))
-        if not t or now-t > dt.timedelta(days=7) or t-now > dt.timedelta(hours=1):
-            continue
-        by_time[iso(t)]={**row,"generated_at":iso(t)}
-    current_t=parse_iso(current_record.get("generated_at")) or now
-    # Replace the most recent live record if it is within 45 minutes; otherwise append.
-    recent=[(parse_iso(v.get("generated_at")),k) for k,v in by_time.items()]
-    recent=[x for x in recent if x[0]]
-    if recent:
-        last_t,last_key=max(recent,key=lambda x:x[0])
-        if abs((current_t-last_t).total_seconds()) < 45*60 and by_time[last_key].get("source")!="reconstructed_dashboard_snapshot":
-            by_time.pop(last_key,None)
-    by_time[iso(current_t)]={**current_record,"generated_at":iso(current_t)}
-    rows=sorted(by_time.values(),key=lambda r:parse_iso(r.get("generated_at")) or now)
-    return rows[-256:]
-
-def choose_baseline(history, target, tolerance_hours=7):
-    rows=[r for r in history if parse_iso(r.get("generated_at")) and r.get("model_peak_ft") is not None]
-    if not rows:
-        return None
-    prior=min(rows,key=lambda r:abs((parse_iso(r["generated_at"])-target).total_seconds()))
-    if abs((parse_iso(prior["generated_at"])-target).total_seconds()) > tolerance_hours*3600:
-        return None
-    return prior
-
-def daily_observed_peaks(rows):
-    try:
-        from zoneinfo import ZoneInfo
-        tz=ZoneInfo("America/New_York")
-    except Exception:
-        tz=dt.timezone.utc
-    days={}
-    for t,v in rows:
-        key=t.astimezone(tz).date().isoformat()
-        old=days.get(key)
-        if old is None or v>old[1]:
-            days[key]=(t,v)
-    out=[]
-    for key,(t,v) in sorted(days.items()):
-        out.append({"date":key,"peak_ft":round(v,2),"peak_time":iso(t)})
-    return out
-
-def refresh_local_pulse(prev):
-    now=now_utc()
-    previous=(prev.get("local_pulse") or {})
-    updated=parse_iso(previous.get("updated_at"))
-    if updated and now-updated < dt.timedelta(hours=3) and isinstance(previous.get("items"),list):
-        return previous
-    items=[]; errors=[]
-    try: items.extend(google_news())
-    except Exception as exc: errors.append("news: "+str(exc))
-    try: items.extend(reddit_feed())
-    except Exception as exc: errors.append("reddit: "+str(exc))
-    items=dedupe(items)
-    items.sort(key=lambda x: parse_iso(x.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
-    return {
-        "updated_at":iso(now),
-        "items":items[:10],
-        "errors":errors,
-        "facebook_note":"Public Facebook posts are not included because reliable public indexing and access are inconsistent."
-    }
-
-def build():
-    now=now_utc()
-    prev=load_previous()
-    seed=load_seed()
-
-    # NOAA observed water levels. Pull several days so the history dataset contains
-    # actual daily gauge peaks in addition to reconstructed forecast snapshots.
-    obs_begin=(now-dt.timedelta(days=4)).strftime("%Y%m%d")
-    obs_end=now.strftime("%Y%m%d")
-    observed=decode_rows(safe_json(noaa_url("water_level",begin_date=obs_begin,end_date=obs_end)) or {})
-    if not observed:
-        observed=decode_rows(safe_json(noaa_url("water_level",date="recent")) or {})
-    obs24=[p for p in observed if p[0]>=now-dt.timedelta(hours=24)]
-    observed_peak=max(obs24,key=lambda x:x[1]) if obs24 else None
-
-    # Current NOAA OFS guidance. Date window mirrors the dashboard.
-    begin=(now-dt.timedelta(days=1)).strftime("%Y%m%d")
-    end=(now+dt.timedelta(days=4)).strftime("%Y%m%d")
-    model=decode_rows(safe_json(noaa_url("ofs_water_level",begin_date=begin,end_date=end)) or {})
-    future=[p for p in model if p[0]>=now-dt.timedelta(minutes=10) and p[0]<=now+dt.timedelta(hours=72)]
-    p24=peak(future,now-dt.timedelta(minutes=10),now+dt.timedelta(hours=24))
-    p72=peak(future,now-dt.timedelta(minutes=10),now+dt.timedelta(hours=72))
-
-    alerts=current_alerts()
-    local=refresh_local_pulse(prev)
-
-    current_record={
-        "generated_at":iso(now),
-        "model_peak_ft":round(p72[1],2) if p72 else None,
-        "model_peak_time":iso(p72[0]) if p72 else None,
-        "next24_peak_ft":round(p24[1],2) if p24 else None,
-        "next24_peak_time":iso(p24[0]) if p24 else None,
-        "alerts":sorted({a.get("event") for a in alerts if a.get("event")}),
-        "source":"live_noaa_ofs_snapshot",
-        "confidence":"live",
-    }
-    history=merge_history(seed.get("forecast_snapshots") or [],prev.get("history") or [],current_record,now)
-    prior=choose_baseline(history,now-dt.timedelta(hours=24),7)
-    prior48=choose_baseline(history,now-dt.timedelta(hours=48),9)
-
-    change=None
-    if prior and p72 and prior.get("model_peak_ft") is not None:
-        old=float(prior["model_peak_ft"])
-        old_t=parse_iso(prior.get("model_peak_time"))
-        old_alerts=set(prior.get("alerts") or [])
-        new_alerts=set(current_record.get("alerts") or [])
-        change={
-            "baseline_at":prior["generated_at"],
-            "baseline_source":prior.get("source"),
-            "peak_delta_ft":round(p72[1]-old,2),
-            "previous_peak_ft":round(old,2),
-            "current_peak_ft":round(p72[1],2),
-            "previous_peak_time":iso(old_t) if old_t else None,
-            "current_peak_time":iso(p72[0]),
-            "time_shift_minutes":round((p72[0]-old_t).total_seconds()/60) if old_t else None,
-            "alerts_added":sorted(new_alerts-old_alerts),
-            "alerts_removed":sorted(old_alerts-new_alerts),
-        }
-
-    news_items=[x for x in local.get("items",[]) if x.get("type")=="news"]
-    reddit_items=[x for x in local.get("items",[]) if x.get("type")=="reddit"]
-
-    if observed_peak:
-        gap=MINOR-observed_peak[1]
-        past=f"Over the past 24 hours, the Portland gauge reached {fmt_ft(observed_peak[1])} ft MLLW"
-        past+=f", {abs(gap):.2f} ft {'below' if gap>=0 else 'above'} the 12.0 ft Minor Flood threshold."
+    obs=w.get("observed_24h_max_ft"); obs_t=w.get("observed_24h_max_time")
+    if obs is not None:
+        gap=hc.THRESHOLDS_FT_MLLW["minor"]-float(obs)
+        past=f"Over the past 24 hours, the Portland gauge reached {fmt_ft(obs)} ft MLLW around {fmt_time(obs_t)}, {abs(gap):.2f} ft {'below' if gap>=0 else 'above'} the 12.0 ft Minor Flood threshold."
     else:
         past="Past-24-hour Portland gauge observations are temporarily unavailable."
-    if news_items:
-        past+=" Public local reporting includes: "+news_items[0]["title"].rstrip(".")+"." 
+    station_bits=[]
+    for sid,s in (((current.get("marine") or {}).get("stations") or {}).items()):
+        if not s or s.get("error"): continue
+        if s.get("max_24h_gust_mph") is not None: station_bits.append(f"{sid} gusted to {s['max_24h_gust_mph']:.1f} mph")
+        elif s.get("max_24h_speed_mph") is not None: station_bits.append(f"{sid} reached {s['max_24h_speed_mph']:.1f} mph sustained")
+    if station_bits: past+=" Marine observations: "+"; ".join(station_bits)+"."
+
+    latest_stored=max((s for s in stored if hc.parse_iso(s.get("snapshot_at"))),key=lambda s:hc.parse_iso(s["snapshot_at"]),default=None)
+    live_alert_changes=hc.diff_alerts((latest_stored or {}).get("alerts") or [],current.get("alerts") or [],now) if latest_stored else []
+    alert_changes=hc.merge_events(_recent(hist.get("alert_events"),"at",now,24),live_alert_changes,100)
+    local24=_recent(hist.get("local_events"),"published_at",now,24)
+    if alert_changes:
+        labels=[f"{e.get('event') or 'Alert'} {e.get('change_type','changed')}" for e in alert_changes[-4:]]
+        past+=" NWS alert changes: "+"; ".join(labels)+"."
+    if local24:
+        first=local24[-1]; qualifier="A public community report" if first.get("anecdotal") else "Local reporting"
+        past+=f" {qualifier} noted: {first.get('headline') or first.get('summary')}."
 
     if change:
-        d=change["peak_delta_ft"]
-        direction="increased" if d>0 else "decreased" if d<0 else "held steady"
-        forecast_change=f"Compared with the Saco Coast Watch NOAA model snapshot about 24 hours ago, the 72-hour peak has {direction}"
+        d=change["peak_delta_ft"]; direction="increased" if d>0 else "decreased" if d<0 else "held steady"
+        forecast_change=f"Compared with the {_baseline_name(baseline)} nearest 24 hours ago, the 72-hour peak has {direction}"
         if d: forecast_change+=f" by {abs(d):.2f} ft"
         forecast_change+=f", from {change['previous_peak_ft']:.2f} to {change['current_peak_ft']:.2f} ft MLLW."
-        if change.get("time_shift_minutes"):
-            mins=change["time_shift_minutes"]; hours=abs(mins)/60
-            forecast_change+=f" Peak timing shifted about {hours:.1f} hours {'later' if mins>0 else 'earlier'}."
-        if change.get("alerts_added"):
-            forecast_change+=" Newly active alert type"+("s" if len(change["alerts_added"])!=1 else "")+": "+", ".join(change["alerts_added"])+"."
-        if change.get("alerts_removed"):
-            forecast_change+=" No longer active: "+", ".join(change["alerts_removed"])+"."
+        mins=change.get("time_shift_minutes")
+        if mins: forecast_change+=f" Peak timing shifted about {abs(mins)/60:.1f} hours {'later' if mins>0 else 'earlier'}."
+        margin_delta=(change.get("threshold_margin_delta_ft") or {}).get("minor")
+        if margin_delta is not None and margin_delta!=0:
+            forecast_change+=f" The margin to Minor Flood {'grew' if margin_delta>0 else 'shrank'} by {abs(margin_delta):.2f} ft."
+        forecast_change+=f" Risk is {'increasing' if d>0 else 'decreasing' if d<0 else 'little changed'} on this water-level measure."
     else:
-        forecast_change="A 24-hour forecast-change baseline is still being established from stored NOAA model snapshots."
+        forecast_change="An authentic forecast snapshot close enough to 24 hours ago is not available yet; no forecast-change value is being inferred from later observations."
 
-    if p24:
-        gap=MINOR-p24[1]
-        next24=f"The highest NOAA modeled total-water level in the next 24 hours is {fmt_ft(p24[1])} ft MLLW around {fmt_et(p24[0])}, {abs(gap):.2f} ft {'below' if gap>=0 else 'above'} Minor Flood."
+    if peak24 is not None:
+        m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak24)
+        next24=f"The highest NOAA modeled total-water level in the next 24 hours is {fmt_ft(peak24)} ft MLLW around {fmt_time(w.get('forecast_peak_24h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
     else:
         next24="NOAA total-water guidance for the next 24 hours is temporarily unavailable."
-
-    if p72:
-        gap=MINOR-p72[1]
-        next72=f"The highest modeled level in the next 72 hours is {fmt_ft(p72[1])} ft MLLW around {fmt_et(p72[0])}, {abs(gap):.2f} ft {'below' if gap>=0 else 'above'} Minor Flood."
-        if alerts: next72+=f" NWS currently lists {len(alerts)} relevant coastal/weather alert{'s' if len(alerts)!=1 else ''} for the Saco-area point."
+    if peak72 is not None:
+        m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak72)
+        next72=f"The highest modeled total-water level in the next 72 hours is {fmt_ft(peak72)} ft MLLW around {fmt_time(w.get('forecast_peak_72h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
+        if w.get("astronomical_tide_at_peak_ft") is not None:
+            next72+=f" The astronomical tide at that time is {w['astronomical_tide_at_peak_ft']:.2f} ft MLLW, implying {w.get('model_uplift_ft',0):+.2f} ft of modeled uplift/departure."
     else:
         next72="NOAA total-water guidance for the next 72 hours is temporarily unavailable."
+    fc=current.get("forecast_conditions") or {}
+    if fc.get("next24_max_sustained_wind_mph") is not None: next24+=f" NWS hourly guidance reaches about {fc['next24_max_sustained_wind_mph']:.0f} mph sustained wind in this period."
+    if fc.get("next72_max_precip_probability_pct") is not None: next72+=f" Maximum hourly precipitation probability in the 72-hour guidance is {fc['next72_max_precip_probability_pct']:.0f}%."
 
-    pulse_count=len(news_items)+len(reddit_items)
-    local_summary=f"{pulse_count} public local item{'s' if pulse_count!=1 else ''} found in the rolling public scan"
-    if news_items or reddit_items:
-        parts=[]
-        if news_items: parts.append(f"{len(news_items)} news")
-        if reddit_items: parts.append(f"{len(reddit_items)} Reddit")
-        local_summary+=" ("+", ".join(parts)+")"
-    local_summary+=". Facebook is not included because reliable public indexing is inconsistent."
+    local_items=[]
+    for e in sorted(hist.get("local_events") or [],key=lambda x:hc.parse_iso(x.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)[:12]:
+        local_items.append({"type":"reddit" if e.get("source")=="Reddit" else "news","source":e.get("source"),"title":e.get("headline") or e.get("summary"),"url":e.get("url"),"published_at":e.get("published_at"),"location":e.get("location"),"event_category":e.get("event_category"),"anecdotal":e.get("anecdotal",False)})
+    community=sum(1 for e in local_items if e.get("anecdotal")); officialish=len(local_items)-community
+    local_summary=f"{len(local_items)} public local item{'s' if len(local_items)!=1 else ''} retained in the recent coastal scan"
+    if local_items: local_summary+=f" ({officialish} news/other public, {community} community)"
+    local_summary+=". Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent."
 
-    change48=None
-    if prior48 and p72 and prior48.get("model_peak_ft") is not None:
-        old48=float(prior48["model_peak_ft"])
-        old48_t=parse_iso(prior48.get("model_peak_time"))
-        change48={
-            "baseline_at":prior48["generated_at"],
-            "baseline_source":prior48.get("source"),
-            "peak_delta_ft":round(p72[1]-old48,2),
-            "previous_peak_ft":round(old48,2),
-            "current_peak_ft":round(p72[1],2),
-            "previous_peak_time":iso(old48_t) if old48_t else None,
-            "current_peak_time":iso(p72[0]),
-            "time_shift_minutes":round((p72[0]-old48_t).total_seconds()/60) if old48_t else None,
-        }
-
+    backfill=hist.get("backfill") or {}; daily=backfill.get("water_observed_daily_peaks") or []
+    merged_hist={**hist,"generated_at":hc.iso(now),"snapshots":snaps}
+    compact=ch.compact_history(merged_hist,7)
     return {
-        "schema_version":1,
-        "generated_at":iso(now),
-        "window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
-        "past_24h":{"text":past,"observed_peak_ft":round(observed_peak[1],2) if observed_peak else None,"observed_peak_time":iso(observed_peak[0]) if observed_peak else None},
-        "forecast_change_24h":{"text":forecast_change,"comparison":change},
+        "schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
+        "past_24h":{"text":past,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"alert_changes":alert_changes,"local_impacts":local24},
+        "forecast_change_24h":{"text":forecast_change,"comparison":change,"wind_comparison":wind_change},
         "forecast_change_48h":{"comparison":change48},
-        "observed_daily_peaks":daily_observed_peaks(observed),
-        "next_24h":{"text":next24,"peak_ft":round(p24[1],2) if p24 else None,"peak_time":iso(p24[0]) if p24 else None},
-        "next_72h":{"text":next72,"peak_ft":round(p72[1],2) if p72 else None,"peak_time":iso(p72[0]) if p72 else None},
-        "local_pulse":{"summary":local_summary,**local},
-        "alerts":alerts,
-        "history":history,
-        "sources":{
-            "noaa":"NOAA CO-OPS Portland 8418150 / OFS total-water guidance",
-            "nws":"National Weather Service active alerts",
-            "news":"Google News public RSS search",
-            "reddit":"Reddit public search RSS",
-            "facebook":"Not collected because reliable public indexing/access is inconsistent."
-        }
+        "observed_daily_peaks":daily,
+        "next_24h":{"text":next24,"peak_ft":peak24,"peak_time":w.get("forecast_peak_24h_time")},
+        "next_72h":{"text":next72,"peak_ft":peak72,"peak_time":w.get("forecast_peak_72h_time")},
+        "local_pulse":{"summary":local_summary,"updated_at":hist.get("generated_at"),"items":local_items,"errors":[],"facebook_note":"Public Facebook posts are included only when verifiable; coverage is not assumed comprehensive."},
+        "alerts":current.get("alerts") or [],
+        "current_snapshot":current,
+        "history":_legacy_history(snaps),
+        "history_compact":compact,
+        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts and hourly forecast","ndbc":"NDBC 44007 and WEXM1 observations","news":"Public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
     }
 
 def main():
-    ap=argparse.ArgumentParser()
-    ap.add_argument("--output",default="data/coastal-briefing.json")
-    ap.add_argument("--history-output",default="data/coastal-history.json")
-    args=ap.parse_args()
-    data=build()
-    out=Path(args.output); out.parent.mkdir(parents=True,exist_ok=True)
-    out.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    history_out=Path(args.history_output); history_out.parent.mkdir(parents=True,exist_ok=True)
-    history_payload={
-        "schema_version":1,
-        "generated_at":data["generated_at"],
-        "forecast_snapshots":data.get("history") or [],
-        "observed_daily_peaks":data.get("observed_daily_peaks") or [],
-        "forecast_change_24h":data.get("forecast_change_24h"),
-        "forecast_change_48h":data.get("forecast_change_48h"),
-        "provenance":{
-            "live_snapshots":"NOAA CO-OPS OFS total-water guidance captured by Saco Coast Watch.",
-            "seed_snapshots":"Reconstructed from Saco Coast Watch dashboard screenshots and explicitly marked reconstructed_dashboard_snapshot.",
-            "observations":"NOAA CO-OPS Portland station 8418150 water-level observations."
-        }
-    }
-    history_out.write_text(json.dumps(history_payload,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"Wrote {out} and {history_out}: {data['generated_at']} / {len(data['history'])} forecast snapshots")
-
-if __name__=="__main__":
-    main()
+    ap=argparse.ArgumentParser(); ap.add_argument("--output",default="data/coastal-briefing.json"); ap.add_argument("--history-output",default="data/coastal-history.json"); ap.add_argument("--history-input"); args=ap.parse_args()
+    now=ch.now_utc(); hist=load_history(args.history_input,now); current=ch.current_snapshot(now); data=build_payload(current,hist,now)
+    out=Path(args.output); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    hout=Path(args.history_output); hout.parent.mkdir(parents=True,exist_ok=True); hout.write_text(json.dumps(data["history_compact"],indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"Wrote {out} and {hout}: {data['generated_at']} / {len(data['history_compact'].get('snapshots',[]))} recent snapshots")
+if __name__=="__main__": main()

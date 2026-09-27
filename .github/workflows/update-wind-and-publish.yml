@@ -50,7 +50,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y ffmpeg
           fi
-          python3 -m pip install --disable-pip-version-check --quiet yt-dlp
           mkdir -p dist/data/webcams
           python3 scripts/fetch_webcam_snapshots.py --output-dir dist/data/webcams
       - name: Assemble site
@@ -88,10 +87,11 @@ jobs:
           w=json.load(open('dist/data/webcams/webcams.json'))
           assert w['schema_version']==1
           assert set(w.get('cameras',{}))=={'ferry_beach','abellona'}
-          for cam in w['cameras'].values():
-              assert cam.get('status') in ('ok','unavailable')
-              if cam.get('status')=='ok':
-                  assert cam.get('image')
+          assert w['cameras']['ferry_beach'].get('status') in ('ok','unavailable')
+          if w['cameras']['ferry_beach'].get('status')=='ok':
+              assert w['cameras']['ferry_beach'].get('image')
+          assert w['cameras']['abellona'].get('status')=='live_embed'
+          assert w['cameras']['abellona'].get('image') is None
           PY
           python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d; assert len(d.get('coastal_pulse',[])) >= 4; assert d.get('sources',{}).get('coastal_pulse',{}).get('ok')"
       - name: Browser map smoke test before publishing

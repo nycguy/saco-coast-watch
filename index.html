@@ -946,12 +946,7 @@ td{color:#e6f1f6}
   </div>
   <div class="ferry-layout">
     <div class="ferry-player">
-      <div class="camera-preview" id="abellonaPreview">
-        <img id="abellonaPreviewImage" hidden alt="Latest Abellona Inn Old Orchard Beach camera preview for visual coastal context">
-        <button class="ferry-start" type="button" id="abellonaStart" aria-label="Start Abellona Inn live beach camera"><span class="ferry-play-icon" aria-hidden="true">▶</span>Watch Old Orchard Beach live<span style="font-size:11px;font-weight:500;color:#b7d6df">Latest preview shown first · tap for live video</span></button>
-        <span class="camera-preview-time" id="abellonaPreviewTime">Loading latest shoreline preview…</span>
-      </div>
-      <iframe id="abellonaFrame" hidden data-src="https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&amp;mute=1" title="Abellona Inn Old Orchard Beach live camera" loading="lazy"
+      <iframe id="abellonaFrame" src="https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="Abellona Inn Old Orchard Beach live camera" loading="lazy"
         referrerpolicy="strict-origin-when-cross-origin"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen></iframe>
@@ -959,7 +954,7 @@ td{color:#e6f1f6}
     <div class="ferry-side">
       <strong>See live conditions farther north on Saco Bay</strong>
       <p>Use the Abellona view with the Ferry Beach camera to compare surf, visibility and shoreline conditions across the bay. Camera imagery is visual context only, not a flood-depth or wave-height measurement.</p>
-      <p class="ferry-status" id="abellonaStatus" role="status" aria-live="polite">Loading the latest Old Orchard Beach preview.</p>
+      <p class="ferry-status" id="abellonaStatus" role="status" aria-live="polite">Live muted video preview from the Abellona Inn. If playback is paused, press Play for current conditions.</p>
       <a href="https://www.youtube.com/watch?v=HSQpqIWLViI" target="_blank" rel="noopener noreferrer">Open Abellona camera on YouTube ↗</a>
     </div>
   </div>
@@ -1636,8 +1631,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
 
 
 <script>
-/* Lightweight current-condition previews are generated during the Pages build.
-   The app preloads those same-origin images on launch; live streams start only on request. */
+/* Ferry Beach uses a lightweight same-origin still generated during the Pages build.
+   Abellona uses the actual muted YouTube Live player so its poster image is never presented as current conditions. */
 (function(){
   'use strict';
   const stream='https://stage-ams.srv.axds.co/stream/adaptive/neracoos/ferrybeach_north/hls.m3u8';
@@ -1645,10 +1640,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
   const ferryPreview=document.getElementById('ferryPreview');
   const ferryVideo=document.getElementById('ferryVideo');
   const ferryStatus=document.getElementById('ferryStatus');
-  const abellonaButton=document.getElementById('abellonaStart');
-  const abellonaPreview=document.getElementById('abellonaPreview');
-  const abellonaFrame=document.getElementById('abellonaFrame');
-  const abellonaStatus=document.getElementById('abellonaStatus');
   let hls=null,started=false;
 
   function etTime(value){
@@ -1692,17 +1683,12 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
       const r=await fetch('data/webcams/webcams.json?t='+Date.now(),{cache:'no-store'});
       if(!r.ok)throw Error('preview manifest HTTP '+r.status);
       const m=await r.json();
-      await Promise.all([
-        preloadPreview(m.cameras?.ferry_beach,'ferryPreviewImage','ferryPreviewTime','ferryStatus',ferryVideo),
-        preloadPreview(m.cameras?.abellona,'abellonaPreviewImage','abellonaPreviewTime','abellonaStatus',abellonaFrame)
-      ]);
+      await preloadPreview(m.cameras?.ferry_beach,'ferryPreviewImage','ferryPreviewTime','ferryStatus',ferryVideo);
     }catch(err){
       console.warn('Saco Coast Watch webcam previews:',err);
-      const ft=document.getElementById('ferryPreviewTime'),at=document.getElementById('abellonaPreviewTime');
+      const ft=document.getElementById('ferryPreviewTime');
       if(ft)ft.textContent='Latest preview unavailable · live camera remains available';
-      if(at)at.textContent='Latest preview unavailable · live camera remains available';
       if(ferryVideo?.hidden)setStatus(ferryStatus,'Latest still image is unavailable. You can still open the live camera.',true);
-      if(abellonaFrame?.hidden)setStatus(abellonaStatus,'Latest still image is unavailable. You can still open the live camera.',true);
     }
   }
   function ferryUnavailable(){
@@ -1740,14 +1726,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.l
       const loader=document.createElement('script');
       loader.src='https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js';loader.async=true;loader.onload=connect;
       loader.onerror=ferryUnavailable;document.head.appendChild(loader);
-    });
-  }
-  if(abellonaButton&&abellonaFrame){
-    abellonaButton.addEventListener('click',()=>{
-      if(abellonaPreview)abellonaPreview.hidden=true;
-      abellonaFrame.hidden=false;
-      if(!abellonaFrame.getAttribute('src'))abellonaFrame.src=abellonaFrame.dataset.src||'';
-      setStatus(abellonaStatus,'Connecting to the Abellona Inn live YouTube camera…',false);
     });
   }
   loadWebcamPreviews();

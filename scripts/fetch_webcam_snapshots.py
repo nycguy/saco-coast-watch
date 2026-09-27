@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Build same-origin still previews from the two public Saco Bay webcam feeds."""
+"""Build lightweight webcam preview data for Saco Coast Watch."""
 from __future__ import annotations
 import argparse, datetime as dt, json, shutil, subprocess
 from pathlib import Path
 
-UA="SacoCoastWatch/2.0 (public coastal dashboard; github.com/nycguy/saco-coast-watch)"
 FERRY_STREAM="https://stage-ams.srv.axds.co/stream/adaptive/neracoos/ferrybeach_north/hls.m3u8"
 FERRY_LIVE="https://webcoos.org/cameras/ferrybeach_north/"
 ABELLONA_VIDEO_ID="HSQpqIWLViI"
@@ -20,12 +19,7 @@ def capture_frame(stream_url,dest,runner=subprocess.run,which=shutil.which):
     executable=which("ffmpeg")
     if not executable:
         raise RuntimeError("ffmpeg is not available")
-    cmd=[
-        executable,"-hide_banner","-loglevel","error","-y",
-        "-rw_timeout","15000000",
-        "-i",stream_url,
-        "-frames:v","1","-q:v","3",str(dest),
-    ]
+    cmd=[executable,"-hide_banner","-loglevel","error","-y","-rw_timeout","15000000","-i",stream_url,"-frames:v","1","-q:v","3",str(dest)]
     result=runner(cmd,capture_output=True,timeout=35)
     if result.returncode:
         detail=(result.stderr or b"").decode("utf-8","replace")[-500:]
@@ -35,36 +29,8 @@ def capture_frame(stream_url,dest,runner=subprocess.run,which=shutil.which):
         raise RuntimeError("ffmpeg did not produce a usable JPEG")
     return stream_url
 
-def resolve_youtube_live_url(runner=subprocess.run,which=shutil.which):
-    executable=which("yt-dlp")
-    if not executable:
-        raise RuntimeError("yt-dlp is not available")
-    cmd=[
-        executable,
-        "--no-playlist",
-        "--no-warnings",
-        "--socket-timeout","15",
-        "-f","best[height<=1080]/best",
-        "--get-url",
-        ABELLONA_LIVE,
-    ]
-    result=runner(cmd,capture_output=True,timeout=35)
-    if result.returncode:
-        detail=(result.stderr or b"").decode("utf-8","replace")[-500:]
-        raise RuntimeError(detail or f"yt-dlp exited {result.returncode}")
-    text=(result.stdout or b"").decode("utf-8","replace")
-    urls=[line.strip() for line in text.splitlines() if line.strip().startswith(("http://","https://"))]
-    if not urls:
-        raise RuntimeError("yt-dlp did not return a playable Abellona stream URL")
-    return urls[0]
-
 def capture_ferry(dest):
     return capture_frame(FERRY_STREAM,dest)
-
-def capture_abellona(dest,resolver=resolve_youtube_live_url,frame_capturer=capture_frame):
-    stream_url=resolver()
-    frame_capturer(stream_url,dest)
-    return ABELLONA_LIVE
 
 def camera_entry(name,source,live_url,image_rel,dest,fetch_fn,stamp):
     try:
@@ -83,7 +49,15 @@ def build(output_dir):
     stamp=now_iso()
     cameras={
         "ferry_beach":camera_entry("Ferry Beach","WebCOOS / NERACOOS live HLS frame",FERRY_LIVE,"data/webcams/ferry-beach.jpg",out/"ferry-beach.jpg",capture_ferry,stamp),
-        "abellona":camera_entry("Abellona Inn / Old Orchard Beach","Abellona Inn / YouTube Live stream frame",ABELLONA_LIVE,"data/webcams/abellona.jpg",out/"abellona.jpg",capture_abellona,stamp),
+        "abellona":{
+            "name":"Abellona Inn / Old Orchard Beach",
+            "status":"live_embed",
+            "image":None,
+            "fetched_at":None,
+            "source":"Abellona Inn / YouTube Live player",
+            "live_url":ABELLONA_LIVE,
+            "note":"The app displays the actual muted live player. YouTube's static poster thumbnail is not used as current-condition imagery.",
+        },
     }
     doc={"schema_version":1,"generated_at":stamp,"refresh_target_minutes":5,"cameras":cameras}
     (out/"webcams.json").write_text(json.dumps(doc,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")

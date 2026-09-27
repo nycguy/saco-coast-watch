@@ -41,7 +41,8 @@ jobs:
           p=pathlib.Path('.history-store/data/history/coastal-history.json')
           if not p.exists(): sys.exit(1)
           d=json.loads(p.read_text())
-          summary=(((d.get('backfill') or {}).get('model_archive') or {}).get('summary') or {})\nsys.exit(0 if int(summary.get('cycles_reconstructed') or 0) > 0 else 1)
+          summary=(((d.get('backfill') or {}).get('model_archive') or {}).get('summary') or {})
+          sys.exit(0 if int(summary.get('cycles_reconstructed') or 0) > 0 else 1)
           PY
           then
             echo "needed=false" >> "$GITHUB_OUTPUT"

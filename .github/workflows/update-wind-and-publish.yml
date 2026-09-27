@@ -24,6 +24,8 @@ jobs:
         run: python3 scripts/fetch_wind.py
       - name: Retrieve coastal-flood and storm-surge alerts
         run: python3 scripts/fetch_coastal_alerts.py
+      - name: Build fixed-window coastal briefing
+        run: python3 scripts/fetch_briefing.py --output data/coastal-briefing.json
       - name: Validate alert thresholds and backend syntax
         run: |
           node --check alerts/src/worker.mjs
@@ -41,6 +43,7 @@ jobs:
           cp index.html dist/index.html
           cp data/wind.json dist/data/wind.json
           cp data/coastal-alerts.json dist/data/coastal-alerts.json
+          cp data/coastal-briefing.json dist/data/coastal-briefing.json
           cp -R eastcast dist/eastcast
           mkdir -p dist/eastcast/data
           python3 scripts/fetch_eastcast.py --output dist/eastcast/data/snapshot.json
@@ -53,6 +56,8 @@ jobs:
           test -f dist/eastcast/core.mjs
           test -f dist/eastcast/style.css
           test -s dist/eastcast/data/snapshot.json
+          test -s dist/data/coastal-briefing.json
+          python3 -c "import json; d=json.load(open('dist/data/coastal-briefing.json')); assert d['schema_version']==1; assert 'past_24h' in d and 'forecast_change_24h' in d and 'next_24h' in d and 'next_72h' in d and 'local_pulse' in d"
           python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d; assert len(d.get('coastal_pulse',[])) >= 4; assert d.get('sources',{}).get('coastal_pulse',{}).get('ok')"
 
       - name: Browser map smoke test before publishing

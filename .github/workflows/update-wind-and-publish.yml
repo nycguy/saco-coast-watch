@@ -50,6 +50,7 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y ffmpeg
           fi
+          python3 -m pip install --disable-pip-version-check --quiet yt-dlp
           mkdir -p dist/data/webcams
           python3 scripts/fetch_webcam_snapshots.py --output-dir dist/data/webcams
       - name: Assemble site

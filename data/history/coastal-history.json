@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-27T16:47:21Z",
+  "generated_at": "2026-09-27T19:56:36Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -1106,6 +1106,133 @@
         ],
         "basis": "Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."
       }
+    },
+    {
+      "snapshot_at": "2026-09-27T19:56:36Z",
+      "snapshot_kind": "realtime",
+      "provenance": {
+        "forecast": "live_noaa_ofs_capture",
+        "observations": "NOAA CO-OPS station 8418150",
+        "astronomical_tide": "NOAA CO-OPS predictions",
+        "marine": "NDBC realtime2",
+        "alerts": "NWS API active alerts",
+        "weather_forecast": "NWS hourly point forecast"
+      },
+      "water": {
+        "station": "8418150",
+        "latest_observed_ft": 4.21,
+        "latest_observed_at": "2026-09-27T19:48:00Z",
+        "observed_24h_max_ft": 11.29,
+        "observed_24h_max_time": "2026-09-27T16:00:00Z",
+        "residual_current_ft": 1.04,
+        "residual_current_at": "2026-09-27T19:48:00Z",
+        "residual_24h_max_ft": 1.24,
+        "residual_24h_max_time": "2026-09-26T21:30:00Z",
+        "forecast_peak_24h_ft": 11.9,
+        "forecast_peak_24h_time": "2026-09-28T16:36:00Z",
+        "forecast_peak_72h_ft": 11.9,
+        "forecast_peak_72h_time": "2026-09-28T16:36:00Z",
+        "astronomical_tide_at_peak_ft": 10.54,
+        "model_uplift_ft": 1.36,
+        "threshold_margins_ft": {
+          "minor": 0.1,
+          "moderate": 1.1,
+          "major": 2.1
+        }
+      },
+      "forecast_conditions": {
+        "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+        "next24_max_sustained_wind_mph": 20.0,
+        "next72_max_sustained_wind_mph": 20.0,
+        "next24_max_precip_probability_pct": 97,
+        "next72_max_precip_probability_pct": 97,
+        "next24_summaries": [
+          "Rain",
+          "Light Rain"
+        ]
+      },
+      "marine": {
+        "stations": {
+          "44007": {
+            "observed_at": "2026-09-27T19:30:00Z",
+            "speed_mph": 29.1,
+            "gust_mph": 38.0,
+            "direction_deg": 50,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": 1013.8,
+            "pressure_tendency_mb": null,
+            "water_temp_f": 57.9,
+            "air_temp_f": 57.2,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
+            "max_24h_speed_mph": 31.3,
+            "max_24h_speed_at": "2026-09-27T02:00:00Z",
+            "max_24h_gust_mph": 40.3,
+            "max_24h_gust_at": "2026-09-27T02:10:00Z",
+            "max_24h_wave_height_ft": 11.2,
+            "max_24h_wave_at": "2026-09-27T09:50:00Z"
+          },
+          "WEXM1": {
+            "observed_at": "2026-09-27T19:00:00Z",
+            "speed_mph": 16.1,
+            "gust_mph": null,
+            "direction_deg": 20,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": null,
+            "pressure_tendency_mb": null,
+            "water_temp_f": null,
+            "air_temp_f": 56.8,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
+            "max_24h_speed_mph": 17.2,
+            "max_24h_speed_at": "2026-09-27T04:00:00Z",
+            "max_24h_gust_mph": null,
+            "max_24h_gust_at": null,
+            "max_24h_wave_height_ft": null,
+            "max_24h_wave_at": null
+          }
+        }
+      },
+      "alerts": [
+        {
+          "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.7afb149ec3869e4a8f87213e4246202c258e800f.002.1",
+          "event": "Gale Warning",
+          "severity": "Moderate",
+          "certainty": "Likely",
+          "urgency": "Expected",
+          "sent": "2026-09-27T14:26:00-04:00",
+          "effective": "2026-09-27T14:26:00-04:00",
+          "onset": "2026-09-27T14:26:00-04:00",
+          "expires": "2026-09-27T20:00:00-04:00",
+          "ends": "2026-09-27T20:00:00-04:00",
+          "headline": "Gale Warning issued September 27 at 2:26PM EDT until September 27 at 8:00PM EDT by NWS Gray ME",
+          "area": "Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+          "message_type": "Update",
+          "references": [
+            {
+              "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b9ad9a121eaebb4772d88bfd94b1fa3efcdd7be0.002.1",
+              "identifier": "urn:oid:2.49.0.1.840.0.b9ad9a121eaebb4772d88bfd94b1fa3efcdd7be0.002.1",
+              "sender": "w-nws.webmaster@noaa.gov",
+              "sent": "2026-09-27T02:37:00-04:00"
+            }
+          ]
+        }
+      ],
+      "storm_mode": {
+        "active": true,
+        "reasons": [
+          "Portland water-level residual is +1.04 ft",
+          "24-hour Portland residual reached +1.24 ft",
+          "Buoy 44007 gust is 38 mph",
+          "Buoy 44007 sustained wind is 29 mph",
+          "Active NWS Gale Warning"
+        ],
+        "basis": "Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."
+      }
     }
   ],
   "daily_rollups": [
@@ -1160,7 +1287,7 @@
     },
     {
       "date": "2026-09-27",
-      "snapshot_count": 4,
+      "snapshot_count": 5,
       "max_observed_ft": 11.29,
       "max_forecast_peak_ft": 11.99,
       "max_gust_mph": 38.0
@@ -1573,22 +1700,22 @@
     },
     {
       "published_at": "2026-06-30T07:00:00Z",
-      "source": "mainemorningstar.com",
+      "source": "Maine Morning Star",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
-      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
+      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
       "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOcHBRU1E1RzlrRmVjOXk1aFR2a1plMEJrOHJyMGJYLTVGVXM0Q19ZMmhGTS1fTG9vRlpEc1JKWGtGOFRBdWhleDJYMHV6a3ZFM2lYWlo2T1BWNnhXeGNtUDl6aGV3OXAteHRhU0hTczFCVS1MWWlGOVRwVkNMc08talNtMVRycXdDZW1IZzVkREhwV1dHak80bDNid3FMQ192ZGt4UVc3N2liZXBPWDZiLTBDSmswSHVDakY4ZA?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     },
     {
       "published_at": "2026-07-01T07:00:00Z",
-      "source": "dredgewire.com",
+      "source": "DredgeWire",
       "source_type": "news",
       "location": "Saco",
-      "headline": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - dredgewire.com",
-      "summary": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - dredgewire.com",
+      "headline": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - DredgeWire",
+      "summary": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - DredgeWire",
       "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOb3BkUmtmNE1GbTBKR2xEZE5vTm1rVlhOUnRiRWNEc1RPN3RVUEpkMlhGcjdJbFBvRnRDMG1JZ09zQjhXRzJ1YVlXQVB3RVVQTzJIcmtkWHZfaFhBTHlGV2EwZnctb3hoZDB5OUZrczlwTmtJdDIyQ1BkRUJhYk15ZFNMWmpUelM5WmFKYkgtQWZkZzkzeDZsZjBnVVBwTjQ1R09OUEIybVdEZTdwQ2Z0UW1hWVhzYTBnSDZz?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

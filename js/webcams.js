@@ -4,9 +4,17 @@
   'use strict';
   const stream='https://stage-ams.srv.axds.co/stream/adaptive/neracoos/ferrybeach_north/hls.m3u8';
   const ferryPreview=document.getElementById('ferryPreview');
+  const ferryPreviewImage=document.getElementById('ferryPreviewImage');
+  const ferryPreviewTime=document.getElementById('ferryPreviewTime');
   const ferryVideo=document.getElementById('ferryVideo');
   const ferryStatus=document.getElementById('ferryStatus');
-  let hls=null;
+  const ferryArchive=document.getElementById('ferryArchive');
+  const ferryArchiveRange=document.getElementById('ferryArchiveRange');
+  const ferryArchiveCount=document.getElementById('ferryArchiveCount');
+  const ferryArchiveTime=document.getElementById('ferryArchiveTime');
+  const ferryArchiveReason=document.getElementById('ferryArchiveReason');
+  const ferryReturnLive=document.getElementById('ferryReturnLive');
+  let hls=null,archiveFrames=[];
 
   function etTime(value){
     const t=Date.parse(value||'');
@@ -57,6 +65,45 @@
       if(ferryVideo?.hidden)setStatus(ferryStatus,'Latest still image is unavailable. You can still open the live camera.',true);
     }
   }
+  function showArchivedFrame(index){
+    const frame=archiveFrames[index];
+    if(!frame||!ferryPreviewImage||!ferryPreview)return;
+    try{ferryVideo.pause();}catch(_err){}
+    ferryVideo.hidden=true;
+    ferryPreview.hidden=false;
+    ferryPreviewImage.hidden=false;
+    ferryPreviewImage.src='data/webcams/ferry-history/'+encodeURIComponent(frame.file)+'?v='+encodeURIComponent(frame.captured_at||'');
+    if(ferryPreviewTime)ferryPreviewTime.textContent='Archived storm frame · '+etTime(frame.captured_at);
+    if(ferryArchiveTime)ferryArchiveTime.textContent=etTime(frame.captured_at);
+    if(ferryArchiveReason)ferryArchiveReason.textContent=(frame.reasons||[]).slice(0,2).join(' · ');
+  }
+  function returnFerryLive(){
+    if(ferryPreview)ferryPreview.hidden=true;
+    if(ferryVideo)ferryVideo.hidden=false;
+    if(ferryVideo)ferryVideo.play().catch(()=>setStatus(ferryStatus,'Live stream loaded. Press Play on the video for current conditions.',false));
+  }
+  async function loadFerryArchive(){
+    if(!ferryArchive)return;
+    try{
+      const r=await fetch('data/webcams/ferry-history/index.json?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok){if(r.status===404){ferryArchive.hidden=true;return;}throw Error('archive manifest HTTP '+r.status);}
+      const doc=await r.json();
+      archiveFrames=(doc.frames||[]).filter(x=>x&&x.file&&x.captured_at);
+      if(!archiveFrames.length){ferryArchive.hidden=true;return;}
+      ferryArchive.hidden=false;
+      ferryArchiveRange.min='0';ferryArchiveRange.max=String(archiveFrames.length-1);ferryArchiveRange.value=String(archiveFrames.length-1);
+      ferryArchiveCount.textContent=archiveFrames.length+' frame'+(archiveFrames.length===1?'':'s')+' from the past '+(doc.retention_hours||24)+'h';
+      const latest=archiveFrames.at(-1);
+      ferryArchiveTime.textContent='Latest archived '+etTime(latest.captured_at);
+      ferryArchiveReason.textContent=(latest.reasons||[]).slice(0,2).join(' · ');
+    }catch(err){
+      console.warn('Saco Coast Watch Ferry Beach archive:',err);
+      ferryArchive.hidden=true;
+    }
+  }
+  if(ferryArchiveRange)ferryArchiveRange.addEventListener('input',()=>showArchivedFrame(Number(ferryArchiveRange.value)));
+  if(ferryReturnLive)ferryReturnLive.addEventListener('click',returnFerryLive);
+
   function ferryUnavailable(){
     if(hls){hls.destroy();hls=null;}
     setStatus(ferryStatus,'Live stream unavailable here. Showing the latest captured shoreline still when available.',true);
@@ -98,7 +145,8 @@
     document.head.appendChild(loader);
   }
   loadWebcamPreviews();
+  loadFerryArchive();
   connectFerryLive();
-  setInterval(()=>{if(!document.hidden)loadWebcamPreviews();},5*60*1000);
+  setInterval(()=>{if(!document.hidden){loadWebcamPreviews();loadFerryArchive();}},5*60*1000);
   window.addEventListener('pagehide',()=>{if(hls)hls.destroy();});
 })();

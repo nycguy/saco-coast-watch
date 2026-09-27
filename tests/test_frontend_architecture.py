@@ -3,7 +3,7 @@ import pathlib, re, unittest
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 INDEX=ROOT/'index.html'
 EXPECTED_JS=[
- 'js/config.js','js/marine.js','js/data.js','js/weather.js','js/water-levels.js',
+ 'js/config.js','js/marine.js','js/data.js','js/weather.js','js/water-levels.js','js/intelligence.js',
  'js/alerts.js','js/chart.js','js/briefing.js','js/app.js','js/map.js','js/webcams.js'
 ]
 
@@ -37,11 +37,16 @@ class FrontendArchitectureTests(unittest.TestCase):
   briefing=(ROOT/'js'/'briefing.js').read_text(encoding='utf-8')
   mapjs=(ROOT/'js'/'map.js').read_text(encoding='utf-8')
   webcams=(ROOT/'js'/'webcams.js').read_text(encoding='utf-8')
+  intelligence=(ROOT/'js'/'intelligence.js').read_text(encoding='utf-8')
   self.assertIn('load();',app)
+  self.assertIn('renderCoastalIntelligence()',app)
   self.assertIn('function renderChart()',chart)
   self.assertIn('function renderBriefing()',briefing)
   self.assertIn("L.map('coastalMap'",mapjs)
   self.assertIn('connectFerryLive();',webcams)
+  self.assertIn('loadFerryArchive();',webcams)
+  self.assertIn('function renderCoastalIntelligence()',intelligence)
+  self.assertIn('function renderStormMode()',intelligence)
 
 if __name__=='__main__':
  unittest.main()

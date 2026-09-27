@@ -5,6 +5,7 @@ function marineNumber(id,value,missingLabel='--'){
  const number=document.createTextNode(Number.isFinite(value)?Math.round(value).toString():missingLabel);
  node.append(number);if(Number.isFinite(value)){const unit=document.createElement('em');unit.textContent=' mph';node.append(unit);}
 }
+function marineText(id,value){const node=$(id);if(node)node.textContent=value;}
 function renderMarine(){
  for(const id of ['44007','WEXM1']){
   const station=state.marine[id],t=Date.parse(station?.observed_at||''),age=now()-t;
@@ -23,6 +24,15 @@ function renderMarine(){
     direction+when+(gust===null?' · gust not reported':'');
   $('marine'+id+'Meta').textContent=note;
   health('healthMarine'+id,label==='Live',label);
+  if(id==='44007'){
+   const show=fresh?station||{}:{};
+   marineText('marine44007Wave',Number.isFinite(show.wave_height_ft)?show.wave_height_ft.toFixed(1)+' ft':'--');
+   marineText('marine44007Period',Number.isFinite(show.dominant_period_sec)?show.dominant_period_sec.toFixed(0)+' s':'--');
+   marineText('marine44007WaveDirection',Number.isFinite(show.wave_direction_deg)?windCompass(show.wave_direction_deg)+' · '+Math.round(show.wave_direction_deg)+'°':'--');
+   marineText('marine44007Pressure',Number.isFinite(show.pressure_mb)?show.pressure_mb.toFixed(1)+' mb':'--');
+   marineText('marine44007PressureTrend',Number.isFinite(show.pressure_tendency_mb)?(show.pressure_tendency_mb>=0?'+':'')+show.pressure_tendency_mb.toFixed(1)+' mb / 3h':'--');
+   marineText('marine44007WaterTemp',Number.isFinite(show.water_temp_f)?show.water_temp_f.toFixed(1)+' °F':'--');
+  }
  }
  $('marineFeedNote').textContent=state.marineFetchError?
   'Marine snapshot warning: '+state.marineFetchError+'. Station timestamps determine whether values are fresh; old readings are withheld. The webpage retries every 60 seconds.':

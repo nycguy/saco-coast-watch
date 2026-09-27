@@ -57,6 +57,48 @@ def _legacy_history(snaps):
         out.append({"generated_at":s.get("snapshot_at"),"model_peak_ft":w.get("forecast_peak_72h_ft"),"model_peak_time":w.get("forecast_peak_72h_time"),"next24_peak_ft":w.get("forecast_peak_24h_ft"),"next24_peak_time":w.get("forecast_peak_24h_time"),"alerts":sorted({a.get("event") for a in s.get("alerts") or [] if a.get("event")}),"source":p.get("forecast") or s.get("snapshot_kind")})
     return out
 
+def _forecast_evolution(snaps,current,now):
+    rows=hc.merge_snapshots(snaps or [],[current],now,30)
+    points=[]
+    seen=set()
+    for hours,label,tolerance in ((24,"24h ago",3.1),(12,"12h ago",2.1),(6,"6h ago",1.6)):
+        row=hc.choose_baseline(rows,now-dt.timedelta(hours=hours),tolerance)
+        if not row: continue
+        at=row.get("snapshot_at") or row.get("generated_at")
+        if not at or at in seen: continue
+        seen.add(at); w=row.get("water") or {}; ft=w.get("forecast_peak_72h_ft")
+        if ft is None: continue
+        points.append({"label":label,"target_hours_ago":hours,"snapshot_at":at,"peak_ft":ft,"peak_time":w.get("forecast_peak_72h_time"),"minor_margin_ft":hc.threshold_margins(ft).get("minor"),"source":_baseline_name(row)})
+    w=current.get("water") or {}; ft=w.get("forecast_peak_72h_ft")
+    if ft is not None:
+        points.append({"label":"Now","target_hours_ago":0,"snapshot_at":current.get("snapshot_at"),"peak_ft":ft,"peak_time":w.get("forecast_peak_72h_time"),"minor_margin_ft":hc.threshold_margins(ft).get("minor"),"source":_baseline_name(current)})
+    points.sort(key=lambda x:x.get("target_hours_ago",0),reverse=True)
+    return {"items":points,"basis":"Captured forecast snapshots nearest 24, 12 and 6 hours ago plus the current snapshot. Retrieval time is not NOAA model issuance time."}
+
+def _impact_timeline(current,alert_changes,local24,now):
+    events=[]; w=current.get("water") or {}
+    def add(at,kind,title,source,source_type,url=None,anecdotal=False):
+        if not hc.parse_iso(at): return
+        events.append({"at":at,"type":kind,"title":title,"source":source,"source_type":source_type,"url":url,"anecdotal":anecdotal})
+    if w.get("observed_24h_max_ft") is not None:
+        add(w.get("observed_24h_max_time"),"water","Portland observed water level reached %.2f ft MLLW"%w["observed_24h_max_ft"],"NOAA CO-OPS station 8418150","official_observation")
+    if w.get("residual_24h_max_ft") is not None:
+        add(w.get("residual_24h_max_time"),"residual","Portland water-level residual reached %+.2f ft versus astronomical tide"%w["residual_24h_max_ft"],"NOAA CO-OPS observation minus astronomical prediction","derived_official_data")
+    buoy=(((current.get("marine") or {}).get("stations") or {}).get("44007") or {})
+    if buoy.get("max_24h_wave_height_ft") is not None:
+        add(buoy.get("max_24h_wave_at"),"waves","Buoy 44007 significant wave height reached %.1f ft"%buoy["max_24h_wave_height_ft"],"NOAA/NDBC buoy 44007","official_observation")
+    if buoy.get("max_24h_gust_mph") is not None and buoy["max_24h_gust_mph"]>=20:
+        add(buoy.get("max_24h_gust_at"),"wind","Buoy 44007 gust reached %.1f mph"%buoy["max_24h_gust_mph"],"NOAA/NDBC buoy 44007","official_observation")
+    for e in alert_changes or []:
+        event=e.get("event") or "Coastal alert"; change=e.get("change_type") or "changed"
+        add(e.get("at"),"alert",f"{event} {change}",e.get("source") or "National Weather Service","official_alert")
+    for e in local24 or []:
+        add(e.get("published_at"),"community" if e.get("anecdotal") else "report",e.get("headline") or e.get("summary") or "Coastal report",e.get("source") or "Public report",e.get("source_type") or ("community" if e.get("anecdotal") else "news"),e.get("url"),bool(e.get("anecdotal")))
+    cutoff=now-dt.timedelta(hours=24)
+    events=[e for e in events if (hc.parse_iso(e.get("at")) or now)>=cutoff]
+    events.sort(key=lambda e:hc.parse_iso(e["at"]))
+    return events[-24:]
+
 def build_payload(current,hist,now=None):
     now=now or hc.parse_iso(current.get("snapshot_at")) or ch.now_utc()
     stored=hist.get("snapshots") or []
@@ -79,11 +121,17 @@ def build_payload(current,hist,now=None):
         if s.get("max_24h_gust_mph") is not None: station_bits.append(f"{sid} gusted to {s['max_24h_gust_mph']:.1f} mph")
         elif s.get("max_24h_speed_mph") is not None: station_bits.append(f"{sid} reached {s['max_24h_speed_mph']:.1f} mph sustained")
     if station_bits: past+=" Marine observations: "+"; ".join(station_bits)+"."
+    if w.get("residual_24h_max_ft") is not None:
+        past+=f" The highest Portland water-level residual was {w['residual_24h_max_ft']:+.2f} ft versus astronomical tide around {fmt_time(w.get('residual_24h_max_time'))}."
 
     latest_stored=max((s for s in stored if hc.parse_iso(s.get("snapshot_at"))),key=lambda s:hc.parse_iso(s["snapshot_at"]),default=None)
     live_alert_changes=hc.diff_alerts((latest_stored or {}).get("alerts") or [],current.get("alerts") or [],now) if latest_stored else []
     alert_changes=hc.merge_events(_recent(hist.get("alert_events"),"at",now,24),live_alert_changes,100)
     local24=[e for e in _recent(hist.get("local_events"),"published_at",now,24) if ch.coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]
+    evolution=_forecast_evolution(snaps,current,now)
+    timeline=_impact_timeline(current,alert_changes,local24,now)
+    storm_mode=current.get("storm_mode") or {"active":bool(ch.storm_reasons(current)),"reasons":ch.storm_reasons(current),"basis":"Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."}
+
     if alert_changes:
         labels=[f"{e.get('event') or 'Alert'} {e.get('change_type','changed')}" for e in alert_changes[-4:]]
         past+=" NWS alert changes: "+"; ".join(labels)+"."
@@ -142,6 +190,9 @@ def build_payload(current,hist,now=None):
         "past_24h":{"text":past,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"alert_changes":alert_changes,"local_impacts":local24},
         "forecast_change_24h":{"text":forecast_change,"comparison":change,"wind_comparison":wind_change},
         "forecast_change_48h":{"comparison":change48},
+        "forecast_evolution":evolution,
+        "storm_mode":storm_mode,
+        "impact_timeline":timeline,
         "observed_daily_peaks":daily,
         "next_24h":{"text":next24,"peak_ft":peak24,"peak_time":w.get("forecast_peak_24h_time")},
         "next_72h":{"text":next72,"peak_ft":peak72,"peak_time":w.get("forecast_peak_72h_time")},

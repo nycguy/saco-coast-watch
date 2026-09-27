@@ -20,6 +20,16 @@
 <main class="shell">
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
+<section class="storm-mode-panel" id="stormModePanel" hidden aria-live="polite">
+ <div class="storm-mode-head"><div><div class="eyebrow">Automatic event focus</div><h3>Storm Mode</h3><p>Saco Coast Watch has promoted the most relevant coastal signals. This interface state is not an official warning.</p></div><span class="storm-mode-badge">Elevated conditions</span></div>
+ <div class="storm-mode-reasons" id="stormModeReasons"></div>
+ <div class="storm-mode-metrics">
+  <div><span>NOAA 72h peak</span><strong id="stormModePeak">--</strong></div>
+  <div><span>Next high tide</span><strong id="stormModeHigh">--</strong></div>
+  <div><span>Portland residual</span><strong id="stormModeResidual">--</strong></div>
+  <div><span>Buoy 44007 sea state</span><strong id="stormModeSea">--</strong></div>
+ </div>
+</section>
 <section class="metrics grid" aria-label="Current coastal metrics">
  <article class="panel metric model-hero"><div class="label">Forecast peak total water level <span class="tag">Next 72h · NOAA OFS</span></div><div class="number" id="modelValue">--<em> ft</em></div><p class="peak-time" id="modelPeakTime">Peak time unavailable</p><p id="modelDetail">Looking for available NOAA model guidance…</p><p class="risk-label" id="modelRiskLabel" role="status">Checking forecast category</p></article>
 <article class="panel metric"><div class="label">Observed water level <span class="tag" id="obsBadge">Live gauge</span></div><div class="number" id="observedValue">--<em> ft</em></div><p id="observedDetail">NOAA Portland · station 8418150</p></article>
@@ -28,6 +38,28 @@
  
 </section>
 <section class="panel status" aria-live="polite"><div class="statuscopy"><div class="statusbadge" id="statusIcon">≈</div><div><h3 id="statusHeading">Checking coastal water levels</h3><p id="statusDescription">The status below uses Portland's published flood thresholds and live/model values only when available.</p></div></div><a class="btn" target="_blank" rel="noopener noreferrer" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150">NOAA flood dashboard ↗</a></section>
+
+<section class="panel coastal-intelligence" aria-labelledby="coastalIntelligenceHeading">
+ <div class="section-head"><div><div class="eyebrow">Coastal decision support</div><h3 id="coastalIntelligenceHeading">What matters at the next high waters</h3><div class="sub">Portland gauge residuals, forecast evolution and the next three high-water windows.</div></div></div>
+ <div class="intelligence-grid">
+  <article class="intel-card residual-card">
+   <div class="intel-head"><div><h4>Storm surge residual</h4><p>Observed Portland water level minus astronomical tide.</p></div><span class="intel-tag">Past 24h</span></div>
+   <div class="intel-stat-row"><div><span>Current</span><strong id="residualNow">--</strong></div><div><span>24h max</span><strong id="residualMax">--</strong></div></div>
+   <svg id="residualSpark" class="mini-chart" role="img" aria-label="Portland water-level residual over the past 24 hours"></svg>
+   <p class="intel-note" id="residualMeta">Building residual history.</p>
+  </article>
+  <article class="intel-card high-water-card">
+   <div class="intel-head"><div><h4>Next high-water windows</h4><p>Tide baseline plus available NOAA total-water guidance.</p></div><span class="intel-tag">Next 3</span></div>
+   <div id="highWaterWindows" class="high-water-windows" aria-live="polite"></div>
+  </article>
+  <article class="intel-card evolution-card">
+   <div class="intel-head"><div><h4>Forecast evolution</h4><p>How the captured 72-hour NOAA peak has changed.</p></div><span class="intel-tag">24h trend</span></div>
+   <svg id="forecastEvolutionSpark" class="mini-chart" role="img" aria-label="Captured NOAA forecast peak evolution"></svg>
+   <div id="forecastEvolutionRows" class="evolution-rows" aria-live="polite"></div>
+   <p class="intel-note" id="forecastEvolutionBasis">Forecast history is building.</p>
+  </article>
+ </div>
+</section>
 
 <section class="panel ferry-camera" aria-labelledby="ferryLiveCamera">
   <div class="ferry-head">
@@ -48,6 +80,11 @@
       <p class="ferry-status" id="ferryStatus" role="status" aria-live="polite">Connecting to the Ferry Beach live stream.</p>
       <a href="https://webcoos.org/cameras/ferrybeach_north/" target="_blank" rel="noopener noreferrer">Open official Ferry Beach camera ↗</a>
     </div>
+  </div>
+  <div class="ferry-archive" id="ferryArchive" hidden>
+   <div class="ferry-archive-head"><div><strong>Storm archive</strong><span id="ferryArchiveCount">No archived frames</span></div><button type="button" class="btn" id="ferryReturnLive">Return to live</button></div>
+   <input type="range" id="ferryArchiveRange" min="0" max="0" value="0" step="1" aria-label="Browse archived Ferry Beach storm frames">
+   <div class="ferry-archive-meta"><span id="ferryArchiveTime">Archive unavailable</span><span id="ferryArchiveReason"></span></div>
   </div>
 </section>
 
@@ -99,10 +136,18 @@
 <section class="panel side-panel threshold-reference" aria-labelledby="thresholdHeading"><div class="reference-head"><div><div class="eyebrow reference-eyebrow">Portland gauge reference</div><h3 id="thresholdHeading">Flood thresholds</h3></div><span class="reference-note">Used in chart above</span></div><p class="threshold-intro">National Weather Service categories for the <strong>Portland gauge</strong>. They are not property-level inundation measurements or Saco-specific road-closure thresholds.</p><div class="threshold-list" role="list" aria-label="Portland flood thresholds"><div class="threshold" role="listitem"><div class="rail minor"></div><div><strong>Minor flooding</strong><small>Low-lying coastal areas may flood</small></div><b>12.0 ft</b></div><div class="threshold" role="listitem"><div class="rail moderate"></div><div><strong>Moderate flooding</strong><small>More extensive coastal impacts</small></div><b>13.0 ft</b></div><div class="threshold" role="listitem"><div class="rail major"></div><div><strong>Major flooding</strong><small>Substantial coastal impacts possible</small></div><b>14.0 ft</b></div></div><details class="history-reference"><summary>January 2024 historical reference</summary><div class="history-reference-body"><p>Observed Portland gauge peaks from Maine's major coastal storms.</p><div class="compare"><div class="history"><small>January 10, 2024</small><strong>≈13.8 <span>ft</span></strong><span>Significant coastal flooding</span></div><div class="history"><small>January 13, 2024</small><strong>14.57 <span>ft</span></strong><span>Record water level</span></div></div><p class="side-note">A predicted astronomical tide below 12 ft does <strong>not</strong> rule out coastal flooding. Wind-driven surge, breaking waves, erosion and local topography can change the outcome, especially near Camp Ellis.</p><div class="history-link"><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.weather.gov/gyx/PortlandRecordTide">Read NWS January 2024 record report ↗</a></div></div></details></section></div>
 <section class="panel weather-panel" aria-labelledby="weatherHeading">
  <div class="section-head"><div><div class="eyebrow">Local storm conditions · Saco Bay coastal area</div><h3 id="weatherHeading">Wind and air temperature</h3><div class="weather-intro">Coastal-point forecasts are for the Ferry Beach / Saco Bay area. Offshore and coastal wind sensors are shown separately from nearby airport measurements; none are at the property. Gusts and shoreline exposure can differ locally.</div></div><a class="mini-link" id="weatherForecastLink" href="https://forecast.weather.gov/MapClick.php?lat=43.472&amp;lon=-70.385" target="_blank" rel="noopener noreferrer">Official coastal-point forecast ↗</a></div>
- <div class="marine-head"><h4>Coastal wind sensors · measured</h4><span class="sub">NOAA NDBC observations · mph · updated when NOAA reports</span></div>
+ <div class="marine-head"><h4>Coastal and offshore observations · measured</h4><span class="sub">NOAA NDBC wind, waves and pressure where reported · updated when NOAA reports</span></div>
 <div class="grid marine-grid" id="marineWindGrid" aria-live="polite">
  <article class="marine-card offshore" aria-labelledby="marine44007Title"><div class="marine-top"><div><h5 id="marine44007Title">Portland Offshore / Casco Bay</h5><div class="marine-id">Buoy 44007 · offshore Gulf of Maine</div></div><span class="marine-tag" id="marine44007Status">WAITING</span></div>
  <div class="marine-values"><div><small>Wind speed</small><strong class="marine-value speed" id="marine44007Speed">-- <em>mph</em></strong></div><div><small>Wind gust</small><strong class="marine-value gust" id="marine44007Gust">-- <em>mph</em></strong></div></div>
+ <div class="sea-state-grid" aria-label="Buoy 44007 sea state and pressure">
+   <div><span>Significant wave</span><strong id="marine44007Wave">--</strong></div>
+   <div><span>Dominant period</span><strong id="marine44007Period">--</strong></div>
+   <div><span>Wave direction</span><strong id="marine44007WaveDirection">--</strong></div>
+   <div><span>Pressure</span><strong id="marine44007Pressure">--</strong></div>
+   <div><span>Pressure trend</span><strong id="marine44007PressureTrend">--</strong></div>
+   <div><span>Water temp</span><strong id="marine44007WaterTemp">--</strong></div>
+ </div>
  <div class="marine-meta" id="marine44007Meta">Waiting for measured wind and observation time.</div><a class="mini-link" target="_blank" rel="noopener noreferrer" href="https://www.ndbc.noaa.gov/station_page.php?station=44007">View NOAA buoy 44007 ↗</a></article>
  <article class="marine-card coastal" aria-labelledby="marineWEXM1Title"><div class="marine-top"><div><h5 id="marineWEXM1Title">Wells Reserve at Laudholm</h5><div class="marine-id">Station WEXM1 · coastal land station</div></div><span class="marine-tag" id="marineWEXM1Status">WAITING</span></div>
  <div class="marine-values"><div><small>Wind speed</small><strong class="marine-value speed" id="marineWEXM1Speed">-- <em>mph</em></strong></div><div><small>Wind gust</small><strong class="marine-value gust" id="marineWEXM1Gust">-- <em>mph</em></strong></div></div>
@@ -163,6 +208,7 @@
   <section class="brief-section"><h4>What changed versus ~24 hours ago</h4><p id="briefFullChange">Forecast comparison is loading.</p></section>
   <section class="brief-section"><h4>Next 24 hours</h4><p id="briefFull24">NOAA guidance is loading.</p></section>
   <section class="brief-section"><h4>Next 72 hours</h4><p id="briefFull72">NOAA guidance is loading.</p></section>
+  <section class="brief-section"><h4>Coastal Impact Timeline · Past 24 Hours</h4><div class="impact-timeline" id="briefTimeline"><p>Impact timeline is loading.</p></div></section>
   <section class="brief-section"><h4>Local Weather &amp; Coastal Reports</h4><p id="briefFullPulse">Weather-related local reporting is loading.</p><div class="brief-pulse-list" id="briefPulseList"></div></section>
   <div class="brief-source-note" id="briefSourceNote">Only weather and coastal-condition reports are retained here. Community items are anecdotal, not official observations. Public Facebook posts are not reliably indexed and are not represented as a complete scan.</div>
  </div>
@@ -174,6 +220,7 @@
 <script src="js/data.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/water-levels.js"></script>
+<script src="js/intelligence.js"></script>
 <script src="js/alerts.js"></script>
 <script src="js/chart.js"></script>
 <script src="js/briefing.js"></script>

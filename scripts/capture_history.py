@@ -14,6 +14,7 @@ NDBC=("44007","WEXM1")
 LOCAL_TERMS=("saco","camp ellis","ferry beach","biddeford","biddeford pool","old orchard beach","scarborough")
 RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft")
 WEATHER_TOPIC_PATTERNS=(r"\bcoastal\b",r"\bsurf\b",r"\bwaves?\b",r"\bswells?\b",r"\bflood(?:ing|ed|s)?\b",r"\beros(?:ion|ive|ing)\b",r"\bwinds?\b",r"\bgust(?:s|ing|ed)?\b",r"\brain(?:fall|ing|ed|s)?\b",r"\bstorm(?:s|y)?\b",r"\btides?\b",r"\bocean\b",r"\bshore(?:line)?\b",r"\brip currents?\b",r"\bweather\b",r"\bmarine\b",r"\bseawalls?\b",r"\bdunes?\b",r"\binundat(?:ion|ed|ing)\b",r"\bsplash[- ]?over\b",r"\boverwash\b",r"\bhigh water\b",r"\brough seas?\b")
+STORM_THRESHOLDS={"residual_ft":0.75,"wave_ft":6.0,"wind_mph":25.0,"gust_mph":35.0}
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"data"/"briefing-seed-history.json"
 
@@ -71,8 +72,26 @@ def parse_ndbc(raw,station):
             t=dt.datetime(year,int(row["MM"]),int(row["DD"]),int(row["hh"]),int(row["mm"]),tzinfo=dt.timezone.utc)
         except Exception: continue
         wspd=num(row.get("WSPD")); gust=num(row.get("GST")); direction=num(row.get("WDIR"))
-        if wspd is None or wspd>=90: continue
-        out.append({"observed_at":hc.iso(t),"speed_mph":round(wspd*2.2369362921,1),"gust_mph":round(gust*2.2369362921,1) if gust is not None and gust<90 else None,"direction_deg":round(direction) if direction is not None and 0<=direction<=360 else None})
+        if wspd is None or not 0<=wspd<90: continue
+        wave=num(row.get("WVHT")); dpd=num(row.get("DPD")); apd=num(row.get("APD")); mwd=num(row.get("MWD"))
+        pres=num(row.get("PRES")); ptdy=num(row.get("PTDY")); wtmp=num(row.get("WTMP")); atmp=num(row.get("ATMP"))
+        if ptdy is not None and not -50<ptdy<50: ptdy=None
+        if wtmp is not None and not -5<wtmp<45: wtmp=None
+        if atmp is not None and not -80<atmp<60: atmp=None
+        out.append({
+            "observed_at":hc.iso(t),
+            "speed_mph":round(wspd*2.2369362921,1),
+            "gust_mph":round(gust*2.2369362921,1) if gust is not None and 0<=gust<90 else None,
+            "direction_deg":round(direction) if direction is not None and 0<=direction<=360 else None,
+            "wave_height_ft":round(wave*3.280839895,1) if wave is not None and 0<=wave<40 else None,
+            "dominant_period_sec":round(dpd,1) if dpd is not None and 0<=dpd<60 else None,
+            "average_period_sec":round(apd,1) if apd is not None and 0<=apd<60 else None,
+            "wave_direction_deg":round(mwd) if mwd is not None and 0<=mwd<=360 else None,
+            "pressure_mb":round(pres,1) if pres is not None and 800<pres<1100 else None,
+            "pressure_tendency_mb":round(ptdy,1) if ptdy is not None else None,
+            "water_temp_f":round(wtmp*9/5+32,1) if wtmp is not None else None,
+            "air_temp_f":round(atmp*9/5+32,1) if atmp is not None else None,
+        })
     return sorted(out,key=lambda r:hc.parse_iso(r["observed_at"]))
 def ndbc_rows(station):
     url=f"https://www.ndbc.noaa.gov/data/realtime2/{station}.txt"
@@ -160,24 +179,66 @@ def reddit_events():
         out.append({"published_at":hc.iso(pub),"source":"Reddit","source_type":"community","location":event_location(title),"headline":title,"summary":title,"url":link,"event_category":event_category(title),"anecdotal":True,"verification_note":"Public community report; not an official observation."})
     return out[:30]
 
+def _max_recent(rows,field):
+    valid=[r for r in rows if r.get(field) is not None]
+    if not valid: return (None,None)
+    row=max(valid,key=lambda r:r[field])
+    return row[field],row.get("observed_at")
+
+def storm_reasons(snapshot):
+    reasons=[]; w=(snapshot or {}).get("water") or {}; stations=((snapshot or {}).get("marine") or {}).get("stations") or {}
+    peak72=w.get("forecast_peak_72h_ft")
+    if peak72 is not None and peak72>=12.0: reasons.append(f"NOAA modeled peak {peak72:.2f} ft reaches the Portland Minor Flood threshold")
+    residual=w.get("residual_current_ft")
+    if residual is not None and residual>=STORM_THRESHOLDS["residual_ft"]: reasons.append(f"Portland water-level residual is +{residual:.2f} ft")
+    residual24=w.get("residual_24h_max_ft")
+    if residual24 is not None and residual24>=1.0: reasons.append(f"24-hour Portland residual reached +{residual24:.2f} ft")
+    buoy=stations.get("44007") or {}
+    wave=buoy.get("wave_height_ft")
+    if wave is not None and wave>=STORM_THRESHOLDS["wave_ft"]: reasons.append(f"Buoy 44007 significant wave height is {wave:.1f} ft")
+    gust=buoy.get("gust_mph")
+    if gust is not None and gust>=STORM_THRESHOLDS["gust_mph"]: reasons.append(f"Buoy 44007 gust is {gust:.0f} mph")
+    wind=buoy.get("speed_mph")
+    if wind is not None and wind>=STORM_THRESHOLDS["wind_mph"]: reasons.append(f"Buoy 44007 sustained wind is {wind:.0f} mph")
+    for alert in (snapshot or {}).get("alerts") or []:
+        event=(alert.get("event") or "").strip()
+        if event and re.search(r"coastal|high surf|storm surge|flood|gale|storm warning|high wind",event,re.I):
+            reasons.append("Active NWS "+event)
+            break
+    return reasons
+
 def current_snapshot(now=None):
     now=now or now_utc()
     obs=decode_noaa(safe_json(noaa_url("water_level",begin_date=(now-dt.timedelta(days=2)).strftime("%Y%m%d"),end_date=now.strftime("%Y%m%d"))) or {})
     latest=max(obs,key=lambda x:x[0]) if obs else None; obs24=peak(obs,now-dt.timedelta(hours=24),now)
     model=decode_noaa(safe_json(noaa_url("ofs_water_level",begin_date=(now-dt.timedelta(days=1)).strftime("%Y%m%d"),end_date=(now+dt.timedelta(days=4)).strftime("%Y%m%d"))) or {})
     p24=peak(model,now-dt.timedelta(minutes=10),now+dt.timedelta(hours=24)); p72=peak(model,now-dt.timedelta(minutes=10),now+dt.timedelta(hours=72))
-    preds=decode_noaa(safe_json(noaa_url("predictions",begin_date=now.strftime("%Y%m%d"),end_date=(now+dt.timedelta(days=4)).strftime("%Y%m%d"),interval="6")) or {})
+    preds=decode_noaa(safe_json(noaa_url("predictions",begin_date=(now-dt.timedelta(days=2)).strftime("%Y%m%d"),end_date=(now+dt.timedelta(days=4)).strftime("%Y%m%d"),interval="6")) or {})
     astro=nearest(preds,p72[0],15) if p72 else None
+    residuals=[]
+    for ot,ov in obs:
+        tide=nearest(preds,ot,15)
+        if tide: residuals.append((ot,ov-tide[1]))
+    residual_latest=nearest(residuals,latest[0],15) if latest else None
+    residual24=peak(residuals,now-dt.timedelta(hours=24),now)
     alerts=active_alerts(); marine={}
     for station in NDBC:
         try:
             rows,url=ndbc_rows(station); recent=[r for r in rows if (hc.parse_iso(r["observed_at"]) or now)>=now-dt.timedelta(hours=24)]; last=rows[-1] if rows else None
-            marine[station]={**(last or {}),"source":url,"max_24h_speed_mph":max((r["speed_mph"] for r in recent),default=None),"max_24h_gust_mph":max((r["gust_mph"] for r in recent if r.get("gust_mph") is not None),default=None)} if last else None
+            if last:
+                max_speed,max_speed_at=_max_recent(recent,"speed_mph")
+                max_gust,max_gust_at=_max_recent(recent,"gust_mph")
+                max_wave,max_wave_at=_max_recent(recent,"wave_height_ft")
+                marine[station]={**last,"source":url,"max_24h_speed_mph":max_speed,"max_24h_speed_at":max_speed_at,"max_24h_gust_mph":max_gust,"max_24h_gust_at":max_gust_at,"max_24h_wave_height_ft":max_wave,"max_24h_wave_at":max_wave_at}
+            else: marine[station]=None
         except Exception as exc: marine[station]={"error":str(exc)[:200]}
     try: forecast=summarize_forecast(nws_hourly_forecast(),now)
     except Exception as exc: forecast={"source":None,"error":str(exc)[:200]}
     p72ft=round(p72[1],2) if p72 else None; astroft=round(astro[1],2) if astro else None
-    return {"snapshot_at":hc.iso(now),"snapshot_kind":"realtime","provenance":{"forecast":"live_noaa_ofs_capture","observations":"NOAA CO-OPS station 8418150","astronomical_tide":"NOAA CO-OPS predictions","marine":"NDBC realtime2","alerts":"NWS API active alerts","weather_forecast":"NWS hourly point forecast"},"water":{"station":STATION,"latest_observed_ft":round(latest[1],2) if latest else None,"latest_observed_at":hc.iso(latest[0]) if latest else None,"observed_24h_max_ft":round(obs24[1],2) if obs24 else None,"observed_24h_max_time":hc.iso(obs24[0]) if obs24 else None,"forecast_peak_24h_ft":round(p24[1],2) if p24 else None,"forecast_peak_24h_time":hc.iso(p24[0]) if p24 else None,"forecast_peak_72h_ft":p72ft,"forecast_peak_72h_time":hc.iso(p72[0]) if p72 else None,"astronomical_tide_at_peak_ft":astroft,"model_uplift_ft":round(p72ft-astroft,2) if p72ft is not None and astroft is not None else None,"threshold_margins_ft":hc.threshold_margins(p72ft)},"forecast_conditions":forecast,"marine":{"stations":marine},"alerts":alerts}
+    snapshot={"snapshot_at":hc.iso(now),"snapshot_kind":"realtime","provenance":{"forecast":"live_noaa_ofs_capture","observations":"NOAA CO-OPS station 8418150","astronomical_tide":"NOAA CO-OPS predictions","marine":"NDBC realtime2","alerts":"NWS API active alerts","weather_forecast":"NWS hourly point forecast"},"water":{"station":STATION,"latest_observed_ft":round(latest[1],2) if latest else None,"latest_observed_at":hc.iso(latest[0]) if latest else None,"observed_24h_max_ft":round(obs24[1],2) if obs24 else None,"observed_24h_max_time":hc.iso(obs24[0]) if obs24 else None,"residual_current_ft":round(residual_latest[1],2) if residual_latest else None,"residual_current_at":hc.iso(residual_latest[0]) if residual_latest else None,"residual_24h_max_ft":round(residual24[1],2) if residual24 else None,"residual_24h_max_time":hc.iso(residual24[0]) if residual24 else None,"forecast_peak_24h_ft":round(p24[1],2) if p24 else None,"forecast_peak_24h_time":hc.iso(p24[0]) if p24 else None,"forecast_peak_72h_ft":p72ft,"forecast_peak_72h_time":hc.iso(p72[0]) if p72 else None,"astronomical_tide_at_peak_ft":astroft,"model_uplift_ft":round(p72ft-astroft,2) if p72ft is not None and astroft is not None else None,"threshold_margins_ft":hc.threshold_margins(p72ft)},"forecast_conditions":forecast,"marine":{"stations":marine},"alerts":alerts}
+    reasons=storm_reasons(snapshot)
+    snapshot["storm_mode"]={"active":bool(reasons),"reasons":reasons,"basis":"Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."}
+    return snapshot
 
 def hourly_sample(rows,start,end):
     by={}

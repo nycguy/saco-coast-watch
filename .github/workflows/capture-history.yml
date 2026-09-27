@@ -6,12 +6,15 @@ on:
       - 'scripts/history_core.py'
       - 'scripts/capture_history.py'
       - 'scripts/backfill_gomofs.py'
+      - 'scripts/archive_ferry_camera.py'
       - 'tests/test_history_core.py'
       - 'tests/test_capture_history.py'
       - 'tests/test_fetch_briefing.py'
+      - 'tests/test_archive_ferry_camera.py'
+      - 'tests/test_fetch_wind.py'
       - '.github/workflows/capture-history.yml'
   schedule:
-    - cron: '17 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 permissions:
   contents: write
@@ -31,7 +34,7 @@ jobs:
           path: .history-store
       - name: Run deterministic history tests
         run: |
-          python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py
+          python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_archive_ferry_camera.py tests/test_fetch_wind.py
       - name: Determine whether model archive backfill is needed
         id: backfill
         shell: bash
@@ -66,6 +69,16 @@ jobs:
             --history .history-store/data/history/coastal-history.json \
             --recent-output /tmp/coastal-history-recent.json \
             "${ARGS[@]}"
+      - name: Archive Ferry Beach frame during significant conditions
+        shell: bash
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+          python3 scripts/archive_ferry_camera.py \
+            --history .history-store/data/history/coastal-history.json \
+            --output-dir .history-store/data/webcams/ferry-history
       - name: Validate durable history
         run: |
           python3 - <<'PY'
@@ -87,6 +100,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/history/coastal-history.json
+          if [ -d data/webcams/ferry-history ]; then
+            git add data/webcams/ferry-history
+          fi
           if git diff --cached --quiet; then
             echo "No history change to commit"
             exit 0

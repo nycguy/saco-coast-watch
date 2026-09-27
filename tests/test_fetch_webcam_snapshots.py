@@ -42,6 +42,10 @@ class WebcamSnapshotTests(unittest.TestCase):
   self.assertNotIn('id="ferryStart"',html)
   self.assertIn('connectFerryLive();',webcams)
   self.assertIn('application/vnd.apple.mpegurl',webcams)
+  self.assertIn('id="ferryArchiveRange"',html)
+  self.assertIn('id="ferryReturnLive"',html)
+  self.assertIn('loadFerryArchive();',webcams)
+  self.assertIn('data/webcams/ferry-history/index.json',webcams)
  def test_camera_entry_marks_source_unavailable_without_fake_image(self):
   with tempfile.TemporaryDirectory() as td:
    dest=pathlib.Path(td)/'failed.jpg'

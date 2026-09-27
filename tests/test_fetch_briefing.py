@@ -29,4 +29,17 @@ class BriefingTests(unittest.TestCase):
   d=f.build_payload(cur,hist,now)
   self.assertIsNone(d['forecast_change_24h']['comparison']); self.assertIn('not available',d['forecast_change_24h']['text'])
   self.assertIn('no forecast-change value is being inferred',d['forecast_change_24h']['text'])
+ def test_forecast_evolution_storm_mode_and_timeline(self):
+  now=dt.datetime(2026,9,27,12,tzinfo=UTC)
+  old24={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.2,'forecast_peak_72h_time':'2026-09-28T04:00:00Z'},'alerts':[]}
+  old12={'snapshot_at':'2026-09-27T00:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.5,'forecast_peak_72h_time':'2026-09-28T08:00:00Z'},'alerts':[]}
+  old6={'snapshot_at':'2026-09-27T06:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.7,'forecast_peak_72h_time':'2026-09-28T10:00:00Z'},'alerts':[]}
+  cur={'snapshot_at':'2026-09-27T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'observed_24h_max_ft':11.0,'observed_24h_max_time':'2026-09-27T10:00:00Z','residual_24h_max_ft':1.1,'residual_24h_max_time':'2026-09-27T09:00:00Z','forecast_peak_24h_ft':11.8,'forecast_peak_24h_time':'2026-09-28T10:00:00Z','forecast_peak_72h_ft':12.1,'forecast_peak_72h_time':'2026-09-28T12:00:00Z','astronomical_tide_at_peak_ft':10.8,'model_uplift_ft':1.3},'forecast_conditions':{},'marine':{'stations':{'44007':{'wave_height_ft':7.2,'max_24h_wave_height_ft':8.0,'max_24h_wave_at':'2026-09-27T08:00:00Z','max_24h_gust_mph':38.0,'max_24h_gust_at':'2026-09-27T07:00:00Z'}}},'alerts':[],'storm_mode':{'active':True,'reasons':['wave'],'basis':'test'}}
+  hist={'schema_version':2,'generated_at':'2026-09-27T11:00:00Z','window_basis':'fixed','station':'8418150','thresholds_ft_mllw':{},'snapshots':[old24,old12,old6],'daily_rollups':[],'alert_events':[],'local_events':[],'backfill':{'water_observed_daily_peaks':[]},'provenance_notes':{}}
+  d=f.build_payload(cur,hist,now)
+  self.assertEqual([x['label'] for x in d['forecast_evolution']['items']],['24h ago','12h ago','6h ago','Now'])
+  self.assertTrue(d['storm_mode']['active'])
+  titles=[x['title'] for x in d['impact_timeline']]
+  self.assertTrue(any('residual' in x.lower() for x in titles))
+  self.assertTrue(any('wave' in x.lower() for x in titles))
 if __name__=='__main__': unittest.main()

@@ -31,6 +31,7 @@ def install_noaa_fixture(page):
     for i,value in enumerate(observed_values):
         t=now-timedelta(hours=24-i*3)
         obs.append({"t":stamp(t),"v":f"{value:.2f}"})
+        tide.append({"t":stamp(t),"v":f"{value-0.65:.2f}"})
     model=[]
     for h in range(0,73,3):
         t=now+timedelta(hours=h)
@@ -65,6 +66,14 @@ def install_noaa_fixture(page):
         "forecast_change_24h":{"text":"Compared with about 24 hours ago, the modeled 72-hour peak increased by 0.50 ft."},
         "next_24h":{"text":"The next 24 hours remain focused on the midday high-water period."},
         "next_72h":{"text":"The next 72 hours trend toward improving water levels after Monday."},
+        "forecast_evolution":{"basis":"Captured forecast snapshots nearest 24, 12 and 6 hours ago plus current.","items":[
+            {"label":"24h ago","target_hours_ago":24,"snapshot_at":(now-timedelta(hours=24)).isoformat().replace("+00:00","Z"),"peak_ft":10.9,"peak_time":(now+timedelta(hours=18)).isoformat().replace("+00:00","Z"),"minor_margin_ft":1.1},
+            {"label":"12h ago","target_hours_ago":12,"snapshot_at":(now-timedelta(hours=12)).isoformat().replace("+00:00","Z"),"peak_ft":11.1,"peak_time":(now+timedelta(hours=19)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.9},
+            {"label":"6h ago","target_hours_ago":6,"snapshot_at":(now-timedelta(hours=6)).isoformat().replace("+00:00","Z"),"peak_ft":11.3,"peak_time":(now+timedelta(hours=20)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.7},
+            {"label":"Now","target_hours_ago":0,"snapshot_at":now.isoformat().replace("+00:00","Z"),"peak_ft":11.5,"peak_time":(now+timedelta(hours=21)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.5}
+        ]},
+        "storm_mode":{"active":True,"reasons":["Synthetic browser test storm signal"],"basis":"test fixture"},
+        "impact_timeline":[{"at":(now-timedelta(hours=2)).isoformat().replace("+00:00","Z"),"type":"water","title":"Portland observed water level test event","source":"NOAA CO-OPS station 8418150","source_type":"official_observation","url":None,"anecdotal":False}],
         "local_pulse":{
             "summary":"2 public local items found in the rolling public scan (1 news, 1 Reddit).",
             "facebook_note":"Public Facebook posts are not included because reliable public indexing and access are inconsistent.",
@@ -167,6 +176,10 @@ def assert_common(page):
     assert "last visit" in brief_text.lower()
     assert "0.50 ft" in brief_text
     assert "2 public local items" in brief_text
+    assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
+    assert page.locator("#highWaterWindows .high-window").count()>=1
+    assert page.locator("#stormModePanel").is_visible()
+    assert page.locator("#residualSpark .mini-line").count()==1
     card_height=briefing.bounding_box()["height"]
     assert card_height<330,f"briefing card should remain compact: {card_height}px"
 
@@ -177,6 +190,8 @@ def assert_common(page):
     assert "What changed versus ~24 hours ago" in dialog.inner_text()
     assert "Next 72 hours" in dialog.inner_text()
     assert dialog.locator(".brief-pulse-item").count()==2
+    assert dialog.locator("#briefTimeline .impact-item").count()==1
+    assert "Portland observed water level test event" in dialog.inner_text()
     assert "Public Facebook posts are not included" in dialog.inner_text()
     page.locator("#briefClose").click()
     assert not dialog.evaluate("el => el.open")

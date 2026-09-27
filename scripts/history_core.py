@@ -168,18 +168,63 @@ def diff_alerts(previous, current, at_time=None):
         elif new_rank<old_rank:
             change="downgraded"
         else:
-            old_exp=parse_iso(old.get("expires") or old.get("ends")); new_exp=parse_iso(cur.get("expires") or cur.get("ends"))
+            old_exp=parse_iso(old.get("ends") or old.get("expires")); new_exp=parse_iso(cur.get("ends") or cur.get("expires"))
             change="extended" if old_exp and new_exp and new_exp>old_exp+dt.timedelta(minutes=5) else None
         if change:
             events.append({"change_type":change,"event":cur.get("event"),"previous_event":old.get("event"),"alert_id":ident,"at":cur.get("sent") or cur.get("effective") or iso(at_time)})
     for i,old in enumerate(previous):
         if i in used_prev: continue
-        exp=parse_iso(old.get("expires") or old.get("ends"))
+        exp=parse_iso(old.get("ends") or old.get("expires"))
         if exp and exp<=at_time+dt.timedelta(minutes=5):
             events.append({"change_type":"expired","event":old.get("event"),"alert_id":_alert_identity(old),"at":iso(exp)})
         else:
             events.append({"change_type":"ended","event":old.get("event"),"alert_id":_alert_identity(old),"at":iso(at_time)})
     return events
+
+
+def alert_events_from_products(products):
+    """Reconstruct alert changes from archived NWS alert products.
+
+    Products are applied in sent-time groups so a cancellation plus replacement
+    warning at the same issuance time is classified as an upgrade/downgrade
+    instead of as unrelated expire/issue events.
+    """
+    rows=[]
+    for p in products or []:
+        t=parse_iso(p.get("sent") or p.get("effective"))
+        if t and p.get("event"):
+            rows.append((t,p))
+    rows.sort(key=lambda x:x[0])
+    active={}
+    events=[]
+    i=0
+    while i<len(rows):
+        at=rows[i][0]; group=[]
+        while i<len(rows) and rows[i][0]==at:
+            group.append(rows[i][1]); i+=1
+        previous=list(active.values())
+        cancelled=set()
+        for p in group:
+            key=(alert_family(p.get("event")),_area_key(p))
+            if (p.get("message_type") or "").lower()=="cancel":
+                cancelled.add(key)
+                active.pop(key,None)
+            else:
+                active[key]=p
+        changes=diff_alerts(previous,list(active.values()),at)
+        for e in changes:
+            key=(alert_family(e.get("event")),_area_key(next((p for p in previous if p.get("event")==e.get("event")),{})))
+            if e.get("change_type")=="ended" and key in cancelled:
+                e["change_type"]="expired"
+            e["source"]="NWS historical alert product"
+            e["source_type"]="official_alert"
+            matched=next((p for p in group if p.get("event")==e.get("event")),None)
+            if matched:
+                e["headline"]=matched.get("headline")
+                e["area"]=matched.get("area") or matched.get("areaDesc")
+            events.append(e)
+    return merge_events([],events)
+
 
 
 def merge_events(existing, additions, max_items=1000):

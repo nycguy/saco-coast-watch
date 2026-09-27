@@ -43,6 +43,23 @@ class HistoryCoreTests(unittest.TestCase):
         self.assertEqual([x["change_type"] for x in changes],["extended","issued"])
         expired=h.diff_alerts(old,[],t)
         self.assertEqual(expired[0]["change_type"],"expired")
+    def test_archived_alert_products_reconstruct_extend_upgrade_expire(self):
+        products=[
+            {"id":"A1","event":"Coastal Flood Advisory","sent":"2026-09-24T10:00:00Z","ends":"2026-09-24T18:00:00Z","expires":"2026-09-24T12:00:00Z","area":"Coastal York","message_type":"Alert"},
+            {"id":"A2","event":"Coastal Flood Advisory","sent":"2026-09-24T12:00:00Z","ends":"2026-09-24T21:00:00Z","expires":"2026-09-24T14:00:00Z","area":"Coastal York","message_type":"Update","references":[{"@id":"A1"}]},
+            {"id":"A3","event":"Coastal Flood Advisory","sent":"2026-09-24T14:00:00Z","ends":"2026-09-24T21:00:00Z","expires":"2026-09-24T14:05:00Z","area":"Coastal York","message_type":"Cancel","references":[{"@id":"A2"}]},
+            {"id":"A4","event":"Coastal Flood Warning","sent":"2026-09-24T14:00:00Z","ends":"2026-09-24T21:00:00Z","expires":"2026-09-24T16:00:00Z","area":"Coastal York","message_type":"Alert"},
+            {"id":"A5","event":"Coastal Flood Warning","sent":"2026-09-24T16:00:00Z","ends":"2026-09-24T17:00:00Z","expires":"2026-09-24T16:05:00Z","area":"Coastal York","message_type":"Cancel","references":[{"@id":"A4"}]},
+        ]
+        events=h.alert_events_from_products(products)
+        kinds=[e["change_type"] for e in events]
+        self.assertIn("issued",kinds)
+        self.assertIn("extended",kinds)
+        self.assertIn("upgraded",kinds)
+        self.assertIn("expired",kinds)
+        extension=next(e for e in events if e["change_type"]=="extended")
+        self.assertEqual(extension["at"],"2026-09-24T12:00:00Z")
+
     def test_alert_upgrade_downgrade(self):
         t=dt.datetime(2026,9,27,12,tzinfo=UTC)
         old=[{"event":"Coastal Flood Advisory","area":"Coastal York"}]

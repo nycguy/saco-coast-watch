@@ -27,8 +27,21 @@
         "Buoy 44007 sustained wind is 29 mph",
         "Active NWS Gale Warning"
       ]
+    },
+    {
+      "captured_at": "2026-09-27T22:49:10Z",
+      "file": "20260927T224910Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Portland water-level residual is +1.12 ft",
+        "24-hour Portland residual reached +1.21 ft",
+        "Buoy 44007 significant wave height is 8.2 ft",
+        "Active NWS Gale Warning",
+        "Adaptive focus: Coastal Flood",
+        "Adaptive focus: Heavy Rain"
+      ]
     }
   ],
-  "generated_at": "2026-09-27T20:06:25Z",
+  "generated_at": "2026-09-27T22:49:10Z",
   "retention_hours": 24
 }

@@ -13,11 +13,21 @@ function residualSeries(hours=24){
   return out;
 }
 
-function miniLine(svgId,points,valueKey='v',zeroLine=false){
+function miniLine(svgId,points,valueKey='v',zeroLine=false,options={}){
   const svg=$(svgId); if(!svg)return;
   svg.replaceChildren();
   const ns='http://www.w3.org/2000/svg',W=420,H=120,pad=12;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.classList.toggle('mini-chart-interactive',Boolean(options.tooltip));
+  if(options.tooltip){
+    svg.setAttribute('tabindex','0');
+    if(options.ariaLabel)svg.setAttribute('aria-label',options.ariaLabel);
+  }else{
+    svg.removeAttribute('tabindex');
+  }
+  const parent=svg.parentElement;
+  let tip=parent?.querySelector(`.mini-chart-tooltip[data-for="${svgId}"]`)||null;
+  if(tip)tip.hidden=true;
   if(!points.length){
     const t=document.createElementNS(ns,'text');t.setAttribute('x',W/2);t.setAttribute('y',H/2);t.setAttribute('text-anchor','middle');t.textContent='History building';svg.append(t);return;
   }
@@ -38,6 +48,72 @@ function miniLine(svgId,points,valueKey='v',zeroLine=false){
   for(let i=0;i<points.length;i++){
     const c=document.createElementNS(ns,'circle');c.setAttribute('cx',x(points[i],i));c.setAttribute('cy',y(points[i][valueKey]));c.setAttribute('r',points.length<8?4:2.5);c.setAttribute('class','mini-dot');svg.append(c);
   }
+  if(!options.tooltip||!parent)return;
+
+  if(!tip){
+    tip=document.createElement('div');
+    tip.className='mini-chart-tooltip';
+    tip.dataset.for=svgId;
+    tip.setAttribute('role','status');
+    tip.hidden=true;
+    parent.append(tip);
+  }
+  const guide=document.createElementNS(ns,'line');
+  guide.setAttribute('class','mini-hover-guide');guide.setAttribute('y1',pad);guide.setAttribute('y2',H-pad);guide.hidden=true;svg.append(guide);
+  const active=document.createElementNS(ns,'circle');
+  active.setAttribute('class','mini-hover-dot');active.setAttribute('r','5');active.hidden=true;svg.append(active);
+  const hit=document.createElementNS(ns,'rect');
+  hit.setAttribute('x',pad);hit.setAttribute('y',pad);hit.setAttribute('width',W-2*pad);hit.setAttribute('height',H-2*pad);hit.setAttribute('fill','transparent');hit.setAttribute('pointer-events','all');svg.append(hit);
+
+  let selected=-1,pinned=false;
+  const nearestIndex=clientX=>{
+    const box=svg.getBoundingClientRect();
+    const px=(clientX-box.left)/Math.max(1,box.width)*W;
+    let best=0,bestDistance=Infinity;
+    for(let i=0;i<points.length;i++){
+      const distance=Math.abs(x(points[i],i)-px);
+      if(distance<bestDistance){best=i;bestDistance=distance;}
+    }
+    return best;
+  };
+  const hide=()=>{tip.hidden=true;guide.hidden=true;active.hidden=true;selected=-1;};
+  const show=i=>{
+    i=Math.max(0,Math.min(points.length-1,i));
+    selected=i;
+    const point=points[i],px=x(point,i),py=y(point[valueKey]);
+    guide.setAttribute('x1',px);guide.setAttribute('x2',px);guide.hidden=false;
+    active.setAttribute('cx',px);active.setAttribute('cy',py);active.hidden=false;
+    const detail=options.tooltip(point,i)||{},rows=Array.isArray(detail.rows)?detail.rows:[];
+    tip.replaceChildren();
+    const title=document.createElement('time');title.textContent=detail.title||'Selected point';tip.append(title);
+    for(const [label,value] of rows){
+      const row=document.createElement('div');row.className='mini-tt-row';
+      const name=document.createElement('span');name.textContent=label;
+      const val=document.createElement('b');val.textContent=value;
+      row.append(name,val);tip.append(row);
+    }
+    tip.hidden=false;
+    const svgBox=svg.getBoundingClientRect(),parentBox=parent.getBoundingClientRect();
+    const leftInParent=(svgBox.left-parentBox.left)+(px/W)*svgBox.width;
+    const topInParent=(svgBox.top-parentBox.top)+(py/H)*svgBox.height;
+    const half=Math.min(104,Math.max(82,(parent.clientWidth-24)/2));
+    tip.style.left=Math.max(half,Math.min(parent.clientWidth-half,leftInParent))+'px';
+    tip.style.top=Math.max(8,topInParent+(py>H/2?-92:13))+'px';
+  };
+  hit.addEventListener('pointermove',event=>{
+    if(event.pointerType==='mouse'||event.pointerType==='pen'){pinned=false;show(nearestIndex(event.clientX));}
+  });
+  hit.addEventListener('pointerleave',()=>{if(!pinned)hide();});
+  hit.addEventListener('pointerdown',event=>{pinned=true;show(nearestIndex(event.clientX));});
+  svg.onkeydown=event=>{
+    if(event.key==='Escape'){pinned=false;hide();return;}
+    if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight'&&event.key!=='Enter'&&event.key!==' ')return;
+    event.preventDefault();pinned=true;
+    if(selected<0)selected=event.key==='ArrowLeft'?points.length-1:0;
+    else if(event.key==='ArrowLeft')selected=Math.max(0,selected-1);
+    else if(event.key==='ArrowRight')selected=Math.min(points.length-1,selected+1);
+    show(selected);
+  };
 }
 
 function renderResidualIntelligence(){
@@ -45,7 +121,17 @@ function renderResidualIntelligence(){
   $('residualNow').textContent=latest?(latest.v>=0?'+':'')+fmtN(latest.v)+' ft':'--';
   $('residualMax').textContent=max?(max.v>=0?'+':'')+fmtN(max.v)+' ft':'--';
   $('residualMeta').textContent=max?'24h max at '+dayTime(max.t)+' ET. Positive values mean observed water was above the astronomical prediction.':'Needs matching Portland observations and astronomical tide predictions.';
-  miniLine('residualSpark',rows,'v',true);
+  miniLine('residualSpark',rows,'v',true,{
+    ariaLabel:'Interactive Portland water-level residual over the past 24 hours. Hover, tap, or use the left and right arrow keys to inspect exact values.',
+    tooltip:point=>({
+      title:dayTime(point.t)+' ET',
+      rows:[
+        ['Storm surge residual',(point.v>=0?'+':'')+fmtN(point.v)+' ft'],
+        ['Observed water level',fmtN(point.observed)+' ft MLLW'],
+        ['Astronomical tide',fmtN(point.tide)+' ft MLLW']
+      ]
+    })
+  });
 }
 
 function modelWindowForHigh(high){

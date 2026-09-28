@@ -48,3 +48,69 @@
     justify-self:end
   }
 }
+
+
+/* iOS installed-PWA safe-area handling */
+@supports (padding-top: env(safe-area-inset-top)){
+  body{
+    min-height:100dvh;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .site-header{
+    top:0;
+    padding-top:env(safe-area-inset-top);
+  }
+  .section{
+    scroll-margin-top:calc(76px + env(safe-area-inset-top));
+  }
+}
+@media(max-width:720px){
+  .header-inner{
+    column-gap:10px;
+  }
+  .header-actions{
+    min-width:0;
+    flex:0 0 auto;
+  }
+}
+@media(max-width:450px){
+  .brand{
+    min-width:0;
+    flex:1 1 auto;
+  }
+  .brand-mark{
+    width:36px;
+    height:36px;
+    flex:0 0 36px;
+  }
+  .brand-mark svg{width:28px}
+  .brand strong{
+    display:block;
+    font-size:13px;
+    letter-spacing:.12em;
+    white-space:nowrap;
+  }
+  .header-actions{gap:5px}
+  .header-btn{
+    min-height:40px;
+    padding:8px 10px;
+    font-size:10px;
+    white-space:nowrap;
+  }
+  .top-nav{
+    gap:0;
+    justify-content:space-between;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .top-nav::-webkit-scrollbar{display:none}
+  .top-nav a{
+    flex:0 0 auto;
+    padding:2px 8px 4px;
+  }
+}
+@media(max-width:370px){
+  .brand strong{font-size:12px;letter-spacing:.09em}
+  .header-btn{padding-inline:8px}
+}

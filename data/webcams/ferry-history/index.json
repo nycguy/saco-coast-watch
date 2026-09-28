@@ -40,8 +40,18 @@
         "Adaptive focus: Coastal Flood",
         "Adaptive focus: Heavy Rain"
       ]
+    },
+    {
+      "captured_at": "2026-09-28T01:21:22Z",
+      "file": "20260928T012122Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Portland water-level residual is +1.21 ft",
+        "24-hour Portland residual reached +1.21 ft",
+        "Adaptive focus: Coastal Flood"
+      ]
     }
   ],
-  "generated_at": "2026-09-27T22:49:10Z",
+  "generated_at": "2026-09-28T01:21:22Z",
   "retention_hours": 24
 }

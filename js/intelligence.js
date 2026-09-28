@@ -59,9 +59,9 @@ function miniLine(svgId,points,valueKey='v',zeroLine=false,options={}){
     parent.append(tip);
   }
   const guide=document.createElementNS(ns,'line');
-  guide.setAttribute('class','mini-hover-guide');guide.setAttribute('y1',pad);guide.setAttribute('y2',H-pad);guide.hidden=true;svg.append(guide);
+  guide.setAttribute('class','mini-hover-guide');guide.setAttribute('y1',pad);guide.setAttribute('y2',H-pad);guide.style.display='none';svg.append(guide);
   const active=document.createElementNS(ns,'circle');
-  active.setAttribute('class','mini-hover-dot');active.setAttribute('r','5');active.hidden=true;svg.append(active);
+  active.setAttribute('class','mini-hover-dot');active.setAttribute('r','5');active.style.display='none';svg.append(active);
   const hit=document.createElementNS(ns,'rect');
   hit.setAttribute('x',pad);hit.setAttribute('y',pad);hit.setAttribute('width',W-2*pad);hit.setAttribute('height',H-2*pad);hit.setAttribute('fill','transparent');hit.setAttribute('pointer-events','all');svg.append(hit);
 
@@ -76,13 +76,13 @@ function miniLine(svgId,points,valueKey='v',zeroLine=false,options={}){
     }
     return best;
   };
-  const hide=()=>{tip.hidden=true;guide.hidden=true;active.hidden=true;selected=-1;};
+  const hide=()=>{tip.hidden=true;guide.style.display='none';active.style.display='none';selected=-1;};
   const show=i=>{
     i=Math.max(0,Math.min(points.length-1,i));
     selected=i;
     const point=points[i],px=x(point,i),py=y(point[valueKey]);
-    guide.setAttribute('x1',px);guide.setAttribute('x2',px);guide.hidden=false;
-    active.setAttribute('cx',px);active.setAttribute('cy',py);active.hidden=false;
+    guide.setAttribute('x1',px);guide.setAttribute('x2',px);guide.style.display='';
+    active.setAttribute('cx',px);active.setAttribute('cy',py);active.style.display='';
     const detail=options.tooltip(point,i)||{},rows=Array.isArray(detail.rows)?detail.rows:[];
     tip.replaceChildren();
     const title=document.createElement('time');title.textContent=detail.title||'Selected point';tip.append(title);

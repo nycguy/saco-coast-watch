@@ -50,6 +50,22 @@ def main():
 
         overflow=page.evaluate("document.documentElement.scrollWidth - window.innerWidth")
         assert overflow <= 3, f"mobile horizontal overflow: {overflow}px"
+        # Installed iPhone PWAs have a native status-area overlay. Simulate a
+        # non-zero safe-area inset and verify the header actions remain usable.
+        safe=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=3)
+        safe.goto(BASE,wait_until="domcontentloaded",timeout=30000)
+        safe.add_style_tag(content=":root{--test-safe-top:47px}.site-header{padding-top:max(env(safe-area-inset-top),var(--test-safe-top))}")
+        safe.wait_for_timeout(100)
+        refresh_box=safe.locator("#refreshBtn").bounding_box()
+        share_box=safe.locator("#shareBtn").bounding_box()
+        nav_box=safe.locator(".top-nav").bounding_box()
+        assert refresh_box and share_box and nav_box
+        assert refresh_box["x"]+refresh_box["width"] <= 390, f"refresh clipped on iPhone PWA: {refresh_box}"
+        assert share_box["x"] >= 0, f"share clipped on iPhone PWA: {share_box}"
+        assert refresh_box["y"] >= 47, f"refresh overlaps simulated iPhone safe area: {refresh_box}"
+        safe_overflow=safe.evaluate("document.documentElement.scrollWidth - window.innerWidth")
+        assert safe_overflow <= 3, f"safe-area mobile horizontal overflow: {safe_overflow}px"
+        safe.close()
 
         Path("eastcast-smoke-mobile.png").unlink(missing_ok=True)
         page.screenshot(path="eastcast-smoke-mobile.png",full_page=True)

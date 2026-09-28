@@ -51,5 +51,17 @@ class FrontendArchitectureTests(unittest.TestCase):
   self.assertIn('function renderHazards()',hazards)
   self.assertIn('async function loadHazards()',hazards)
 
+ def test_residual_chart_interaction_contract(self):
+  intelligence=(ROOT/'js'/'intelligence.js').read_text(encoding='utf-8')
+  css=(ROOT/'css'/'app.css').read_text(encoding='utf-8')
+  self.assertIn("miniLine('residualSpark',rows,'v',true,{",intelligence)
+  self.assertIn("['Observed water level'",intelligence)
+  self.assertIn("['Astronomical tide'",intelligence)
+  self.assertIn("hit.addEventListener('pointermove'",intelligence)
+  self.assertIn("hit.addEventListener('pointerdown'",intelligence)
+  self.assertIn("event.key==='ArrowLeft'",intelligence)
+  self.assertIn('.mini-chart-tooltip{',css)
+  self.assertIn('touch-action:pan-y',css)
+
 if __name__=='__main__':
  unittest.main()

@@ -63,5 +63,20 @@ class FrontendArchitectureTests(unittest.TestCase):
   self.assertIn('.mini-chart-tooltip{',css)
   self.assertIn('touch-action:pan-y',css)
 
+ def test_impact_timeline_alignment_and_favicon(self):
+  html=INDEX.read_text(encoding='utf-8')
+  css=(ROOT/'css'/'app.css').read_text(encoding='utf-8')
+  favicon=ROOT/'favicon.svg'
+  self.assertTrue(favicon.is_file())
+  icon=favicon.read_text(encoding='utf-8')
+  self.assertIn('viewBox="0 0 64 64"',icon)
+  self.assertIn('lighthouse and wave icon',icon)
+  self.assertIn('type="image/svg+xml" href="favicon.svg"',html)
+  self.assertIn('.impact-forecast-panel{overflow:hidden;padding:18px 0 10px}',css)
+  self.assertIn('.impact-forecast-panel .section-head{margin:0 18px 14px}',css)
+  self.assertIn('padding:4px 18px 10px',css)
+  self.assertIn('.impact-forecast-panel{padding:14px 0 8px}',css)
+  self.assertIn('.impact-forecast-panel .section-head{margin:0 14px 12px}',css)
+
 if __name__=='__main__':
  unittest.main()

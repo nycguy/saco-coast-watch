@@ -13,6 +13,7 @@
   const ferryArchiveCount=document.getElementById('ferryArchiveCount');
   const ferryArchiveTime=document.getElementById('ferryArchiveTime');
   const ferryArchiveReason=document.getElementById('ferryArchiveReason');
+  const ferryArchiveContext=document.getElementById('ferryArchiveContext');
   const ferryReturnLive=document.getElementById('ferryReturnLive');
   let hls=null,archiveFrames=[];
 
@@ -65,6 +66,19 @@
       if(ferryVideo?.hidden)setStatus(ferryStatus,'Latest still image is unavailable. You can still open the live camera.',true);
     }
   }
+  function renderArchiveContext(frame){
+    if(!ferryArchiveContext)return;
+    const c=frame?.context||{},rows=[
+      ['Event',c.event],['Phase',c.phase],['Impact',c.impact],
+      ['Water level',Number.isFinite(Number(c.water_level_ft))?Number(c.water_level_ft).toFixed(2)+' ft MLLW':null],
+      ['Residual',Number.isFinite(Number(c.residual_ft))?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
+      ['Waves',Number.isFinite(Number(c.wave_height_ft))?Number(c.wave_height_ft).toFixed(1)+' ft':null],
+      ['Dominant period',Number.isFinite(Number(c.dominant_period_sec))?Number(c.dominant_period_sec).toFixed(1)+' sec':null],
+      ['Gust',Number.isFinite(Number(c.gust_mph))?Math.round(c.gust_mph)+' mph':null]
+    ].filter(([,value])=>value);
+    ferryArchiveContext.replaceChildren();ferryArchiveContext.hidden=!rows.length;
+    for(const [label,value] of rows){const d=document.createElement('div'),span=document.createElement('span'),strong=document.createElement('strong');span.textContent=label;strong.textContent=value;d.append(span,strong);ferryArchiveContext.append(d);}
+  }
   function showArchivedFrame(index){
     const frame=archiveFrames[index];
     if(!frame||!ferryPreviewImage||!ferryPreview)return;
@@ -76,6 +90,7 @@
     if(ferryPreviewTime)ferryPreviewTime.textContent='Archived storm frame · '+etTime(frame.captured_at);
     if(ferryArchiveTime)ferryArchiveTime.textContent=etTime(frame.captured_at);
     if(ferryArchiveReason)ferryArchiveReason.textContent=(frame.reasons||[]).slice(0,2).join(' · ');
+    renderArchiveContext(frame);
   }
   function returnFerryLive(){
     if(ferryPreview)ferryPreview.hidden=true;
@@ -95,7 +110,7 @@
       ferryArchiveCount.textContent=archiveFrames.length+' frame'+(archiveFrames.length===1?'':'s')+' from the past '+(doc.retention_hours||24)+'h';
       const latest=archiveFrames.at(-1);
       ferryArchiveTime.textContent='Latest archived '+etTime(latest.captured_at);
-      ferryArchiveReason.textContent=(latest.reasons||[]).slice(0,2).join(' · ');
+      ferryArchiveReason.textContent=(latest.reasons||[]).slice(0,2).join(' · ');renderArchiveContext(latest);
     }catch(err){
       console.warn('Saco Coast Watch Ferry Beach archive:',err);
       ferryArchive.hidden=true;

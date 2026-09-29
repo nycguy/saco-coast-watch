@@ -15,7 +15,6 @@ NDBC=("44007","WEXM1")
 LOCAL_TERMS=("saco","camp ellis","ferry beach","biddeford","biddeford pool","old orchard beach","scarborough")
 RELEVANT_ALERT=("coastal","surf","rip current","storm surge","flood","wind","gale","storm","small craft","winter","blizzard","snow","ice","hurricane","tropical","freeze","cold","rain")
 WEATHER_TOPIC_PATTERNS=(r"\bcoastal\b",r"\bsurf\b",r"\bwaves?\b",r"\bswells?\b",r"\bflood(?:ing|ed|s)?\b",r"\beros(?:ion|ive|ing)\b",r"\bwinds?\b",r"\bgust(?:s|ing|ed)?\b",r"\brain(?:fall|ing|ed|s)?\b",r"\bstorm(?:s|y)?\b",r"\btides?\b",r"\bocean\b",r"\bshore(?:line)?\b",r"\brip currents?\b",r"\bweather\b",r"\bmarine\b",r"\bseawalls?\b",r"\bdunes?\b",r"\binundat(?:ion|ed|ing)\b",r"\bsplash[- ]?over\b",r"\boverwash\b",r"\bhigh water\b",r"\brough seas?\b",r"\bsnow(?:fall|ing|ed|s)?\b",r"\bblizzard\b",r"\bhurricane\b",r"\btropical storm\b",r"\bfreezing rain\b",r"\bice storm\b")
-STORM_THRESHOLDS={"residual_ft":0.75,"wave_ft":6.0,"wind_mph":25.0,"gust_mph":35.0}
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"data"/"briefing-seed-history.json"
 
@@ -186,31 +185,27 @@ def _max_recent(rows,field):
     row=max(valid,key=lambda r:r[field])
     return row[field],row.get("observed_at")
 
-def storm_reasons(snapshot):
-    reasons=[]; w=(snapshot or {}).get("water") or {}; stations=((snapshot or {}).get("marine") or {}).get("stations") or {}
-    peak72=w.get("forecast_peak_72h_ft")
-    if peak72 is not None and peak72>=12.0: reasons.append(f"NOAA modeled peak {peak72:.2f} ft reaches the Portland Minor Flood threshold")
-    residual=w.get("residual_current_ft")
-    if residual is not None and residual>=STORM_THRESHOLDS["residual_ft"]: reasons.append(f"Portland water-level residual is +{residual:.2f} ft")
-    residual24=w.get("residual_24h_max_ft")
-    if residual24 is not None and residual24>=1.0: reasons.append(f"24-hour Portland residual reached +{residual24:.2f} ft")
-    buoy=stations.get("44007") or {}
-    wave=buoy.get("wave_height_ft")
-    if wave is not None and wave>=STORM_THRESHOLDS["wave_ft"]: reasons.append(f"Buoy 44007 significant wave height is {wave:.1f} ft")
-    gust=buoy.get("gust_mph")
-    if gust is not None and gust>=STORM_THRESHOLDS["gust_mph"]: reasons.append(f"Buoy 44007 gust is {gust:.0f} mph")
-    wind=buoy.get("speed_mph")
-    if wind is not None and wind>=STORM_THRESHOLDS["wind_mph"]: reasons.append(f"Buoy 44007 sustained wind is {wind:.0f} mph")
-    for alert in (snapshot or {}).get("alerts") or []:
-        event=(alert.get("event") or "").strip()
-        if event and re.search(r"coastal|high surf|storm surge|flood|gale|storm warning|high wind|winter|blizzard|snow|ice|hurricane|tropical",event,re.I):
-            reasons.append("Active NWS "+event)
-            break
-    for mode in ((snapshot or {}).get("hazards") or {}).get("active_modes") or []:
-        label=(mode or {}).get("label")
-        if label and not any(label.lower() in item.lower() for item in reasons):
-            reasons.append("Adaptive focus: "+label)
-    return reasons
+def recent_coastal_signals(snapshot):
+    state=(snapshot or {}).get("event_state") or ((snapshot or {}).get("hazards") or {}).get("event_state") or {}
+    return list(state.get("recent_impacts") or [])
+
+def event_transition(previous,current,now=None):
+    now=now or now_utc()
+    old=(previous or {}).get("event_state") or (((previous or {}).get("hazards") or {}).get("event_state") or {})
+    new=(current or {}).get("event_state") or (((current or {}).get("hazards") or {}).get("event_state") or {})
+    if not new: return None
+    old_phase=old.get("phase") or "Unknown"; new_phase=new.get("phase") or "Unknown"; old_impact=((old.get("impact") or {}).get("label") or "Unknown"); new_impact=((new.get("impact") or {}).get("label") or "Unknown"); old_display=old.get("primary_display") or "Coastal Conditions"; new_display=new.get("primary_display") or "Coastal Conditions"
+    if (old_phase,old_impact,old_display)==(new_phase,new_impact,new_display): return None
+    return {"at":(current or {}).get("snapshot_at") or hc.iso(now),"type":"event_state_transition","from_phase":old_phase,"to_phase":new_phase,"from_impact":old_impact,"to_impact":new_impact,"from_display":old_display,"to_display":new_display}
+
+def merge_event_transitions(existing, additions, limit=500):
+    rows=[]; seen=set()
+    for item in list(existing or [])+list(additions or []):
+        key=(item.get("at"),item.get("from_phase"),item.get("to_phase"),item.get("from_impact"),item.get("to_impact"),item.get("to_display"))
+        if key in seen: continue
+        seen.add(key); rows.append(item)
+    rows.sort(key=lambda item:hc.parse_iso(item.get("at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc))
+    return rows[-limit:]
 
 def current_snapshot(now=None):
     now=now or now_utc()
@@ -242,9 +237,8 @@ def current_snapshot(now=None):
     try: hazards=fh.build_snapshot(now)
     except Exception as exc: hazards={"schema_version":1,"generated_at":hc.iso(now),"active_modes":[],"error":str(exc)[:220]}
     p72ft=round(p72[1],2) if p72 else None; astroft=round(astro[1],2) if astro else None
-    snapshot={"snapshot_at":hc.iso(now),"snapshot_kind":"realtime","provenance":{"forecast":"live_noaa_ofs_capture","observations":"NOAA CO-OPS station 8418150","astronomical_tide":"NOAA CO-OPS predictions","marine":"NDBC realtime2","alerts":"NWS API active alerts","weather_forecast":"NWS hourly point forecast","hazards":"NWS forecast grid + NHC CurrentStorms and GIS products"},"water":{"station":STATION,"latest_observed_ft":round(latest[1],2) if latest else None,"latest_observed_at":hc.iso(latest[0]) if latest else None,"observed_24h_max_ft":round(obs24[1],2) if obs24 else None,"observed_24h_max_time":hc.iso(obs24[0]) if obs24 else None,"residual_current_ft":round(residual_latest[1],2) if residual_latest else None,"residual_current_at":hc.iso(residual_latest[0]) if residual_latest else None,"residual_24h_max_ft":round(residual24[1],2) if residual24 else None,"residual_24h_max_time":hc.iso(residual24[0]) if residual24 else None,"forecast_peak_24h_ft":round(p24[1],2) if p24 else None,"forecast_peak_24h_time":hc.iso(p24[0]) if p24 else None,"forecast_peak_72h_ft":p72ft,"forecast_peak_72h_time":hc.iso(p72[0]) if p72 else None,"astronomical_tide_at_peak_ft":astroft,"model_uplift_ft":round(p72ft-astroft,2) if p72ft is not None and astroft is not None else None,"threshold_margins_ft":hc.threshold_margins(p72ft)},"forecast_conditions":forecast,"hazards":hazards,"marine":{"stations":marine},"alerts":alerts}
-    reasons=storm_reasons(snapshot)
-    snapshot["storm_mode"]={"active":bool(reasons),"reasons":reasons,"basis":"Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."}
+    snapshot={"snapshot_at":hc.iso(now),"snapshot_kind":"realtime","provenance":{"forecast":"live_noaa_ofs_capture","observations":"NOAA CO-OPS station 8418150","astronomical_tide":"NOAA CO-OPS predictions","marine":"NDBC realtime2","alerts":"NWS API active alerts","weather_forecast":"NWS hourly point forecast","hazards":"NWS forecast grid + Surf Zone Forecast + marine alerts + NHC CurrentStorms and GIS products"},"water":{"station":STATION,"latest_observed_ft":round(latest[1],2) if latest else None,"latest_observed_at":hc.iso(latest[0]) if latest else None,"observed_24h_max_ft":round(obs24[1],2) if obs24 else None,"observed_24h_max_time":hc.iso(obs24[0]) if obs24 else None,"residual_current_ft":round(residual_latest[1],2) if residual_latest else None,"residual_current_at":hc.iso(residual_latest[0]) if residual_latest else None,"residual_24h_max_ft":round(residual24[1],2) if residual24 else None,"residual_24h_max_time":hc.iso(residual24[0]) if residual24 else None,"forecast_peak_24h_ft":round(p24[1],2) if p24 else None,"forecast_peak_24h_time":hc.iso(p24[0]) if p24 else None,"forecast_peak_72h_ft":p72ft,"forecast_peak_72h_time":hc.iso(p72[0]) if p72 else None,"astronomical_tide_at_peak_ft":astroft,"model_uplift_ft":round(p72ft-astroft,2) if p72ft is not None and astroft is not None else None,"threshold_margins_ft":hc.threshold_margins(p72ft)},"forecast_conditions":forecast,"hazards":hazards,"marine":{"stations":marine},"alerts":alerts}
+    event_state=fh.derive_event_state(hazards,water=snapshot["water"],marine=snapshot["marine"],alerts=alerts,now=now); hazards["event_state"]=event_state; hazards["severity"]=event_state["impact"]; hazards["active_modes"]=event_state["active_hazards"]; snapshot["event_state"]=event_state
     return snapshot
 
 def hourly_sample(rows,start,end):
@@ -308,6 +302,7 @@ def update_history(path,model_backfill=None,now=None):
     prev=previous[-1] if previous else None
     alert_changes=hc.diff_alerts((prev or {}).get("alerts") or [],current.get("alerts") or [],now) if prev else []
     for e in alert_changes: e["source"]="NWS snapshot comparison"; e["source_type"]="official_alert"
+    transition=event_transition(prev,current,now); event_events=merge_event_transitions(existing.get("event_events") or [],[transition] if transition else [])
     local=[]
     try: local.extend(google_news(7))
     except Exception: pass
@@ -320,7 +315,7 @@ def update_history(path,model_backfill=None,now=None):
         backfill["model_archive"]={"attempted_at":model_doc.get("attempted_at"),"period_start":model_doc.get("period_start"),"period_end":model_doc.get("period_end"),"source":model_doc.get("source"),"summary":model_doc.get("summary"),"errors":model_doc.get("errors") or []}
     local=hc.merge_events(existing.get("local_events") or [],local)
     local=[e for e in local if coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]
-    hist={"schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snapshots,"daily_rollups":hc.daily_rollups(snapshots,existing.get("daily_rollups") or []),"alert_events":hc.merge_events(existing.get("alert_events") or [],alert_changes),"local_events":local,"backfill":backfill,"provenance_notes":{"realtime":"Snapshots are captures of official source data at the listed snapshot time.","model_archive":"Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.","reconstructed_dashboard_snapshot":"Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.","observations":"Historical observations describe what happened, not what a model forecast beforehand.","community":"Reddit and other community reports are anecdotal unless independently verified.","facebook":"Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."}}
+    hist={"schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snapshots,"daily_rollups":hc.daily_rollups(snapshots,existing.get("daily_rollups") or []),"alert_events":hc.merge_events(existing.get("alert_events") or [],alert_changes),"event_events":event_events,"local_events":local,"backfill":backfill,"provenance_notes":{"realtime":"Snapshots are captures of official source data at the listed snapshot time.","model_archive":"Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.","reconstructed_dashboard_snapshot":"Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.","observations":"Historical observations describe what happened, not what a model forecast beforehand.","community":"Reddit and other community reports are anecdotal unless independently verified.","facebook":"Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."}}
     Path(path).parent.mkdir(parents=True,exist_ok=True); Path(path).write_text(json.dumps(hist,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     return hist
 def compact_history(hist,days=7):
@@ -328,7 +323,7 @@ def compact_history(hist,days=7):
     snaps=[s for s in hist.get("snapshots") or [] if (hc.parse_iso(s.get("snapshot_at")) or now)>=cutoff]
     events=[e for e in hist.get("local_events") or [] if not (hc.parse_iso(e.get("published_at")) and hc.parse_iso(e.get("published_at"))<cutoff)]
     alerts=[e for e in hist.get("alert_events") or [] if not (hc.parse_iso(e.get("at")) and hc.parse_iso(e.get("at"))<cutoff)]
-    return {"schema_version":2,"generated_at":hist.get("generated_at"),"window_basis":hist.get("window_basis"),"station":hist.get("station"),"thresholds_ft_mllw":hist.get("thresholds_ft_mllw"),"snapshots":snaps,"daily_rollups":[r for r in hist.get("daily_rollups") or [] if r.get("date","")>=cutoff.date().isoformat()],"alert_events":alerts,"local_events":events,"backfill":hist.get("backfill"),"provenance_notes":hist.get("provenance_notes")}
+    return {"schema_version":2,"generated_at":hist.get("generated_at"),"window_basis":hist.get("window_basis"),"station":hist.get("station"),"thresholds_ft_mllw":hist.get("thresholds_ft_mllw"),"snapshots":snaps,"daily_rollups":[r for r in hist.get("daily_rollups") or [] if r.get("date","")>=cutoff.date().isoformat()],"alert_events":alerts,"event_events":[e for e in hist.get("event_events") or [] if not (hc.parse_iso(e.get("at")) and hc.parse_iso(e.get("at"))<cutoff)],"local_events":events,"backfill":hist.get("backfill"),"provenance_notes":hist.get("provenance_notes")}
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--history",required=True); ap.add_argument("--model-backfill"); ap.add_argument("--recent-output"); args=ap.parse_args()
     hist=update_history(args.history,args.model_backfill)

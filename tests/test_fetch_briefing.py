@@ -29,23 +29,23 @@ class BriefingTests(unittest.TestCase):
   d=f.build_payload(cur,hist,now)
   self.assertIsNone(d['forecast_change_24h']['comparison']); self.assertIn('not available',d['forecast_change_24h']['text'])
   self.assertIn('no forecast-change value is being inferred',d['forecast_change_24h']['text'])
- def test_forecast_evolution_storm_mode_and_timeline(self):
+ def test_forecast_evolution_recent_event_and_timeline(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   old24={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.2,'forecast_peak_72h_time':'2026-09-28T04:00:00Z'},'alerts':[]}
   old12={'snapshot_at':'2026-09-27T00:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.5,'forecast_peak_72h_time':'2026-09-28T08:00:00Z'},'alerts':[]}
   old6={'snapshot_at':'2026-09-27T06:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.7,'forecast_peak_72h_time':'2026-09-28T10:00:00Z'},'alerts':[]}
-  cur={'snapshot_at':'2026-09-27T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'observed_24h_max_ft':11.0,'observed_24h_max_time':'2026-09-27T10:00:00Z','residual_24h_max_ft':1.1,'residual_24h_max_time':'2026-09-27T09:00:00Z','forecast_peak_24h_ft':11.8,'forecast_peak_24h_time':'2026-09-28T10:00:00Z','forecast_peak_72h_ft':12.1,'forecast_peak_72h_time':'2026-09-28T12:00:00Z','astronomical_tide_at_peak_ft':10.8,'model_uplift_ft':1.3},'forecast_conditions':{},'marine':{'stations':{'44007':{'wave_height_ft':7.2,'max_24h_wave_height_ft':8.0,'max_24h_wave_at':'2026-09-27T08:00:00Z','max_24h_gust_mph':38.0,'max_24h_gust_at':'2026-09-27T07:00:00Z'}}},'alerts':[],'storm_mode':{'active':True,'reasons':['wave'],'basis':'test'}}
+  cur={'snapshot_at':'2026-09-27T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'observed_24h_max_ft':11.0,'observed_24h_max_time':'2026-09-27T10:00:00Z','residual_24h_max_ft':1.1,'residual_24h_max_time':'2026-09-27T09:00:00Z','forecast_peak_24h_ft':11.8,'forecast_peak_24h_time':'2026-09-28T10:00:00Z','forecast_peak_72h_ft':12.1,'forecast_peak_72h_time':'2026-09-28T12:00:00Z','astronomical_tide_at_peak_ft':10.8,'model_uplift_ft':1.3},'forecast_conditions':{},'marine':{'stations':{'44007':{'wave_height_ft':7.2,'max_24h_wave_height_ft':8.0,'max_24h_wave_at':'2026-09-27T08:00:00Z','max_24h_gust_mph':38.0,'max_24h_gust_at':'2026-09-27T07:00:00Z'}}},'alerts':[],'event_state':{'phase':'Recent','show_focus':False,'primary_display':'Routine Coastal Conditions','impact':{'label':'Routine','level':'green','rank':0},'recent_impact':{'label':'Elevated','level':'yellow','rank':1},'active_hazards':[],'official_alerts':[],'recent_impacts':[{'label':'Portland water-level residual'}],'reasons':[]}}
   hist={'schema_version':2,'generated_at':'2026-09-27T11:00:00Z','window_basis':'fixed','station':'8418150','thresholds_ft_mllw':{},'snapshots':[old24,old12,old6],'daily_rollups':[],'alert_events':[],'local_events':[],'backfill':{'water_observed_daily_peaks':[]},'provenance_notes':{}}
   d=f.build_payload(cur,hist,now)
   self.assertEqual([x['label'] for x in d['forecast_evolution']['items']],['24h ago','12h ago','6h ago','Now'])
-  self.assertTrue(d['storm_mode']['active'])
+  self.assertTrue(d['recent_event']['active']); self.assertEqual(d['event_state']['phase'],'Recent')
   titles=[x['title'] for x in d['impact_timeline']]
   self.assertTrue(any('residual' in x.lower() for x in titles))
   self.assertTrue(any('wave' in x.lower() for x in titles))
  def test_event_briefing_compares_winter_guidance(self):
   now=dt.datetime(2026,1,10,12,tzinfo=UTC)
   old={'snapshot_at':'2026-01-09T12:00:00Z','water':{'forecast_peak_72h_ft':11.0},'hazards':{'winter':{'snowfall_72h_in':5.0},'rain':{'qpf_72h_in':1.0},'wind':{'max_gust_72h_mph':35}},'alerts':[]}
-  cur={'snapshot_at':'2026-01-10T12:00:00Z','water':{'forecast_peak_72h_ft':11.2,'forecast_peak_24h_ft':11.1},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[],'hazards':{'active_modes':[{'code':'winter','label':'Winter Storm'}],'severity':{'level':'orange'},'winter':{'snowfall_24h_in':6.0,'snowfall_72h_in':9.0,'precip_transition_24h':'Snow'},'rain':{'qpf_72h_in':1.2},'wind':{'max_gust_24h_mph':40,'max_gust_72h_mph':45},'cold':{'min_temp_24h_f':22}}}
+  cur={'snapshot_at':'2026-01-10T12:00:00Z','water':{'forecast_peak_72h_ft':11.2,'forecast_peak_24h_ft':11.1},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[],'event_state':{'phase':'Approaching','show_focus':True,'primary_display':'Winter Storm','impact':{'label':'Significant','level':'orange','rank':2},'recent_impact':{'label':'Routine','level':'green','rank':0},'active_hazards':[{'code':'winter','label':'Winter Storm'}],'official_alerts':[],'recent_impacts':[],'reasons':[]},'hazards':{'active_modes':[{'code':'winter','label':'Winter Storm'}],'severity':{'level':'orange'},'winter':{'snowfall_24h_in':6.0,'snowfall_72h_in':9.0,'precip_transition_24h':'Snow'},'rain':{'qpf_72h_in':1.2},'wind':{'max_gust_24h_mph':40,'max_gust_72h_mph':45},'cold':{'min_temp_24h_f':22}}}
   hist={'schema_version':2,'generated_at':'2026-01-10T11:00:00Z','snapshots':[old],'alert_events':[],'local_events':[],'backfill':{},'daily_rollups':[]}
   data=f.build_payload(cur,hist,now)
   self.assertTrue(data['event_briefing']['active'])

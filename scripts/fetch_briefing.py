@@ -23,7 +23,7 @@ def normalize_history(doc,now=None):
     now=now or ch.now_utc()
     if doc.get("schema_version")==2 and isinstance(doc.get("snapshots"),list): return doc
     snaps=[_legacy_snapshot(r) for r in doc.get("forecast_snapshots") or doc.get("history") or []]
-    return {"schema_version":2,"generated_at":doc.get("generated_at") or hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":ch.STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snaps,"daily_rollups":[],"alert_events":[],"local_events":[],"backfill":{"water_observed_daily_peaks":doc.get("observed_daily_peaks") or []},"provenance_notes":{}}
+    return {"schema_version":2,"generated_at":doc.get("generated_at") or hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":ch.STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snaps,"daily_rollups":[],"alert_events":[],"event_events":[],"local_events":[],"backfill":{"water_observed_daily_peaks":doc.get("observed_daily_peaks") or []},"provenance_notes":{}}
 def load_history(path=None,now=None):
     doc=_load_json(path) if path else {}
     if not doc: doc=_fetch_json(PUBLISHED_HISTORY)
@@ -58,38 +58,49 @@ def _legacy_history(snaps):
     return out
 
 
+def _event_state(snapshot):
+    state=(snapshot or {}).get("event_state") or (((snapshot or {}).get("hazards") or {}).get("event_state") or {})
+    if state: return state
+    hazards=(snapshot or {}).get("hazards") or {}; modes=hazards.get("active_modes") or []
+    return {"phase":"Approaching" if modes else "Routine","show_focus":bool(modes),"primary_display":modes[0].get("label") if modes else "Routine Coastal Conditions","impact":hazards.get("severity") or {"level":"green","label":"Routine","rank":0},"recent_impact":{"level":"green","label":"Routine","rank":0},"active_hazards":modes,"official_alerts":hazards.get("alerts") or [],"recent_impacts":[],"reasons":[]}
+
+def _event_transition_text(current,baseline):
+    now_state=_event_state(current); old_state=_event_state(baseline) if baseline else {}
+    if not old_state: return ""
+    pieces=[]
+    if old_state.get("phase")!=now_state.get("phase"): pieces.append(f"event phase changed from {old_state.get('phase','Unknown')} to {now_state.get('phase','Unknown')}")
+    old_impact=(old_state.get("impact") or {}).get("label"); new_impact=(now_state.get("impact") or {}).get("label")
+    if old_impact and new_impact and old_impact!=new_impact: pieces.append(f"local impact level changed from {old_impact} to {new_impact}")
+    return ("Compared with the stored state nearest 24 hours ago, "+"; ".join(pieces)+".") if pieces else ""
+
+def _recent_event(current):
+    state=_event_state(current)
+    if state.get("phase")!="Recent": return {"active":False,"summary":"","items":[],"impact":state.get("recent_impact") or {}}
+    items=state.get("recent_impacts") or []; labels=[item.get("label") for item in items if item.get("label")]; detail=", ".join(labels[:3]) if labels else "notable coastal observations"
+    return {"active":True,"summary":"Recent coastal event: "+detail+". Current and forward-looking conditions have returned to Routine.","items":items,"impact":state.get("recent_impact") or {}}
+
 def _event_briefing(current,baseline,now):
-    hazards=current.get("hazards") or {}
-    modes=hazards.get("active_modes") or []
-    codes=[mode.get("code") for mode in modes if mode.get("code")]
-    if not codes:
-        return {"active":False,"title":"Coastal Briefing","modes":[],"severity":hazards.get("severity") or {},"summary":"","change_text":"","next24_text":"","next72_text":""}
-    title="Event Briefing"
-    if "tropical" in codes: title="Tropical Cyclone Briefing"
-    elif "winter" in codes and "coastal_flood" in codes: title="Winter Coastal Storm Briefing"
-    elif "winter" in codes: title="Winter Storm Briefing"
-    elif "coastal_flood" in codes: title="Coastal Flood Briefing"
-    elif "heavy_rain" in codes: title="Heavy Rain Briefing"
-    elif "high_wind" in codes: title="High Wind Briefing"
-    elif "extreme_cold" in codes: title="Extreme Cold Briefing"
-    labels=[mode.get("label") for mode in modes if mode.get("label")]
-    summary="Active focus: "+", ".join(labels)+"."
-    next24=[]; next72=[]
-    winter=hazards.get("winter") or {}; rain=hazards.get("rain") or {}; wind=hazards.get("wind") or {}; cold=hazards.get("cold") or {}; tropical=hazards.get("tropical") or {}
+    hazards=current.get("hazards") or {}; state=_event_state(current); modes=state.get("active_hazards") or []; codes=[mode.get("code") for mode in modes if mode.get("code")]
+    if not state.get("show_focus"): return {"active":False,"title":"Coastal Briefing","modes":modes,"severity":state.get("impact") or {},"phase":state.get("phase"),"summary":"","change_text":_event_transition_text(current,baseline),"next24_text":"","next72_text":""}
+    title=(state.get("primary_display") or "Event")+" Briefing"; impact=(state.get("impact") or {}).get("label") or "Elevated"; summary=f"{state.get('primary_display') or 'Weather event'}: {impact} · {state.get('phase') or 'Active'}."
+    official=[a.get("event") for a in state.get("official_alerts") or [] if a.get("event")]
+    if official: summary+=" Active NWS products: "+", ".join(list(dict.fromkeys(official))[:3])+"."
+    next24=[]; next72=[]; winter=hazards.get("winter") or {}; rain=hazards.get("rain") or {}; wind=hazards.get("wind") or {}; cold=hazards.get("cold") or {}; tropical=hazards.get("tropical") or {}; surf=hazards.get("surf") or {}
     if "winter" in codes:
         if winter.get("snowfall_24h_in") is not None: next24.append(f"NWS grid snowfall guidance totals {winter['snowfall_24h_in']:.1f} in in the next 24 hours")
         if winter.get("snowfall_72h_in") is not None: next72.append(f"NWS grid snowfall guidance totals {winter['snowfall_72h_in']:.1f} in in the next 72 hours")
         if winter.get("precip_transition_24h"): next24.append("precipitation type: "+winter["precip_transition_24h"])
-    if "heavy_rain" in codes:
+    if "heavy_rain" in codes or "flooding" in codes:
         if rain.get("qpf_24h_in") is not None: next24.append(f"NWS grid precipitation guidance totals {rain['qpf_24h_in']:.1f} in in the next 24 hours")
         if rain.get("qpf_72h_in") is not None: next72.append(f"NWS grid precipitation guidance totals {rain['qpf_72h_in']:.1f} in in the next 72 hours")
     if "high_wind" in codes or "winter" in codes or "tropical" in codes:
         if wind.get("max_gust_24h_mph") is not None: next24.append(f"peak NWS hourly gust guidance is {wind['max_gust_24h_mph']:.0f} mph")
         if wind.get("max_gust_72h_mph") is not None: next72.append(f"peak NWS hourly gust guidance is {wind['max_gust_72h_mph']:.0f} mph")
+    if "high_surf" in codes and surf.get("max_surf_height_ft") is not None: next72.append(f"NWS Coastal York Surf Zone Forecast reaches about {surf['max_surf_height_ft']:.0f} ft surf")
+    if "beach_hazard" in codes and surf.get("rip_current_risk"): next24.append(f"NWS Surf Zone Forecast lists {surf['rip_current_risk']} rip-current risk")
     if "extreme_cold" in codes and cold.get("min_temp_24h_f") is not None: next24.append(f"minimum NWS hourly temperature guidance is {cold['min_temp_24h_f']:.0f}°F")
     if "tropical" in codes and tropical.get("storms"):
-        storm=tropical["storms"][0]
-        summary+=f" NHC is tracking {storm.get('label') or storm.get('name') or 'a tropical cyclone'}"
+        storm=tropical["storms"][0]; summary+=f" NHC is tracking {storm.get('label') or storm.get('name') or 'a tropical cyclone'}"
         if storm.get("min_forecast_track_distance_mi") is not None: summary+=f", with the nearest current NHC forecast-track point about {storm['min_forecast_track_distance_mi']:.0f} miles from Saco Bay."
         else: summary+="."
     changes=[]; previous=(baseline or {}).get("hazards") or {}
@@ -98,13 +109,12 @@ def _event_briefing(current,baseline,now):
         delta=float(current_value)-float(previous_value)
         if abs(delta)<minimum: return
         changes.append(f"{label} {'increased' if delta>0 else 'decreased'} by {abs(delta):.1f} {unit}, from {float(previous_value):.1f} to {float(current_value):.1f} {unit}")
-    add_delta("NWS 72-hour snowfall guidance",winter.get("snowfall_72h_in"),(previous.get("winter") or {}).get("snowfall_72h_in"),"in")
-    add_delta("NWS 72-hour precipitation guidance",rain.get("qpf_72h_in"),(previous.get("rain") or {}).get("qpf_72h_in"),"in")
-    add_delta("Peak NWS 72-hour gust guidance",wind.get("max_gust_72h_mph"),(previous.get("wind") or {}).get("max_gust_72h_mph"),"mph",1)
-    change_text=("Compared with the stored guidance nearest 24 hours ago, "+"; ".join(changes)+".") if changes else ""
-    return {"active":True,"title":title,"modes":modes,"severity":hazards.get("severity") or {},"summary":summary,"change_text":change_text,"next24_text":(". ".join(next24)+".") if next24 else "No additional event-specific 24-hour metric is available.","next72_text":(". ".join(next72)+".") if next72 else "No additional event-specific 72-hour metric is available."}
+    add_delta("NWS 72-hour snowfall guidance",winter.get("snowfall_72h_in"),(previous.get("winter") or {}).get("snowfall_72h_in"),"in"); add_delta("NWS 72-hour precipitation guidance",rain.get("qpf_72h_in"),(previous.get("rain") or {}).get("qpf_72h_in"),"in"); add_delta("Peak NWS 72-hour gust guidance",wind.get("max_gust_72h_mph"),(previous.get("wind") or {}).get("max_gust_72h_mph"),"mph",1)
+    transition=_event_transition_text(current,baseline); change_text=("Compared with the stored guidance nearest 24 hours ago, "+"; ".join(changes)+".") if changes else transition
+    if changes and transition: change_text+=" "+transition
+    return {"active":True,"title":title,"modes":modes,"severity":state.get("impact") or {},"phase":state.get("phase"),"summary":summary,"change_text":change_text,"next24_text":(". ".join(next24)+".") if next24 else "No additional event-specific 24-hour metric is available.","next72_text":(". ".join(next72)+".") if next72 else "No additional event-specific 72-hour metric is available."}
 
-def _forecast_evolution(snaps,current,now):
+def _forecast_evolutiondef _forecast_evolution(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     points=[]
     seen=set()
@@ -177,8 +187,7 @@ def build_payload(current,hist,now=None):
     local24=[e for e in _recent(hist.get("local_events"),"published_at",now,24) if ch.coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]
     evolution=_forecast_evolution(snaps,current,now)
     timeline=_impact_timeline(current,alert_changes,local24,now)
-    storm_mode=current.get("storm_mode") or {"active":bool(ch.storm_reasons(current)),"reasons":ch.storm_reasons(current),"basis":"Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."}
-    event_briefing=_event_briefing(current,baseline,now)
+    event_state=_event_state(current); event_briefing=_event_briefing(current,baseline,now); recent_event=_recent_event(current); event_transitions=_recent(hist.get("event_events"),"at",now,72)
 
     if alert_changes:
         labels=[f"{e.get('event') or 'Alert'} {e.get('change_type','changed')}" for e in alert_changes[-4:]]
@@ -186,6 +195,7 @@ def build_payload(current,hist,now=None):
     if local24:
         first=local24[-1]; qualifier="A public community report" if first.get("anecdotal") else "Local reporting"
         past+=f" {qualifier} noted: {first.get('headline') or first.get('summary')}."
+    if recent_event.get("active"): past+=" "+recent_event.get("summary","")
 
     if change:
         d=change["peak_delta_ft"]; direction="increased" if d>0 else "decreased" if d<0 else "held steady"
@@ -200,7 +210,9 @@ def build_payload(current,hist,now=None):
         forecast_change+=f" Risk is {'increasing' if d>0 else 'decreasing' if d<0 else 'little changed'} on this water-level measure."
     else:
         forecast_change="An authentic forecast snapshot close enough to 24 hours ago is not available yet; no forecast-change value is being inferred from later observations."
+    transition_text=_event_transition_text(current,baseline)
     if event_briefing.get("change_text"): forecast_change+=" "+event_briefing["change_text"]
+    elif transition_text: forecast_change+=" "+transition_text
 
     if peak24 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak24)
@@ -243,8 +255,10 @@ def build_payload(current,hist,now=None):
         "forecast_change_24h":{"text":forecast_change,"comparison":change,"wind_comparison":wind_change},
         "forecast_change_48h":{"comparison":change48},
         "forecast_evolution":evolution,
-        "storm_mode":storm_mode,
+        "event_state":event_state,
         "event_briefing":event_briefing,
+        "recent_event":recent_event,
+        "event_transitions":event_transitions,
         "impact_timeline":timeline,
         "impact_timeline_next24":((current.get("hazards") or {}).get("hourly") or []),
         "observed_daily_peaks":daily,
@@ -255,7 +269,7 @@ def build_payload(current,hist,now=None):
         "current_snapshot":current,
         "history":_legacy_history(snaps),
         "history_compact":compact,
-        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts, hourly forecast and forecast grid","nhc":"National Hurricane Center CurrentStorms and GIS products","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
+        "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts, hourly forecast, forecast grid, marine alerts and Coastal York Surf Zone Forecast","nhc":"National Hurricane Center CurrentStorms and GIS products","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
     }
 
 def main():

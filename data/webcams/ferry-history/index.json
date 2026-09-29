@@ -4,16 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-09-28T07:13:28Z",
-      "file": "20260928T071328Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Portland water-level residual is +1.14 ft",
-        "24-hour Portland residual reached +1.29 ft",
-        "Adaptive focus: Coastal Flood"
-      ]
-    },
-    {
       "captured_at": "2026-09-28T15:29:37Z",
       "file": "20260928T152937Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -32,8 +22,17 @@
         "24-hour Portland residual reached +1.45 ft",
         "Adaptive focus: Coastal Flood"
       ]
+    },
+    {
+      "captured_at": "2026-09-29T13:40:12Z",
+      "file": "20260929T134012Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Portland water-level residual is +0.75 ft",
+        "24-hour Portland residual reached +1.39 ft"
+      ]
     }
   ],
-  "generated_at": "2026-09-29T06:53:34Z",
+  "generated_at": "2026-09-29T13:40:12Z",
   "retention_hours": 24
 }

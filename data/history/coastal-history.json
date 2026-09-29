@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-29T21:06:29Z",
+  "generated_at": "2026-09-29T21:41:21Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -6231,7 +6231,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-29T21:06:29Z",
+      "snapshot_at": "2026-09-29T21:41:21Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -6244,12 +6244,12 @@
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 4.37,
-        "latest_observed_at": "2026-09-29T21:00:00Z",
+        "latest_observed_ft": 2.8,
+        "latest_observed_at": "2026-09-29T21:36:00Z",
         "observed_24h_max_ft": 11.34,
         "observed_24h_max_time": "2026-09-29T17:24:00Z",
-        "residual_current_ft": 0.63,
-        "residual_current_at": "2026-09-29T21:00:00Z",
+        "residual_current_ft": 0.69,
+        "residual_current_at": "2026-09-29T21:36:00Z",
         "residual_24h_max_ft": 1.11,
         "residual_24h_max_time": "2026-09-28T23:00:00Z",
         "forecast_peak_24h_ft": 11.55,
@@ -6288,23 +6288,23 @@
           {
             "time": "2026-10-01T18:53:00Z",
             "astronomical_ft": 10.52,
-            "modeled_total_ft": 11.54,
+            "modeled_total_ft": 11.53,
             "modeled_time": "2026-10-01T18:54:00Z",
-            "modeled_uplift_ft": 1.03
+            "modeled_uplift_ft": 1.01
           },
           {
             "time": "2026-10-02T07:37:00Z",
             "astronomical_ft": 9.0,
-            "modeled_total_ft": 9.92,
+            "modeled_total_ft": 9.86,
             "modeled_time": "2026-10-02T07:36:00Z",
-            "modeled_uplift_ft": 0.92
+            "modeled_uplift_ft": 0.85
           },
           {
             "time": "2026-10-02T19:50:00Z",
             "astronomical_ft": 10.23,
-            "modeled_total_ft": null,
-            "modeled_time": null,
-            "modeled_uplift_ft": null
+            "modeled_total_ft": 9.22,
+            "modeled_time": "2026-10-02T18:00:00Z",
+            "modeled_uplift_ft": 0.82
           }
         ]
       },
@@ -6323,7 +6323,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-09-29T21:06:29.600940Z",
+        "generated_at": "2026-09-29T21:41:21.419937Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -6376,11 +6376,11 @@
             "peak_at": "2026-09-30T18:06:00Z",
             "window_start": null,
             "window_end": null,
-            "hours_until_peak": 21.0,
+            "hours_until_peak": 20.4,
             "basis": "NOAA OFS modeled total-water peak"
           },
           "coastal_impact": {
-            "method": "Saco Coast Watch compound coastal-impact synthesis; not an official NOAA/NWS impact forecast.",
+            "method": "Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.",
             "impact": {
               "score": 29,
               "rank": 0,
@@ -6408,18 +6408,18 @@
                 },
                 "drivers": [
                   {
-                    "label": "NOAA modeled total water",
+                    "label": "NOAA forecast water level",
                     "value": "10.50 ft MLLW",
                     "source": "NOAA OFS"
                   },
                   {
-                    "label": "Astronomical high tide",
+                    "label": "Predicted high tide",
                     "value": "9.71 ft MLLW",
-                    "source": "NOAA CO-OPS"
+                    "source": "NOAA CO-OPS tide prediction"
                   },
                   {
-                    "label": "Forecast surf context",
-                    "value": "5 ft max in current Coastal York product",
+                    "label": "NWS surf forecast",
+                    "value": "5 ft max in the current Coastal York forecast",
                     "source": "NWS Surf Zone Forecast"
                   }
                 ]
@@ -6444,24 +6444,24 @@
                 },
                 "drivers": [
                   {
-                    "label": "NOAA modeled total water",
+                    "label": "NOAA forecast water level",
                     "value": "11.55 ft MLLW",
                     "source": "NOAA OFS"
                   },
                   {
-                    "label": "Astronomical high tide",
+                    "label": "Predicted high tide",
                     "value": "10.70 ft MLLW",
-                    "source": "NOAA CO-OPS"
+                    "source": "NOAA CO-OPS tide prediction"
                   },
                   {
-                    "label": "Forecast surf context",
-                    "value": "5 ft max in current Coastal York product",
+                    "label": "NWS surf forecast",
+                    "value": "5 ft max in the current Coastal York forecast",
                     "source": "NWS Surf Zone Forecast"
                   },
                   {
-                    "label": "Onshore wind component",
+                    "label": "Wind pushing toward shore",
                     "value": "2 mph",
-                    "source": "Derived from NWS hourly wind"
+                    "source": "Calculated from NWS hourly wind direction and speed"
                   }
                 ]
               },
@@ -6485,24 +6485,24 @@
                 },
                 "drivers": [
                   {
-                    "label": "NOAA modeled total water",
+                    "label": "NOAA forecast water level",
                     "value": "10.22 ft MLLW",
                     "source": "NOAA OFS"
                   },
                   {
-                    "label": "Astronomical high tide",
+                    "label": "Predicted high tide",
                     "value": "9.38 ft MLLW",
-                    "source": "NOAA CO-OPS"
+                    "source": "NOAA CO-OPS tide prediction"
                   },
                   {
-                    "label": "Forecast surf context",
-                    "value": "5 ft max in current Coastal York product",
+                    "label": "NWS surf forecast",
+                    "value": "5 ft max in the current Coastal York forecast",
                     "source": "NWS Surf Zone Forecast"
                   },
                   {
-                    "label": "Onshore wind component",
+                    "label": "Wind pushing toward shore",
                     "value": "0 mph",
-                    "source": "Derived from NWS hourly wind"
+                    "source": "Calculated from NWS hourly wind direction and speed"
                   }
                 ]
               },
@@ -6511,9 +6511,9 @@
                 "window_start": "2026-10-01T17:23:00Z",
                 "window_end": "2026-10-01T20:23:00Z",
                 "astronomical_ft": 10.52,
-                "modeled_total_ft": 11.54,
+                "modeled_total_ft": 11.53,
                 "modeled_time": "2026-10-01T18:54:00Z",
-                "modeled_uplift_ft": 1.03,
+                "modeled_uplift_ft": 1.01,
                 "forecast_wind_mph": 10.0,
                 "forecast_wind_direction": "S",
                 "onshore_component_mph": 5.0,
@@ -6526,24 +6526,24 @@
                 },
                 "drivers": [
                   {
-                    "label": "NOAA modeled total water",
-                    "value": "11.54 ft MLLW",
+                    "label": "NOAA forecast water level",
+                    "value": "11.53 ft MLLW",
                     "source": "NOAA OFS"
                   },
                   {
-                    "label": "Astronomical high tide",
+                    "label": "Predicted high tide",
                     "value": "10.52 ft MLLW",
-                    "source": "NOAA CO-OPS"
+                    "source": "NOAA CO-OPS tide prediction"
                   },
                   {
-                    "label": "Forecast surf context",
-                    "value": "5 ft max in current Coastal York product",
+                    "label": "NWS surf forecast",
+                    "value": "5 ft max in the current Coastal York forecast",
                     "source": "NWS Surf Zone Forecast"
                   },
                   {
-                    "label": "Onshore wind component",
+                    "label": "Wind pushing toward shore",
                     "value": "5 mph",
-                    "source": "Derived from NWS hourly wind"
+                    "source": "Calculated from NWS hourly wind direction and speed"
                   }
                 ]
               },
@@ -6552,9 +6552,9 @@
                 "window_start": "2026-10-02T06:07:00Z",
                 "window_end": "2026-10-02T09:07:00Z",
                 "astronomical_ft": 9.0,
-                "modeled_total_ft": 9.92,
+                "modeled_total_ft": 9.86,
                 "modeled_time": "2026-10-02T07:36:00Z",
-                "modeled_uplift_ft": 0.92,
+                "modeled_uplift_ft": 0.85,
                 "forecast_wind_mph": 5.0,
                 "forecast_wind_direction": "SW",
                 "onshore_component_mph": 0.0,
@@ -6567,24 +6567,24 @@
                 },
                 "drivers": [
                   {
-                    "label": "NOAA modeled total water",
-                    "value": "9.92 ft MLLW",
+                    "label": "NOAA forecast water level",
+                    "value": "9.86 ft MLLW",
                     "source": "NOAA OFS"
                   },
                   {
-                    "label": "Astronomical high tide",
+                    "label": "Predicted high tide",
                     "value": "9.00 ft MLLW",
-                    "source": "NOAA CO-OPS"
+                    "source": "NOAA CO-OPS tide prediction"
                   },
                   {
-                    "label": "Forecast surf context",
-                    "value": "5 ft max in current Coastal York product",
+                    "label": "NWS surf forecast",
+                    "value": "5 ft max in the current Coastal York forecast",
                     "source": "NWS Surf Zone Forecast"
                   },
                   {
-                    "label": "Onshore wind component",
+                    "label": "Wind pushing toward shore",
                     "value": "0 mph",
-                    "source": "Derived from NWS hourly wind"
+                    "source": "Calculated from NWS hourly wind direction and speed"
                   }
                 ]
               },
@@ -6593,9 +6593,9 @@
                 "window_start": "2026-10-02T18:20:00Z",
                 "window_end": "2026-10-02T21:20:00Z",
                 "astronomical_ft": 10.23,
-                "modeled_total_ft": null,
-                "modeled_time": null,
-                "modeled_uplift_ft": null,
+                "modeled_total_ft": 9.22,
+                "modeled_time": "2026-10-02T18:00:00Z",
+                "modeled_uplift_ft": 0.82,
                 "forecast_wind_mph": 10.0,
                 "forecast_wind_direction": "SW",
                 "onshore_component_mph": 0.0,
@@ -6608,19 +6608,24 @@
                 },
                 "drivers": [
                   {
-                    "label": "Astronomical high tide",
-                    "value": "10.23 ft MLLW",
-                    "source": "NOAA CO-OPS"
+                    "label": "NOAA forecast water level",
+                    "value": "9.22 ft MLLW",
+                    "source": "NOAA OFS"
                   },
                   {
-                    "label": "Forecast surf context",
-                    "value": "5 ft max in current Coastal York product",
+                    "label": "Predicted high tide",
+                    "value": "10.23 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "5 ft max in the current Coastal York forecast",
                     "source": "NWS Surf Zone Forecast"
                   },
                   {
-                    "label": "Onshore wind component",
+                    "label": "Wind pushing toward shore",
                     "value": "0 mph",
-                    "source": "Derived from NWS hourly wind"
+                    "source": "Calculated from NWS hourly wind direction and speed"
                   }
                 ]
               }
@@ -6645,28 +6650,28 @@
               },
               "drivers": [
                 {
-                  "label": "NOAA modeled total water",
+                  "label": "NOAA forecast water level",
                   "value": "11.55 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
-                  "label": "Astronomical high tide",
+                  "label": "Predicted high tide",
                   "value": "10.70 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "source": "NOAA CO-OPS tide prediction"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 },
                 {
-                  "label": "Onshore wind component",
+                  "label": "Wind pushing toward shore",
                   "value": "2 mph",
-                  "source": "Derived from NWS hourly wind"
+                  "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
             },
-            "hours_until_peak": 20.9,
+            "hours_until_peak": 20.4,
             "confidence": {
               "label": "Moderate",
               "score": 0.85,
@@ -6676,24 +6681,24 @@
             },
             "drivers": [
               {
-                "label": "NOAA modeled total water",
+                "label": "NOAA forecast water level",
                 "value": "11.55 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
-                "label": "Astronomical high tide",
+                "label": "Predicted high tide",
                 "value": "10.70 ft MLLW",
-                "source": "NOAA CO-OPS"
+                "source": "NOAA CO-OPS tide prediction"
               },
               {
-                "label": "Forecast surf context",
-                "value": "5 ft max in current Coastal York product",
+                "label": "NWS surf forecast",
+                "value": "5 ft max in the current Coastal York forecast",
                 "source": "NWS Surf Zone Forecast"
               },
               {
-                "label": "Onshore wind component",
+                "label": "Wind pushing toward shore",
                 "value": "2 mph",
-                "source": "Derived from NWS hourly wind"
+                "source": "Calculated from NWS hourly wind direction and speed"
               },
               {
                 "label": "Latest buoy onshore-wind component",
@@ -7676,31 +7681,31 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-09-29T20:30:00Z",
-            "speed_mph": 4.5,
-            "gust_mph": 6.7,
-            "direction_deg": 350,
+            "observed_at": "2026-09-29T21:10:00Z",
+            "speed_mph": 6.7,
+            "gust_mph": 11.2,
+            "direction_deg": 330,
             "wave_height_ft": null,
             "dominant_period_sec": null,
             "average_period_sec": null,
             "wave_direction_deg": null,
-            "pressure_mb": 1013.1,
+            "pressure_mb": 1013.5,
             "pressure_tendency_mb": null,
             "water_temp_f": 56.1,
-            "air_temp_f": 58.6,
+            "air_temp_f": 59.2,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 20.1,
-            "max_24h_speed_at": "2026-09-28T21:20:00Z",
+            "max_24h_speed_at": "2026-09-28T22:00:00Z",
             "max_24h_gust_mph": 24.6,
-            "max_24h_gust_at": "2026-09-28T21:20:00Z",
+            "max_24h_gust_at": "2026-09-28T22:30:00Z",
             "max_24h_wave_height_ft": 6.6,
             "max_24h_wave_at": "2026-09-28T22:50:00Z"
           },
           "WEXM1": {
-            "observed_at": "2026-09-29T20:00:00Z",
-            "speed_mph": 1.1,
+            "observed_at": "2026-09-29T21:00:00Z",
+            "speed_mph": 2.2,
             "gust_mph": null,
-            "direction_deg": 330,
+            "direction_deg": 20,
             "wave_height_ft": null,
             "dominant_period_sec": null,
             "average_period_sec": null,
@@ -7708,10 +7713,10 @@
             "pressure_mb": null,
             "pressure_tendency_mb": null,
             "water_temp_f": null,
-            "air_temp_f": 63.5,
+            "air_temp_f": 63.1,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
             "max_24h_speed_mph": 6.9,
-            "max_24h_speed_at": "2026-09-28T21:15:00Z",
+            "max_24h_speed_at": "2026-09-28T21:45:00Z",
             "max_24h_gust_mph": null,
             "max_24h_gust_at": null,
             "max_24h_wave_height_ft": null,
@@ -7761,11 +7766,11 @@
           "peak_at": "2026-09-30T18:06:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 21.0,
+          "hours_until_peak": 20.4,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
-          "method": "Saco Coast Watch compound coastal-impact synthesis; not an official NOAA/NWS impact forecast.",
+          "method": "Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.",
           "impact": {
             "score": 29,
             "rank": 0,
@@ -7793,18 +7798,18 @@
               },
               "drivers": [
                 {
-                  "label": "NOAA modeled total water",
+                  "label": "NOAA forecast water level",
                   "value": "10.50 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
-                  "label": "Astronomical high tide",
+                  "label": "Predicted high tide",
                   "value": "9.71 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "source": "NOAA CO-OPS tide prediction"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 }
               ]
@@ -7829,24 +7834,24 @@
               },
               "drivers": [
                 {
-                  "label": "NOAA modeled total water",
+                  "label": "NOAA forecast water level",
                   "value": "11.55 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
-                  "label": "Astronomical high tide",
+                  "label": "Predicted high tide",
                   "value": "10.70 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "source": "NOAA CO-OPS tide prediction"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 },
                 {
-                  "label": "Onshore wind component",
+                  "label": "Wind pushing toward shore",
                   "value": "2 mph",
-                  "source": "Derived from NWS hourly wind"
+                  "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
             },
@@ -7870,24 +7875,24 @@
               },
               "drivers": [
                 {
-                  "label": "NOAA modeled total water",
+                  "label": "NOAA forecast water level",
                   "value": "10.22 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
-                  "label": "Astronomical high tide",
+                  "label": "Predicted high tide",
                   "value": "9.38 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "source": "NOAA CO-OPS tide prediction"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 },
                 {
-                  "label": "Onshore wind component",
+                  "label": "Wind pushing toward shore",
                   "value": "0 mph",
-                  "source": "Derived from NWS hourly wind"
+                  "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
             },
@@ -7896,9 +7901,9 @@
               "window_start": "2026-10-01T17:23:00Z",
               "window_end": "2026-10-01T20:23:00Z",
               "astronomical_ft": 10.52,
-              "modeled_total_ft": 11.54,
+              "modeled_total_ft": 11.53,
               "modeled_time": "2026-10-01T18:54:00Z",
-              "modeled_uplift_ft": 1.03,
+              "modeled_uplift_ft": 1.01,
               "forecast_wind_mph": 10.0,
               "forecast_wind_direction": "S",
               "onshore_component_mph": 5.0,
@@ -7911,24 +7916,24 @@
               },
               "drivers": [
                 {
-                  "label": "NOAA modeled total water",
-                  "value": "11.54 ft MLLW",
+                  "label": "NOAA forecast water level",
+                  "value": "11.53 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
-                  "label": "Astronomical high tide",
+                  "label": "Predicted high tide",
                   "value": "10.52 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "source": "NOAA CO-OPS tide prediction"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 },
                 {
-                  "label": "Onshore wind component",
+                  "label": "Wind pushing toward shore",
                   "value": "5 mph",
-                  "source": "Derived from NWS hourly wind"
+                  "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
             },
@@ -7937,9 +7942,9 @@
               "window_start": "2026-10-02T06:07:00Z",
               "window_end": "2026-10-02T09:07:00Z",
               "astronomical_ft": 9.0,
-              "modeled_total_ft": 9.92,
+              "modeled_total_ft": 9.86,
               "modeled_time": "2026-10-02T07:36:00Z",
-              "modeled_uplift_ft": 0.92,
+              "modeled_uplift_ft": 0.85,
               "forecast_wind_mph": 5.0,
               "forecast_wind_direction": "SW",
               "onshore_component_mph": 0.0,
@@ -7952,24 +7957,24 @@
               },
               "drivers": [
                 {
-                  "label": "NOAA modeled total water",
-                  "value": "9.92 ft MLLW",
+                  "label": "NOAA forecast water level",
+                  "value": "9.86 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
-                  "label": "Astronomical high tide",
+                  "label": "Predicted high tide",
                   "value": "9.00 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "source": "NOAA CO-OPS tide prediction"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 },
                 {
-                  "label": "Onshore wind component",
+                  "label": "Wind pushing toward shore",
                   "value": "0 mph",
-                  "source": "Derived from NWS hourly wind"
+                  "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
             },
@@ -7978,9 +7983,9 @@
               "window_start": "2026-10-02T18:20:00Z",
               "window_end": "2026-10-02T21:20:00Z",
               "astronomical_ft": 10.23,
-              "modeled_total_ft": null,
-              "modeled_time": null,
-              "modeled_uplift_ft": null,
+              "modeled_total_ft": 9.22,
+              "modeled_time": "2026-10-02T18:00:00Z",
+              "modeled_uplift_ft": 0.82,
               "forecast_wind_mph": 10.0,
               "forecast_wind_direction": "SW",
               "onshore_component_mph": 0.0,
@@ -7993,19 +7998,24 @@
               },
               "drivers": [
                 {
-                  "label": "Astronomical high tide",
-                  "value": "10.23 ft MLLW",
-                  "source": "NOAA CO-OPS"
+                  "label": "NOAA forecast water level",
+                  "value": "9.22 ft MLLW",
+                  "source": "NOAA OFS"
                 },
                 {
-                  "label": "Forecast surf context",
-                  "value": "5 ft max in current Coastal York product",
+                  "label": "Predicted high tide",
+                  "value": "10.23 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "5 ft max in the current Coastal York forecast",
                   "source": "NWS Surf Zone Forecast"
                 },
                 {
-                  "label": "Onshore wind component",
+                  "label": "Wind pushing toward shore",
                   "value": "0 mph",
-                  "source": "Derived from NWS hourly wind"
+                  "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
             }
@@ -8030,28 +8040,28 @@
             },
             "drivers": [
               {
-                "label": "NOAA modeled total water",
+                "label": "NOAA forecast water level",
                 "value": "11.55 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
-                "label": "Astronomical high tide",
+                "label": "Predicted high tide",
                 "value": "10.70 ft MLLW",
-                "source": "NOAA CO-OPS"
+                "source": "NOAA CO-OPS tide prediction"
               },
               {
-                "label": "Forecast surf context",
-                "value": "5 ft max in current Coastal York product",
+                "label": "NWS surf forecast",
+                "value": "5 ft max in the current Coastal York forecast",
                 "source": "NWS Surf Zone Forecast"
               },
               {
-                "label": "Onshore wind component",
+                "label": "Wind pushing toward shore",
                 "value": "2 mph",
-                "source": "Derived from NWS hourly wind"
+                "source": "Calculated from NWS hourly wind direction and speed"
               }
             ]
           },
-          "hours_until_peak": 20.9,
+          "hours_until_peak": 20.4,
           "confidence": {
             "label": "Moderate",
             "score": 0.85,
@@ -8061,24 +8071,24 @@
           },
           "drivers": [
             {
-              "label": "NOAA modeled total water",
+              "label": "NOAA forecast water level",
               "value": "11.55 ft MLLW",
               "source": "NOAA OFS"
             },
             {
-              "label": "Astronomical high tide",
+              "label": "Predicted high tide",
               "value": "10.70 ft MLLW",
-              "source": "NOAA CO-OPS"
+              "source": "NOAA CO-OPS tide prediction"
             },
             {
-              "label": "Forecast surf context",
-              "value": "5 ft max in current Coastal York product",
+              "label": "NWS surf forecast",
+              "value": "5 ft max in the current Coastal York forecast",
               "source": "NWS Surf Zone Forecast"
             },
             {
-              "label": "Onshore wind component",
+              "label": "Wind pushing toward shore",
               "value": "2 mph",
-              "source": "Derived from NWS hourly wind"
+              "source": "Calculated from NWS hourly wind direction and speed"
             },
             {
               "label": "Latest buoy onshore-wind component",
@@ -8752,22 +8762,22 @@
     },
     {
       "published_at": "2026-07-13T07:00:00Z",
-      "source": "pressherald.com",
+      "source": "The Portland Press Herald",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - pressherald.com",
-      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - pressherald.com",
+      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - The Portland Press Herald",
+      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - The Portland Press Herald",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNVTZXdEp4QjFqYzZfRnN3M1FtWXRiMXlqSlBpR2hjNTNFVnY1Z19fTjVBSlBHSWlNX2RyM000WGc4eGNZMnFsUjI5VVNiVWYzZHVvb3IwZjRrQ3JDejhSMnVuRFFmUkQxUUN6VXZrR0NlMVdoeHVteHJPMTdUX1hBcHlZSUZMTFhJWE92cjJxVjAxVGZickVySHJFdUxYNDY5X2FmNTVuX2lFLUNqSHNIMUVDM3YxdUE?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     },
     {
       "published_at": "2026-07-14T07:00:00Z",
-      "source": "Honolulu Star-Advertiser",
+      "source": "staradvertiser.com",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Protesters rally a day after fatal ICE shooting in coastal Maine town of Biddeford - Honolulu Star-Advertiser",
-      "summary": "Protesters rally a day after fatal ICE shooting in coastal Maine town of Biddeford - Honolulu Star-Advertiser",
+      "headline": "Protesters rally a day after fatal ICE shooting in coastal Maine town of Biddeford - staradvertiser.com",
+      "summary": "Protesters rally a day after fatal ICE shooting in coastal Maine town of Biddeford - staradvertiser.com",
       "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOb05RMjZ4SWV4aFdjTy1qVWZ1d01wR2xoUFhHN25kT3NxcWIxeWpOWExuS2FSd2tKSm1POFdLc2NuS2NFcW5MUFRPNzVFRkVTVjNqMHRvWE02OHdXZmZ3eTkzZXgwcGtYajNhWEZVSFJBVFlrSEduZUE2UUw1azNkR3M1R0ttZ1BsajVqUURQRDBnVzF1TVVQVHdyUGptYTViTjU0RWVnOXRKRWU5WDhPMGtnQjVyazg4X05MbHJxZnIyY0RJM1dqb1hZeExQUGdFd25oOVRB?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

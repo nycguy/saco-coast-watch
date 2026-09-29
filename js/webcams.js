@@ -10,6 +10,7 @@
   const ferryStatus=document.getElementById('ferryStatus');
   const ferryArchive=document.getElementById('ferryArchive');
   const ferryArchiveRange=document.getElementById('ferryArchiveRange');
+  const ferryArchiveThumbs=document.getElementById('ferryArchiveThumbs');
   const ferryArchiveCount=document.getElementById('ferryArchiveCount');
   const ferryArchiveTime=document.getElementById('ferryArchiveTime');
   const ferryArchiveReason=document.getElementById('ferryArchiveReason');
@@ -71,13 +72,54 @@
     const c=frame?.context||{},rows=[
       ['Event',c.event],['Phase',c.phase],['Impact',c.impact],
       ['Water level',Number.isFinite(Number(c.water_level_ft))?Number(c.water_level_ft).toFixed(2)+' ft MLLW':null],
-      ['Residual',Number.isFinite(Number(c.residual_ft))?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
+      ['Water above predicted tide',Number.isFinite(Number(c.residual_ft))?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
       ['Waves',Number.isFinite(Number(c.wave_height_ft))?Number(c.wave_height_ft).toFixed(1)+' ft':null],
       ['Dominant period',Number.isFinite(Number(c.dominant_period_sec))?Number(c.dominant_period_sec).toFixed(1)+' sec':null],
       ['Gust',Number.isFinite(Number(c.gust_mph))?Math.round(c.gust_mph)+' mph':null]
     ].filter(([,value])=>value);
     ferryArchiveContext.replaceChildren();ferryArchiveContext.hidden=!rows.length;
     for(const [label,value] of rows){const d=document.createElement('div'),span=document.createElement('span'),strong=document.createElement('strong');span.textContent=label;strong.textContent=value;d.append(span,strong);ferryArchiveContext.append(d);}
+  }
+  function archiveImageUrl(frame){
+    return 'data/webcams/ferry-history/'+encodeURIComponent(frame.file)+'?v='+encodeURIComponent(frame.captured_at||'');
+  }
+  function plainArchiveReason(value){
+    return String(value||'')
+      .replace(/Portland water-level residual is\s*/i,'Portland water was ')
+      .replace(/24-hour Portland residual reached\s*/i,'Highest water above the predicted tide in the past 24h was ')
+      .replace(/residual/gi,'water above predicted tide');
+  }
+  function setActiveArchiveThumb(index){
+    if(!ferryArchiveThumbs)return;
+    ferryArchiveThumbs.querySelectorAll('.ferry-archive-thumb').forEach((button,i)=>{
+      const active=i===index;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',active?'true':'false');
+    });
+  }
+  function renderArchiveThumbnails(){
+    if(!ferryArchiveThumbs)return;
+    ferryArchiveThumbs.replaceChildren();
+    archiveFrames.forEach((frame,index)=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='ferry-archive-thumb';
+      button.setAttribute('aria-pressed','false');
+      button.setAttribute('aria-label','View saved Ferry Beach image from '+etTime(frame.captured_at));
+      const img=document.createElement('img');
+      img.src=archiveImageUrl(frame);
+      img.loading='lazy';
+      img.alt='Saved Ferry Beach shoreline image from '+etTime(frame.captured_at);
+      const meta=document.createElement('span');
+      const time=document.createElement('strong');time.textContent=etTime(frame.captured_at);
+      const detail=document.createElement('small');
+      const c=frame.context||{};
+      detail.textContent=c.impact&&c.phase?c.impact+' · '+c.phase:'Saved event image';
+      meta.append(time,detail);
+      button.append(img,meta);
+      button.addEventListener('click',()=>showArchivedFrame(index));
+      ferryArchiveThumbs.append(button);
+    });
   }
   function showArchivedFrame(index){
     const frame=archiveFrames[index];
@@ -86,13 +128,19 @@
     ferryVideo.hidden=true;
     ferryPreview.hidden=false;
     ferryPreviewImage.hidden=false;
-    ferryPreviewImage.src='data/webcams/ferry-history/'+encodeURIComponent(frame.file)+'?v='+encodeURIComponent(frame.captured_at||'');
+    ferryPreviewImage.src=archiveImageUrl(frame);
     if(ferryPreviewTime)ferryPreviewTime.textContent='Archived storm frame · '+etTime(frame.captured_at);
     if(ferryArchiveTime)ferryArchiveTime.textContent=etTime(frame.captured_at);
-    if(ferryArchiveReason)ferryArchiveReason.textContent=(frame.reasons||[]).slice(0,2).join(' · ');
+    if(ferryArchiveReason)ferryArchiveReason.textContent=(frame.reasons||[]).slice(0,2).map(plainArchiveReason).join(' · ');
+    if(ferryArchiveRange)ferryArchiveRange.value=String(index);
+    setActiveArchiveThumb(index);
     renderArchiveContext(frame);
   }
   function returnFerryLive(){
+    setActiveArchiveThumb(-1);
+    if(ferryArchiveTime)ferryArchiveTime.textContent='Choose a saved image above.';
+    if(ferryArchiveReason)ferryArchiveReason.textContent='';
+    renderArchiveContext(null);
     if(ferryPreview)ferryPreview.hidden=true;
     if(ferryVideo)ferryVideo.hidden=false;
     if(ferryVideo)ferryVideo.play().catch(()=>setStatus(ferryStatus,'Live stream loaded. Press Play on the video for current conditions.',false));
@@ -106,11 +154,14 @@
       archiveFrames=(doc.frames||[]).filter(x=>x&&x.file&&x.captured_at);
       if(!archiveFrames.length){ferryArchive.hidden=true;return;}
       ferryArchive.hidden=false;
+      renderArchiveThumbnails();
       ferryArchiveRange.min='0';ferryArchiveRange.max=String(archiveFrames.length-1);ferryArchiveRange.value=String(archiveFrames.length-1);
-      ferryArchiveCount.textContent=archiveFrames.length+' frame'+(archiveFrames.length===1?'':'s')+' from the past '+(doc.retention_hours||24)+'h';
-      const latest=archiveFrames.at(-1);
-      ferryArchiveTime.textContent='Latest archived '+etTime(latest.captured_at);
-      ferryArchiveReason.textContent=(latest.reasons||[]).slice(0,2).join(' · ');renderArchiveContext(latest);
+      ferryArchiveRange.hidden=archiveFrames.length<=6;
+      ferryArchiveCount.textContent=archiveFrames.length+' saved image'+(archiveFrames.length===1?'':'s')+' from the past '+(doc.retention_hours||24)+'h';
+      ferryArchiveTime.textContent='Choose a saved image above.';
+      ferryArchiveReason.textContent='';
+      renderArchiveContext(null);
+      setActiveArchiveThumb(-1);
     }catch(err){
       console.warn('Saco Coast Watch Ferry Beach archive:',err);
       ferryArchive.hidden=true;

@@ -15,7 +15,7 @@ class ArchiveFerryCameraTests(unittest.TestCase):
    event={'phase':'Recent','show_focus':False,'primary_display':'Routine Coastal Conditions','impact':{'label':'Routine','level':'green','rank':0},'recent_impact':{'label':'Elevated','level':'yellow','rank':1},'reasons':[],'recent_impacts':[{'label':'Portland residual'}]}
   else:
    event={'phase':'Routine','show_focus':False,'primary_display':'Routine Coastal Conditions','impact':{'label':'Routine','level':'green','rank':0},'reasons':[],'recent_impacts':[]}
-  return {'snapshot_at':at,'event_state':event,'water':{},'marine':{'stations':{}},'alerts':[]}
+  return {'snapshot_at':at,'event_state':event,'water':{'latest_observed_ft':11.4,'residual_current_ft':0.8},'marine':{'stations':{'44007':{'wave_height_ft':7.2,'dominant_period_sec':12.0,'gust_mph':38.0}}},'alerts':[]}
  def write_history(self,path,snaps):
   path.write_text(json.dumps({'schema_version':2,'snapshots':snaps}),encoding='utf-8')
  def fake_capture(self,dest):
@@ -29,6 +29,7 @@ class ArchiveFerryCameraTests(unittest.TestCase):
    self.assertTrue(result['active']); self.assertTrue(result['captured'])
    self.assertIn('Coastal Storm',result['reasons'])
    doc=json.loads((out/'index.json').read_text()); self.assertEqual(len(doc['frames']),1); self.assertTrue((out/doc['frames'][0]['file']).exists())
+   self.assertEqual(doc['frames'][0]['context']['event'],'Coastal Storm'); self.assertEqual(doc['frames'][0]['context']['wave_height_ft'],7.2)
  def test_does_not_capture_routine_conditions(self):
   now=datetime(2026,9,27,15,0,tzinfo=timezone.utc)
   with tempfile.TemporaryDirectory() as td:

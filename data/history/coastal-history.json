@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-29T19:29:02Z",
+  "generated_at": "2026-09-29T19:29:39Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -4425,7 +4425,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-29T19:29:02Z",
+      "snapshot_at": "2026-09-29T19:29:39Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -4438,12 +4438,12 @@
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 9.1,
-        "latest_observed_at": "2026-09-29T19:18:00Z",
+        "latest_observed_ft": 8.84,
+        "latest_observed_at": "2026-09-29T19:24:00Z",
         "observed_24h_max_ft": 11.34,
         "observed_24h_max_time": "2026-09-29T17:24:00Z",
-        "residual_current_ft": 0.76,
-        "residual_current_at": "2026-09-29T19:18:00Z",
+        "residual_current_ft": 0.73,
+        "residual_current_at": "2026-09-29T19:24:00Z",
         "residual_24h_max_ft": 1.11,
         "residual_24h_max_time": "2026-09-28T23:00:00Z",
         "forecast_peak_24h_ft": 11.58,
@@ -4500,7 +4500,7 @@
         "next24_max_sustained_wind_mph": 5.0,
         "next72_max_sustained_wind_mph": 10.0,
         "next24_max_precip_probability_pct": 14,
-        "next72_max_precip_probability_pct": 14,
+        "next72_max_precip_probability_pct": 18,
         "next24_summaries": [
           "Mostly Cloudy",
           "Cloudy",
@@ -4510,7 +4510,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-09-29T19:29:02.314477Z",
+        "generated_at": "2026-09-29T19:29:39.675548Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -4819,11 +4819,9 @@
             },
             "hours_until_peak": 22.6,
             "confidence": {
-              "label": "Moderate",
-              "score": 0.85,
-              "missing": [
-                "NDBC 44007 wave observation"
-              ]
+              "label": "High",
+              "score": 1.0,
+              "missing": []
             },
             "drivers": [
               {
@@ -4847,16 +4845,26 @@
                 "source": "Derived from NWS hourly wind"
               },
               {
+                "label": "Latest offshore wave observation",
+                "value": "3.0 ft at 9.0 sec dominant period",
+                "source": "NDBC 44007"
+              },
+              {
+                "label": "Wave-power proxy",
+                "value": "3.7 kW/m proxy",
+                "source": "Derived from NDBC Hs² × dominant period"
+              },
+              {
                 "label": "Latest buoy onshore-wind component",
                 "value": "0 mph",
                 "source": "Derived from NDBC 44007"
               }
             ],
             "wave_context": {
-              "height_ft": null,
-              "dominant_period_sec": null,
-              "direction_deg": null,
-              "power_proxy_kw_m": null
+              "height_ft": 3.0,
+              "dominant_period_sec": 9.0,
+              "direction_deg": 125.0,
+              "power_proxy_kw_m": 3.7
             },
             "onshore_reference": {
               "shore_normal_from_deg": 120.0,
@@ -5827,18 +5835,18 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-09-29T19:00:00Z",
-            "speed_mph": 6.7,
+            "observed_at": "2026-09-29T18:50:00Z",
+            "speed_mph": 8.9,
             "gust_mph": 8.9,
             "direction_deg": 10,
-            "wave_height_ft": null,
-            "dominant_period_sec": null,
-            "average_period_sec": null,
-            "wave_direction_deg": null,
+            "wave_height_ft": 3.0,
+            "dominant_period_sec": 9.0,
+            "average_period_sec": 5.6,
+            "wave_direction_deg": 125,
             "pressure_mb": 1012.4,
-            "pressure_tendency_mb": -0.4,
+            "pressure_tendency_mb": null,
             "water_temp_f": 56.1,
-            "air_temp_f": 58.1,
+            "air_temp_f": 58.3,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 22.4,
             "max_24h_speed_at": "2026-09-28T19:50:00Z",
@@ -5848,7 +5856,7 @@
             "max_24h_wave_at": "2026-09-28T22:50:00Z"
           },
           "WEXM1": {
-            "observed_at": "2026-09-29T18:00:00Z",
+            "observed_at": "2026-09-29T19:00:00Z",
             "speed_mph": 5.8,
             "gust_mph": null,
             "direction_deg": 340,
@@ -5859,7 +5867,7 @@
             "pressure_mb": null,
             "pressure_tendency_mb": null,
             "water_temp_f": null,
-            "air_temp_f": 62.8,
+            "air_temp_f": 63.3,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
             "max_24h_speed_mph": 6.9,
             "max_24h_speed_at": "2026-09-28T19:30:00Z",
@@ -6168,11 +6176,9 @@
           },
           "hours_until_peak": 22.6,
           "confidence": {
-            "label": "Moderate",
-            "score": 0.85,
-            "missing": [
-              "NDBC 44007 wave observation"
-            ]
+            "label": "High",
+            "score": 1.0,
+            "missing": []
           },
           "drivers": [
             {
@@ -6196,16 +6202,26 @@
               "source": "Derived from NWS hourly wind"
             },
             {
+              "label": "Latest offshore wave observation",
+              "value": "3.0 ft at 9.0 sec dominant period",
+              "source": "NDBC 44007"
+            },
+            {
+              "label": "Wave-power proxy",
+              "value": "3.7 kW/m proxy",
+              "source": "Derived from NDBC Hs² × dominant period"
+            },
+            {
               "label": "Latest buoy onshore-wind component",
               "value": "0 mph",
               "source": "Derived from NDBC 44007"
             }
           ],
           "wave_context": {
-            "height_ft": null,
-            "dominant_period_sec": null,
-            "direction_deg": null,
-            "power_proxy_kw_m": null
+            "height_ft": 3.0,
+            "dominant_period_sec": 9.0,
+            "direction_deg": 125.0,
+            "power_proxy_kw_m": 3.7
           },
           "onshore_reference": {
             "shore_normal_from_deg": 120.0,
@@ -6423,6 +6439,16 @@
       "to_impact": "Routine",
       "from_display": "High Surf / Wave Impact",
       "to_display": "Routine Coastal Conditions"
+    },
+    {
+      "at": "2026-09-29T19:29:39Z",
+      "type": "event_state_transition",
+      "from_phase": "Approaching",
+      "to_phase": "Recent",
+      "from_impact": "High Impact",
+      "to_impact": "Routine",
+      "from_display": "High Surf / Wave Impact",
+      "to_display": "Routine Coastal Conditions"
     }
   ],
   "local_events": [
@@ -6527,11 +6553,11 @@
     },
     {
       "published_at": "2024-06-27T07:00:00Z",
-      "source": "maineaudubon.org",
+      "source": "Maine Audubon",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
-      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -6549,11 +6575,11 @@
     },
     {
       "published_at": "2025-01-10T08:00:00Z",
-      "source": "Spectrum News",
+      "source": "spectrumlocalnews.com",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "A year on, Saco’s Camp Ellis neighborhood bounces back from storm damage - Spectrum News",
-      "summary": "A year on, Saco’s Camp Ellis neighborhood bounces back from storm damage - Spectrum News",
+      "headline": "A year on, Saco’s Camp Ellis neighborhood bounces back from storm damage - spectrumlocalnews.com",
+      "summary": "A year on, Saco’s Camp Ellis neighborhood bounces back from storm damage - spectrumlocalnews.com",
       "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNRXRqQ1B3S292eG5iOXg3ZGFSckE5STd6VGNSRERsN2JVWFpLYlFySXMxamNDbzkycDN3clR2S0JhQ2d1VjNGWnNTcGMtckpiUk1kYlRZaVlzTEVLOTN3cTJOZWNIU3g5cUhLRzlrZVhKaG5oajNvWnozY2YtYzFlODJzWlhDTWF2b2w4NThrS2hNNzhLcGhfeWNicENrMnYxbldpVU5tU050ckI2TFROSEQ1OTlRUVlBc3R5bWdBWVM4Sm1YN0E?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -6714,11 +6740,11 @@
     },
     {
       "published_at": "2026-03-10T07:00:00Z",
-      "source": "Spectrum News",
+      "source": "spectrumlocalnews.com",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Saco to begin work on breakwater jetty to protect Camp Ellis shoreline - Spectrum News",
-      "summary": "Saco to begin work on breakwater jetty to protect Camp Ellis shoreline - Spectrum News",
+      "headline": "Saco to begin work on breakwater jetty to protect Camp Ellis shoreline - spectrumlocalnews.com",
+      "summary": "Saco to begin work on breakwater jetty to protect Camp Ellis shoreline - spectrumlocalnews.com",
       "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPcS1ZUHVFdGNaVTJmZFZhU0loLWdDZkpRZVMxOG1lMXJMVmxsUFlHUktiNE42c3phTFluNlRkbERCbGplME84cE4xYjl4Umg5MnZXLXNpbXJEWkhiZ0VZSEU3dTJCMVRrUVRseHBfRk95TGVIVDAtV3lKRl92Mk13UWNIZ1I0VmFKTDdJbDB3YXNBWTdsbmJDYVZtU3ZlWVltdERTOGx5QXIzZWJib3VQR0IxY2hYQUFicWhKZkwwb1JLOFk?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -6802,11 +6828,11 @@
     },
     {
       "published_at": "2026-06-30T07:00:00Z",
-      "source": "mainemorningstar.com",
+      "source": "Maine Morning Star",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
-      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
+      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
       "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOcHBRU1E1RzlrRmVjOXk1aFR2a1plMEJrOHJyMGJYLTVGVXM0Q19ZMmhGTS1fTG9vRlpEc1JKWGtGOFRBdWhleDJYMHV6a3ZFM2lYWlo2T1BWNnhXeGNtUDl6aGV3OXAteHRhU0hTczFCVS1MWWlGOVRwVkNMc08talNtMVRycXdDZW1IZzVkREhwV1dHak80bDNid3FMQ192ZGt4UVc3N2liZXBPWDZiLTBDSmswSHVDakY4ZA?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

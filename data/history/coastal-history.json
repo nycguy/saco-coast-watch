@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-29T19:21:50Z",
+  "generated_at": "2026-09-29T19:22:47Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -4425,7 +4425,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-29T19:21:50Z",
+      "snapshot_at": "2026-09-29T19:22:47Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -4500,7 +4500,7 @@
         "next24_max_sustained_wind_mph": 5.0,
         "next72_max_sustained_wind_mph": 10.0,
         "next24_max_precip_probability_pct": 14,
-        "next72_max_precip_probability_pct": 18,
+        "next72_max_precip_probability_pct": 14,
         "next24_summaries": [
           "Mostly Cloudy",
           "Cloudy",
@@ -4510,7 +4510,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-09-29T19:21:50.289685Z",
+        "generated_at": "2026-09-29T19:22:47.032999Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -4980,6 +4980,16 @@
       "to_impact": "Routine",
       "from_display": "High Surf / Wave Impact",
       "to_display": "Routine Coastal Conditions"
+    },
+    {
+      "at": "2026-09-29T19:22:47Z",
+      "type": "event_state_transition",
+      "from_phase": "Approaching",
+      "to_phase": "Recent",
+      "from_impact": "High Impact",
+      "to_impact": "Routine",
+      "from_display": "High Surf / Wave Impact",
+      "to_display": "Routine Coastal Conditions"
     }
   ],
   "local_events": [
@@ -5084,11 +5094,11 @@
     },
     {
       "published_at": "2024-06-27T07:00:00Z",
-      "source": "Maine Audubon",
+      "source": "maineaudubon.org",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
-      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5359,11 +5369,11 @@
     },
     {
       "published_at": "2026-06-30T07:00:00Z",
-      "source": "Maine Morning Star",
+      "source": "mainemorningstar.com",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
-      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
+      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
       "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOcHBRU1E1RzlrRmVjOXk1aFR2a1plMEJrOHJyMGJYLTVGVXM0Q19ZMmhGTS1fTG9vRlpEc1JKWGtGOFRBdWhleDJYMHV6a3ZFM2lYWlo2T1BWNnhXeGNtUDl6aGV3OXAteHRhU0hTczFCVS1MWWlGOVRwVkNMc08talNtMVRycXdDZW1IZzVkREhwV1dHak80bDNid3FMQ192ZGt4UVc3N2liZXBPWDZiLTBDSmswSHVDakY4ZA?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

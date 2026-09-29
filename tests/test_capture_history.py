@@ -30,6 +30,14 @@ class CaptureTests(unittest.TestCase):
   self.assertEqual(row['wave_height_ft'],6.6)
   self.assertEqual(row['pressure_mb'],985.5)
   self.assertEqual(row['pressure_tendency_mb'],-3.2)
+ def test_build_high_tide_windows_aligns_model_guidance(self):
+  now=datetime(2026,9,29,12,tzinfo=timezone.utc)
+  highs=[(datetime(2026,9,29,16,tzinfo=timezone.utc),10.5)]
+  model=[(datetime(2026,9,29,15,30,tzinfo=timezone.utc),11.7),(datetime(2026,9,29,16,30,tzinfo=timezone.utc),11.9)]
+  preds=[(datetime(2026,9,29,16,30,tzinfo=timezone.utc),10.6)]
+  rows=c.build_high_tide_windows(highs,model,preds,now)
+  self.assertEqual(rows[0]["modeled_total_ft"],11.9)
+  self.assertEqual(rows[0]["modeled_uplift_ft"],1.3)
  def test_event_transition_records_phase_and_impact_changes(self):
   old={'snapshot_at':'2026-09-27T10:00:00Z','event_state':{'phase':'Ongoing','primary_display':'Coastal Storm','impact':{'label':'Significant'}}}
   cur={'snapshot_at':'2026-09-27T12:00:00Z','event_state':{'phase':'Improving','primary_display':'Coastal Storm','impact':{'label':'Elevated'}}}

@@ -58,6 +58,29 @@ class BriefingTests(unittest.TestCase):
   snap2={'snapshot_at':'2026-09-29T18:00:00Z','event_state':state,'water':{'observed_24h_max_ft':11.5,'residual_24h_max_ft':1.1,'forecast_peak_72h_ft':11.6},'marine':{'stations':{'44007':{'max_24h_wave_height_ft':8.0,'max_24h_gust_mph':38}}},'hazards':{'surf':{'max_surf_height_ft':7}},'alerts':[]}
   events=f._event_history([snap1],snap2,now)
   self.assertEqual(len(events),1); self.assertEqual(events[0]['title'],'High Surf / Wave Impact'); self.assertEqual(events[0]['highest_impact']['label'],'Significant'); self.assertEqual(events[0]['max_wave_ft'],8.4)
+ def test_retrospective_excludes_superseded_parse_for_same_surf_product(self):
+  now=dt.datetime(2026,9,29,20,tzinfo=UTC)
+  bad_state={'phase':'Approaching','show_focus':True,'primary_display':'High Surf / Wave Impact','impact':{'rank':3,'label':'High Impact','level':'red'},'recent_impact':{'rank':1,'label':'Elevated','level':'yellow'},'active_hazards':[{'code':'high_surf','label':'High Surf / Wave Impact','impact_rank':3}],'official_alerts':[],'recent_impacts':[],'reasons':[]}
+  good_state={'phase':'Recent','show_focus':False,'primary_display':'Routine Coastal Conditions','impact':{'rank':0,'label':'Routine','level':'green'},'recent_impact':{'rank':1,'label':'Elevated','level':'yellow'},'active_hazards':[],'official_alerts':[],'recent_impacts':[],'reasons':[]}
+  snap1={'snapshot_at':'2026-09-29T18:57:39Z','event_state':bad_state,'water':{'observed_24h_max_ft':11.34,'residual_24h_max_ft':1.11,'forecast_peak_72h_ft':11.58},'marine':{'stations':{'44007':{'max_24h_wave_height_ft':6.6,'max_24h_gust_mph':26.8}}},'hazards':{'surf':{'product_id':'same-product','issued_at':'2026-09-29T18:41:00Z','max_surf_height_ft':60}},'alerts':[]}
+  snap2={'snapshot_at':'2026-09-29T19:29:39Z','event_state':good_state,'water':{'observed_24h_max_ft':11.34,'residual_24h_max_ft':1.11,'forecast_peak_72h_ft':11.58},'marine':{'stations':{'44007':{'max_24h_wave_height_ft':6.6,'max_24h_gust_mph':26.8}}},'hazards':{'surf':{'product_id':'same-product','issued_at':'2026-09-29T18:41:00Z','max_surf_height_ft':5}},'alerts':[]}
+  events=f._event_history([snap1],snap2,now)
+  self.assertEqual(events[0]['max_surf_ft'],5.0)
+  self.assertEqual(events[0]['highest_impact']['label'],'Elevated')
+  self.assertEqual(events[0]['data_quality'][0]['type'],'superseded_surf_parse')
+  self.assertEqual(events[0]['data_quality'][0]['count'],1)
+  self.assertEqual(events[0]['captured_coverage_hours'],0.5)
+  self.assertIn('not the actual storm duration',events[0]['coverage_basis'])
+  self.assertEqual(snap1['hazards']['surf']['max_surf_height_ft'],60)
+ def test_retrospective_preserves_valid_extreme_surf_from_distinct_products(self):
+  now=dt.datetime(2026,9,29,20,tzinfo=UTC)
+  state={'phase':'Ongoing','show_focus':True,'primary_display':'High Surf / Wave Impact','impact':{'rank':3,'label':'High Impact','level':'red'},'recent_impact':{'rank':0,'label':'Routine','level':'green'},'active_hazards':[{'code':'high_surf','label':'High Surf / Wave Impact','impact_rank':3}],'official_alerts':[{'event':'High Surf Warning'}],'recent_impacts':[],'reasons':[]}
+  snap1={'snapshot_at':'2026-09-29T18:00:00Z','event_state':state,'water':{},'marine':{'stations':{}},'hazards':{'surf':{'product_id':'product-a','max_surf_height_ft':35}},'alerts':[{'event':'High Surf Warning'}]}
+  snap2={'snapshot_at':'2026-09-29T19:00:00Z','event_state':state,'water':{},'marine':{'stations':{}},'hazards':{'surf':{'product_id':'product-b','max_surf_height_ft':28}},'alerts':[{'event':'High Surf Warning'}]}
+  events=f._event_history([snap1],snap2,now)
+  self.assertEqual(events[0]['max_surf_ft'],35.0)
+  self.assertEqual(events[0]['highest_impact']['label'],'High Impact')
+  self.assertEqual(events[0]['data_quality'],[])
  def test_coastal_impact_change_attributes_available_drivers(self):
   base={'event_state':{'coastal_impact':{'impact':{'score':30,'label':'Routine'},'peak_window':{'modeled_total_ft':11.4,'surf_context_ft':5,'onshore_component_mph':10}}}}
   cur={'event_state':{'coastal_impact':{'impact':{'score':48,'label':'Elevated'},'peak_window':{'modeled_total_ft':11.8,'surf_context_ft':8,'onshore_component_mph':24}}}}

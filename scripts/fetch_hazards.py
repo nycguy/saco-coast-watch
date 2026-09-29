@@ -650,7 +650,9 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
         add("marine_hazard","Marine Hazard","NDBC 44007 measured offshore conditions are elevated")
     all_alerts=list(alerts)+list(marine_alerts); active_hazards=[]
     for mode in modes:
-        code=mode.get("code"); rank=0; basis=[mode.get("basis")] if mode.get("basis") else []
+        code=mode.get("code"); rank=0
+        raw_basis=mode.get("basis")
+        basis=list(raw_basis) if isinstance(raw_basis,list) else ([raw_basis] if raw_basis else [])
         if code=="coastal_flood": rank=max(rank,_rank(max([v for v in (forecast72,observed) if v is not None],default=None),12,13,14))
         elif code=="high_surf": rank=max(rank,_rank(surf.get("max_surf_height_ft"),7,10,15))
         elif code=="beach_hazard": rank=max(rank,1 if str(surf.get("rip_current_risk") or "").lower()=="high" else 0)

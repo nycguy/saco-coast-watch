@@ -34,5 +34,12 @@ class HazardTests(unittest.TestCase):
  def test_official_tropical_identity_becomes_display_name(self):
   hazards={"active_modes":[{"code":"tropical","label":"Tropical Cyclone","basis":"test"}],"alerts":[],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"surf":{},"tropical":{"storms":[{"id":"AL012026","name":"Arthur","classification":"HU","label":"Hurricane Arthur","min_forecast_track_distance_mi":220}]}}
   state=h.derive_event_state(hazards,now=dt.datetime(2026,8,1,tzinfo=UTC)); self.assertEqual(state["primary_display"],"Hurricane Arthur"); self.assertEqual(state["event_identity"]["storm_id"],"AL012026"); self.assertEqual(state["event_identity"]["naming_authority"],"National Hurricane Center / WMO")
+ def test_event_state_can_be_enriched_twice(self):
+  now=dt.datetime(2026,9,29,18,tzinfo=UTC)
+  hazards={"active_modes":[{"code":"high_surf","label":"High Surf / Wave Impact","basis":"NWS High Surf Advisory"}],"alerts":[{"event":"High Surf Advisory"}],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"tropical":{},"surf":{"max_surf_height_ft":8}}
+  first=h.derive_event_state(hazards,now=now)
+  hazards["active_modes"]=first["active_hazards"]
+  second=h.derive_event_state(hazards,now=now)
+  self.assertEqual(second["active_hazards"][0]["basis"],["NWS High Surf Advisory"])
  def test_haversine_local_reference(self): self.assertLess(h.haversine_miles(h.SITE_LAT,h.SITE_LON,43.47,-70.38),1)
 if __name__=="__main__": unittest.main()

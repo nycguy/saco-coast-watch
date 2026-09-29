@@ -40,7 +40,7 @@ class BriefingTests(unittest.TestCase):
   self.assertEqual([x['label'] for x in d['forecast_evolution']['items']],['24h ago','12h ago','6h ago','Now'])
   self.assertTrue(d['recent_event']['active']); self.assertEqual(d['event_state']['phase'],'Recent')
   titles=[x['title'] for x in d['impact_timeline']]
-  self.assertTrue(any('residual' in x.lower() for x in titles))
+  self.assertTrue(any('above the predicted tide' in x.lower() for x in titles))
   self.assertTrue(any('wave' in x.lower() for x in titles))
  def test_event_briefing_compares_winter_guidance(self):
   now=dt.datetime(2026,1,10,12,tzinfo=UTC)
@@ -70,7 +70,11 @@ class BriefingTests(unittest.TestCase):
   self.assertEqual(events[0]['data_quality'][0]['type'],'superseded_surf_parse')
   self.assertEqual(events[0]['data_quality'][0]['count'],1)
   self.assertEqual(events[0]['captured_coverage_hours'],0.5)
-  self.assertIn('not the actual storm duration',events[0]['coverage_basis'])
+  self.assertIn('not how long the storm itself lasted',events[0]['coverage_basis'])
+  self.assertNotIn('event-state snapshots',events[0]['coverage_basis'])
+  self.assertIn('One earlier surf value was corrected',events[0]['data_quality'][0]['message'])
+  self.assertNotIn('superseded',events[0]['data_quality'][0]['message'].lower())
+  self.assertNotIn('parse',events[0]['data_quality'][0]['message'].lower())
   self.assertEqual(snap1['hazards']['surf']['max_surf_height_ft'],60)
  def test_retrospective_preserves_valid_extreme_surf_from_distinct_products(self):
   now=dt.datetime(2026,9,29,20,tzinfo=UTC)
@@ -86,4 +90,5 @@ class BriefingTests(unittest.TestCase):
   cur={'event_state':{'coastal_impact':{'impact':{'score':48,'label':'Elevated'},'peak_window':{'modeled_total_ft':11.8,'surf_context_ft':8,'onshore_component_mph':24}}}}
   change=f._coastal_impact_change(cur,base)
   self.assertEqual(change['score_delta'],18); self.assertEqual(len(change['drivers']),3)
+  self.assertEqual([driver['label'] for driver in change['drivers']],['NOAA forecast water level','NWS surf forecast','wind pushing toward shore'])
 if __name__=='__main__': unittest.main()

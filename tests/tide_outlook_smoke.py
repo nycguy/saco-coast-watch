@@ -122,7 +122,7 @@ def assert_common(page):
     thumbs=page.locator("#ferryArchiveThumbs .ferry-archive-thumb")
     assert thumbs.count()==2
     assert page.locator("#ferryArchiveRange").is_hidden()
-    assert "Saved event image" in thumbs.first.inner_text()
+    assert "Elevated · Ongoing" in thumbs.first.inner_text()
     thumbs.first.click()
     assert page.locator("#ferryPreview").is_visible()
     assert "frame-one.jpg" in page.locator("#ferryPreviewImage").get_attribute("src")

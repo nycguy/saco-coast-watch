@@ -114,7 +114,7 @@ def _event_briefing(current,baseline,now):
     if changes and transition: change_text+=" "+transition
     return {"active":True,"title":title,"modes":modes,"severity":state.get("impact") or {},"phase":state.get("phase"),"summary":summary,"change_text":change_text,"next24_text":(". ".join(next24)+".") if next24 else "No additional event-specific 24-hour metric is available.","next72_text":(". ".join(next72)+".") if next72 else "No additional event-specific 72-hour metric is available."}
 
-def _forecast_evolutiondef _forecast_evolution(snaps,current,now):
+def _forecast_evolution(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     points=[]
     seen=set()

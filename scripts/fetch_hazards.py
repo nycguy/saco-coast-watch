@@ -344,7 +344,7 @@ def surf_zone_snapshot(doc):
     }
 
 
-def tropical_snapshotdef tropical_snapshot(nhc_doc, alerts):
+def tropical_snapshot(nhc_doc, alerts):
     local_tropical = any(
         re.search(r"hurricane|tropical storm|storm surge", alert.get("event") or "", re.I)
         for alert in alerts
@@ -759,7 +759,7 @@ def build_snapshot(now=None):
     return snapshot
 
 
-def main()def main():
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="data/hazards.json")
     args = parser.parse_args()

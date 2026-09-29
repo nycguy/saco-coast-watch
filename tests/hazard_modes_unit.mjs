@@ -45,5 +45,5 @@ test('live NWS alerts augment backend modes without duplicates',()=>{
 
 test('routine state has no adaptive backend modes',()=>{
   const {hazardModeList}=loadContext({hazards:{active_modes:[]},alerts:[]});
-  assert.deepEqual(hazardModeList(),[]);
+  assert.equal(hazardModeList().length,0);
 });

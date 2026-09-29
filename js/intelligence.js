@@ -142,6 +142,29 @@ function modelWindowForHigh(high){
 
 function renderHighWaterWindows(){
   const root=$('highWaterWindows');if(!root)return;root.replaceChildren();
+  const impactWindows=typeof normalizedEventState==='function'?(normalizedEventState().coastal_impact?.windows||[]):[];
+  if(impactWindows.length){
+    for(const w of impactWindows.slice(0,3)){
+      const card=document.createElement('article'),rank=Number(w.impact?.rank)||0;
+      card.className='high-window impact-'+(['green','yellow','orange','red'][rank]||'green');
+      const tideAt=Date.parse(w.high_tide_at||''),startAt=Date.parse(w.window_start||''),endAt=Date.parse(w.window_end||'');
+      const title=document.createElement('div');title.className='high-window-time';
+      title.textContent=Number.isFinite(startAt)&&Number.isFinite(endAt)?dayTime(startAt)+'–'+dayTime(endAt)+' ET · high tide '+dayTime(tideAt):Number.isFinite(tideAt)?dayTime(tideAt)+' ET':'High-water window';
+      const grid=document.createElement('div');grid.className='high-window-grid';
+      const impact=w.impact||{},pairs=[
+        ['Coastal impact',impact.label?impact.label+(Number.isFinite(Number(impact.score))?' · '+impact.score+'/100':''):'Routine'],
+        ['Astronomical tide',Number.isFinite(Number(w.astronomical_ft))?Number(w.astronomical_ft).toFixed(2)+' ft':'Unavailable'],
+        ['NOAA modeled total',Number.isFinite(Number(w.modeled_total_ft))?Number(w.modeled_total_ft).toFixed(2)+' ft':'Unavailable'],
+        ['Modeled uplift',Number.isFinite(Number(w.modeled_uplift_ft))?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':'Unavailable'],
+        ['Onshore wind component',Number.isFinite(Number(w.onshore_component_mph))?Math.round(w.onshore_component_mph)+' mph':'Unavailable'],
+        ['Surf forecast context',Number.isFinite(Number(w.surf_context_ft))?Math.round(w.surf_context_ft)+' ft max':'Unavailable']
+      ];
+      for(const [label,value] of pairs){const d=document.createElement('div');d.innerHTML='<span></span><strong></strong>';d.querySelector('span').textContent=label;d.querySelector('strong').textContent=value;grid.append(d);}
+      const note=document.createElement('p');note.className='intel-note';note.textContent='Compound impact is a Saco Coast Watch synthesis. Surf height is broader NWS forecast context unless exact timing is available.';
+      card.append(title,grid,note);root.append(card);
+    }
+    return;
+  }
   const sourceHighs=state.highs.length?state.highs:highTides();
   const highs=sourceHighs.filter(x=>x.t>=now()-10*60000).slice(0,3);
   if(!highs.length){root.innerHTML='<div class="intel-empty">Upcoming high-water windows are unavailable.</div>';return;}
@@ -150,17 +173,11 @@ function renderHighWaterWindows(){
     const band=riskBand(w.model?.v);card.className='high-window risk-'+band;
     const title=document.createElement('div');title.className='high-window-time';title.textContent=dayTime(high.t)+' ET';
     const grid=document.createElement('div');grid.className='high-window-grid';
-    const pairs=[
-      ['Astronomical tide',fmtN(high.v)+' ft'],
-      ['NOAA modeled peak',w.model?fmtN(w.model.v)+' ft':'Unavailable'],
-      ['Weather contribution',w.contribution===null||w.contribution===undefined?'Unavailable':(w.contribution>=0?'+':'')+fmtN(w.contribution)+' ft'],
-      ['Margin to Minor Flood',w.margin===null||w.margin===undefined?'Unavailable':Math.abs(w.margin).toFixed(2)+' ft '+(w.margin>=0?'below':'above')]
-    ];
+    const pairs=[['Astronomical tide',fmtN(high.v)+' ft'],['NOAA modeled peak',w.model?fmtN(w.model.v)+' ft':'Unavailable'],['Weather contribution',w.contribution===null||w.contribution===undefined?'Unavailable':(w.contribution>=0?'+':'')+fmtN(w.contribution)+' ft'],['Margin to Minor Flood',w.margin===null||w.margin===undefined?'Unavailable':Math.abs(w.margin).toFixed(2)+' ft '+(w.margin>=0?'below':'above')]];
     for(const [label,value] of pairs){const d=document.createElement('div');d.innerHTML='<span></span><strong></strong>';d.querySelector('span').textContent=label;d.querySelector('strong').textContent=value;grid.append(d);}
     card.append(title,grid);root.append(card);
   }
 }
-
 function renderForecastEvolution(){
   const items=state.briefing?.forecast_evolution?.items||[];
   const root=$('forecastEvolutionRows');if(!root)return;root.replaceChildren();

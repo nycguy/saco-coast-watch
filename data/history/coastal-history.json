@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-29T19:00:38Z",
+  "generated_at": "2026-09-29T19:21:50Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -4425,7 +4425,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-29T19:00:38Z",
+      "snapshot_at": "2026-09-29T19:21:50Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -4438,12 +4438,12 @@
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 9.93,
-        "latest_observed_at": "2026-09-29T18:54:00Z",
+        "latest_observed_ft": 9.32,
+        "latest_observed_at": "2026-09-29T19:12:00Z",
         "observed_24h_max_ft": 11.34,
         "observed_24h_max_time": "2026-09-29T17:24:00Z",
         "residual_current_ft": 0.76,
-        "residual_current_at": "2026-09-29T18:54:00Z",
+        "residual_current_at": "2026-09-29T19:12:00Z",
         "residual_24h_max_ft": 1.11,
         "residual_24h_max_time": "2026-09-28T23:00:00Z",
         "forecast_peak_24h_ft": 11.58,
@@ -4456,7 +4456,44 @@
           "minor": 0.42,
           "moderate": 1.42,
           "major": 2.42
-        }
+        },
+        "high_tides": [
+          {
+            "time": "2026-09-30T05:52:00Z",
+            "astronomical_ft": 9.71,
+            "modeled_total_ft": 10.53,
+            "modeled_time": "2026-09-30T05:48:00Z",
+            "modeled_uplift_ft": 0.82
+          },
+          {
+            "time": "2026-09-30T18:03:00Z",
+            "astronomical_ft": 10.7,
+            "modeled_total_ft": 11.58,
+            "modeled_time": "2026-09-30T18:06:00Z",
+            "modeled_uplift_ft": 0.89
+          },
+          {
+            "time": "2026-10-01T06:41:00Z",
+            "astronomical_ft": 9.38,
+            "modeled_total_ft": 10.24,
+            "modeled_time": "2026-10-01T06:42:00Z",
+            "modeled_uplift_ft": 0.85
+          },
+          {
+            "time": "2026-10-01T18:53:00Z",
+            "astronomical_ft": 10.52,
+            "modeled_total_ft": 11.54,
+            "modeled_time": "2026-10-01T18:54:00Z",
+            "modeled_uplift_ft": 1.03
+          },
+          {
+            "time": "2026-10-02T07:37:00Z",
+            "astronomical_ft": 9.0,
+            "modeled_total_ft": 9.92,
+            "modeled_time": "2026-10-02T07:36:00Z",
+            "modeled_uplift_ft": 0.92
+          }
+        ]
       },
       "forecast_conditions": {
         "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
@@ -4473,7 +4510,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-09-29T19:00:38.951695Z",
+        "generated_at": "2026-09-29T19:21:50.289685Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -4506,7 +4543,7 @@
             {
               "code": "waves",
               "label": "Buoy 44007 significant wave height",
-              "at": "2026-09-28T19:20:00Z",
+              "at": "2026-09-28T22:50:00Z",
               "value": 6.6,
               "unit": "ft",
               "impact_rank": 1
@@ -4681,25 +4718,25 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-09-29T18:30:00Z",
+            "observed_at": "2026-09-29T18:50:00Z",
             "speed_mph": 8.9,
-            "gust_mph": 11.2,
-            "direction_deg": 350,
-            "wave_height_ft": null,
-            "dominant_period_sec": null,
-            "average_period_sec": null,
-            "wave_direction_deg": null,
-            "pressure_mb": 1012.2,
+            "gust_mph": 8.9,
+            "direction_deg": 10,
+            "wave_height_ft": 3.0,
+            "dominant_period_sec": 9.0,
+            "average_period_sec": 5.6,
+            "wave_direction_deg": 125,
+            "pressure_mb": 1012.4,
             "pressure_tendency_mb": null,
             "water_temp_f": 56.1,
             "air_temp_f": 58.3,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 22.4,
-            "max_24h_speed_at": "2026-09-28T19:20:00Z",
+            "max_24h_speed_at": "2026-09-28T19:50:00Z",
             "max_24h_gust_mph": 26.8,
-            "max_24h_gust_at": "2026-09-28T19:20:00Z",
+            "max_24h_gust_at": "2026-09-28T19:30:00Z",
             "max_24h_wave_height_ft": 6.6,
-            "max_24h_wave_at": "2026-09-28T19:20:00Z"
+            "max_24h_wave_at": "2026-09-28T22:50:00Z"
           },
           "WEXM1": {
             "observed_at": "2026-09-29T18:00:00Z",
@@ -4746,7 +4783,7 @@
           {
             "code": "waves",
             "label": "Buoy 44007 significant wave height",
-            "at": "2026-09-28T19:20:00Z",
+            "at": "2026-09-28T22:50:00Z",
             "value": 6.6,
             "unit": "ft",
             "impact_rank": 1
@@ -4933,6 +4970,16 @@
       "to_impact": "Routine",
       "from_display": "High Surf / Wave Impact",
       "to_display": "Routine Coastal Conditions"
+    },
+    {
+      "at": "2026-09-29T19:21:50Z",
+      "type": "event_state_transition",
+      "from_phase": "Approaching",
+      "to_phase": "Recent",
+      "from_impact": "High Impact",
+      "to_impact": "Routine",
+      "from_display": "High Surf / Wave Impact",
+      "to_display": "Routine Coastal Conditions"
     }
   ],
   "local_events": [
@@ -4982,11 +5029,11 @@
     },
     {
       "published_at": "2024-01-13T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Higgins Beach residents reel from historic storm damage in Scarborough - wgme.com",
-      "summary": "Higgins Beach residents reel from historic storm damage in Scarborough - wgme.com",
+      "headline": "Higgins Beach residents reel from historic storm damage in Scarborough - WGME",
+      "summary": "Higgins Beach residents reel from historic storm damage in Scarborough - WGME",
       "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNLUdnY2YxQW5LcENMazAxX0Y0S0tfWTBiS3FYNllIOXVMTkllNF9CSkNOS202cS1EVnE4NkpiZmJKM2hVZF8xVjBMaXQ0UGx4QllYNjVyZjlFOXh6a0NJQnpuVFAtLUVYS3IzMUpLVE9DMXBQZ29pQVc4bDR1dnBYemI0WXFyTE5BYUFkUHNkSGVENEdqVUdBd255bGlFbUUtaGR2a1EwVEtYemVNY3I4UGtleE5aM0VFOG9jbHlIV1dpZzQ3bm40aXpVYnpXdE5PZmJkS3BTSDljN3dRX1E?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5004,55 +5051,55 @@
     },
     {
       "published_at": "2024-02-29T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - wgme.com",
-      "summary": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - wgme.com",
+      "headline": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - WGME",
+      "summary": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - WGME",
       "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPZVQzR2lvU3VBbmVEakd3dno4bTJKZzZ1QzhKci1FZlQya1ZYNTRsZVBCZzRrRmdwc2dMZGZjQ1huLWdMVkhNTjdWN29EZTJndC0yR1VaOTBoNXhaM3FVa0xRZ2RzMjZjUDlNYlpUVW5HQUtmNWhWRldod2hxdXlNTW5Dc0hRTHBRVUxVQzltLWlOdVJ1ZWttREh2ZlB4c0YzQnAzc2pWdnRXN1YtLTk3MFRR?oc=5",
       "event_category": "road impacts",
       "anecdotal": false
     },
     {
       "published_at": "2024-03-10T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough residents face severe coastal flooding for third time this year - wgme.com",
-      "summary": "Scarborough residents face severe coastal flooding for third time this year - wgme.com",
+      "headline": "Scarborough residents face severe coastal flooding for third time this year - WGME",
+      "summary": "Scarborough residents face severe coastal flooding for third time this year - WGME",
       "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRDZxcGJuT255ZFJWdEJPdE9XdEpkOTJEWXgwSkpJd3lrelM1blFxTlZDUXRBdDVKUGxJTS1sSFRwQmdrVDNUTHFjOFdiVnduMDBqNS00UGV2WTJYMTc5SWx5UnNhemtiNFhwbG1TQVFtNzVpRDd3Sm5rVm90STRFN1dKUVduemtNOUZZbERFT0hjeW5DVUozaEhRcnY0T3dHMFJZdTV3?oc=5",
       "event_category": "flooding",
       "anecdotal": false
     },
     {
       "published_at": "2024-03-20T07:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough residents frustrated by FEMA flood map update - wgme.com",
-      "summary": "Scarborough residents frustrated by FEMA flood map update - wgme.com",
+      "headline": "Scarborough residents frustrated by FEMA flood map update - WGME",
+      "summary": "Scarborough residents frustrated by FEMA flood map update - WGME",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPbEViQjBVOWZLZzYxbzNLd3VFQjBubXNsRGZuaDQ1NjAxdFpzMXVmbUdnY2FjSXJyN3oxNWxiX2hrTHVZVjU5UEJybF81Q1BaTDVPdm81OC1hQllOT1hneEdrYkVpcjNJWnptdnhtVEdRekVyem9Bd21xbWt6UXNUOVJWMEl4eTZUTGZxQkV3?oc=5",
       "event_category": "flooding",
       "anecdotal": false
     },
     {
       "published_at": "2024-06-27T07:00:00Z",
-      "source": "maineaudubon.org",
+      "source": "Maine Audubon",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
-      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     },
     {
       "published_at": "2024-10-08T07:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - wgme.com",
-      "summary": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - wgme.com",
+      "headline": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - WGME",
+      "summary": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - WGME",
       "url": "https://news.google.com/rss/articles/CBMioAJBVV95cUxQSFAtWEwyX0dZVG40NkIxQk5wTjVnVzU3UDhRTWlERWcxTEVVS3MxMENvWUJyVlFrUlNQTl9SS3oxeTI3dzNTMFNzV3dQaVR1ZEdtVUgwbU9odXF1LXRHdmN2aVQ5Tzl6aU5BQ0xWaVFiWXotREt1SEtqOC0xdDdIM1ZjaVhuOFc3dWpGUk92Q2JiLWM4T0tkN21yT1h5dHhrVVNCVmN1VHU5OTI3eGFjNi01bVUyU2pEYVJmUV9IX05zNC1rMnZBOGw3RmtwY0pZQkxuLVBTQV9tY3pXQlhLQm1IejVneVYyR0hrVVR3Z1RybC1WeVBIWmo5bnpkSWhKMnBNV3QyNVBMbWJHNjRyZWxFYjhQUmkzUDFVS2JyRXE?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5070,11 +5117,11 @@
     },
     {
       "published_at": "2025-01-13T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Camp Ellis still rebuilding after last year's devastating storms - wgme.com",
-      "summary": "Camp Ellis still rebuilding after last year's devastating storms - wgme.com",
+      "headline": "Camp Ellis still rebuilding after last year's devastating storms - WGME",
+      "summary": "Camp Ellis still rebuilding after last year's devastating storms - WGME",
       "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOdmtzbkktYTliU1h6RDFydHJwMHkyWHlIc1dHQXZDLXZKWUFHTG5zUmdXTTU4a0F2cEhRdHpUQTUyOTFxOEduUUtndFhwbjJKRzd2bFBHN29qWmcwMFhMZ0VwYU1aTnJWQ3RrRWhGUWM1LVk0ajdONVJlLTBaVld4OXBVYjM5V2hQZl9COS0xVnVFUkx6eFFfbVFyNV9sdGJ3UG5McFJlNnJSNGhvZnR5YVB1bG5IVlAtQzJsS245dVBiVFRvS1R4aXZWblB5TDBB?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5092,11 +5139,11 @@
     },
     {
       "published_at": "2025-05-16T07:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - wgme.com",
-      "summary": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - wgme.com",
+      "headline": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - WGME",
+      "summary": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - WGME",
       "url": "https://news.google.com/rss/articles/CBMilgJBVV95cUxNdjZuZUlSLVY2OVVfd29wSTJIVHhNMGJLRms0MVVHR3J0TnczVnYwMzhvN1RfblAtWkFOeThGVzRQX1RvTFRJRDlsR1R4Ym1YSVFKRHlMQ0dFWXVuNzVnSHNVM2NHLWdBd1g0MG4xUUR6aktHRy0tbFYzM2hTTEpIUHRmWmFmUEU3RE1uY3hvTENRN05CdnNXeUdycl9seGlldDdRcmFGY2Q0SzUycmh5OHlxeksyWjZfcm5GZ3N5RVBRTXhzdjh1d3R4UWVfSmRFdW5iQkpndnNHd211bGhwekVDbVZGM1hEcFR6bGszZ1RjaUFOS3BlTC1TUEJPZnVVdnVGa1loaFZnTkM1RHQ2cU9SSkE3dw?oc=5",
       "event_category": "erosion",
       "anecdotal": false
@@ -5136,33 +5183,33 @@
     },
     {
       "published_at": "2025-10-07T07:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Saco discusses future storm preparation - wgme.com",
-      "summary": "Saco discusses future storm preparation - wgme.com",
+      "headline": "Saco discusses future storm preparation - WGME",
+      "summary": "Saco discusses future storm preparation - WGME",
       "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPeXBBZ2RCVi1UZm5iNnlsaTBuNWZXTVZxaFNDR0hDR1l3UEZVTkhBX211bmhIVldFU0Vnck9rMno3Q2lISjdtTDBzbzFjeFJteml5WU93bmZ1ZmtTQlNHU3dkaUwwVWwxQmVhQU9US3JOb0p1cThrRnc1eXlYQXVjWk5Ed3NPc1hQNS1GcjQxWFROYzZxNXR1aHJzeTNwbzRoVlpnQjdVc1gyZ2hmS1h0eFBtRjdwTUNQcTVUeV9mS3RJbi0zeEVpTHM1d1Y?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     },
     {
       "published_at": "2025-11-03T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Saco",
-      "headline": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - wgme.com",
-      "summary": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - wgme.com",
+      "headline": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - WGME",
+      "summary": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - WGME",
       "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPeVpDLV9DM1EtQjlvNFRCSWRDbzBBeW1DdlI3SU0tX2xlQXNzYzA4UkszWGFsd3M3SGJZYUVQLUMzV0FDYm12aUdpLV9acTVQY29yLUtYOUFGeVczV1VCSlR0aW5KT3pmeUs4Tzk0bUFSQThOOFFaWklINi1EWWxncXNxTzZXYk53UzFSV1RwRG83V3drZ1VfenBsanBGWFBid0c1MFpJSHFLcVF2NUlUOXQzR1ZsUzJMbGZLYmNidUYxUTZyWU0tNy05VjF5X3Nma2JUUlZZa2dFVlU4bFROUjN1LUJsNVE3VzRyTG00Yw?oc=5",
       "event_category": "erosion",
       "anecdotal": false
     },
     {
       "published_at": "2026-01-05T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Old Orchard Beach",
-      "headline": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - wgme.com",
-      "summary": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - wgme.com",
+      "headline": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - WGME",
+      "summary": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - WGME",
       "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxPdlg2UEdvd2hPTUk0SHZBTXJ1d1ltXy1VenBvOUgyOEUwN1g3MTM1N0RFbWdabG9mUTFaaEw2MUk2U2QzaVJmVnZzcE1HeDB6ZmQ2TWo1R2pJMmVEN3dYRVJUanNyUGRJazhYWlhUVExfbDJEal9PNU5IcE4wNHVvU0dfQkZaOEVvb2VNa1c5WlUyd3I5WjduWWFtYWpUYU9jRXJBSzBfT1VnNjByS3haT05leERxT1NscDJXdUxPMDJkTExaRWpNVHN1NzlhaVRnV1hIV24wY1VISWt0TzZoQS00ZWhsVlpIbUd5eXFR?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5191,11 +5238,11 @@
     },
     {
       "published_at": "2026-01-26T08:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Car flips in Scarborough amid winter storm conditions - wgme.com",
-      "summary": "Car flips in Scarborough amid winter storm conditions - wgme.com",
+      "headline": "Car flips in Scarborough amid winter storm conditions - WGME",
+      "summary": "Car flips in Scarborough amid winter storm conditions - WGME",
       "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPZ1VkT0k5NzFDTkVsNkRUU3dGV0hkeUFwTnBDbFNBZGZWQjlsX1hCcWVHT0tXWmZGMm5UcG9KS0pKT19PTFVlZzZLR1FpVXhhUThqY0x2cU4xRFg3a3A5LU90dm5pdC12dUdQSkRGM1V5RGlJdmd1R21BNERXQnFwTXFEWUtHMHYt?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5246,11 +5293,11 @@
     },
     {
       "published_at": "2026-04-13T07:00:00Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - wgme.com",
-      "summary": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - wgme.com",
+      "headline": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - WGME",
+      "summary": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - WGME",
       "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxOOGo0bXI2NkM2NkM0RVRNTTdtMWlGZnFFNmZPZVBHSGd0Snp2ZU1YTklNbm0xUnJQcEdfd3RDT191Ymh3VWk4X1U5Q09zWEsxSUJlZ29zUVNYb2hFWTZRZkRaWFZ5d3ZPeDRwMFBFeG11RDBxOVEyN0hRc09wbGdLRFJmU285Qjg0d09UY0xyUDhNdWdUOVdSUzNaVklFZEh5d3NSaUlJTEN5VG5qZXJMMlUxSEhHdHZRRmtGY0hlb3lQSjZZcE9BMWRqbjByRmFHOGc?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -5279,11 +5326,11 @@
     },
     {
       "published_at": "2026-05-15T15:28:38Z",
-      "source": "wgme.com",
+      "source": "WGME",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Heavy rainfall causes flooding along Saco River - wgme.com",
-      "summary": "Heavy rainfall causes flooding along Saco River - wgme.com",
+      "headline": "Heavy rainfall causes flooding along Saco River - WGME",
+      "summary": "Heavy rainfall causes flooding along Saco River - WGME",
       "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxOUHdBVG5GZFdtd01va0JLY2lOZUFVOG44SnFEeldQMUtBR1U3M0E3ZTFSTjZ2enFUZy1WaDRIZDgxbUdwUmhwbmQxaVpGV1hXOTZ3TDJYZmNxMlNsXzJ0RVN2M3h5Mko4TTlhOEhsZjZROVBLN3VaY3BGdE1XQXdQbUx4OHVQWTlBaHlLNFdtVnhTYmVyclUxaVVKT1NGaGNnWm1YbHByMkczNnFxX0hNZHNmLU5JbGRuYzBnTzE2TkNLQ0lhTW9MUS1n?oc=5",
       "event_category": "flooding",
       "anecdotal": false
@@ -5312,11 +5359,11 @@
     },
     {
       "published_at": "2026-06-30T07:00:00Z",
-      "source": "mainemorningstar.com",
+      "source": "Maine Morning Star",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
-      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
+      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
       "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOcHBRU1E1RzlrRmVjOXk1aFR2a1plMEJrOHJyMGJYLTVGVXM0Q19ZMmhGTS1fTG9vRlpEc1JKWGtGOFRBdWhleDJYMHV6a3ZFM2lYWlo2T1BWNnhXeGNtUDl6aGV3OXAteHRhU0hTczFCVS1MWWlGOVRwVkNMc08talNtMVRycXdDZW1IZzVkREhwV1dHak80bDNid3FMQ192ZGt4UVc3N2liZXBPWDZiLTBDSmswSHVDakY4ZA?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

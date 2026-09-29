@@ -13,7 +13,9 @@ function renderEventHistory(){
   const metrics=document.createElement('div');metrics.className='event-history-metrics';
   const pairs=[['Observed water',item.max_observed_water_ft,' ft'],['Residual',item.max_residual_ft,' ft'],['Modeled water',item.max_modeled_water_ft,' ft'],['Waves',item.max_wave_ft,' ft'],['Gust',item.max_gust_mph,' mph'],['Surf',item.max_surf_ft,' ft']];
   for(const [label,value,suffix] of pairs){if(!Number.isFinite(Number(value)))continue;const d=document.createElement('div'),span=document.createElement('span'),b=document.createElement('b');span.textContent=label;b.textContent=Number(value).toFixed(label.includes('water')||label==='Residual'?2:1)+suffix;d.append(span,b);metrics.append(d);}card.append(metrics);
-  const foot=document.createElement('p'),duration=Number(item.duration_hours),bits=[];if(Number.isFinite(duration))bits.push('Captured duration '+duration.toFixed(1)+'h');if(Number.isFinite(Number(item.snapshot_count)))bits.push(item.snapshot_count+' snapshots');if((item.official_products||[]).length)bits.push('NWS: '+item.official_products.slice(0,3).join(', '));foot.textContent=bits.join(' · ')||'Captured event summary';card.append(foot);
+  const foot=document.createElement('p'),coverage=Number(item.captured_coverage_hours??item.duration_hours),bits=[];if(Number.isFinite(coverage))bits.push('Captured coverage '+coverage.toFixed(1)+'h');if(Number.isFinite(Number(item.snapshot_count)))bits.push(item.snapshot_count+' snapshots');if((item.official_products||[]).length)bits.push('NWS: '+item.official_products.slice(0,3).join(', '));foot.textContent=bits.join(' · ')||'Captured event summary';card.append(foot);
+  if(item.coverage_basis){const note=document.createElement('p');note.className='event-history-note';note.textContent=item.coverage_basis;card.append(note);}
+  for(const quality of item.data_quality||[]){const note=document.createElement('p');note.className='event-history-quality';note.textContent=quality.message||'A superseded historical parse was excluded from this retrospective.';card.append(note);}
   root.append(card);
  }
 }

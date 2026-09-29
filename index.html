@@ -58,21 +58,21 @@
 <section class="panel status" aria-live="polite"><div class="statuscopy"><div class="statusbadge" id="statusIcon">≈</div><div><h3 id="statusHeading">Checking coastal water levels</h3><p id="statusDescription">The status below uses Portland's published flood thresholds and live/model values only when available.</p></div></div><a class="btn" target="_blank" rel="noopener noreferrer" href="https://tidesandcurrents.noaa.gov/inundationdb/index.html?id=8418150">NOAA flood dashboard ↗</a></section>
 
 <section class="panel coastal-intelligence" aria-labelledby="coastalIntelligenceHeading">
- <div class="section-head"><div><div class="eyebrow">Coastal decision support</div><h3 id="coastalIntelligenceHeading">What matters at the next high waters</h3><div class="sub">Portland gauge residuals, forecast evolution and the next three high-water windows.</div></div></div>
+ <div class="section-head"><div><div class="eyebrow">Coastal decision support</div><h3 id="coastalIntelligenceHeading">What matters at the next high waters</h3><div class="sub">How far water is running above the predicted tide, how NOAA's peak forecast is changing, and the next three high-water windows.</div></div></div>
  <div class="intelligence-grid">
   <article class="intel-card residual-card">
-   <div class="intel-head"><div><h4>Storm surge residual</h4><p>Observed Portland water level minus astronomical tide.</p></div><span class="intel-tag">Past 24h</span></div>
-   <div class="intel-stat-row"><div><span>Current</span><strong id="residualNow">--</strong></div><div><span>24h max</span><strong id="residualMax">--</strong></div></div>
-   <svg id="residualSpark" class="mini-chart" role="img" aria-label="Portland water-level residual over the past 24 hours"></svg>
-   <p class="intel-note" id="residualMeta">Building residual history.</p>
+   <div class="intel-head"><div><h4>Water above predicted tide</h4><p>How much higher the Portland water level is than the astronomical tide prediction.</p></div><span class="intel-tag">Past 24h</span></div>
+   <div class="intel-stat-row"><div><span>Now</span><strong id="residualNow">--</strong></div><div><span>Highest in 24h</span><strong id="residualMax">--</strong></div></div>
+   <svg id="residualSpark" class="mini-chart" role="img" aria-label="Portland water above the predicted tide over the past 24 hours"></svg>
+   <p class="intel-note" id="residualMeta">Building the past-24-hour comparison with the predicted tide.</p>
   </article>
   <article class="intel-card high-water-card">
-   <div class="intel-head"><div><h4>Next high-water windows</h4><p>Tide baseline plus available NOAA total-water guidance.</p></div><span class="intel-tag">Next 3</span></div>
+   <div class="intel-head"><div><h4>Next high-water windows</h4><p>Upcoming high tides combined with NOAA's forecast water level and other coastal conditions.</p></div><span class="intel-tag">Next 3</span></div>
    <div id="highWaterWindows" class="high-water-windows" aria-live="polite"></div>
   </article>
   <article class="intel-card evolution-card">
-   <div class="intel-head"><div><h4>Forecast evolution</h4><p>How the captured 72-hour NOAA peak has changed.</p></div><span class="intel-tag">24h trend</span></div>
-   <svg id="forecastEvolutionSpark" class="mini-chart" role="img" aria-label="Captured NOAA forecast peak evolution"></svg>
+   <div class="intel-head"><div><h4>How the forecast is changing</h4><p>How NOAA's highest forecast water level for the next 72 hours has changed over the past day.</p></div><span class="intel-tag">24h trend</span></div>
+   <svg id="forecastEvolutionSpark" class="mini-chart" role="img" aria-label="How NOAA's peak water-level forecast has changed"></svg>
    <div id="forecastEvolutionRows" class="evolution-rows" aria-live="polite"></div>
    <p class="intel-note" id="forecastEvolutionBasis">Forecast history is building.</p>
   </article>
@@ -80,7 +80,7 @@
 </section>
 
 <section class="panel event-history-panel" id="eventHistoryPanel" hidden aria-labelledby="eventHistoryHeading">
- <div class="section-head"><div><div class="eyebrow">Captured event history</div><h3 id="eventHistoryHeading">Recent coastal events</h3><div class="sub">Retrospectives are built only from captured Saco Coast Watch snapshots. They do not reconstruct unavailable historical forecasts.</div></div></div>
+ <div class="section-head"><div><div class="eyebrow">Recent event history</div><h3 id="eventHistoryHeading">Recent coastal events</h3><div class="sub">These summaries use only information Saco Coast Watch actually captured. Missing past forecasts are never filled in.</div></div></div>
  <div id="eventHistoryCards" class="event-history-cards" aria-live="polite"></div>
 </section>
 

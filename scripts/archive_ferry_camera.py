@@ -55,11 +55,30 @@ def prune(out,doc,now):
     doc["frames"]=kept
     return doc
 
+def archive_event_state(snapshot,now):
+    if not snapshot: return {}
+    state=snapshot.get("event_state") or ((snapshot.get("hazards") or {}).get("event_state") or {})
+    if not state:
+        state=ch.fh.derive_event_state(snapshot.get("hazards") or {},water=snapshot.get("water") or {},marine=snapshot.get("marine") or {},alerts=snapshot.get("alerts") or [],now=now)
+    return state
+
+def archive_reasons(snapshot,now):
+    state=archive_event_state(snapshot,now)
+    if not state.get("show_focus"): return []
+    reasons=[]
+    display=state.get("primary_display")
+    impact=(state.get("impact") or {}).get("label")
+    phase=state.get("phase")
+    if display: reasons.append(display)
+    if impact and phase: reasons.append(f"{impact} · {phase}")
+    reasons.extend(state.get("reasons") or [])
+    return list(dict.fromkeys(reason for reason in reasons if reason))[:6]
+
 def archive(history_path,output_dir,now=None,capture_fn=capture_frame):
     now=now or ch.now_utc(); out=Path(output_dir); out.mkdir(parents=True,exist_ok=True)
     doc=prune(out,load_index(out),now)
     snap=latest_snapshot(history_path)
-    reasons=ch.storm_reasons(snap or {}) if snap else []
+    reasons=archive_reasons(snap or {},now) if snap else []
     result={"active":bool(reasons),"reasons":reasons,"captured":False}
     if reasons:
         recent=doc.get("frames")[-1] if doc.get("frames") else None

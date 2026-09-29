@@ -58,6 +58,9 @@ def install_noaa_fixture(page):
             route.continue_()
     page.route("**/api/prod/datagetter**",handler)
 
+    peak_at=(now+timedelta(hours=4)).isoformat().replace("+00:00","Z")
+    event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Compound Coastal Impact","basis":["Synthetic compound impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Synthetic test window"},"coastal_impact":{"method":"Synthetic Saco Coast Watch compound-impact test.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"confidence":{"label":"High","score":1.0,"missing":[]},"drivers":[{"label":"NOAA modeled total water","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"Forecast surf context","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Onshore wind component","value":"24 mph","source":"Derived from NWS hourly wind"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
+    event_history=[{"title":"Coastal Storm","started_at":(now-timedelta(hours=18)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"duration_hours":18.0,"phase":"Recent","highest_impact":{"rank":2,"label":"Significant"},"max_observed_water_ft":11.4,"max_residual_ft":1.1,"max_modeled_water_ft":11.9,"max_wave_ft":8.2,"max_gust_mph":41.0,"max_surf_ft":9.0,"official_products":["High Surf Advisory"],"snapshot_count":12}]
     briefing={
         "schema_version":1,
         "generated_at":datetime.now(timezone.utc).isoformat().replace("+00:00","Z"),
@@ -72,10 +75,11 @@ def install_noaa_fixture(page):
             {"label":"6h ago","target_hours_ago":6,"snapshot_at":(now-timedelta(hours=6)).isoformat().replace("+00:00","Z"),"peak_ft":11.3,"peak_time":(now+timedelta(hours=20)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.7},
             {"label":"Now","target_hours_ago":0,"snapshot_at":now.isoformat().replace("+00:00","Z"),"peak_ft":11.5,"peak_time":(now+timedelta(hours=21)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.5}
         ]},
-        "event_state":{"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"]},
-        "current_snapshot":{"event_state":{"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"]}},
+        "event_state":event_state,
+        "current_snapshot":{"event_state":event_state},
         "event_briefing":{"active":True,"title":"Coastal Storm Briefing","phase":"Approaching","severity":{"rank":1,"level":"yellow","label":"Elevated"},"summary":"Coastal Storm: Elevated · Approaching.","change_text":""},
         "recent_event":{"active":False,"summary":"","items":[],"impact":{"rank":0,"level":"green","label":"Routine"}},
+        "event_history":event_history,
         "impact_timeline":[{"at":(now-timedelta(hours=2)).isoformat().replace("+00:00","Z"),"type":"water","title":"Portland observed water level test event","source":"NOAA CO-OPS station 8418150","source_type":"official_observation","url":None,"anecdotal":False}],
         "local_pulse":{
             "summary":"2 public local items found in the rolling public scan (1 news, 1 Reddit).",
@@ -184,6 +188,11 @@ def assert_common(page):
     assert page.locator("#stormModePanel").is_visible()
     assert page.locator("#eventFocusTitle").inner_text().strip()=="Coastal Storm"
     assert page.locator("#eventFocusBadge").inner_text().strip()=="Elevated · Approaching"
+    assert "Peak coastal-impact window" in page.locator("#eventPeakSummary").inner_text()
+    assert page.locator("#eventConfidence").inner_text().startswith("Confidence: High")
+    assert page.locator("#eventWhyList .event-why-row").count()==3
+    assert page.locator("#eventHistoryPanel").is_visible()
+    assert page.locator("#eventHistoryCards .event-history-card").count()==1
     badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
     assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1

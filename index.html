@@ -105,9 +105,11 @@
     </div>
   </div>
   <div class="ferry-archive" id="ferryArchive" hidden>
-   <div class="ferry-archive-head"><div><strong>Event camera timeline</strong><span id="ferryArchiveCount">No archived frames</span></div><button type="button" class="btn" id="ferryReturnLive">Return to live</button></div>
-   <input type="range" id="ferryArchiveRange" min="0" max="0" value="0" step="1" aria-label="Browse archived Ferry Beach storm frames">
-   <div class="ferry-archive-meta"><span id="ferryArchiveTime">Archive unavailable</span><span id="ferryArchiveReason"></span></div>
+   <div class="ferry-archive-head"><div><strong>Saved event images</strong><span id="ferryArchiveCount">No saved images</span></div><button type="button" class="btn" id="ferryReturnLive">Return to live</button></div>
+   <p class="ferry-archive-help">Tap a saved image to view it full size with the coastal conditions captured at that time.</p>
+   <div class="ferry-archive-thumbs" id="ferryArchiveThumbs" aria-label="Saved Ferry Beach event images"></div>
+   <input type="range" id="ferryArchiveRange" min="0" max="0" value="0" step="1" aria-label="Browse saved Ferry Beach event images" hidden>
+   <div class="ferry-archive-meta"><span id="ferryArchiveTime">Choose a saved image above.</span><span id="ferryArchiveReason"></span></div>
    <div class="ferry-archive-context" id="ferryArchiveContext" hidden></div>
   </div>
 </section>

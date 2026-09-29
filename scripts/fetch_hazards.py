@@ -320,9 +320,15 @@ def surf_zone_snapshot(doc):
     block = match.group(1) if match else ""
     heights = []
     risks = []
-    for line in block.splitlines():
+    lines = block.splitlines()
+    for index, line in enumerate(lines):
         if re.search(r"Surf Height", line, re.I):
-            heights.extend(float(v) for v in re.findall(r"\d+(?:\.\d+)?", line))
+            segment = line
+            for continuation in lines[index + 1:index + 3]:
+                if re.match(r"\s*[A-Za-z][A-Za-z *]+\.{3,}", continuation) or re.match(r"\s*\.[A-Z]", continuation):
+                    break
+                segment += " " + continuation.strip()
+            heights.extend(float(v) for v in re.findall(r"(\d+(?:\.\d+)?)\s*(?:foot|feet)\b", segment, re.I))
         if re.search(r"Rip Current Risk", line, re.I):
             lower = line.lower()
             if "high" in lower:

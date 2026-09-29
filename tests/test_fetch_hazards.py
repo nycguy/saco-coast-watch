@@ -15,6 +15,9 @@ class HazardTests(unittest.TestCase):
  def test_surf_zone_parser_coastal_york(self):
   doc={"issuanceTime":"2026-09-29T12:00:00+00:00","productText":"SRFGYX\nMEZ023-292000-\nCoastal York-\n.TODAY...\nSurf Height.................6 to 8 feet.\nRip Current Risk*...........High.\n.WEDNESDAY...\nSurf Height.................Around 5 feet.\nMEZ024-292000-\nCoastal Cumberland-\n"}
   surf=h.surf_zone_snapshot(doc); self.assertTrue(surf["available"]); self.assertEqual(surf["max_surf_height_ft"],8.0); self.assertEqual(surf["rip_current_risk"],"High")
+ def test_surf_parser_ignores_temperature_numbers_on_compact_line(self):
+  doc={"productText":"SRFGYX\nMEZ023-292000-\nCoastal York-\n.TUESDAY...\nSurf Height.................Around 3 feet. Mostly sunny. Highs in the lower 60s.\nRip Current Risk*...........Moderate.\nMEZ024-292000-\nCoastal Cumberland-\n"}
+  surf=h.surf_zone_snapshot(doc); self.assertEqual(surf["max_surf_height_ft"],3.0); self.assertEqual(surf["rip_current_risk"],"Moderate")
  def test_modes_separate_coastal_surf_marine_and_land_wind(self):
   alerts=[{"event":"Coastal Flood Watch"},{"event":"High Surf Advisory"}]; marine=[{"event":"Gale Warning"}]
   codes=[m["code"] for m in h.detect_modes(alerts,{"snowfall_72h_in":0,"ice_72h_in":0},{"max_gust_72h_mph":20,"max_sustained_72h_mph":15},{"qpf_72h_in":0.2},{"min_temp_24h_f":30},{"active":False},{"max_surf_height_ft":8,"rip_current_risk":"High"},marine)]

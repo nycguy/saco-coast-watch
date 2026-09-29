@@ -60,7 +60,7 @@ def install_noaa_fixture(page):
 
     peak_at=(now+timedelta(hours=4)).isoformat().replace("+00:00","Z")
     event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Compound Coastal Impact","basis":["Synthetic compound impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Highest Saco Coast Watch compound coastal-impact window"},"coastal_impact":{"method":"Synthetic Saco Coast Watch compound-impact test.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"confidence":{"label":"High","score":1.0,"missing":[]},"drivers":[{"label":"NOAA modeled total water","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"Forecast surf context","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Onshore wind component","value":"24 mph","source":"Derived from NWS hourly wind"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
-    event_history=[{"title":"Coastal Storm","started_at":(now-timedelta(hours=18)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"duration_hours":18.0,"phase":"Recent","highest_impact":{"rank":2,"label":"Significant"},"max_observed_water_ft":11.4,"max_residual_ft":1.1,"max_modeled_water_ft":11.9,"max_wave_ft":8.2,"max_gust_mph":41.0,"max_surf_ft":9.0,"official_products":["High Surf Advisory"],"snapshot_count":12}]
+    event_history=[{"title":"Coastal Storm","started_at":(now-timedelta(hours=18)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"captured_coverage_hours":18.0,"duration_hours":18.0,"coverage_basis":"Span of compatible captured event-state snapshots; not the actual storm duration.","phase":"Recent","highest_impact":{"rank":2,"label":"Significant"},"max_observed_water_ft":11.4,"max_residual_ft":1.1,"max_modeled_water_ft":11.9,"max_wave_ft":8.2,"max_gust_mph":41.0,"max_surf_ft":9.0,"official_products":["High Surf Advisory"],"snapshot_count":12,"data_quality":[{"type":"superseded_surf_parse","count":1,"message":"Excluded 1 superseded Surf Zone parse where the same NWS product was later parsed differently."}]}]
     briefing={
         "schema_version":1,
         "generated_at":datetime.now(timezone.utc).isoformat().replace("+00:00","Z"),
@@ -193,6 +193,11 @@ def assert_common(page):
     assert page.locator("#eventWhyList .event-why-row").count()==3
     assert page.locator("#eventHistoryPanel").is_visible()
     assert page.locator("#eventHistoryCards .event-history-card").count()==1
+    history_text=page.locator("#eventHistoryCards .event-history-card").inner_text()
+    assert "Captured coverage 18.0h" in history_text
+    assert "not the actual storm duration" in history_text
+    assert "Excluded 1 superseded Surf Zone parse" in history_text
+    assert "Captured duration" not in history_text
     badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
     assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1

@@ -153,7 +153,7 @@ function renderHighWaterWindows(){
       const grid=document.createElement('div');grid.className='high-window-grid';
       const impact=w.impact||{},pairs=[
         ['Coastal impact',impact.label?impact.label+(Number.isFinite(Number(impact.score))?' · '+impact.score+'/100':''):'Routine'],
-        ['Astronomical tide',Number.isFinite(Number(w.astronomical_ft))?Number(w.astronomical_ft).toFixed(2)+' ft':'Unavailable'],
+        ['Predicted high tide',Number.isFinite(Number(w.astronomical_ft))?Number(w.astronomical_ft).toFixed(2)+' ft':'Unavailable'],
         ['NOAA forecast water level',Number.isFinite(Number(w.modeled_total_ft))?Number(w.modeled_total_ft).toFixed(2)+' ft':'Unavailable'],
         ['Forecast above predicted tide',Number.isFinite(Number(w.modeled_uplift_ft))?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':'Unavailable'],
         ['Wind pushing toward shore',Number.isFinite(Number(w.onshore_component_mph))?Math.round(w.onshore_component_mph)+' mph':'Unavailable'],

@@ -49,7 +49,7 @@ function modeTitle(modes){
 
 function renderEventFocus(){
  const panel=$('stormModePanel');if(!panel)return;
- const modes=hazardModeList(),coastalReasons=typeof liveStormReasons==='function'?liveStormReasons():[];
+ const modes=hazardModeList(),coastalReasons=typeof coastalEventReasons==='function'?coastalEventReasons():[];
  const active=modes.length>0||coastalReasons.length>0;
  panel.hidden=!active;document.body.classList.toggle('hazard-active',active);document.body.classList.toggle('storm-mode',active);
  for(const level of ['green','yellow','orange','red'])document.body.classList.remove('hazard-severity-'+level);

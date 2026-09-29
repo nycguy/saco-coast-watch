@@ -181,7 +181,7 @@ function renderForecastEvolution(){
   const basis=$('forecastEvolutionBasis');if(basis)basis.textContent=state.briefing?.forecast_evolution?.basis||'Captured forecast snapshots.';
 }
 
-function liveStormReasons(){
+function coastalEventReasons(){
   const reasons=[];
   const {nextPeak}=currentStatus();
   if(nextPeak?.v>=12)reasons.push('NOAA modeled peak reaches Portland Minor Flood');
@@ -198,23 +198,9 @@ function liveStormReasons(){
   return reasons;
 }
 
-function renderStormMode(){
-  if(typeof renderEventFocus==='function'){renderEventFocus();return;}
-  const panel=$('stormModePanel');if(!panel)return;
-  const reasons=liveStormReasons(),active=reasons.length>0;
-  panel.hidden=!active;document.body.classList.toggle('storm-mode',active);
-  if(!active)return;
-  $('eventFocusTitle').textContent='Coastal Storm Mode';$('eventFocusBadge').textContent='Elevated conditions';
-  const reasonRoot=$('stormModeReasons');reasonRoot.replaceChildren();
-  for(const r of reasons.slice(0,5)){const span=document.createElement('span');span.textContent=r;reasonRoot.append(span);}
-  const root=$('eventFocusMetrics');root.replaceChildren();
-  const {nextPeak}=currentStatus(),sourceHighs=state.highs.length?state.highs:highTides(),high=sourceHighs.find(x=>x.t>=now()-10*60000),res=residualSeries(24).at(-1),buoy=state.marine?.['44007']||{};
-  const pairs=[['NOAA 72h peak',nextPeak?fmtN(nextPeak.v)+' ft':'--'],['Next high tide',high?dayTime(high.t)+' ET':'--'],['Portland residual',res?(res.v>=0?'+':'')+fmtN(res.v)+' ft':'--'],['Buoy 44007 sea state',Number.isFinite(buoy.wave_height_ft)?buoy.wave_height_ft.toFixed(1)+' ft':'--']];
-  for(const [label,value] of pairs){const d=document.createElement('div'),s=document.createElement('span'),strong=document.createElement('strong');s.textContent=label;strong.textContent=value;d.append(s,strong);root.append(d);}
-}
 function renderCoastalIntelligence(){
   renderResidualIntelligence();
   renderHighWaterWindows();
   renderForecastEvolution();
-  renderStormMode();
+  if(typeof renderEventFocus==='function')renderEventFocus();
 }

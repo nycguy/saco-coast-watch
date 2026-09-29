@@ -40,6 +40,7 @@ jobs:
           node --check js/weather.js
           node --check js/app.js
           node --check js/map.js
+          node --test tests/hazard_modes_unit.mjs
       - name: Build fixed-window coastal briefing
         run: python3 scripts/fetch_briefing.py --history-input .history-store/data/history/coastal-history.json --output data/coastal-briefing.json --history-output data/coastal-history.json
       - name: Validate alert thresholds and backend syntax

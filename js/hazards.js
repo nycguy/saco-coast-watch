@@ -29,7 +29,8 @@ function renderEventFocus(){
  const peakNode=$('eventPeakSummary');
  if(peakNode){
   if(Number.isFinite(peakAt)){
-   const relative=Number.isFinite(hours)?(hours>0.5?'Peak coastal-impact window in '+Math.round(hours)+'h':hours>=-0.5?'Peak coastal-impact window is near now':'Peak window passed '+Math.abs(Math.round(hours))+'h ago'):'Peak timing available';
+   const timingLabel=String(timing.basis||'').toLowerCase().includes('compound coastal-impact')?'Peak coastal-impact window':'Key forecast time';
+   const relative=Number.isFinite(hours)?(hours>0.5?timingLabel+' in '+Math.round(hours)+'h':hours>=-0.5?timingLabel+' is near now':timingLabel+' passed '+Math.abs(Math.round(hours))+'h ago'):'Peak timing available';
    peakNode.textContent=relative+' · '+dayTime(peakAt)+' ET';
   }else peakNode.textContent='Peak timing is unavailable from the current authoritative guidance.';
  }
@@ -63,7 +64,8 @@ function renderImpactForecast(){
  const panel=$('impactTimelinePanel'),root=$('impactForecastTimeline');if(!panel||!root)return;
  const eventState=normalizedEventState(),rows=sourceHazards().hourly||[];panel.hidden=!(eventState.show_focus&&rows.length);if(panel.hidden)return;
  root.replaceChildren();const highs=state.highs.length?state.highs:highTides();
- for(const row of rows){const when=Date.parse(row.start||'');if(!Number.isFinite(when))continue;const card=document.createElement('article');card.className='impact-forecast-card';const timeNode=document.createElement('strong');timeNode.textContent=dayTime(when)+' ET';card.append(timeNode);const primary=document.createElement('span');primary.className='impact-primary';primary.textContent=row.precip_type&&row.precip_type!=='Dry / Clouds'?row.precip_type:(row.summary||'Forecast');card.append(primary);const bits=[];if(Number.isFinite(row.temperature_f))bits.push(Math.round(row.temperature_f)+'°F');if(Number.isFinite(row.gust_mph))bits.push('gust '+Math.round(row.gust_mph)+' mph');else if(Number.isFinite(row.wind_mph))bits.push('wind '+Math.round(row.wind_mph)+' mph');if(Number.isFinite(row.precip_probability_pct))bits.push(Math.round(row.precip_probability_pct)+'% precip');const near=highs.find(high=>Math.abs(high.t-when)<=90*60000);if(near)bits.push('high tide '+fmtN(near.v)+' ft');const small=document.createElement('small');small.textContent=bits.join(' · ');card.append(small);root.append(card);}
+ const keyAt=Date.parse(eventState.event_timing?.peak_at||'');
+ for(const row of rows){const when=Date.parse(row.start||'');if(!Number.isFinite(when))continue;const card=document.createElement('article');card.className='impact-forecast-card';if(Number.isFinite(keyAt)&&Math.abs(when-keyAt)<=90*60000)card.classList.add('peak-impact');const timeNode=document.createElement('strong');timeNode.textContent=dayTime(when)+' ET';card.append(timeNode);const primary=document.createElement('span');primary.className='impact-primary';primary.textContent=row.precip_type&&row.precip_type!=='Dry / Clouds'?row.precip_type:(row.summary||'Forecast');card.append(primary);const bits=[];if(Number.isFinite(row.temperature_f))bits.push(Math.round(row.temperature_f)+'°F');if(Number.isFinite(row.gust_mph))bits.push('gust '+Math.round(row.gust_mph)+' mph');else if(Number.isFinite(row.wind_mph))bits.push('wind '+Math.round(row.wind_mph)+' mph');if(Number.isFinite(row.precip_probability_pct))bits.push(Math.round(row.precip_probability_pct)+'% precip');const near=highs.find(high=>Math.abs(high.t-when)<=90*60000);if(near)bits.push('high tide '+fmtN(near.v)+' ft');const small=document.createElement('small');small.textContent=bits.join(' · ');card.append(small);root.append(card);}
 }
 function renderWinterPanel(){
  const panel=$('winterWeatherPanel');if(!panel)return;const h=sourceHazards(),winter=h.winter||{},active=hazardModeList().some(mode=>mode.code==='winter');panel.hidden=!active;if(!active)return;

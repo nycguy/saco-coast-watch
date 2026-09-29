@@ -749,35 +749,34 @@ def _primary_display(codes, identity=None):
     if "tropical" in codes and identity and identity.get("label"): return identity["label"]
     if "winter" in codes and ({"coastal_flood", "high_surf"} & codes): return "Winter Coastal Storm"
     if "coastal_flood" in codes and ({"high_surf", "high_wind", "marine_hazard"} & codes): return "Coastal Storm"
-    if "high_surf" in codes and ({"high_wind", "marine_hazard"} & codes): return "Coastal Storm"
-    labels = [("coastal_flood","Coastal Flood"),("high_surf","High Surf / Wave Impact"),("beach_hazard","Beach Hazard / Rip Current"),("marine_hazard","Marine Hazard"),("flooding","Flooding"),("heavy_rain","Heavy Rain"),("high_wind","High Wind"),("winter","Winter Storm"),("extreme_cold","Extreme Cold")]
+    if "high_surf" in codes and ({"high_wind", "marine_hazard", "coastal_impact"} & codes): return "Coastal Storm"
+    if "coastal_impact" in codes and ({"coastal_flood","high_surf","high_wind","marine_hazard"} & codes): return "Coastal Storm"
+    labels = [("coastal_impact","Coastal Impact"),("coastal_flood","Coastal Flood"),("high_surf","High Surf / Wave Impact"),("beach_hazard","Beach Hazard / Rip Current"),("marine_hazard","Marine Hazard"),("flooding","Flooding"),("heavy_rain","Heavy Rain"),("high_wind","High Wind"),("winter","Winter Storm"),("extreme_cold","Extreme Cold")]
     for code, label in labels:
         if code in codes: return label
     return "Routine Coastal Conditions"
 
 
 def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
-    now = now or now_utc()
-    hazards = hazards or {}; water = water or {}
-    alerts = alerts if alerts is not None else hazards.get("alerts") or []
-    marine_alerts = hazards.get("marine_alerts") or []
-    stations = (marine or {}).get("stations") if isinstance(marine, dict) and "stations" in marine else (marine or {})
-    buoy = (stations or {}).get("44007") or {}
-    surf=hazards.get("surf") or {}; winter=hazards.get("winter") or {}; rain=hazards.get("rain") or {}; wind=hazards.get("wind") or {}; cold=hazards.get("cold") or {}; tropical=hazards.get("tropical") or {}
+    now=now or now_utc(); hazards=hazards or {}; water=water or {}
+    alerts=alerts if alerts is not None else hazards.get("alerts") or []
+    marine_alerts=hazards.get("marine_alerts") or []
+    stations=(marine or {}).get("stations") if isinstance(marine,dict) and "stations" in marine else (marine or {})
+    buoy=(stations or {}).get("44007") or {}; surf=hazards.get("surf") or {}; winter=hazards.get("winter") or {}; rain=hazards.get("rain") or {}; wind=hazards.get("wind") or {}; cold=hazards.get("cold") or {}; tropical=hazards.get("tropical") or {}
     modes=[dict(mode) for mode in hazards.get("active_modes") or []]
     def add(code,label,basis):
         if not any(mode.get("code")==code for mode in modes): modes.append({"code":code,"label":label,"basis":basis})
     forecast72=num(water.get("forecast_peak_72h_ft")); forecast24=num(water.get("forecast_peak_24h_ft")); observed=num(water.get("latest_observed_ft"))
-    if max([v for v in (forecast72,forecast24,observed) if v is not None],default=-999)>=12:
-        add("coastal_flood","Coastal Flood","Portland observed or modeled total water reaches Minor Flood")
-    if (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25:
-        add("marine_hazard","Marine Hazard","NDBC 44007 measured offshore conditions are elevated")
-    all_alerts=list(alerts)+list(marine_alerts); active_hazards=[]
+    if max([v for v in (forecast72,forecast24,observed) if v is not None],default=-999)>=12: add("coastal_flood","Coastal Flood","Portland observed or modeled total water reaches Minor Flood")
+    if (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25: add("marine_hazard","Marine Hazard","NDBC 44007 measured offshore conditions are elevated")
+    all_alerts=list(alerts)+list(marine_alerts)
+    coastal_impact=coastal_impact_state(hazards,water,buoy,all_alerts,now)
+    if (coastal_impact.get("impact") or {}).get("rank",0)>=1: add("coastal_impact","Compound Coastal Impact","Saco Coast Watch time-aligned high-tide compound-impact synthesis")
+    active_hazards=[]
     for mode in modes:
-        code=mode.get("code"); rank=0
-        raw_basis=mode.get("basis")
-        basis=list(raw_basis) if isinstance(raw_basis,list) else ([raw_basis] if raw_basis else [])
-        if code=="coastal_flood": rank=max(rank,_rank(max([v for v in (forecast72,observed) if v is not None],default=None),12,13,14))
+        code=mode.get("code"); rank=0; raw_basis=mode.get("basis"); basis=list(raw_basis) if isinstance(raw_basis,list) else ([raw_basis] if raw_basis else [])
+        if code=="coastal_impact": rank=max(rank,(coastal_impact.get("impact") or {}).get("rank",0))
+        elif code=="coastal_flood": rank=max(rank,_rank(max([v for v in (forecast72,observed) if v is not None],default=None),12,13,14))
         elif code=="high_surf": rank=max(rank,_rank(surf.get("max_surf_height_ft"),7,10,15))
         elif code=="beach_hazard": rank=max(rank,1 if str(surf.get("rip_current_risk") or "").lower()=="high" else 0)
         elif code=="marine_hazard": rank=max(rank,_rank(buoy.get("wave_height_ft"),8,12,18),_rank(buoy.get("gust_mph"),35,50,65),_rank(buoy.get("speed_mph"),25,40,55))
@@ -811,16 +810,18 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
     if wave24 is not None and wave24>=6: recent("waves","Buoy 44007 significant wave height",buoy.get("max_24h_wave_at"),round(wave24,1),"ft",_rank(wave24,6,10,15))
     gust24=num(buoy.get("max_24h_gust_mph"))
     if gust24 is not None and gust24>=35: recent("marine_wind","Buoy 44007 gust",buoy.get("max_24h_gust_at"),round(gust24,1),"mph",_rank(gust24,35,50,65))
-    recent_impacts.sort(key=lambda item:parse_iso(item["at"]) or dt.datetime.min.replace(tzinfo=dt.timezone.utc))
-    recent_rank=max((item["impact_rank"] for item in recent_impacts),default=0)
+    recent_impacts.sort(key=lambda item:parse_iso(item["at"]) or dt.datetime.min.replace(tzinfo=dt.timezone.utc)); recent_rank=max((item["impact_rank"] for item in recent_impacts),default=0)
     warning_now=False
     for alert in all_alerts:
         event=alert.get("event") or ""
         if "warning" not in event.lower(): continue
         onset=parse_iso(alert.get("onset")); ends=parse_iso(alert.get("ends") or alert.get("expires"))
         if (not onset or onset<=now) and (not ends or ends>=now): warning_now=True; break
-    current_signal=((observed is not None and observed>=12) or (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25)
-    near24=((forecast24 is not None and forecast24>=12) or (num(winter.get("snowfall_24h_in")) or 0)>=2 or (num(rain.get("qpf_24h_in")) or 0)>=1 or (num(wind.get("max_gust_24h_mph")) or 0)>=25 or any(re.search(r"watch|advisory|warning|statement",alert.get("event") or "",re.I) for alert in all_alerts) or any(mode.get("code") in ("high_surf","beach_hazard") for mode in active_hazards))
+    peak_window=coastal_impact.get("peak_window") or {}; peak_start=parse_iso(peak_window.get("window_start")); peak_end=parse_iso(peak_window.get("window_end"))
+    compound_now=bool((coastal_impact.get("impact") or {}).get("rank",0)>=1 and peak_start and peak_end and peak_start<=now<=peak_end)
+    compound_24=bool((coastal_impact.get("impact") or {}).get("rank",0)>=1 and coastal_impact.get("hours_until_peak") is not None and coastal_impact["hours_until_peak"]<=24)
+    current_signal=((observed is not None and observed>=12) or (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25 or compound_now)
+    near24=((forecast24 is not None and forecast24>=12) or (num(winter.get("snowfall_24h_in")) or 0)>=2 or (num(rain.get("qpf_24h_in")) or 0)>=1 or (num(wind.get("max_gust_24h_mph")) or 0)>=25 or compound_24 or any(re.search(r"watch|advisory|warning|statement",alert.get("event") or "",re.I) for alert in all_alerts) or any(mode.get("code") in ("high_surf","beach_hazard") for mode in active_hazards))
     if active_hazards: phase="Ongoing" if (current_signal or warning_now) else "Approaching" if near24 else "Outlook"
     elif recent_impacts:
         freshest=max(parse_iso(item["at"]) for item in recent_impacts if parse_iso(item["at"])); phase="Improving" if freshest>=now-dt.timedelta(hours=6) else "Recent"
@@ -834,12 +835,16 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
     reasons=[]
     for mode in active_hazards: reasons.extend(mode.get("basis") or [])
     reasons=list(dict.fromkeys(reason for reason in reasons if reason))[:8]
+    event_timing=None
+    if peak_window and (coastal_impact.get("impact") or {}).get("rank",0)>=1:
+        event_timing={"peak_at":peak_window.get("high_tide_at"),"window_start":peak_window.get("window_start"),"window_end":peak_window.get("window_end"),"hours_until_peak":coastal_impact.get("hours_until_peak"),"basis":"Highest Saco Coast Watch compound coastal-impact window"}
+    elif water.get("forecast_peak_72h_time") and forecast72 is not None:
+        target=parse_iso(water.get("forecast_peak_72h_time")); event_timing={"peak_at":water.get("forecast_peak_72h_time"),"window_start":None,"window_end":None,"hours_until_peak":round((target-now).total_seconds()/3600,1) if target else None,"basis":"NOAA OFS modeled total-water peak"}
     if phase=="Recent": summary="Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine."
     elif phase=="Routine": summary="No meaningful active or near-term adaptive hazard is detected."
     elif phase=="Improving": summary=f"{display} impacts are improving; recent observations remain relevant."
     else: summary=f"{display} is {phase.lower()} with {impact['label'].lower()} local impact potential."
-    return {"phase":phase,"show_focus":show_focus,"primary_display":display,"impact":impact,"recent_impact":recent_impact,"event_identity":identity,"active_hazards":active_hazards,"official_alerts":all_alerts,"recent_impacts":recent_impacts,"reasons":reasons,"summary":summary}
-
+    return {"phase":phase,"show_focus":show_focus,"primary_display":display,"impact":impact,"recent_impact":recent_impact,"event_identity":identity,"active_hazards":active_hazards,"official_alerts":all_alerts,"recent_impacts":recent_impacts,"reasons":reasons,"summary":summary,"event_timing":event_timing,"coastal_impact":coastal_impact}
 
 def severity(alerts, winter, wind, rain, tropical, modes, surf=None, marine_alerts=None, cold=None):
     hazards={"active_modes":modes,"alerts":alerts,"marine_alerts":marine_alerts or [],"winter":winter,"wind":wind,"rain":rain,"tropical":tropical,"surf":surf or {},"cold":cold or {}}
@@ -880,7 +885,7 @@ def build_snapshot(now=None):
     if error: errors["nhc"] = error
     tropical=tropical_snapshot(nhc_doc,alerts) if nhc_doc else {"active":False,"atlantic_active_count":0,"storms":[],"errors":[error] if error else []}
     modes=detect_modes(alerts,winter,wind,rain,cold,tropical,surf,marine_alerts); winter["active"]=any(mode["code"]=="winter" for mode in modes)
-    snapshot={"schema_version":1,"generated_at":iso(now),"location":{"name":"Saco Bay coastal reference","lat":SITE_LAT,"lon":SITE_LON},"active_modes":modes,"severity":{"level":"green","label":"Routine","rank":0},"event_state":{},"alerts":alerts,"marine_alerts":marine_alerts,"surf":surf,"winter":winter,"rain":rain,"wind":wind,"cold":cold,"tropical":tropical,"hourly":timeline(rows,now),"errors":errors,"sources":{"nws_point":"https://api.weather.gov/points/"+POINT,"nws_hourly":hourly_url,"nws_grid":grid_url,"nws_alerts":"https://api.weather.gov/alerts/active?point="+POINT,"nws_marine_alerts":NWS_MARINE_ALERTS,"nws_surf_zone":NWS_SURF_LATEST,"nhc":NHC_CURRENT}}
+    snapshot={"schema_version":1,"generated_at":iso(now),"location":{"name":"Saco Bay coastal reference","lat":SITE_LAT,"lon":SITE_LON},"active_modes":modes,"severity":{"level":"green","label":"Routine","rank":0},"event_state":{},"alerts":alerts,"marine_alerts":marine_alerts,"surf":surf,"winter":winter,"rain":rain,"wind":wind,"cold":cold,"tropical":tropical,"hourly":timeline(rows,now),"hourly_full":rows,"errors":errors,"sources":{"nws_point":"https://api.weather.gov/points/"+POINT,"nws_hourly":hourly_url,"nws_grid":grid_url,"nws_alerts":"https://api.weather.gov/alerts/active?point="+POINT,"nws_marine_alerts":NWS_MARINE_ALERTS,"nws_surf_zone":NWS_SURF_LATEST,"nhc":NHC_CURRENT}}
     event_state=derive_event_state(snapshot,alerts=alerts,now=now); snapshot["event_state"]=event_state; snapshot["severity"]=event_state["impact"]; snapshot["active_modes"]=event_state["active_hazards"]
     return snapshot
 

@@ -76,7 +76,15 @@ def _event_transition_text(current,baseline):
 def _recent_event(current):
     state=_event_state(current)
     if state.get("phase")!="Recent": return {"active":False,"summary":"","items":[],"impact":state.get("recent_impact") or {}}
-    items=state.get("recent_impacts") or []; labels=[item.get("label") for item in items if item.get("label")]; detail=", ".join(labels[:3]) if labels else "notable coastal observations"
+    items=state.get("recent_impacts") or []
+    def plain_label(label):
+        return {
+            "Portland water-level residual":"Portland water above the predicted tide",
+            "Portland observed high water":"Portland observed high water",
+            "Buoy 44007 significant wave height":"offshore wave height",
+            "Buoy 44007 gust":"offshore wind gust",
+        }.get(label,label)
+    labels=[plain_label(item.get("label")) for item in items if item.get("label")]; detail=", ".join(labels[:3]) if labels else "notable coastal observations"
     return {"active":True,"summary":"Recent coastal event: "+detail+". Current and forward-looking conditions have returned to Routine.","items":items,"impact":state.get("recent_impact") or {}}
 
 def _event_briefing(current,baseline,now):
@@ -196,7 +204,7 @@ def _event_history(snaps,current,now):
             data_quality.append({
                 "type":"superseded_surf_parse",
                 "count":len(conflicts),
-                "message":f"Excluded {len(conflicts)} superseded Surf Zone parse{'s' if len(conflicts)!=1 else ''} where the same NWS product was later parsed differently.",
+                "message":("One earlier surf value was corrected after the same NWS forecast was re-read. This summary uses the corrected value." if len(conflicts)==1 else f"{len(conflicts)} earlier surf values were corrected after the same NWS forecasts were re-read. This summary uses the corrected values."),
                 "product_ids":products,
             })
         coverage=round((end-start).total_seconds()/3600,1) if start and end else None
@@ -206,7 +214,7 @@ def _event_history(snaps,current,now):
             "ended_at":hc.iso(end),
             "captured_coverage_hours":coverage,
             "duration_hours":coverage,
-            "coverage_basis":"Span of compatible captured event-state snapshots; not the actual storm duration.",
+            "coverage_basis":"This is how much of the event Saco Coast Watch captured, not how long the storm itself lasted.",
             "phase":states[-1].get("phase"),
             "highest_impact":{"rank":rank,"label":labels[min(rank,3)]},
             "max_observed_water_ft":_max_value(group,("water","observed_24h_max_ft")),
@@ -239,7 +247,7 @@ def _coastal_impact_change(current,baseline):
     if cur_impact.get("score") is None or old_impact.get("score") is None: return None
     out={"score_delta":cur_impact["score"]-old_impact["score"],"current_score":cur_impact["score"],"previous_score":old_impact["score"],"current_label":cur_impact.get("label"),"previous_label":old_impact.get("label"),"drivers":[]}
     cp=cur.get("peak_window") or {}; op=old.get("peak_window") or {}
-    for key,label,unit in (("modeled_total_ft","modeled total water","ft"),("surf_context_ft","surf context","ft"),("onshore_component_mph","onshore wind component","mph")):
+    for key,label,unit in (("modeled_total_ft","NOAA forecast water level","ft"),("surf_context_ft","NWS surf forecast","ft"),("onshore_component_mph","wind pushing toward shore","mph")):
         cv=cp.get(key); ov=op.get(key)
         if cv is None or ov is None: continue
         delta=float(cv)-float(ov)
@@ -272,7 +280,7 @@ def _impact_timeline(current,alert_changes,local24,now):
     if w.get("observed_24h_max_ft") is not None:
         add(w.get("observed_24h_max_time"),"water","Portland observed water level reached %.2f ft MLLW"%w["observed_24h_max_ft"],"NOAA CO-OPS station 8418150","official_observation")
     if w.get("residual_24h_max_ft") is not None:
-        add(w.get("residual_24h_max_time"),"residual","Portland water-level residual reached %+.2f ft versus astronomical tide"%w["residual_24h_max_ft"],"NOAA CO-OPS observation minus astronomical prediction","derived_official_data")
+        add(w.get("residual_24h_max_time"),"residual","Portland water ran %+.2f ft above the predicted tide"%w["residual_24h_max_ft"],"NOAA CO-OPS observation compared with the astronomical tide prediction","derived_official_data")
     buoy=(((current.get("marine") or {}).get("stations") or {}).get("44007") or {})
     if buoy.get("max_24h_wave_height_ft") is not None:
         add(buoy.get("max_24h_wave_at"),"waves","Buoy 44007 significant wave height reached %.1f ft"%buoy["max_24h_wave_height_ft"],"NOAA/NDBC buoy 44007","official_observation")
@@ -311,7 +319,7 @@ def build_payload(current,hist,now=None):
         elif s.get("max_24h_speed_mph") is not None: station_bits.append(f"{sid} reached {s['max_24h_speed_mph']:.1f} mph sustained")
     if station_bits: past+=" Marine observations: "+"; ".join(station_bits)+"."
     if w.get("residual_24h_max_ft") is not None:
-        past+=f" The highest Portland water-level residual was {w['residual_24h_max_ft']:+.2f} ft versus astronomical tide around {fmt_time(w.get('residual_24h_max_time'))}."
+        past+=f" Portland water reached {w['residual_24h_max_ft']:+.2f} ft above the predicted astronomical tide around {fmt_time(w.get('residual_24h_max_time'))}."
 
     latest_stored=max((s for s in stored if hc.parse_iso(s.get("snapshot_at"))),key=lambda s:hc.parse_iso(s["snapshot_at"]),default=None)
     live_alert_changes=hc.diff_alerts((latest_stored or {}).get("alerts") or [],current.get("alerts") or [],now) if latest_stored else []
@@ -358,14 +366,14 @@ def build_payload(current,hist,now=None):
 
     if peak24 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak24)
-        next24=f"The highest NOAA modeled total-water level in the next 24 hours is {fmt_ft(peak24)} ft MLLW around {fmt_time(w.get('forecast_peak_24h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
+        next24=f"The highest NOAA forecast water level in the next 24 hours is {fmt_ft(peak24)} ft MLLW around {fmt_time(w.get('forecast_peak_24h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
     else:
         next24="NOAA total-water guidance for the next 24 hours is temporarily unavailable."
     if peak72 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak72)
-        next72=f"The highest modeled total-water level in the next 72 hours is {fmt_ft(peak72)} ft MLLW around {fmt_time(w.get('forecast_peak_72h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
+        next72=f"The highest NOAA forecast water level in the next 72 hours is {fmt_ft(peak72)} ft MLLW around {fmt_time(w.get('forecast_peak_72h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
         if w.get("astronomical_tide_at_peak_ft") is not None:
-            next72+=f" The astronomical tide at that time is {w['astronomical_tide_at_peak_ft']:.2f} ft MLLW, implying {w.get('model_uplift_ft',0):+.2f} ft of modeled uplift/departure."
+            next72+=f" The astronomical tide at that time is {w['astronomical_tide_at_peak_ft']:.2f} ft MLLW, so NOAA's water forecast is {w.get('model_uplift_ft',0):+.2f} ft above the tide prediction."
     else:
         next72="NOAA total-water guidance for the next 72 hours is temporarily unavailable."
     fc=current.get("forecast_conditions") or {}

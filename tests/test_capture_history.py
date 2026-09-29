@@ -31,10 +31,10 @@ class CaptureTests(unittest.TestCase):
   self.assertEqual(row['pressure_mb'],985.5)
   self.assertEqual(row['pressure_tendency_mb'],-3.2)
  def test_build_high_tide_windows_aligns_model_guidance(self):
-  now=datetime(2026,9,29,12,tzinfo=timezone.utc)
-  highs=[(datetime(2026,9,29,16,tzinfo=timezone.utc),10.5)]
-  model=[(datetime(2026,9,29,15,30,tzinfo=timezone.utc),11.7),(datetime(2026,9,29,16,30,tzinfo=timezone.utc),11.9)]
-  preds=[(datetime(2026,9,29,16,30,tzinfo=timezone.utc),10.6)]
+  now=dt.datetime(2026,9,29,12,tzinfo=dt.timezone.utc)
+  highs=[(dt.datetime(2026,9,29,16,tzinfo=dt.timezone.utc),10.5)]
+  model=[(dt.datetime(2026,9,29,15,30,tzinfo=dt.timezone.utc),11.7),(dt.datetime(2026,9,29,16,30,tzinfo=dt.timezone.utc),11.9)]
+  preds=[(dt.datetime(2026,9,29,16,30,tzinfo=dt.timezone.utc),10.6)]
   rows=c.build_high_tide_windows(highs,model,preds,now)
   self.assertEqual(rows[0]["modeled_total_ft"],11.9)
   self.assertEqual(rows[0]["modeled_uplift_ft"],1.3)

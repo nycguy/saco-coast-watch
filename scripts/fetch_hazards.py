@@ -611,7 +611,7 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
         impact=_impact_from_score(water_points+surf_points+onshore_points+alert_points+compound_bonus)
         drivers=[]
         if total is not None: drivers.append({"label":"NOAA forecast water level","value":f"{total:.2f} ft MLLW","source":"NOAA OFS"})
-        if num(item.get("astronomical_ft")) is not None: drivers.append({"label":"Astronomical high tide","value":f"{float(item['astronomical_ft']):.2f} ft MLLW","source":"NOAA CO-OPS"})
+        if num(item.get("astronomical_ft")) is not None: drivers.append({"label":"Predicted high tide","value":f"{float(item['astronomical_ft']):.2f} ft MLLW","source":"NOAA CO-OPS tide prediction"})
         if surf_ft is not None: drivers.append({"label":"NWS surf forecast","value":f"{surf_ft:.0f} ft max in the current Coastal York forecast","source":"NWS Surf Zone Forecast"})
         if onshore is not None: drivers.append({"label":"Wind pushing toward shore","value":f"{onshore:.0f} mph","source":"Calculated from NWS hourly wind direction and speed"})
         for event in alert_labels[:2]: drivers.append({"label":"Official coastal product","value":event,"source":"National Weather Service"})
@@ -629,7 +629,7 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
         drivers.append({"label":"Latest offshore wave observation","value":detail,"source":"NDBC 44007"})
     if wave_power is not None: drivers.append({"label":"Wave energy estimate","value":f"{wave_power:.1f} kW/m estimate","source":"Estimated from NDBC wave height and dominant period"})
     if buoy_onshore is not None: drivers.append({"label":"Latest buoy onshore-wind component","value":f"{buoy_onshore:.0f} mph","source":"Derived from NDBC 44007"})
-    return {"method":"Saco Coast Watch compound coastal-impact synthesis; not an official NOAA/NWS impact forecast.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"confidence":{"label":confidence_label,"score":confidence_score,"missing":[name for name,ok in checks.items() if not ok]},"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
+    return {"method":"Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"confidence":{"label":confidence_label,"score":confidence_score,"missing":[name for name,ok in checks.items() if not ok]},"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
 def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_alerts=None):
     surf = surf or {}
     marine_alerts = marine_alerts or []

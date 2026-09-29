@@ -44,5 +44,28 @@ class HazardTests(unittest.TestCase):
   hazards["active_modes"]=first["active_hazards"]
   second=h.derive_event_state(hazards,now=now)
   self.assertEqual(second["active_hazards"][0]["basis"],["NWS High Surf Advisory"])
+ def test_onshore_component_respects_wind_direction(self):
+  self.assertGreater(h.onshore_component(30,"ESE"),29)
+  self.assertEqual(h.onshore_component(30,"WNW"),0.0)
+ def test_wave_power_proxy_uses_height_and_period(self):
+  self.assertAlmostEqual(h.wave_power_proxy_kw_m(6.6,12),23.8,places=1)
+  self.assertIsNone(h.wave_power_proxy_kw_m(None,12))
+ def test_compound_coastal_impact_promotes_three_factors(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  hazards={"surf":{"max_surf_height_ft":8},"hourly_full":[{"start":"2026-09-29T16:00:00Z","wind_mph":28,"gust_mph":32,"wind_direction":"ESE"}],"active_modes":[],"alerts":[],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"tropical":{}}
+  water={"high_tides":[{"time":"2026-09-29T16:00:00Z","astronomical_ft":10.5,"modeled_total_ft":11.8,"modeled_time":"2026-09-29T16:00:00Z","modeled_uplift_ft":1.3}],"forecast_peak_24h_ft":11.8,"forecast_peak_72h_ft":11.8}
+  marine={"stations":{"44007":{"wave_height_ft":7.0,"dominant_period_sec":12,"direction_deg":110,"wave_direction_deg":120}}}
+  state=h.derive_event_state(hazards,water=water,marine=marine,now=now)
+  self.assertGreaterEqual(state["coastal_impact"]["impact"]["rank"],1)
+  self.assertIn("coastal_impact",[m["code"] for m in state["active_hazards"]])
+  self.assertEqual(state["phase"],"Approaching")
+  self.assertEqual(state["coastal_impact"]["confidence"]["label"],"High")
+ def test_compound_model_stays_routine_for_current_benign_case(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  hazards={"surf":{"max_surf_height_ft":5},"hourly_full":[{"start":"2026-09-29T16:00:00Z","wind_mph":7,"gust_mph":10,"wind_direction":"W"}],"active_modes":[],"alerts":[],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"tropical":{}}
+  water={"high_tides":[{"time":"2026-09-29T16:00:00Z","astronomical_ft":10.5,"modeled_total_ft":11.58}],"forecast_peak_24h_ft":11.58,"forecast_peak_72h_ft":11.58}
+  state=h.derive_event_state(hazards,water=water,marine={"stations":{}},now=now)
+  self.assertEqual(state["coastal_impact"]["impact"]["label"],"Routine")
+  self.assertNotIn("coastal_impact",[m["code"] for m in state["active_hazards"]])
  def test_haversine_local_reference(self): self.assertLess(h.haversine_miles(h.SITE_LAT,h.SITE_LON,43.47,-70.38),1)
 if __name__=="__main__": unittest.main()

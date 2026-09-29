@@ -32,6 +32,7 @@ class FrontendArchitectureTests(unittest.TestCase):
    self.assertGreater(len(p.read_text(encoding='utf-8')),20,rel)
 
  def test_bootstrap_and_domain_separation(self):
+  html=INDEX.read_text(encoding='utf-8')
   app=(ROOT/'js'/'app.js').read_text(encoding='utf-8')
   chart=(ROOT/'js'/'chart.js').read_text(encoding='utf-8')
   briefing=(ROOT/'js'/'briefing.js').read_text(encoding='utf-8')

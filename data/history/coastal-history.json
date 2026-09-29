@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-29T18:52:23Z",
+  "generated_at": "2026-09-29T18:57:39Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -4054,7 +4054,7 @@
       }
     },
     {
-      "snapshot_at": "2026-09-29T18:52:23Z",
+      "snapshot_at": "2026-09-29T18:57:39Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -4063,16 +4063,16 @@
         "marine": "NDBC realtime2",
         "alerts": "NWS API active alerts",
         "weather_forecast": "NWS hourly point forecast",
-        "hazards": "NWS forecast grid + NHC CurrentStorms and GIS products"
+        "hazards": "NWS forecast grid + Surf Zone Forecast + marine alerts + NHC CurrentStorms and GIS products"
       },
       "water": {
         "station": "8418150",
-        "latest_observed_ft": 10.27,
-        "latest_observed_at": "2026-09-29T18:42:00Z",
+        "latest_observed_ft": 10.1,
+        "latest_observed_at": "2026-09-29T18:48:00Z",
         "observed_24h_max_ft": 11.34,
         "observed_24h_max_time": "2026-09-29T17:24:00Z",
         "residual_current_ft": 0.75,
-        "residual_current_at": "2026-09-29T18:42:00Z",
+        "residual_current_at": "2026-09-29T18:48:00Z",
         "residual_24h_max_ft": 1.11,
         "residual_24h_max_time": "2026-09-28T23:00:00Z",
         "forecast_peak_24h_ft": 11.58,
@@ -4102,20 +4102,87 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-09-29T18:52:23.115591Z",
+        "generated_at": "2026-09-29T18:57:39.073682Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
           "lon": -70.385
         },
-        "active_modes": [],
+        "active_modes": [
+          {
+            "code": "high_surf",
+            "label": "High Surf / Wave Impact",
+            "basis": [
+              "NWS High Surf product or Coastal York Surf Zone Forecast"
+            ],
+            "impact_rank": 3
+          }
+        ],
         "severity": {
-          "level": "green",
-          "label": "Routine",
-          "rank": 0,
-          "reasons": []
+          "rank": 3,
+          "level": "red",
+          "label": "High Impact"
+        },
+        "event_state": {
+          "phase": "Approaching",
+          "show_focus": true,
+          "primary_display": "High Surf / Wave Impact",
+          "impact": {
+            "rank": 3,
+            "level": "red",
+            "label": "High Impact"
+          },
+          "recent_impact": {
+            "rank": 1,
+            "level": "yellow",
+            "label": "Elevated"
+          },
+          "event_identity": null,
+          "active_hazards": [
+            {
+              "code": "high_surf",
+              "label": "High Surf / Wave Impact",
+              "basis": [
+                "NWS High Surf product or Coastal York Surf Zone Forecast"
+              ],
+              "impact_rank": 3
+            }
+          ],
+          "official_alerts": [],
+          "recent_impacts": [
+            {
+              "code": "waves",
+              "label": "Buoy 44007 significant wave height",
+              "at": "2026-09-28T19:20:00Z",
+              "value": 6.6,
+              "unit": "ft",
+              "impact_rank": 1
+            },
+            {
+              "code": "residual",
+              "label": "Portland water-level residual",
+              "at": "2026-09-28T23:00:00Z",
+              "value": 1.11,
+              "unit": "ft",
+              "impact_rank": 1
+            }
+          ],
+          "reasons": [
+            "NWS High Surf product or Coastal York Surf Zone Forecast"
+          ],
+          "summary": "High Surf / Wave Impact is approaching with high impact local impact potential."
         },
         "alerts": [],
+        "marine_alerts": [],
+        "surf": {
+          "available": true,
+          "zone": "Coastal York",
+          "max_surf_height_ft": 60.0,
+          "rip_current_risk": "Moderate",
+          "issued_at": "2026-09-29T18:41:00+00:00",
+          "product_id": "108966c6-f685-4a71-a878-6546a21c0a75",
+          "source": "https://api.weather.gov/products/types/SRF/locations/GYX/latest"
+        },
         "winter": {
           "active": false,
           "snowfall_24h_in": 0.0,
@@ -4255,24 +4322,26 @@
           "nws_hourly": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
           "nws_grid": "https://api.weather.gov/gridpoints/GYX/70,49",
           "nws_alerts": "https://api.weather.gov/alerts/active?point=43.472,-70.385",
+          "nws_marine_alerts": "https://api.weather.gov/alerts/active?zone=ANZ154",
+          "nws_surf_zone": "https://api.weather.gov/products/types/SRF/locations/GYX/latest",
           "nhc": "https://www.nhc.noaa.gov/CurrentStorms.json"
         }
       },
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-09-29T18:20:00Z",
+            "observed_at": "2026-09-29T18:30:00Z",
             "speed_mph": 8.9,
             "gust_mph": 11.2,
-            "direction_deg": 340,
-            "wave_height_ft": 3.3,
-            "dominant_period_sec": 8.0,
-            "average_period_sec": 5.6,
-            "wave_direction_deg": 136,
-            "pressure_mb": 1012.3,
+            "direction_deg": 350,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": 1012.2,
             "pressure_tendency_mb": null,
             "water_temp_f": 56.1,
-            "air_temp_f": 58.1,
+            "air_temp_f": 58.3,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 22.4,
             "max_24h_speed_at": "2026-09-28T19:20:00Z",
@@ -4305,13 +4374,54 @@
         }
       },
       "alerts": [],
-      "storm_mode": {
-        "active": true,
-        "reasons": [
-          "Portland water-level residual is +0.75 ft",
-          "24-hour Portland residual reached +1.11 ft"
+      "event_state": {
+        "phase": "Approaching",
+        "show_focus": true,
+        "primary_display": "High Surf / Wave Impact",
+        "impact": {
+          "rank": 3,
+          "level": "red",
+          "label": "High Impact"
+        },
+        "recent_impact": {
+          "rank": 1,
+          "level": "yellow",
+          "label": "Elevated"
+        },
+        "event_identity": null,
+        "active_hazards": [
+          {
+            "code": "high_surf",
+            "label": "High Surf / Wave Impact",
+            "basis": [
+              "NWS High Surf product or Coastal York Surf Zone Forecast"
+            ],
+            "impact_rank": 3
+          }
         ],
-        "basis": "Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."
+        "official_alerts": [],
+        "recent_impacts": [
+          {
+            "code": "waves",
+            "label": "Buoy 44007 significant wave height",
+            "at": "2026-09-28T19:20:00Z",
+            "value": 6.6,
+            "unit": "ft",
+            "impact_rank": 1
+          },
+          {
+            "code": "residual",
+            "label": "Portland water-level residual",
+            "at": "2026-09-28T23:00:00Z",
+            "value": 1.11,
+            "unit": "ft",
+            "impact_rank": 1
+          }
+        ],
+        "reasons": [
+          "NWS High Surf product or Coastal York Surf Zone Forecast"
+        ],
+        "summary": "High Surf / Wave Impact is approaching with high impact local impact potential."
       }
     }
   ],
@@ -4463,6 +4573,18 @@
       "source_type": "official_alert"
     }
   ],
+  "event_events": [
+    {
+      "at": "2026-09-29T18:57:39Z",
+      "type": "event_state_transition",
+      "from_phase": "Unknown",
+      "to_phase": "Approaching",
+      "from_impact": "Unknown",
+      "to_impact": "High Impact",
+      "from_display": "Coastal Conditions",
+      "to_display": "High Surf / Wave Impact"
+    }
+  ],
   "local_events": [
     {
       "published_at": "2023-11-28T08:00:00Z",
@@ -4488,11 +4610,11 @@
     },
     {
       "published_at": "2024-01-11T08:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Work crews shore up seawall to protect Biddeford neighborhood - WMTW",
-      "summary": "Work crews shore up seawall to protect Biddeford neighborhood - WMTW",
+      "headline": "Work crews shore up seawall to protect Biddeford neighborhood - wmtw.com",
+      "summary": "Work crews shore up seawall to protect Biddeford neighborhood - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPclJPa1U4MmFDeUFkQXpGS3dlQWNjVU1UMG84dlMtX3FZbEo2cnQ0em1OWExVYm1sSjktQWEzZnBSbUc3cHUzZ1FmYjA3UDE0QW5jeTFoVVhBb3NTem5VYktBcXFtdjlYSEtfdDBnWEFQclhoMGdhVkxxR0dlX28wT21QOTFWLWlvcVNiVGJMSWd2NGFuS3lRSk1NaEY?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4565,11 +4687,11 @@
     },
     {
       "published_at": "2024-06-27T07:00:00Z",
-      "source": "maineaudubon.org",
+      "source": "Maine Audubon",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
-      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4653,11 +4775,11 @@
     },
     {
       "published_at": "2025-10-01T07:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough launches second drone flight to assess beach erosion - WMTW",
-      "summary": "Scarborough launches second drone flight to assess beach erosion - WMTW",
+      "headline": "Scarborough launches second drone flight to assess beach erosion - wmtw.com",
+      "summary": "Scarborough launches second drone flight to assess beach erosion - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPZjBLb0NMTzFSbHdOUG9IdjBIUUZEV1ZYTTdwTEJORmgtakw0Qm9BRGNqTnQwTmRIZ294eVYtbDIxajgzTXh4RWpOdTc4OHRaUmhBNl9zWDdGSmlDb2RFSGcxSjF6X1JLM3dQNjB3ZzFPUVNPMkIwLU1hSnVXQkFTcVp2RjBsWENVTDNSVVNSRFZSS1RINzBlT0g3RDlUZk9zY2tjTw?oc=5",
       "event_category": "erosion",
       "anecdotal": false
@@ -4697,11 +4819,11 @@
     },
     {
       "published_at": "2026-01-12T08:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Old Orchard Beach",
-      "headline": "Old Orchard Beach dune restoration project underway 2 years after devastating coastal storms - WMTW",
-      "summary": "Old Orchard Beach dune restoration project underway 2 years after devastating coastal storms - WMTW",
+      "headline": "Old Orchard Beach dune restoration project underway 2 years after devastating coastal storms - wmtw.com",
+      "summary": "Old Orchard Beach dune restoration project underway 2 years after devastating coastal storms - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNSHVCRTFsSVVpdnJfVjVCZ1NfUTNLT29hZ0QxcnJsZ2d3Y1RtdWVpcDhaV3BSdDlSM283dHZGLVk2RW5xSlRTcTFZVEE0eS1JNHhkNXdEYzVnOUtNMDZiNUU5UGNFTXlSR2xuOWpidnN4VjF3SnFIM0pfdkdDQUJ0djBMMExCYVEySFF1VWx6MXp2UzZORFE?oc=5",
       "event_category": "erosion",
       "anecdotal": false
@@ -4763,11 +4885,11 @@
     },
     {
       "published_at": "2026-03-17T07:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Flood Watch for the Maine mountains and a flood warning for the Saco River - WMTW",
-      "summary": "Flood Watch for the Maine mountains and a flood warning for the Saco River - WMTW",
+      "headline": "Flood Watch for the Maine mountains and a flood warning for the Saco River - wmtw.com",
+      "summary": "Flood Watch for the Maine mountains and a flood warning for the Saco River - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOLWZpVVozY2p6OUVUekhTZHhPcGtzR2M5dmRhVUpwMUdZX21QNUExT05jUUI1OTgxZ3FRT0pMUUN4aDNvNlpGV3NMbWl3ZHhDVHdfQ2FTMnlUVEFkVDM1LVk5b0FzaVZnSzJzV3pnUXRoWGFseUgyb3ZWdVVqVU56aW1wVjJaSEIxck1Fa1Y2aXFNS0MwN2tsb25QNA?oc=5",
       "event_category": "flooding",
       "anecdotal": false
@@ -4796,11 +4918,11 @@
     },
     {
       "published_at": "2026-05-15T07:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Flooding underway along the Saco River as rain continues to fall - WMTW",
-      "summary": "Flooding underway along the Saco River as rain continues to fall - WMTW",
+      "headline": "Flooding underway along the Saco River as rain continues to fall - wmtw.com",
+      "summary": "Flooding underway along the Saco River as rain continues to fall - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNV1JOeGJVdmh6MDkwaGZvSUZHV0dWd0dXQU1ScEs0WmlKcmwyY2xEOUJka2otQnBkcXE5SFk3Vk1zMWdJVzJxUS1iZ1VVX0gzclhrNllXM2dEYmRINXBuZnh5ZDBfOUR6RW15b0w3NHFZckV5R0JvUWVOaUdEdWl5Q2N0N0I?oc=5",
       "event_category": "flooding",
       "anecdotal": false
@@ -4818,11 +4940,11 @@
     },
     {
       "published_at": "2026-05-29T07:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Flood warning issued for Saco River in Fryeburg-Conway area, covering parts of Maine and New Hampshire - WMTW",
-      "summary": "Flood warning issued for Saco River in Fryeburg-Conway area, covering parts of Maine and New Hampshire - WMTW",
+      "headline": "Flood warning issued for Saco River in Fryeburg-Conway area, covering parts of Maine and New Hampshire - wmtw.com",
+      "summary": "Flood warning issued for Saco River in Fryeburg-Conway area, covering parts of Maine and New Hampshire - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQUE9DS0hWc1Q4WE5DUThCeG4tSDJmV3NacmctUHkxZzYxMVBlRUtDb3JfOGpkaGdPUmxfR3VRdEJzdXR3ckxxSXVlN0wyeHpfUXBHRER6RjJLNUR1NkZudU1aTTQ1Q2k4M04xeEx3cU1mRGRrMU1UalFXWlRvWjktWTFsQjhnOE1FRGc?oc=5",
       "event_category": "flooding",
       "anecdotal": false
@@ -4840,11 +4962,11 @@
     },
     {
       "published_at": "2026-06-30T07:00:00Z",
-      "source": "mainemorningstar.com",
+      "source": "Maine Morning Star",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
-      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - mainemorningstar.com",
+      "headline": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
+      "summary": "Maine delegation celebrates long-awaited Camp Ellis coastal restoration project - Maine Morning Star",
       "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOcHBRU1E1RzlrRmVjOXk1aFR2a1plMEJrOHJyMGJYLTVGVXM0Q19ZMmhGTS1fTG9vRlpEc1JKWGtGOFRBdWhleDJYMHV6a3ZFM2lYWlo2T1BWNnhXeGNtUDl6aGV3OXAteHRhU0hTczFCVS1MWWlGOVRwVkNMc08talNtMVRycXdDZW1IZzVkREhwV1dHak80bDNid3FMQ192ZGt4UVc3N2liZXBPWDZiLTBDSmswSHVDakY4ZA?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4884,11 +5006,11 @@
     },
     {
       "published_at": "2026-07-13T07:00:00Z",
-      "source": "The Portland Press Herald",
+      "source": "pressherald.com",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - The Portland Press Herald",
-      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - The Portland Press Herald",
+      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - pressherald.com",
+      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - pressherald.com",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNVTZXdEp4QjFqYzZfRnN3M1FtWXRiMXlqSlBpR2hjNTNFVnY1Z19fTjVBSlBHSWlNX2RyM000WGc4eGNZMnFsUjI5VVNiVWYzZHVvb3IwZjRrQ3JDejhSMnVuRFFmUkQxUUN6VXZrR0NlMVdoeHVteHJPMTdUX1hBcHlZSUZMTFhJWE92cjJxVjAxVGZickVySHJFdUxYNDY5X2FmNTVuX2lFLUNqSHNIMUVDM3YxdUE?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4928,11 +5050,11 @@
     },
     {
       "published_at": "2026-09-11T07:00:00Z",
-      "source": "WMTW",
+      "source": "wmtw.com",
       "source_type": "news",
       "location": "Old Orchard Beach",
-      "headline": "Massachusetts couple injured after wind gust topples light pole in Old Orchard Beach - WMTW",
-      "summary": "Massachusetts couple injured after wind gust topples light pole in Old Orchard Beach - WMTW",
+      "headline": "Massachusetts couple injured after wind gust topples light pole in Old Orchard Beach - wmtw.com",
+      "summary": "Massachusetts couple injured after wind gust topples light pole in Old Orchard Beach - wmtw.com",
       "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNcFFBNE83TUExazRfVFBkWHhaRWdzT3VLOHNEM3JRWXdFQXZEbFV0SGZhSWJlc01XZ05sX2VZc3V3c3k2N01Wa3hsQ3hXd2FBY1U2ZkZDUDlxNnVwQ1Y5aE1kNlh0akFqbVZ3NjgwTVE3Q0I0ekNVVWdnbk1ZMVVJaHkxRWtpUkJTcV9qaVRwaw?oc=5",
       "event_category": "wind",
       "anecdotal": false

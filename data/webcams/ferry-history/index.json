@@ -4,19 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-09-27T22:49:10Z",
-      "file": "20260927T224910Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Portland water-level residual is +1.12 ft",
-        "24-hour Portland residual reached +1.21 ft",
-        "Buoy 44007 significant wave height is 8.2 ft",
-        "Active NWS Gale Warning",
-        "Adaptive focus: Coastal Flood",
-        "Adaptive focus: Heavy Rain"
-      ]
-    },
-    {
       "captured_at": "2026-09-28T01:21:22Z",
       "file": "20260928T012122Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -57,6 +44,6 @@
       ]
     }
   ],
-  "generated_at": "2026-09-28T21:21:00Z",
+  "generated_at": "2026-09-29T01:07:42Z",
   "retention_hours": 24
 }

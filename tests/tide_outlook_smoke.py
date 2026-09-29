@@ -193,7 +193,21 @@ def assert_common(page):
     assert page.locator("#eventWhyList .event-why-row").count()==3
     assert page.locator("#eventHistoryPanel").is_visible()
     assert page.locator("#eventHistoryCards .event-history-card").count()==1
-    history_text=page.locator("#eventHistoryCards .event-history-card").inner_text()
+    high_water_label_size=page.locator("#highWaterWindows .high-window-grid span").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
+    high_water_value_size=page.locator("#highWaterWindows .high-window-grid strong").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
+    evolution_size=page.locator("#forecastEvolutionRows .evolution-row").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
+    assert high_water_label_size>=10.5,high_water_label_size
+    assert high_water_value_size>=11.5,high_water_value_size
+    assert evolution_size>=10.5,evolution_size
+    history_card=page.locator("#eventHistoryCards .event-history-card")
+    history_grid=page.locator("#eventHistoryCards")
+    card_box=history_card.bounding_box(); grid_box=history_grid.bounding_box()
+    assert card_box["width"]>=grid_box["width"]*0.97,(card_box,grid_box)
+    history_metric_size=history_card.locator(".event-history-metrics span").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
+    history_value_size=history_card.locator(".event-history-metrics b").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
+    assert history_metric_size>=9.5,history_metric_size
+    assert history_value_size>=12,history_value_size
+    history_text=history_card.inner_text()
     assert "Captured coverage 18.0h" in history_text
     assert "not the actual storm duration" in history_text
     assert "Excluded 1 superseded Surf Zone parse" in history_text

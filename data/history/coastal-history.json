@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-09-29T13:39:47Z",
+  "generated_at": "2026-09-29T18:52:23Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -4052,6 +4052,267 @@
         ],
         "basis": "Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."
       }
+    },
+    {
+      "snapshot_at": "2026-09-29T18:52:23Z",
+      "snapshot_kind": "realtime",
+      "provenance": {
+        "forecast": "live_noaa_ofs_capture",
+        "observations": "NOAA CO-OPS station 8418150",
+        "astronomical_tide": "NOAA CO-OPS predictions",
+        "marine": "NDBC realtime2",
+        "alerts": "NWS API active alerts",
+        "weather_forecast": "NWS hourly point forecast",
+        "hazards": "NWS forecast grid + NHC CurrentStorms and GIS products"
+      },
+      "water": {
+        "station": "8418150",
+        "latest_observed_ft": 10.27,
+        "latest_observed_at": "2026-09-29T18:42:00Z",
+        "observed_24h_max_ft": 11.34,
+        "observed_24h_max_time": "2026-09-29T17:24:00Z",
+        "residual_current_ft": 0.75,
+        "residual_current_at": "2026-09-29T18:42:00Z",
+        "residual_24h_max_ft": 1.11,
+        "residual_24h_max_time": "2026-09-28T23:00:00Z",
+        "forecast_peak_24h_ft": 11.58,
+        "forecast_peak_24h_time": "2026-09-30T18:06:00Z",
+        "forecast_peak_72h_ft": 11.58,
+        "forecast_peak_72h_time": "2026-09-30T18:06:00Z",
+        "astronomical_tide_at_peak_ft": 10.69,
+        "model_uplift_ft": 0.89,
+        "threshold_margins_ft": {
+          "minor": 0.42,
+          "moderate": 1.42,
+          "major": 2.42
+        }
+      },
+      "forecast_conditions": {
+        "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+        "next24_max_sustained_wind_mph": 5.0,
+        "next72_max_sustained_wind_mph": 10.0,
+        "next24_max_precip_probability_pct": 14,
+        "next72_max_precip_probability_pct": 14,
+        "next24_summaries": [
+          "Cloudy",
+          "Mostly Cloudy",
+          "Patchy Fog",
+          "Partly Sunny"
+        ]
+      },
+      "hazards": {
+        "schema_version": 1,
+        "generated_at": "2026-09-29T18:52:23.115591Z",
+        "location": {
+          "name": "Saco Bay coastal reference",
+          "lat": 43.472,
+          "lon": -70.385
+        },
+        "active_modes": [],
+        "severity": {
+          "level": "green",
+          "label": "Routine",
+          "rank": 0,
+          "reasons": []
+        },
+        "alerts": [],
+        "winter": {
+          "active": false,
+          "snowfall_24h_in": 0.0,
+          "snowfall_72h_in": 0.0,
+          "ice_72h_in": 0.0,
+          "max_average_snow_rate_24h_in_hr": 0.0,
+          "min_visibility_24h_mi": 1.0,
+          "precip_transition_24h": "Rain"
+        },
+        "rain": {
+          "qpf_24h_in": 0.0,
+          "qpf_72h_in": 0.01
+        },
+        "wind": {
+          "max_sustained_24h_mph": 10.0,
+          "max_sustained_24h_time": "2026-09-29T18:00:00Z",
+          "max_sustained_72h_mph": 10.0,
+          "max_gust_24h_mph": null,
+          "max_gust_24h_time": null,
+          "max_gust_72h_mph": null,
+          "max_gust_72h_time": null
+        },
+        "cold": {
+          "min_temp_24h_f": 55.0,
+          "min_temp_24h_time": "2026-09-30T11:00:00Z"
+        },
+        "tropical": {
+          "active": false,
+          "atlantic_active_count": 2,
+          "storms": [],
+          "errors": []
+        },
+        "hourly": [
+          {
+            "start": "2026-09-29T18:00:00Z",
+            "end": "2026-09-29T19:00:00Z",
+            "temperature_f": 64.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "N",
+            "precip_probability_pct": 16,
+            "summary": "Slight Chance Rain Showers",
+            "precip_type": "Rain"
+          },
+          {
+            "start": "2026-09-29T21:00:00Z",
+            "end": "2026-09-29T22:00:00Z",
+            "temperature_f": 64.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "N",
+            "precip_probability_pct": 13,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T00:00:00Z",
+            "end": "2026-09-30T01:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 5,
+            "summary": "Patchy Fog",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T03:00:00Z",
+            "end": "2026-09-30T04:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 1,
+            "summary": "Patchy Fog",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T06:00:00Z",
+            "end": "2026-09-30T07:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 1,
+            "summary": "Patchy Fog",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T09:00:00Z",
+            "end": "2026-09-30T10:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 1,
+            "summary": "Patchy Fog",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T12:00:00Z",
+            "end": "2026-09-30T13:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Patchy Fog",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T15:00:00Z",
+            "end": "2026-09-30T16:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-09-30T18:00:00Z",
+            "end": "2026-09-30T19:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          }
+        ],
+        "errors": {},
+        "sources": {
+          "nws_point": "https://api.weather.gov/points/43.472,-70.385",
+          "nws_hourly": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+          "nws_grid": "https://api.weather.gov/gridpoints/GYX/70,49",
+          "nws_alerts": "https://api.weather.gov/alerts/active?point=43.472,-70.385",
+          "nhc": "https://www.nhc.noaa.gov/CurrentStorms.json"
+        }
+      },
+      "marine": {
+        "stations": {
+          "44007": {
+            "observed_at": "2026-09-29T18:20:00Z",
+            "speed_mph": 8.9,
+            "gust_mph": 11.2,
+            "direction_deg": 340,
+            "wave_height_ft": 3.3,
+            "dominant_period_sec": 8.0,
+            "average_period_sec": 5.6,
+            "wave_direction_deg": 136,
+            "pressure_mb": 1012.3,
+            "pressure_tendency_mb": null,
+            "water_temp_f": 56.1,
+            "air_temp_f": 58.1,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
+            "max_24h_speed_mph": 22.4,
+            "max_24h_speed_at": "2026-09-28T19:20:00Z",
+            "max_24h_gust_mph": 26.8,
+            "max_24h_gust_at": "2026-09-28T19:20:00Z",
+            "max_24h_wave_height_ft": 6.6,
+            "max_24h_wave_at": "2026-09-28T19:20:00Z"
+          },
+          "WEXM1": {
+            "observed_at": "2026-09-29T18:00:00Z",
+            "speed_mph": 5.8,
+            "gust_mph": null,
+            "direction_deg": 340,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": null,
+            "pressure_tendency_mb": null,
+            "water_temp_f": null,
+            "air_temp_f": 62.8,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
+            "max_24h_speed_mph": 6.9,
+            "max_24h_speed_at": "2026-09-28T19:00:00Z",
+            "max_24h_gust_mph": null,
+            "max_24h_gust_at": null,
+            "max_24h_wave_height_ft": null,
+            "max_24h_wave_at": null
+          }
+        }
+      },
+      "alerts": [],
+      "storm_mode": {
+        "active": true,
+        "reasons": [
+          "Portland water-level residual is +0.75 ft",
+          "24-hour Portland residual reached +1.11 ft"
+        ],
+        "basis": "Saco Coast Watch interface heuristic; official NWS alerts remain authoritative."
+      }
     }
   ],
   "daily_rollups": [
@@ -4120,7 +4381,7 @@
     },
     {
       "date": "2026-09-29",
-      "snapshot_count": 3,
+      "snapshot_count": 4,
       "max_observed_ft": 11.63,
       "max_forecast_peak_ft": 11.69,
       "max_gust_mph": 22.4
@@ -4192,6 +4453,14 @@
       "at": "2026-09-28T00:00:00Z",
       "source": "NWS snapshot comparison",
       "source_type": "official_alert"
+    },
+    {
+      "change_type": "expired",
+      "event": "Small Craft Advisory",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.400e647fe65d998116a4fcb4341a9e78985c0988.002.1",
+      "at": "2026-09-29T15:00:00Z",
+      "source": "NWS snapshot comparison",
+      "source_type": "official_alert"
     }
   ],
   "local_events": [
@@ -4241,11 +4510,11 @@
     },
     {
       "published_at": "2024-01-13T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Higgins Beach residents reel from historic storm damage in Scarborough - WGME",
-      "summary": "Higgins Beach residents reel from historic storm damage in Scarborough - WGME",
+      "headline": "Higgins Beach residents reel from historic storm damage in Scarborough - wgme.com",
+      "summary": "Higgins Beach residents reel from historic storm damage in Scarborough - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNLUdnY2YxQW5LcENMazAxX0Y0S0tfWTBiS3FYNllIOXVMTkllNF9CSkNOS202cS1EVnE4NkpiZmJKM2hVZF8xVjBMaXQ0UGx4QllYNjVyZjlFOXh6a0NJQnpuVFAtLUVYS3IzMUpLVE9DMXBQZ29pQVc4bDR1dnBYemI0WXFyTE5BYUFkUHNkSGVENEdqVUdBd255bGlFbUUtaGR2a1EwVEtYemVNY3I4UGtleE5aM0VFOG9jbHlIV1dpZzQ3bm40aXpVYnpXdE5PZmJkS3BTSDljN3dRX1E?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4263,55 +4532,55 @@
     },
     {
       "published_at": "2024-02-29T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - WGME",
-      "summary": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - WGME",
+      "headline": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - wgme.com",
+      "summary": "Biddeford's Fortune Rocks Road temporarily repaired after severe coastal storm damage - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPZVQzR2lvU3VBbmVEakd3dno4bTJKZzZ1QzhKci1FZlQya1ZYNTRsZVBCZzRrRmdwc2dMZGZjQ1huLWdMVkhNTjdWN29EZTJndC0yR1VaOTBoNXhaM3FVa0xRZ2RzMjZjUDlNYlpUVW5HQUtmNWhWRldod2hxdXlNTW5Dc0hRTHBRVUxVQzltLWlOdVJ1ZWttREh2ZlB4c0YzQnAzc2pWdnRXN1YtLTk3MFRR?oc=5",
       "event_category": "road impacts",
       "anecdotal": false
     },
     {
       "published_at": "2024-03-10T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough residents face severe coastal flooding for third time this year - WGME",
-      "summary": "Scarborough residents face severe coastal flooding for third time this year - WGME",
+      "headline": "Scarborough residents face severe coastal flooding for third time this year - wgme.com",
+      "summary": "Scarborough residents face severe coastal flooding for third time this year - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPRDZxcGJuT255ZFJWdEJPdE9XdEpkOTJEWXgwSkpJd3lrelM1blFxTlZDUXRBdDVKUGxJTS1sSFRwQmdrVDNUTHFjOFdiVnduMDBqNS00UGV2WTJYMTc5SWx5UnNhemtiNFhwbG1TQVFtNzVpRDd3Sm5rVm90STRFN1dKUVduemtNOUZZbERFT0hjeW5DVUozaEhRcnY0T3dHMFJZdTV3?oc=5",
       "event_category": "flooding",
       "anecdotal": false
     },
     {
       "published_at": "2024-03-20T07:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough residents frustrated by FEMA flood map update - WGME",
-      "summary": "Scarborough residents frustrated by FEMA flood map update - WGME",
+      "headline": "Scarborough residents frustrated by FEMA flood map update - wgme.com",
+      "summary": "Scarborough residents frustrated by FEMA flood map update - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPbEViQjBVOWZLZzYxbzNLd3VFQjBubXNsRGZuaDQ1NjAxdFpzMXVmbUdnY2FjSXJyN3oxNWxiX2hrTHVZVjU5UEJybF81Q1BaTDVPdm81OC1hQllOT1hneEdrYkVpcjNJWnptdnhtVEdRekVyem9Bd21xbWt6UXNUOVJWMEl4eTZUTGZxQkV3?oc=5",
       "event_category": "flooding",
       "anecdotal": false
     },
     {
       "published_at": "2024-06-27T07:00:00Z",
-      "source": "Maine Audubon",
+      "source": "maineaudubon.org",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
-      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     },
     {
       "published_at": "2024-10-08T07:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - WGME",
-      "summary": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - WGME",
+      "headline": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - wgme.com",
+      "summary": "Experts gather at SOS Saco Bay Coastal Conference to discuss saving Maine's coastline - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMioAJBVV95cUxQSFAtWEwyX0dZVG40NkIxQk5wTjVnVzU3UDhRTWlERWcxTEVVS3MxMENvWUJyVlFrUlNQTl9SS3oxeTI3dzNTMFNzV3dQaVR1ZEdtVUgwbU9odXF1LXRHdmN2aVQ5Tzl6aU5BQ0xWaVFiWXotREt1SEtqOC0xdDdIM1ZjaVhuOFc3dWpGUk92Q2JiLWM4T0tkN21yT1h5dHhrVVNCVmN1VHU5OTI3eGFjNi01bVUyU2pEYVJmUV9IX05zNC1rMnZBOGw3RmtwY0pZQkxuLVBTQV9tY3pXQlhLQm1IejVneVYyR0hrVVR3Z1RybC1WeVBIWmo5bnpkSWhKMnBNV3QyNVBMbWJHNjRyZWxFYjhQUmkzUDFVS2JyRXE?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4329,11 +4598,11 @@
     },
     {
       "published_at": "2025-01-13T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Camp Ellis still rebuilding after last year's devastating storms - WGME",
-      "summary": "Camp Ellis still rebuilding after last year's devastating storms - WGME",
+      "headline": "Camp Ellis still rebuilding after last year's devastating storms - wgme.com",
+      "summary": "Camp Ellis still rebuilding after last year's devastating storms - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxOdmtzbkktYTliU1h6RDFydHJwMHkyWHlIc1dHQXZDLXZKWUFHTG5zUmdXTTU4a0F2cEhRdHpUQTUyOTFxOEduUUtndFhwbjJKRzd2bFBHN29qWmcwMFhMZ0VwYU1aTnJWQ3RrRWhGUWM1LVk0ajdONVJlLTBaVld4OXBVYjM5V2hQZl9COS0xVnVFUkx6eFFfbVFyNV9sdGJ3UG5McFJlNnJSNGhvZnR5YVB1bG5IVlAtQzJsS245dVBiVFRvS1R4aXZWblB5TDBB?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4351,11 +4620,11 @@
     },
     {
       "published_at": "2025-05-16T07:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - WGME",
-      "summary": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - WGME",
+      "headline": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - wgme.com",
+      "summary": "Sen. Collins secures $23 million to prevent erosion at Camp Ellis - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMilgJBVV95cUxNdjZuZUlSLVY2OVVfd29wSTJIVHhNMGJLRms0MVVHR3J0TnczVnYwMzhvN1RfblAtWkFOeThGVzRQX1RvTFRJRDlsR1R4Ym1YSVFKRHlMQ0dFWXVuNzVnSHNVM2NHLWdBd1g0MG4xUUR6aktHRy0tbFYzM2hTTEpIUHRmWmFmUEU3RE1uY3hvTENRN05CdnNXeUdycl9seGlldDdRcmFGY2Q0SzUycmh5OHlxeksyWjZfcm5GZ3N5RVBRTXhzdjh1d3R4UWVfSmRFdW5iQkpndnNHd211bGhwekVDbVZGM1hEcFR6bGszZ1RjaUFOS3BlTC1TUEJPZnVVdnVGa1loaFZnTkM1RHQ2cU9SSkE3dw?oc=5",
       "event_category": "erosion",
       "anecdotal": false
@@ -4395,33 +4664,33 @@
     },
     {
       "published_at": "2025-10-07T07:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Saco discusses future storm preparation - WGME",
-      "summary": "Saco discusses future storm preparation - WGME",
+      "headline": "Saco discusses future storm preparation - wgme.com",
+      "summary": "Saco discusses future storm preparation - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPeXBBZ2RCVi1UZm5iNnlsaTBuNWZXTVZxaFNDR0hDR1l3UEZVTkhBX211bmhIVldFU0Vnck9rMno3Q2lISjdtTDBzbzFjeFJteml5WU93bmZ1ZmtTQlNHU3dkaUwwVWwxQmVhQU9US3JOb0p1cThrRnc1eXlYQXVjWk5Ed3NPc1hQNS1GcjQxWFROYzZxNXR1aHJzeTNwbzRoVlpnQjdVc1gyZ2hmS1h0eFBtRjdwTUNQcTVUeV9mS3RJbi0zeEVpTHM1d1Y?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
     },
     {
       "published_at": "2025-11-03T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - WGME",
-      "summary": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - WGME",
+      "headline": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - wgme.com",
+      "summary": "UNE deploys buoy to monitor Saco Bay waves, combat erosion - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPeVpDLV9DM1EtQjlvNFRCSWRDbzBBeW1DdlI3SU0tX2xlQXNzYzA4UkszWGFsd3M3SGJZYUVQLUMzV0FDYm12aUdpLV9acTVQY29yLUtYOUFGeVczV1VCSlR0aW5KT3pmeUs4Tzk0bUFSQThOOFFaWklINi1EWWxncXNxTzZXYk53UzFSV1RwRG83V3drZ1VfenBsanBGWFBid0c1MFpJSHFLcVF2NUlUOXQzR1ZsUzJMbGZLYmNidUYxUTZyWU0tNy05VjF5X3Nma2JUUlZZa2dFVlU4bFROUjN1LUJsNVE3VzRyTG00Yw?oc=5",
       "event_category": "erosion",
       "anecdotal": false
     },
     {
       "published_at": "2026-01-05T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Old Orchard Beach",
-      "headline": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - WGME",
-      "summary": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - WGME",
+      "headline": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - wgme.com",
+      "summary": "Old Orchard Beach continues efforts to repair coastal damage from 2024 winter storms - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxPdlg2UEdvd2hPTUk0SHZBTXJ1d1ltXy1VenBvOUgyOEUwN1g3MTM1N0RFbWdabG9mUTFaaEw2MUk2U2QzaVJmVnZzcE1HeDB6ZmQ2TWo1R2pJMmVEN3dYRVJUanNyUGRJazhYWlhUVExfbDJEal9PNU5IcE4wNHVvU0dfQkZaOEVvb2VNa1c5WlUyd3I5WjduWWFtYWpUYU9jRXJBSzBfT1VnNjByS3haT05leERxT1NscDJXdUxPMDJkTExaRWpNVHN1NzlhaVRnV1hIV24wY1VISWt0TzZoQS00ZWhsVlpIbUd5eXFR?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4450,11 +4719,11 @@
     },
     {
       "published_at": "2026-01-26T08:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Car flips in Scarborough amid winter storm conditions - WGME",
-      "summary": "Car flips in Scarborough amid winter storm conditions - WGME",
+      "headline": "Car flips in Scarborough amid winter storm conditions - wgme.com",
+      "summary": "Car flips in Scarborough amid winter storm conditions - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPZ1VkT0k5NzFDTkVsNkRUU3dGV0hkeUFwTnBDbFNBZGZWQjlsX1hCcWVHT0tXWmZGMm5UcG9KS0pKT19PTFVlZzZLR1FpVXhhUThqY0x2cU4xRFg3a3A5LU90dm5pdC12dUdQSkRGM1V5RGlJdmd1R21BNERXQnFwTXFEWUtHMHYt?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4505,11 +4774,11 @@
     },
     {
       "published_at": "2026-04-13T07:00:00Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Camp Ellis",
-      "headline": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - WGME",
-      "summary": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - WGME",
+      "headline": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - wgme.com",
+      "summary": "'We want a beach': Camp Ellis shoreline restoration project to begin in June - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxOOGo0bXI2NkM2NkM0RVRNTTdtMWlGZnFFNmZPZVBHSGd0Snp2ZU1YTklNbm0xUnJQcEdfd3RDT191Ymh3VWk4X1U5Q09zWEsxSUJlZ29zUVNYb2hFWTZRZkRaWFZ5d3ZPeDRwMFBFeG11RDBxOVEyN0hRc09wbGdLRFJmU285Qjg0d09UY0xyUDhNdWdUOVdSUzNaVklFZEh5d3NSaUlJTEN5VG5qZXJMMlUxSEhHdHZRRmtGY0hlb3lQSjZZcE9BMWRqbjByRmFHOGc?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4538,11 +4807,11 @@
     },
     {
       "published_at": "2026-05-15T15:28:38Z",
-      "source": "WGME",
+      "source": "wgme.com",
       "source_type": "news",
       "location": "Saco",
-      "headline": "Heavy rainfall causes flooding along Saco River - WGME",
-      "summary": "Heavy rainfall causes flooding along Saco River - WGME",
+      "headline": "Heavy rainfall causes flooding along Saco River - wgme.com",
+      "summary": "Heavy rainfall causes flooding along Saco River - wgme.com",
       "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxOUHdBVG5GZFdtd01va0JLY2lOZUFVOG44SnFEeldQMUtBR1U3M0E3ZTFSTjZ2enFUZy1WaDRIZDgxbUdwUmhwbmQxaVpGV1hXOTZ3TDJYZmNxMlNsXzJ0RVN2M3h5Mko4TTlhOEhsZjZROVBLN3VaY3BGdE1XQXdQbUx4OHVQWTlBaHlLNFdtVnhTYmVyclUxaVVKT1NGaGNnWm1YbHByMkczNnFxX0hNZHNmLU5JbGRuYzBnTzE2TkNLQ0lhTW9MUS1n?oc=5",
       "event_category": "flooding",
       "anecdotal": false
@@ -4582,11 +4851,11 @@
     },
     {
       "published_at": "2026-07-01T07:00:00Z",
-      "source": "dredgewire.com",
+      "source": "DredgeWire",
       "source_type": "news",
       "location": "Saco",
-      "headline": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - dredgewire.com",
-      "summary": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - dredgewire.com",
+      "headline": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - DredgeWire",
+      "summary": "U.S. Army Corps of Engineers to Begin Construction on Saco, Maine Shore Damage Mitigation Project - DredgeWire",
       "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOb3BkUmtmNE1GbTBKR2xEZE5vTm1rVlhOUnRiRWNEc1RPN3RVUEpkMlhGcjdJbFBvRnRDMG1JZ09zQjhXRzJ1YVlXQVB3RVVQTzJIcmtkWHZfaFhBTHlGV2EwZnctb3hoZDB5OUZrczlwTmtJdDIyQ1BkRUJhYk15ZFNMWmpUelM5WmFKYkgtQWZkZzkzeDZsZjBnVVBwTjQ1R09OUEIybVdEZTdwQ2Z0UW1hWVhzYTBnSDZz?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false
@@ -4615,11 +4884,11 @@
     },
     {
       "published_at": "2026-07-13T07:00:00Z",
-      "source": "Portland Press Herald - Maine Sunday Telegram",
+      "source": "The Portland Press Herald",
       "source_type": "news",
       "location": "Biddeford",
-      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - Portland Press Herald - Maine Sunday Telegram",
-      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - Portland Press Herald - Maine Sunday Telegram",
+      "headline": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - The Portland Press Herald",
+      "summary": "Protesters storm Susan Collins’ Biddeford office after federal agent shot man - The Portland Press Herald",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNVTZXdEp4QjFqYzZfRnN3M1FtWXRiMXlqSlBpR2hjNTNFVnY1Z19fTjVBSlBHSWlNX2RyM000WGc4eGNZMnFsUjI5VVNiVWYzZHVvb3IwZjRrQ3JDejhSMnVuRFFmUkQxUUN6VXZrR0NlMVdoeHVteHJPMTdUX1hBcHlZSUZMTFhJWE92cjJxVjAxVGZickVySHJFdUxYNDY5X2FmNTVuX2lFLUNqSHNIMUVDM3YxdUE?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

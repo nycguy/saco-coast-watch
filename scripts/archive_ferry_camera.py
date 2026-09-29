@@ -74,6 +74,22 @@ def archive_reasons(snapshot,now):
     reasons.extend(state.get("reasons") or [])
     return list(dict.fromkeys(reason for reason in reasons if reason))[:6]
 
+def frame_context(snapshot):
+    state=(snapshot or {}).get("event_state") or (((snapshot or {}).get("hazards") or {}).get("event_state") or {})
+    water=(snapshot or {}).get("water") or {}
+    buoy=((((snapshot or {}).get("marine") or {}).get("stations") or {}).get("44007") or {})
+    impact=state.get("impact") or {}
+    return {
+        "event":state.get("primary_display"),
+        "phase":state.get("phase"),
+        "impact":impact.get("label"),
+        "impact_level":impact.get("level"),
+        "water_level_ft":water.get("latest_observed_ft"),
+        "residual_ft":water.get("residual_current_ft"),
+        "wave_height_ft":buoy.get("wave_height_ft"),
+        "dominant_period_sec":buoy.get("dominant_period_sec"),
+        "gust_mph":buoy.get("gust_mph"),
+    }
 def archive(history_path,output_dir,now=None,capture_fn=capture_frame):
     now=now or ch.now_utc(); out=Path(output_dir); out.mkdir(parents=True,exist_ok=True)
     doc=prune(out,load_index(out),now)
@@ -87,7 +103,7 @@ def archive(history_path,output_dir,now=None,capture_fn=capture_frame):
             filename=now.strftime("%Y%m%dT%H%M%SZ")+".jpg"; dest=out/filename
             try:
                 capture_fn(dest)
-                doc.setdefault("frames",[]).append({"captured_at":hc.iso(now),"file":filename,"source":"WebCOOS / NERACOOS Ferry Beach north HLS","reasons":reasons})
+                doc.setdefault("frames",[]).append({"captured_at":hc.iso(now),"file":filename,"source":"WebCOOS / NERACOOS Ferry Beach north HLS","reasons":reasons,"context":frame_context(snap)})
                 result["captured"]=True; result["file"]=filename
             except Exception as exc:
                 try: dest.unlink(missing_ok=True)

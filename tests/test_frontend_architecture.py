@@ -54,6 +54,12 @@ class FrontendArchitectureTests(unittest.TestCase):
   self.assertIn('function eventDisplayTitle(',hazards)
   self.assertIn('function renderHazards()',hazards)
   self.assertIn('async function loadHazards()',hazards)
+  self.assertIn('eventPeakSummary',html)
+  self.assertIn('eventWhyList',html)
+  self.assertIn('eventHistoryPanel',html)
+  self.assertIn('ferryArchiveContext',html)
+  self.assertIn('function renderEventHistory()',briefing)
+  self.assertIn('function renderArchiveContext(',webcams)
 
  def test_residual_chart_interaction_contract(self):
   intelligence=(ROOT/'js'/'intelligence.js').read_text(encoding='utf-8')

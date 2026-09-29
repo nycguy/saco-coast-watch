@@ -47,9 +47,11 @@ class FrontendArchitectureTests(unittest.TestCase):
   self.assertIn('connectFerryLive();',webcams)
   self.assertIn('loadFerryArchive();',webcams)
   self.assertIn('function renderCoastalIntelligence()',intelligence)
-  self.assertIn('function coastalEventReasons()',intelligence)
+  self.assertNotIn('function coastalEventReasons()',intelligence)
   self.assertNotIn('function renderStormMode()',intelligence)
   self.assertIn("if(typeof renderEventFocus==='function')renderEventFocus();",intelligence)
+  self.assertIn('function normalizedEventState()',hazards)
+  self.assertIn('function eventDisplayTitle(',hazards)
   self.assertIn('function renderHazards()',hazards)
   self.assertIn('async function loadHazards()',hazards)
 

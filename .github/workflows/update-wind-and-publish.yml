@@ -99,12 +99,12 @@ jobs:
           b=json.load(open('dist/data/coastal-briefing.json'))
           h=json.load(open('dist/data/coastal-history.json'))
           assert b['schema_version']==2
-          assert all(k in b for k in ('past_24h','forecast_change_24h','forecast_change_48h','forecast_evolution','storm_mode','event_briefing','impact_timeline','impact_timeline_next24','observed_daily_peaks','next_24h','next_72h','local_pulse','current_snapshot'))
+          assert all(k in b for k in ('past_24h','forecast_change_24h','forecast_change_48h','forecast_evolution','event_state','event_briefing','recent_event','event_transitions','impact_timeline','impact_timeline_next24','observed_daily_peaks','next_24h','next_72h','local_pulse','current_snapshot'))
           assert h['schema_version']==2
           assert h['thresholds_ft_mllw']=={'minor':12.0,'moderate':13.0,'major':14.0}
           hz=json.load(open('dist/data/hazards.json'))
           assert hz['schema_version']==1
-          assert all(k in hz for k in ('active_modes','severity','winter','rain','wind','cold','tropical','hourly'))
+          assert all(k in hz for k in ('active_modes','severity','event_state','marine_alerts','surf','winter','rain','wind','cold','tropical','hourly'))
           assert len(h.get('snapshots',[]))>=1
           w=json.load(open('dist/data/webcams/webcams.json'))
           assert w['schema_version']==1

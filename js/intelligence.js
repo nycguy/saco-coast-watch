@@ -1,7 +1,5 @@
 'use strict';
 
-const STORM_UI_THRESHOLDS={residualFt:0.75,waveFt:6,windMph:25,gustMph:35};
-
 function residualSeries(hours=24){
   const start=now()-hours*3600000;
   const out=[];
@@ -179,23 +177,6 @@ function renderForecastEvolution(){
     root.append(row);
   }
   const basis=$('forecastEvolutionBasis');if(basis)basis.textContent=state.briefing?.forecast_evolution?.basis||'Captured forecast snapshots.';
-}
-
-function coastalEventReasons(){
-  const reasons=[];
-  const {nextPeak}=currentStatus();
-  if(nextPeak?.v>=12)reasons.push('NOAA modeled peak reaches Portland Minor Flood');
-  const residual=residualSeries(24),latest=residual.at(-1),max=residual.reduce((a,b)=>!a||b.v>a.v?b:a,null);
-  if(latest?.v>=STORM_UI_THRESHOLDS.residualFt)reasons.push('Portland residual '+(latest.v>=0?'+':'')+fmtN(latest.v)+' ft');
-  else if(max?.v>=1)reasons.push('24h Portland residual reached +'+fmtN(max.v)+' ft');
-  const buoy=state.marine?.['44007']||{};
-  if(Number.isFinite(buoy.wave_height_ft)&&buoy.wave_height_ft>=STORM_UI_THRESHOLDS.waveFt)reasons.push('Buoy 44007 waves '+buoy.wave_height_ft.toFixed(1)+' ft');
-  if(Number.isFinite(buoy.gust_mph)&&buoy.gust_mph>=STORM_UI_THRESHOLDS.gustMph)reasons.push('Buoy 44007 gust '+Math.round(buoy.gust_mph)+' mph');
-  else if(Number.isFinite(buoy.speed_mph)&&buoy.speed_mph>=STORM_UI_THRESHOLDS.windMph)reasons.push('Buoy 44007 wind '+Math.round(buoy.speed_mph)+' mph');
-  const alert=state.alerts.find(a=>/coastal|high surf|storm surge|flood|gale|storm warning|high wind/i.test(a?.properties?.event||''));
-  if(alert)reasons.push('Active NWS '+alert.properties.event);
-  for(const r of state.briefing?.storm_mode?.reasons||[])if(!reasons.includes(r))reasons.push(r);
-  return reasons;
 }
 
 function renderCoastalIntelligence(){

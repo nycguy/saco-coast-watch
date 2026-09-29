@@ -2,48 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
-
 const source=fs.readFileSync(new URL('../js/hazards.js',import.meta.url),'utf8');
-
-function loadContext(state={hazards:{active_modes:[]},alerts:[]}){
-  const context=vm.createContext({state,console,Date,Math,Number,Set});
-  vm.runInContext(source,context,{filename:'js/hazards.js'});
-  return context;
-}
-
-const mode=code=>({code,label:code,basis:'test'});
-
-test('displayed event mode titles preserve priority and combinations',()=>{
-  const {modeTitle}=loadContext();
-  assert.equal(modeTitle([mode('tropical'),mode('winter')]),'Tropical Cyclone Mode');
-  assert.equal(modeTitle([mode('winter'),mode('coastal_flood')]),'Winter Coastal Storm Mode');
-  assert.equal(modeTitle([mode('winter')]),'Winter Storm Mode');
-  assert.equal(modeTitle([mode('coastal_flood'),mode('high_wind')]),'Coastal Storm Mode');
-  assert.equal(modeTitle([mode('heavy_rain')]),'Heavy Rain Mode');
-  assert.equal(modeTitle([mode('high_wind')]),'High Wind Mode');
-  assert.equal(modeTitle([mode('extreme_cold')]),'Extreme Cold Mode');
-  assert.equal(modeTitle([mode('coastal_flood')]),'Coastal Storm Mode');
-  assert.equal(modeTitle([]),'Coastal Storm Mode');
-});
-
-test('live NWS alerts augment backend modes without duplicates',()=>{
-  const state={
-    hazards:{active_modes:[{code:'winter',label:'Winter Storm',basis:'backend'}]},
-    alerts:[
-      {properties:{event:'Winter Storm Warning'}},
-      {properties:{event:'Coastal Flood Watch'}},
-      {properties:{event:'High Wind Warning'}},
-      {properties:{event:'Tropical Storm Warning'}}
-    ]
-  };
-  const {hazardModeList}=loadContext(state);
-  const modes=hazardModeList();
-  const codes=modes.map(item=>item.code);
-  assert.deepEqual([...codes].sort(),['coastal_flood','high_wind','tropical','winter']);
-  assert.equal(codes.filter(code=>code==='winter').length,1);
-});
-
-test('routine state has no adaptive backend modes',()=>{
-  const {hazardModeList}=loadContext({hazards:{active_modes:[]},alerts:[]});
-  assert.equal(hazardModeList().length,0);
-});
+function loadContext(state={hazards:{active_modes:[]},alerts:[]}){const context=vm.createContext({state,console,Date,Math,Number,Set});vm.runInContext(source,context,{filename:'js/hazards.js'});return context;}
+test('official NHC identity is the display title',()=>{const state={briefing:{current_snapshot:{event_state:{phase:'Approaching',show_focus:true,primary_display:'Tropical Cyclone',impact:{level:'orange',label:'Significant',rank:2},event_identity:{label:'Hurricane Arthur'},active_hazards:[{code:'tropical',label:'Tropical Cyclone'}],official_alerts:[],recent_impacts:[],reasons:[]}}},hazards:{}};const {normalizedEventState,eventDisplayTitle}=loadContext(state);assert.equal(eventDisplayTitle(normalizedEventState()),'Hurricane Arthur');});
+test('recent-only state does not show event focus',()=>{const state={briefing:{current_snapshot:{event_state:{phase:'Recent',show_focus:false,primary_display:'Routine Coastal Conditions',impact:{level:'green',label:'Routine',rank:0},active_hazards:[],official_alerts:[],recent_impacts:[{label:'Residual'}],reasons:[]}}},hazards:{}};const {normalizedEventState,hazardModeList}=loadContext(state);assert.equal(normalizedEventState().show_focus,false);assert.equal(hazardModeList().length,0);});
+test('normalized backend hazard list is authoritative',()=>{const state={hazards:{event_state:{phase:'Approaching',show_focus:true,primary_display:'Coastal Storm',impact:{level:'yellow',label:'Elevated',rank:1},active_hazards:[{code:'high_surf',label:'High Surf / Wave Impact'},{code:'marine_hazard',label:'Marine Hazard'}],official_alerts:[],recent_impacts:[],reasons:[]}}};const {hazardModeList,eventDisplayTitle}=loadContext(state);assert.equal(hazardModeList().length,2);assert.equal(eventDisplayTitle(),'Coastal Storm');});

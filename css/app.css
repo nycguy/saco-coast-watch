@@ -887,11 +887,11 @@ td{color:#e6f1f6}
 
 
 /* Coastal intelligence, automatic Storm Mode, sea state, and Ferry Beach storm archive. */
-.storm-mode-panel{margin:0 0 16px;padding:16px 18px;border:1px solid #e18b2f;border-radius:14px;background:linear-gradient(135deg,#3d2413,#182d38 62%);box-shadow:inset 0 3px #ff9c3d}
-.storm-mode-panel[hidden]{display:none!important}.storm-mode-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.storm-mode-head h3{margin:1px 0 3px;font-size:20px}.storm-mode-head p{margin:0;color:#d7e4e8;font-size:12px;max-width:680px}.storm-mode-badge{border:1px solid #f6a34f;background:#4d2d17;color:#ffd7ac;border-radius:99px;padding:5px 9px;font-size:10px;font-weight:800;white-space:nowrap}
-.storm-mode-reasons{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.storm-mode-reasons span{border:1px solid #8f5a2c;background:#2b251d;color:#ffe1bd;border-radius:99px;padding:5px 8px;font-size:10px;font-weight:700}
+.storm-mode-panel{margin:0 0 16px;padding:16px 18px;border:1px solid #49697a;border-radius:14px;background:linear-gradient(135deg,#123146,#182d38 62%);box-shadow:inset 0 3px #547989}
+.storm-mode-panel[hidden]{display:none!important}.storm-mode-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.storm-mode-head h3{margin:1px 0 3px;font-size:20px}.storm-mode-head p{margin:0;color:#d7e4e8;font-size:12px;max-width:680px}.storm-mode-badge{border:1px solid #547989;background:#18384a;color:#eaf8fc;border-radius:99px;padding:6px 10px;font-size:10px;font-weight:850;white-space:nowrap}
+.storm-mode-reasons{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.storm-mode-reasons span{border:1px solid #486778;background:#102c3a;color:#dcecf2;border-radius:99px;padding:5px 8px;font-size:10px;font-weight:700}
 .storm-mode-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.storm-mode-metrics div{border:1px solid #684b35;background:#101f29b8;border-radius:9px;padding:8px 10px}.storm-mode-metrics span{display:block;color:#b9cbd2;font-size:9px;font-weight:700}.storm-mode-metrics strong{display:block;color:#fff;font-size:14px;margin-top:2px}
-body.storm-mode .coastal-intelligence{border-color:#bb6f2c;box-shadow:inset 0 3px #ff9c3d}
+body.storm-mode .coastal-intelligence{border-color:#547989}
 
 .coastal-intelligence{padding:17px;margin-top:14px}.intelligence-grid{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:12px;margin-top:12px}.intel-card{border:1px solid #315266;background:#0d2230;border-radius:12px;padding:12px;min-width:0}.intel-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.intel-head h4{margin:0;color:#f2fbff;font-size:14px}.intel-head p{margin:2px 0 0;color:#a9c0ca;font-size:10.5px;line-height:1.35}.intel-tag{font-size:8px;font-weight:800;color:#a8e7e2;border:1px solid #315d68;border-radius:99px;padding:3px 6px;white-space:nowrap}
 .intel-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px}.intel-stat-row div{background:#102c3b;border-radius:8px;padding:8px}.intel-stat-row span{display:block;color:#9fb8c4;font-size:9px}.intel-stat-row strong{display:block;font-size:18px;color:#fff;margin-top:2px}.intel-note{margin:6px 0 0;color:#9fb7c2;font-size:9.5px;line-height:1.35}
@@ -927,14 +927,21 @@ body.storm-mode .coastal-intelligence{border-color:#bb6f2c;box-shadow:inset 0 3p
 
 
 /* Adaptive event intelligence: stays hidden during routine weather. */
-.adaptive-event-panel{border-top:4px solid #f4c542}
-body.hazard-severity-orange .adaptive-event-panel{border-top-color:#f28c28}
-body.hazard-severity-red .adaptive-event-panel{border-top-color:#dc3545}
+.adaptive-event-panel{border-top:4px solid #547989}
+body.hazard-severity-yellow .adaptive-event-panel{border-top-color:#f4c542;box-shadow:inset 0 4px #f4c542}
+body.hazard-severity-orange .adaptive-event-panel{border-top-color:#f28c28;box-shadow:inset 0 4px #f28c28}
+body.hazard-severity-red .adaptive-event-panel{border-top-color:#dc3545;box-shadow:inset 0 4px #dc3545}
+body.hazard-severity-yellow .storm-mode-badge{border-color:#f4c542;background:#f4c542;color:#17212a}
+body.hazard-severity-orange .storm-mode-badge{border-color:#f28c28;background:#f28c28;color:#17212a}
+body.hazard-severity-red .storm-mode-badge{border-color:#dc3545;background:#dc3545;color:#fff}
 .hazard-mode-chips,.event-alert-chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px}
 .hazard-chip,.event-alert-chips span{display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 10px;font-size:.78rem;font-weight:800;letter-spacing:.01em;background:rgba(255,255,255,.08)}
 body.hazard-severity-yellow .hazard-chip{border-color:#f4c542}
 body.hazard-severity-orange .hazard-chip{border-color:#f28c28}
 body.hazard-severity-red .hazard-chip{border-color:#dc3545}
+body.hazard-severity-yellow .storm-mode-reasons span{border-color:#f4c542}
+body.hazard-severity-orange .storm-mode-reasons span{border-color:#f28c28}
+body.hazard-severity-red .storm-mode-reasons span{border-color:#dc3545}
 .storm-mode-metrics .event-metric{min-width:0}
 .storm-mode-metrics .event-metric small{display:block;margin-top:4px;color:var(--muted,#9fb2c0);font-size:.72rem;line-height:1.3}
 .impact-forecast-panel{overflow:hidden;padding:18px 0 10px}

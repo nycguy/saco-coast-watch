@@ -22,7 +22,7 @@
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
 <section class="storm-mode-panel adaptive-event-panel" id="stormModePanel" hidden aria-live="polite">
- <div class="storm-mode-head"><div><div class="eyebrow">Automatic event focus</div><h3 id="eventFocusTitle">Adaptive Event Mode</h3><p id="eventFocusDescription">Saco Coast Watch promotes the hazards that matter most while preserving the coastal dashboard below.</p></div><span class="storm-mode-badge" id="eventFocusBadge">Monitoring</span></div>
+ <div class="storm-mode-head"><div><div class="eyebrow">Automatic event focus</div><h3 id="eventFocusTitle">Adaptive Event Mode</h3><p id="eventFocusDescription">Saco Coast Watch promotes meaningful current and near-term hazards while keeping recent impacts in the fixed-window briefing.</p></div><span class="storm-mode-badge" id="eventFocusBadge">Monitoring</span></div>
  <div class="hazard-mode-chips" id="hazardModeChips"></div>
  <div class="storm-mode-reasons" id="stormModeReasons"></div>
  <div class="storm-mode-metrics" id="eventFocusMetrics"></div>
@@ -142,7 +142,7 @@
 <section class="panel coastal-briefing" aria-labelledby="briefHeading">
  <div class="brief-head"><div><h3 id="briefHeading">Coastal briefing</h3><div class="sub">Fixed rolling windows · not based on your last visit</div></div><span class="brief-window">24h / 72h</span></div>
  <div class="brief-grid" aria-live="polite">
-  <div class="brief-row" id="briefEventRow" hidden><b>Event focus</b><span id="briefEvent">Adaptive event summary is loading…</span></div>
+  <div class="brief-row" id="briefEventRow" hidden><b id="briefEventLabel">Event status</b><span id="briefEvent">Adaptive event summary is loading…</span></div>
   <div class="brief-row"><b>Past 24h</b><span id="briefPast">Building the latest coastal briefing…</span></div>
   <div class="brief-row"><b>Forecast change</b><span id="briefChange">Comparing with the model snapshot from about 24 hours ago…</span></div>
   <div class="brief-row"><b>Next 24h</b><span id="briefNext">Loading NOAA guidance…</span></div>

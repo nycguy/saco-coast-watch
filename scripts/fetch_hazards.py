@@ -512,6 +512,124 @@ def timeline(rows, now):
     return out
 
 
+def compass_degrees(value):
+    if value is None:
+        return None
+    numeric=num(value)
+    if numeric is not None:
+        return numeric%360
+    token=str(value).strip().upper()
+    points={"N":0,"NNE":22.5,"NE":45,"ENE":67.5,"E":90,"ESE":112.5,"SE":135,"SSE":157.5,"S":180,"SSW":202.5,"SW":225,"WSW":247.5,"W":270,"WNW":292.5,"NW":315,"NNW":337.5}
+    return points.get(token)
+
+SACO_ONSHORE_FROM_DEG=120.0
+
+def onshore_component(speed_mph,direction,shore_normal_from_deg=SACO_ONSHORE_FROM_DEG):
+    speed=num(speed_mph); direction_deg=compass_degrees(direction)
+    if speed is None or direction_deg is None: return None
+    delta=math.radians(((direction_deg-shore_normal_from_deg+180)%360)-180)
+    return round(max(0.0,speed*math.cos(delta)),1)
+
+def wave_power_proxy_kw_m(height_ft,dominant_period_sec):
+    height=num(height_ft); period=num(dominant_period_sec)
+    if height is None or period is None or height<=0 or period<=0: return None
+    height_m=height*0.3048
+    return round(0.49*height_m*height_m*period,1)
+
+def _nearest_hourly(rows,target,max_hours=4):
+    target=parse_iso(target) if not isinstance(target,dt.datetime) else target
+    if not target: return None
+    candidates=[]
+    for row in rows or []:
+        when=parse_iso(row.get("start"))
+        if when: candidates.append((abs((when-target).total_seconds()),row))
+    if not candidates: return None
+    distance,row=min(candidates,key=lambda item:item[0])
+    return row if distance<=max_hours*3600 else None
+
+def _water_points(value):
+    value=num(value)
+    if value is None: return 0
+    if value>=14: return 35
+    if value>=13: return 30
+    if value>=12: return 24
+    if value>=11.5: return 16
+    if value>=11: return 8
+    return 0
+
+def _surf_points(value):
+    value=num(value)
+    if value is None: return 0
+    if value>=15: return 25
+    if value>=10: return 20
+    if value>=7: return 15
+    if value>=5: return 8
+    return 0
+
+def _onshore_points(value):
+    value=num(value)
+    if value is None: return 0
+    if value>=50: return 20
+    if value>=35: return 15
+    if value>=25: return 10
+    if value>=15: return 5
+    return 0
+
+def _impact_from_score(score):
+    score=max(0,min(100,int(round(score or 0))))
+    rank=3 if score>=75 else 2 if score>=55 else 1 if score>=35 else 0
+    return {"score":score,"rank":rank,"level":["green","yellow","orange","red"][rank],"label":["Routine","Elevated","Significant","High Impact"][rank]}
+
+def _coastal_alert_points(alerts):
+    points=0; labels=[]
+    for alert in alerts or []:
+        event=alert.get("event") or ""; lower=event.lower()
+        if not re.search(r"coastal flood|storm surge|high surf",lower): continue
+        if "warning" in lower: points=max(points,15)
+        elif "watch" in lower or "advisory" in lower or "statement" in lower: points=max(points,8)
+        labels.append(event)
+    return points,list(dict.fromkeys(labels))
+
+def coastal_impact_state(hazards,water,buoy,alerts,now):
+    surf=hazards.get("surf") or {}; hourly=hazards.get("hourly_full") or hazards.get("hourly") or []
+    high_tides=list((water or {}).get("high_tides") or [])
+    alert_points,alert_labels=_coastal_alert_points(alerts)
+    surf_ft=num(surf.get("max_surf_height_ft")); wave_ft=num((buoy or {}).get("wave_height_ft")); wave_period=num((buoy or {}).get("dominant_period_sec"))
+    wave_power=wave_power_proxy_kw_m(wave_ft,wave_period)
+    buoy_onshore=onshore_component((buoy or {}).get("gust_mph") or (buoy or {}).get("speed_mph"),(buoy or {}).get("direction_deg"))
+    windows=[]
+    for item in high_tides[:6]:
+        at=parse_iso(item.get("time"))
+        if not at or at<now-dt.timedelta(minutes=30) or at>now+dt.timedelta(hours=72): continue
+        row=_nearest_hourly(hourly,at)
+        gust=num((row or {}).get("gust_mph")) or num((row or {}).get("wind_mph"))
+        onshore=onshore_component(gust,(row or {}).get("wind_direction"))
+        total=num(item.get("modeled_total_ft"))
+        water_points=_water_points(total); surf_points=_surf_points(surf_ft); onshore_points=_onshore_points(onshore)
+        factor_count=sum(1 for value in (water_points,surf_points,onshore_points,alert_points) if value>0)
+        compound_bonus=10 if factor_count>=3 else 5 if factor_count>=2 else 0
+        impact=_impact_from_score(water_points+surf_points+onshore_points+alert_points+compound_bonus)
+        drivers=[]
+        if total is not None: drivers.append({"label":"NOAA modeled total water","value":f"{total:.2f} ft MLLW","source":"NOAA OFS"})
+        if num(item.get("astronomical_ft")) is not None: drivers.append({"label":"Astronomical high tide","value":f"{float(item['astronomical_ft']):.2f} ft MLLW","source":"NOAA CO-OPS"})
+        if surf_ft is not None: drivers.append({"label":"Forecast surf context","value":f"{surf_ft:.0f} ft max in current Coastal York product","source":"NWS Surf Zone Forecast"})
+        if onshore is not None: drivers.append({"label":"Onshore wind component","value":f"{onshore:.0f} mph","source":"Derived from NWS hourly wind"})
+        for event in alert_labels[:2]: drivers.append({"label":"Official coastal product","value":event,"source":"National Weather Service"})
+        windows.append({"high_tide_at":iso(at),"window_start":iso(at-dt.timedelta(minutes=90)),"window_end":iso(at+dt.timedelta(minutes=90)),"astronomical_ft":num(item.get("astronomical_ft")),"modeled_total_ft":total,"modeled_time":item.get("modeled_time"),"modeled_uplift_ft":num(item.get("modeled_uplift_ft")),"forecast_wind_mph":gust,"forecast_wind_direction":(row or {}).get("wind_direction"),"onshore_component_mph":onshore,"surf_context_ft":surf_ft,"impact":impact,"drivers":drivers})
+    peak=max(windows,key=lambda item:(item["impact"]["score"],-(parse_iso(item["high_tide_at"])-now).total_seconds())) if windows else None
+    peak_at=parse_iso((peak or {}).get("high_tide_at")); hours_until=round((peak_at-now).total_seconds()/3600,1) if peak_at else None
+    checks={"NOAA modeled total-water guidance":any(num(item.get("modeled_total_ft")) is not None for item in high_tides),"NOAA astronomical high tides":bool(high_tides),"NWS Coastal York surf guidance":surf_ft is not None,"NWS hourly wind guidance":bool(hourly),"NDBC 44007 wave observation":wave_ft is not None}
+    weights={"NOAA modeled total-water guidance":0.25,"NOAA astronomical high tides":0.20,"NWS Coastal York surf guidance":0.20,"NWS hourly wind guidance":0.20,"NDBC 44007 wave observation":0.15}
+    confidence_score=round(sum(weights[name] for name,ok in checks.items() if ok),2)
+    confidence_label="High" if confidence_score>=0.90 else "Moderate" if confidence_score>=0.60 else "Low"
+    impact=(peak or {}).get("impact") or _impact_from_score(0)
+    drivers=list((peak or {}).get("drivers") or [])
+    if wave_ft is not None:
+        detail=f"{wave_ft:.1f} ft"+(f" at {wave_period:.1f} sec dominant period" if wave_period is not None else "")
+        drivers.append({"label":"Latest offshore wave observation","value":detail,"source":"NDBC 44007"})
+    if wave_power is not None: drivers.append({"label":"Wave-power proxy","value":f"{wave_power:.1f} kW/m proxy","source":"Derived from NDBC Hs² × dominant period"})
+    if buoy_onshore is not None: drivers.append({"label":"Latest buoy onshore-wind component","value":f"{buoy_onshore:.0f} mph","source":"Derived from NDBC 44007"})
+    return {"method":"Saco Coast Watch compound coastal-impact synthesis; not an official NOAA/NWS impact forecast.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"confidence":{"label":confidence_label,"score":confidence_score,"missing":[name for name,ok in checks.items() if not ok]},"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
 def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_alerts=None):
     surf = surf or {}
     marine_alerts = marine_alerts or []

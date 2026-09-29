@@ -114,6 +114,76 @@ def _event_briefing(current,baseline,now):
     if changes and transition: change_text+=" "+transition
     return {"active":True,"title":title,"modes":modes,"severity":state.get("impact") or {},"phase":state.get("phase"),"summary":summary,"change_text":change_text,"next24_text":(". ".join(next24)+".") if next24 else "No additional event-specific 24-hour metric is available.","next72_text":(". ".join(next72)+".") if next72 else "No additional event-specific 72-hour metric is available."}
 
+def _max_value(rows,path):
+    vals=[]
+    for row in rows:
+        value=row
+        for key in path:
+            value=(value or {}).get(key) if isinstance(value,dict) else None
+        try:
+            if value is not None: vals.append(float(value))
+        except Exception: pass
+    return round(max(vals),2) if vals else None
+
+def _event_history(snaps,current,now):
+    rows=hc.merge_snapshots(snaps or [],[current],now,30)
+    rows=[row for row in rows if (row.get("event_state") or ((row.get("hazards") or {}).get("event_state")))]
+    episodes=[]; active=[]; previous_at=None
+    def finish(group):
+        if not group: return
+        states=[_event_state(row) for row in group]; start=hc.parse_iso(group[0].get("snapshot_at")); end=hc.parse_iso(group[-1].get("snapshot_at"))
+        names=[state.get("event_identity",{}).get("label") if state.get("event_identity") else state.get("primary_display") for state in states]
+        names=[name for name in names if name and name!="Routine Coastal Conditions"]
+        title=max(set(names),key=names.count) if names else "Coastal Event"
+        ranks=[(state.get("impact") or {}).get("rank",0) for state in states]+[(state.get("recent_impact") or {}).get("rank",0) for state in states]
+        rank=max(ranks or [0]); labels=["Routine","Elevated","Significant","High Impact"]
+        alerts=[]
+        for row,state in zip(group,states):
+            alerts.extend(a.get("event") for a in state.get("official_alerts") or [] if a.get("event"))
+            alerts.extend(a.get("event") for a in row.get("alerts") or [] if a.get("event"))
+        buoy_rows=[(((row.get("marine") or {}).get("stations") or {}).get("44007") or {}) for row in group]
+        summary={
+            "title":title,
+            "started_at":hc.iso(start),
+            "ended_at":hc.iso(end),
+            "duration_hours":round((end-start).total_seconds()/3600,1) if start and end else None,
+            "phase":states[-1].get("phase"),
+            "highest_impact":{"rank":rank,"label":labels[min(rank,3)]},
+            "max_observed_water_ft":_max_value(group,("water","observed_24h_max_ft")),
+            "max_residual_ft":_max_value(group,("water","residual_24h_max_ft")),
+            "max_modeled_water_ft":_max_value(group,("water","forecast_peak_72h_ft")),
+            "max_wave_ft":_max_value(buoy_rows,("max_24h_wave_height_ft",)),
+            "max_gust_mph":_max_value(buoy_rows,("max_24h_gust_mph",)),
+            "max_surf_ft":_max_value([row.get("hazards") or {} for row in group],("surf","max_surf_height_ft")),
+            "official_products":list(dict.fromkeys(alerts)),
+            "snapshot_count":len(group),
+        }
+        episodes.append(summary)
+    for row in rows:
+        at=hc.parse_iso(row.get("snapshot_at")); state=_event_state(row); phase=state.get("phase") or "Routine"
+        nonroutine=phase!="Routine"
+        if active and previous_at and at and at-previous_at>dt.timedelta(hours=12): finish(active); active=[]
+        if nonroutine: active.append(row)
+        elif active: finish(active); active=[]
+        previous_at=at or previous_at
+    finish(active)
+    episodes.sort(key=lambda item:hc.parse_iso(item.get("started_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
+    return episodes[:8]
+
+def _coastal_impact_change(current,baseline):
+    if not baseline: return None
+    cur=((_event_state(current).get("coastal_impact") or {})); old=((_event_state(baseline).get("coastal_impact") or {}))
+    cur_impact=cur.get("impact") or {}; old_impact=old.get("impact") or {}
+    if cur_impact.get("score") is None or old_impact.get("score") is None: return None
+    out={"score_delta":cur_impact["score"]-old_impact["score"],"current_score":cur_impact["score"],"previous_score":old_impact["score"],"current_label":cur_impact.get("label"),"previous_label":old_impact.get("label"),"drivers":[]}
+    cp=cur.get("peak_window") or {}; op=old.get("peak_window") or {}
+    for key,label,unit in (("modeled_total_ft","modeled total water","ft"),("surf_context_ft","surf context","ft"),("onshore_component_mph","onshore wind component","mph")):
+        cv=cp.get(key); ov=op.get(key)
+        if cv is None or ov is None: continue
+        delta=float(cv)-float(ov)
+        if abs(delta)<0.1: continue
+        out["drivers"].append({"label":label,"delta":round(delta,2),"unit":unit,"current":cv,"previous":ov})
+    return out
 def _forecast_evolution(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     points=[]
@@ -188,6 +258,8 @@ def build_payload(current,hist,now=None):
     evolution=_forecast_evolution(snaps,current,now)
     timeline=_impact_timeline(current,alert_changes,local24,now)
     event_state=_event_state(current); event_briefing=_event_briefing(current,baseline,now); recent_event=_recent_event(current); event_transitions=_recent(hist.get("event_events"),"at",now,72)
+    event_history=_event_history(stored,current,now); coastal_impact_change=_coastal_impact_change(current,baseline)
+    if recent_event.get("active") and event_history: recent_event["retrospective"]=event_history[0]
 
     if alert_changes:
         labels=[f"{e.get('event') or 'Alert'} {e.get('change_type','changed')}" for e in alert_changes[-4:]]
@@ -213,6 +285,14 @@ def build_payload(current,hist,now=None):
     transition_text=_event_transition_text(current,baseline)
     if event_briefing.get("change_text"): forecast_change+=" "+event_briefing["change_text"]
     elif transition_text: forecast_change+=" "+transition_text
+    if coastal_impact_change:
+        ci=coastal_impact_change; delta=ci["score_delta"]
+        if delta:
+            forecast_change+=f" The Saco Coast Watch compound coastal-impact score {'increased' if delta>0 else 'decreased'} by {abs(delta)} points, from {ci['previous_score']} to {ci['current_score']}."
+            if ci.get("drivers"):
+                parts=[]
+                for driver in ci["drivers"][:3]: parts.append(f"{driver['label']} {'rose' if driver['delta']>0 else 'fell'} by {abs(driver['delta']):.1f} {driver['unit']}")
+                forecast_change+=" Drivers: "+", ".join(parts)+"."
 
     if peak24 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak24)
@@ -259,6 +339,8 @@ def build_payload(current,hist,now=None):
         "event_briefing":event_briefing,
         "recent_event":recent_event,
         "event_transitions":event_transitions,
+        "event_history":event_history,
+        "coastal_impact_change_24h":coastal_impact_change,
         "impact_timeline":timeline,
         "impact_timeline_next24":((current.get("hazards") or {}).get("hourly") or []),
         "observed_daily_peaks":daily,

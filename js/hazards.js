@@ -47,7 +47,7 @@ function renderEventFocus(){
  const metrics=$('eventFocusMetrics');metrics.replaceChildren();
  const h=sourceHazards(),codes=new Set(hazardModeList().map(m=>m.code)),{nextPeak}=currentStatus(),buoy=state.marine?.['44007']||{};
  if(codes.has('tropical')){const storm=h.tropical?.storms?.[0];metrics.append(eventMetric('Nearest NHC track',storm?fmtHaz(storm.min_forecast_track_distance_mi,0,' mi'):'--',storm?.label||'Official NHC storm'));}
- if(codes.has('coastal_flood')&&nextPeak)metrics.append(eventMetric('Portland modeled peak',fmtN(nextPeak.v)+' ft',dayTime(nextPeak.t)+' ET'));
+ if(codes.has('coastal_flood')&&nextPeak)metrics.append(eventMetric('Portland forecast peak',fmtN(nextPeak.v)+' ft',dayTime(nextPeak.t)+' ET'));
  if(codes.has('high_surf'))metrics.append(eventMetric('Forecast surf',fmtHaz(h.surf?.max_surf_height_ft,0,' ft'),'NWS Coastal York Surf Zone Forecast'));
  if(codes.has('beach_hazard'))metrics.append(eventMetric('Rip current risk',h.surf?.rip_current_risk||'--','NWS Surf Zone Forecast'));
  if(codes.has('winter')){metrics.append(eventMetric('Snow next 24h',fmtHaz(h.winter?.snowfall_24h_in,1,' in'),'NWS grid guidance'));metrics.append(eventMetric('Snow next 72h',fmtHaz(h.winter?.snowfall_72h_in,1,' in'),'NWS grid guidance'));}
@@ -55,8 +55,8 @@ function renderEventFocus(){
  if(codes.has('high_wind')||codes.has('winter')||codes.has('tropical'))metrics.append(eventMetric('Peak gust next 24h',fmtHaz(h.wind?.max_gust_24h_mph,0,' mph'),'NWS land forecast'));
  if(codes.has('marine_hazard'))metrics.append(eventMetric('Buoy 44007 waves',Number.isFinite(buoy.wave_height_ft)?buoy.wave_height_ft.toFixed(1)+' ft':'--',Number.isFinite(buoy.gust_mph)?'gust '+Math.round(buoy.gust_mph)+' mph':'Measured offshore'));
  if(codes.has('extreme_cold')||codes.has('winter'))metrics.append(eventMetric('Low temperature next 24h',fmtHaz(h.cold?.min_temp_24h_f,0,'°F'),'NWS hourly guidance'));
- if(codes.has('coastal_impact')){const peak=coastal.peak_window||{},impact=coastal.impact||{};metrics.append(eventMetric('Compound coastal impact',impact.label||'--',Number.isFinite(Number(impact.score))?'Score '+impact.score+'/100':'Saco Coast Watch synthesis'));if(Number.isFinite(Number(peak.onshore_component_mph)))metrics.append(eventMetric('Onshore wind component',Math.round(peak.onshore_component_mph)+' mph',peak.forecast_wind_direction||'NWS hourly wind'));}
- const wave=coastal.wave_context||{};if(Number.isFinite(Number(wave.power_proxy_kw_m))&&metrics.children.length<4)metrics.append(eventMetric('Wave-power proxy',Number(wave.power_proxy_kw_m).toFixed(1)+' kW/m','Derived from latest NDBC Hs and dominant period'));
+ if(codes.has('coastal_impact')){const peak=coastal.peak_window||{},impact=coastal.impact||{};metrics.append(eventMetric('Coastal impact',impact.label||'--',Number.isFinite(Number(impact.score))?'Score '+impact.score+'/100':'Saco Coast Watch synthesis'));if(Number.isFinite(Number(peak.onshore_component_mph)))metrics.append(eventMetric('Wind pushing toward shore',Math.round(peak.onshore_component_mph)+' mph',peak.forecast_wind_direction||'NWS hourly wind'));}
+ const wave=coastal.wave_context||{};if(Number.isFinite(Number(wave.power_proxy_kw_m))&&metrics.children.length<4)metrics.append(eventMetric('Wave energy estimate',Number(wave.power_proxy_kw_m).toFixed(1)+' kW/m','Estimated from latest NDBC wave height and dominant period'));
  const high=(state.highs.length?state.highs:highTides()).find(x=>x.t>=now()-10*60000);if(high&&metrics.children.length<4)metrics.append(eventMetric('Next high tide',fmtN(high.v)+' ft',dayTime(high.t)+' ET'));
  while(metrics.children.length>4)metrics.lastElementChild.remove();
 }

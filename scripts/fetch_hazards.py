@@ -610,16 +610,16 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
         compound_bonus=10 if factor_count>=3 else 5 if factor_count>=2 else 0
         impact=_impact_from_score(water_points+surf_points+onshore_points+alert_points+compound_bonus)
         drivers=[]
-        if total is not None: drivers.append({"label":"NOAA modeled total water","value":f"{total:.2f} ft MLLW","source":"NOAA OFS"})
+        if total is not None: drivers.append({"label":"NOAA forecast water level","value":f"{total:.2f} ft MLLW","source":"NOAA OFS"})
         if num(item.get("astronomical_ft")) is not None: drivers.append({"label":"Astronomical high tide","value":f"{float(item['astronomical_ft']):.2f} ft MLLW","source":"NOAA CO-OPS"})
-        if surf_ft is not None: drivers.append({"label":"Forecast surf context","value":f"{surf_ft:.0f} ft max in current Coastal York product","source":"NWS Surf Zone Forecast"})
-        if onshore is not None: drivers.append({"label":"Onshore wind component","value":f"{onshore:.0f} mph","source":"Derived from NWS hourly wind"})
+        if surf_ft is not None: drivers.append({"label":"NWS surf forecast","value":f"{surf_ft:.0f} ft max in the current Coastal York forecast","source":"NWS Surf Zone Forecast"})
+        if onshore is not None: drivers.append({"label":"Wind pushing toward shore","value":f"{onshore:.0f} mph","source":"Calculated from NWS hourly wind direction and speed"})
         for event in alert_labels[:2]: drivers.append({"label":"Official coastal product","value":event,"source":"National Weather Service"})
         windows.append({"high_tide_at":iso(at),"window_start":iso(at-dt.timedelta(minutes=90)),"window_end":iso(at+dt.timedelta(minutes=90)),"astronomical_ft":num(item.get("astronomical_ft")),"modeled_total_ft":total,"modeled_time":item.get("modeled_time"),"modeled_uplift_ft":num(item.get("modeled_uplift_ft")),"forecast_wind_mph":gust,"forecast_wind_direction":(row or {}).get("wind_direction"),"onshore_component_mph":onshore,"surf_context_ft":surf_ft,"impact":impact,"drivers":drivers})
     peak=max(windows,key=lambda item:(item["impact"]["score"],-(parse_iso(item["high_tide_at"])-now).total_seconds())) if windows else None
     peak_at=parse_iso((peak or {}).get("high_tide_at")); hours_until=round((peak_at-now).total_seconds()/3600,1) if peak_at else None
-    checks={"NOAA modeled total-water guidance":any(num(item.get("modeled_total_ft")) is not None for item in high_tides),"NOAA astronomical high tides":bool(high_tides),"NWS Coastal York surf guidance":surf_ft is not None,"NWS hourly wind guidance":bool(hourly),"NDBC 44007 wave observation":wave_ft is not None}
-    weights={"NOAA modeled total-water guidance":0.25,"NOAA astronomical high tides":0.20,"NWS Coastal York surf guidance":0.20,"NWS hourly wind guidance":0.20,"NDBC 44007 wave observation":0.15}
+    checks={"NOAA forecast water level":any(num(item.get("modeled_total_ft")) is not None for item in high_tides),"NOAA tide predictions":bool(high_tides),"NWS surf forecast":surf_ft is not None,"NWS wind forecast":bool(hourly),"NDBC 44007 wave observation":wave_ft is not None}
+    weights={"NOAA forecast water level":0.25,"NOAA tide predictions":0.20,"NWS surf forecast":0.20,"NWS wind forecast":0.20,"NDBC 44007 wave observation":0.15}
     confidence_score=round(sum(weights[name] for name,ok in checks.items() if ok),2)
     confidence_label="High" if confidence_score>=0.90 else "Moderate" if confidence_score>=0.60 else "Low"
     impact=(peak or {}).get("impact") or _impact_from_score(0)
@@ -627,7 +627,7 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
     if wave_ft is not None:
         detail=f"{wave_ft:.1f} ft"+(f" at {wave_period:.1f} sec dominant period" if wave_period is not None else "")
         drivers.append({"label":"Latest offshore wave observation","value":detail,"source":"NDBC 44007"})
-    if wave_power is not None: drivers.append({"label":"Wave-power proxy","value":f"{wave_power:.1f} kW/m proxy","source":"Derived from NDBC Hs² × dominant period"})
+    if wave_power is not None: drivers.append({"label":"Wave energy estimate","value":f"{wave_power:.1f} kW/m estimate","source":"Estimated from NDBC wave height and dominant period"})
     if buoy_onshore is not None: drivers.append({"label":"Latest buoy onshore-wind component","value":f"{buoy_onshore:.0f} mph","source":"Derived from NDBC 44007"})
     return {"method":"Saco Coast Watch compound coastal-impact synthesis; not an official NOAA/NWS impact forecast.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"confidence":{"label":confidence_label,"score":confidence_score,"missing":[name for name,ok in checks.items() if not ok]},"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
 def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_alerts=None):
@@ -767,11 +767,11 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
     def add(code,label,basis):
         if not any(mode.get("code")==code for mode in modes): modes.append({"code":code,"label":label,"basis":basis})
     forecast72=num(water.get("forecast_peak_72h_ft")); forecast24=num(water.get("forecast_peak_24h_ft")); observed=num(water.get("latest_observed_ft"))
-    if max([v for v in (forecast72,forecast24,observed) if v is not None],default=-999)>=12: add("coastal_flood","Coastal Flood","Portland observed or modeled total water reaches Minor Flood")
+    if max([v for v in (forecast72,forecast24,observed) if v is not None],default=-999)>=12: add("coastal_flood","Coastal Flood","Portland observed or NOAA forecast water reaches Minor Flood")
     if (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25: add("marine_hazard","Marine Hazard","NDBC 44007 measured offshore conditions are elevated")
     all_alerts=list(alerts)+list(marine_alerts)
     coastal_impact=coastal_impact_state(hazards,water,buoy,all_alerts,now)
-    if (coastal_impact.get("impact") or {}).get("rank",0)>=1: add("coastal_impact","Compound Coastal Impact","Saco Coast Watch time-aligned high-tide compound-impact synthesis")
+    if (coastal_impact.get("impact") or {}).get("rank",0)>=1: add("coastal_impact","Coastal Impact","Saco Coast Watch combines high tide, NOAA water forecast, surf and wind signals")
     active_hazards=[]
     for mode in modes:
         code=mode.get("code"); rank=0; raw_basis=mode.get("basis"); basis=list(raw_basis) if isinstance(raw_basis,list) else ([raw_basis] if raw_basis else [])

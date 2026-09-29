@@ -72,7 +72,10 @@ def install_noaa_fixture(page):
             {"label":"6h ago","target_hours_ago":6,"snapshot_at":(now-timedelta(hours=6)).isoformat().replace("+00:00","Z"),"peak_ft":11.3,"peak_time":(now+timedelta(hours=20)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.7},
             {"label":"Now","target_hours_ago":0,"snapshot_at":now.isoformat().replace("+00:00","Z"),"peak_ft":11.5,"peak_time":(now+timedelta(hours=21)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.5}
         ]},
-        "storm_mode":{"active":True,"reasons":["Synthetic browser test storm signal"],"basis":"test fixture"},
+        "event_state":{"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"]},
+        "current_snapshot":{"event_state":{"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"]}},
+        "event_briefing":{"active":True,"title":"Coastal Storm Briefing","phase":"Approaching","severity":{"rank":1,"level":"yellow","label":"Elevated"},"summary":"Coastal Storm: Elevated · Approaching.","change_text":""},
+        "recent_event":{"active":False,"summary":"","items":[],"impact":{"rank":0,"level":"green","label":"Routine"}},
         "impact_timeline":[{"at":(now-timedelta(hours=2)).isoformat().replace("+00:00","Z"),"type":"water","title":"Portland observed water level test event","source":"NOAA CO-OPS station 8418150","source_type":"official_observation","url":None,"anecdotal":False}],
         "local_pulse":{
             "summary":"2 public local items found in the rolling public scan (1 news, 1 Reddit).",
@@ -179,6 +182,10 @@ def assert_common(page):
     assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
     assert page.locator("#highWaterWindows .high-window").count()>=1
     assert page.locator("#stormModePanel").is_visible()
+    assert page.locator("#eventFocusTitle").inner_text().strip()=="Coastal Storm"
+    assert page.locator("#eventFocusBadge").inner_text().strip()=="Elevated · Approaching"
+    badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
+    assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1
     card_height=briefing.bounding_box()["height"]
     assert card_height<330,f"briefing card should remain compact: {card_height}px"

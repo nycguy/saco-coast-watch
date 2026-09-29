@@ -51,4 +51,16 @@ class BriefingTests(unittest.TestCase):
   self.assertTrue(data['event_briefing']['active'])
   self.assertEqual(data['event_briefing']['title'],'Winter Storm Briefing')
   self.assertIn('increased by 4.0 in',data['event_briefing']['change_text'])
+ def test_event_history_builds_retrospective_from_captured_states(self):
+  now=dt.datetime(2026,9,29,18,tzinfo=UTC)
+  state={'phase':'Recent','show_focus':False,'primary_display':'High Surf / Wave Impact','impact':{'rank':0,'label':'Routine','level':'green'},'recent_impact':{'rank':2,'label':'Significant','level':'orange'},'active_hazards':[],'official_alerts':[{'event':'High Surf Advisory'}],'recent_impacts':[],'reasons':[]}
+  snap1={'snapshot_at':'2026-09-29T12:00:00Z','event_state':{**state,'phase':'Ongoing','show_focus':True,'impact':{'rank':2,'label':'Significant','level':'orange'}},'water':{'observed_24h_max_ft':11.4,'residual_24h_max_ft':1.2,'forecast_peak_72h_ft':11.9},'marine':{'stations':{'44007':{'max_24h_wave_height_ft':8.4,'max_24h_gust_mph':42}}},'hazards':{'surf':{'max_surf_height_ft':9}},'alerts':[{'event':'High Surf Advisory'}]}
+  snap2={'snapshot_at':'2026-09-29T18:00:00Z','event_state':state,'water':{'observed_24h_max_ft':11.5,'residual_24h_max_ft':1.1,'forecast_peak_72h_ft':11.6},'marine':{'stations':{'44007':{'max_24h_wave_height_ft':8.0,'max_24h_gust_mph':38}}},'hazards':{'surf':{'max_surf_height_ft':7}},'alerts':[]}
+  events=f._event_history([snap1],snap2,now)
+  self.assertEqual(len(events),1); self.assertEqual(events[0]['title'],'High Surf / Wave Impact'); self.assertEqual(events[0]['highest_impact']['label'],'Significant'); self.assertEqual(events[0]['max_wave_ft'],8.4)
+ def test_coastal_impact_change_attributes_available_drivers(self):
+  base={'event_state':{'coastal_impact':{'impact':{'score':30,'label':'Routine'},'peak_window':{'modeled_total_ft':11.4,'surf_context_ft':5,'onshore_component_mph':10}}}}
+  cur={'event_state':{'coastal_impact':{'impact':{'score':48,'label':'Elevated'},'peak_window':{'modeled_total_ft':11.8,'surf_context_ft':8,'onshore_component_mph':24}}}}
+  change=f._coastal_impact_change(cur,base)
+  self.assertEqual(change['score_delta'],18); self.assertEqual(len(change['drivers']),3)
 if __name__=='__main__': unittest.main()

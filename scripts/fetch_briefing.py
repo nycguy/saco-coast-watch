@@ -125,28 +125,88 @@ def _max_value(rows,path):
         except Exception: pass
     return round(max(vals),2) if vals else None
 
+def _surf_canonical_by_product(rows):
+    """Use the latest parse of an identical NWS Surf Zone product as canonical.
+
+    Raw history is preserved. This only prevents superseded parser output for
+    the same official product ID from contaminating retrospectives.
+    """
+    products={}
+    for row in rows or []:
+        surf=((row.get("hazards") or {}).get("surf") or {})
+        product_id=surf.get("product_id")
+        value=surf.get("max_surf_height_ft")
+        at=hc.parse_iso(row.get("snapshot_at"))
+        if not product_id or value is None or not at:
+            continue
+        try: value=float(value)
+        except Exception: continue
+        item=products.setdefault(product_id,{"latest_at":at,"value":value,"values":set()})
+        item["values"].add(round(value,3))
+        if at>=item["latest_at"]:
+            item["latest_at"]=at; item["value"]=value
+    return products
+
+def _surf_parse_conflict(row,canonical):
+    surf=((row.get("hazards") or {}).get("surf") or {})
+    product_id=surf.get("product_id")
+    value=surf.get("max_surf_height_ft")
+    item=(canonical or {}).get(product_id)
+    if not item or len(item.get("values") or [])<2 or value is None:
+        return False
+    try: return abs(float(value)-float(item["value"]))>0.01
+    except Exception: return False
+
+def _trusted_event_rank(row,state,canonical):
+    if not _surf_parse_conflict(row,canonical):
+        return int((state.get("impact") or {}).get("rank",0) or 0)
+    ranks=[]
+    for mode in state.get("active_hazards") or []:
+        if mode.get("code") in ("high_surf","coastal_impact"):
+            continue
+        try: ranks.append(int(mode.get("impact_rank",0) or 0))
+        except Exception: pass
+    return max(ranks or [0])
+
 def _event_history(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     rows=[row for row in rows if (row.get("event_state") or ((row.get("hazards") or {}).get("event_state")))]
+    canonical_surf=_surf_canonical_by_product(rows)
     episodes=[]; active=[]; previous_at=None
     def finish(group):
         if not group: return
-        states=[_event_state(row) for row in group]; start=hc.parse_iso(group[0].get("snapshot_at")); end=hc.parse_iso(group[-1].get("snapshot_at"))
+        states=[_event_state(row) for row in group]
+        start=hc.parse_iso(group[0].get("snapshot_at")); end=hc.parse_iso(group[-1].get("snapshot_at"))
         names=[state.get("event_identity",{}).get("label") if state.get("event_identity") else state.get("primary_display") for state in states]
         names=[name for name in names if name and name!="Routine Coastal Conditions"]
         title=max(set(names),key=names.count) if names else "Coastal Event"
-        ranks=[(state.get("impact") or {}).get("rank",0) for state in states]+[(state.get("recent_impact") or {}).get("rank",0) for state in states]
+        ranks=[_trusted_event_rank(row,state,canonical_surf) for row,state in zip(group,states)]
+        ranks += [int((state.get("recent_impact") or {}).get("rank",0) or 0) for state in states]
         rank=max(ranks or [0]); labels=["Routine","Elevated","Significant","High Impact"]
         alerts=[]
         for row,state in zip(group,states):
             alerts.extend(a.get("event") for a in state.get("official_alerts") or [] if a.get("event"))
             alerts.extend(a.get("event") for a in row.get("alerts") or [] if a.get("event"))
         buoy_rows=[(((row.get("marine") or {}).get("stations") or {}).get("44007") or {}) for row in group]
+        trusted_surf_rows=[row.get("hazards") or {} for row in group if not _surf_parse_conflict(row,canonical_surf)]
+        conflicts=[row for row in group if _surf_parse_conflict(row,canonical_surf)]
+        data_quality=[]
+        if conflicts:
+            products=sorted({((row.get("hazards") or {}).get("surf") or {}).get("product_id") for row in conflicts if ((row.get("hazards") or {}).get("surf") or {}).get("product_id")})
+            data_quality.append({
+                "type":"superseded_surf_parse",
+                "count":len(conflicts),
+                "message":f"Excluded {len(conflicts)} superseded Surf Zone parse{'s' if len(conflicts)!=1 else ''} where the same NWS product was later parsed differently.",
+                "product_ids":products,
+            })
+        coverage=round((end-start).total_seconds()/3600,1) if start and end else None
         summary={
             "title":title,
             "started_at":hc.iso(start),
             "ended_at":hc.iso(end),
-            "duration_hours":round((end-start).total_seconds()/3600,1) if start and end else None,
+            "captured_coverage_hours":coverage,
+            "duration_hours":coverage,
+            "coverage_basis":"Span of compatible captured event-state snapshots; not the actual storm duration.",
             "phase":states[-1].get("phase"),
             "highest_impact":{"rank":rank,"label":labels[min(rank,3)]},
             "max_observed_water_ft":_max_value(group,("water","observed_24h_max_ft")),
@@ -154,9 +214,10 @@ def _event_history(snaps,current,now):
             "max_modeled_water_ft":_max_value(group,("water","forecast_peak_72h_ft")),
             "max_wave_ft":_max_value(buoy_rows,("max_24h_wave_height_ft",)),
             "max_gust_mph":_max_value(buoy_rows,("max_24h_gust_mph",)),
-            "max_surf_ft":_max_value([row.get("hazards") or {} for row in group],("surf","max_surf_height_ft")),
+            "max_surf_ft":_max_value(trusted_surf_rows,("surf","max_surf_height_ft")),
             "official_products":list(dict.fromkeys(alerts)),
             "snapshot_count":len(group),
+            "data_quality":data_quality,
         }
         episodes.append(summary)
     for row in rows:
@@ -169,6 +230,7 @@ def _event_history(snaps,current,now):
     finish(active)
     episodes.sort(key=lambda item:hc.parse_iso(item.get("started_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
     return episodes[:8]
+
 
 def _coastal_impact_change(current,baseline):
     if not baseline: return None

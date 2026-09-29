@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic browser regression for the 14-day tide + NOAA OFS outlook."""
 from datetime import datetime, timedelta, timezone
+import base64
 import json
 from playwright.sync_api import sync_playwright
 
@@ -94,14 +95,42 @@ def install_noaa_fixture(page):
         "sources":{}
     }
     page.route("**/data/coastal-briefing.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(briefing)))
+    archive={
+        "schema_version":1,
+        "camera":"ferry_beach",
+        "retention_hours":24,
+        "frames":[
+            {"captured_at":(now-timedelta(hours=5)).isoformat().replace("+00:00","Z"),"file":"frame-one.jpg","reasons":["Portland water-level residual is +0.82 ft"],"context":{"event":"Coastal Storm","phase":"Ongoing","impact":"Elevated","water_level_ft":11.2,"residual_ft":0.82,"wave_height_ft":6.4,"dominant_period_sec":11.0,"gust_mph":31}},
+            {"captured_at":(now-timedelta(hours=1)).isoformat().replace("+00:00","Z"),"file":"frame-two.jpg","reasons":["24-hour Portland residual reached +1.11 ft"],"context":{"event":"Coastal Storm","phase":"Improving","impact":"Elevated","water_level_ft":10.9,"residual_ft":0.63,"wave_height_ft":5.8,"dominant_period_sec":10.0,"gust_mph":26}}
+        ]
+    }
+    page.route("**/data/webcams/ferry-history/index.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(archive)))
+    tiny_png=base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=")
+    page.route("**/data/webcams/ferry-history/*.jpg*",lambda route: route.fulfill(status=200,content_type="image/png",body=tiny_png))
 
 def assert_common(page):
     page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
     page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
     page.wait_for_function("document.querySelector('#briefPast').textContent.includes('past 24 hours')",timeout=10000)
+    page.wait_for_function("document.querySelectorAll('#ferryArchiveThumbs .ferry-archive-thumb').length===2",timeout=10000)
     section=page.locator(".calendar-panel")
     section.scroll_into_view_if_needed()
     page.wait_for_timeout(300)
+
+    assert page.locator("#ferryArchive").is_visible()
+    assert page.locator("#ferryArchiveCount").inner_text().startswith("2 saved images")
+    thumbs=page.locator("#ferryArchiveThumbs .ferry-archive-thumb")
+    assert thumbs.count()==2
+    assert page.locator("#ferryArchiveRange").is_hidden()
+    assert "Saved event image" in thumbs.first.inner_text()
+    thumbs.first.click()
+    assert page.locator("#ferryPreview").is_visible()
+    assert "frame-one.jpg" in page.locator("#ferryPreviewImage").get_attribute("src")
+    assert page.locator("#ferryArchiveThumbs .ferry-archive-thumb.active").count()==1
+    assert "Water above predicted tide" in page.locator("#ferryArchiveContext").inner_text()
+    assert "Portland water was +0.82 ft" in page.locator("#ferryArchiveReason").inner_text()
+    page.locator("#ferryReturnLive").click()
+    assert page.locator("#ferryArchiveThumbs .ferry-archive-thumb.active").count()==0
 
     assert page.locator("#tideOutlookPeak").inner_text().strip()=="10.71 ft"
     assert page.locator("#tideOutlookChange").inner_text().strip()=="+0.87 ft"

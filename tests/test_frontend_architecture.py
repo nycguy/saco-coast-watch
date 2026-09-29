@@ -59,8 +59,11 @@ class FrontendArchitectureTests(unittest.TestCase):
   self.assertIn('eventWhyList',html)
   self.assertIn('eventHistoryPanel',html)
   self.assertIn('ferryArchiveContext',html)
+  self.assertIn('ferryArchiveThumbs',html)
   self.assertIn('function renderEventHistory()',briefing)
   self.assertIn('function renderArchiveContext(',webcams)
+  self.assertIn('function renderArchiveThumbnails()',webcams)
+  self.assertIn('function setActiveArchiveThumb(',webcams)
 
  def test_residual_chart_interaction_contract(self):
   intelligence=(ROOT/'js'/'intelligence.js').read_text(encoding='utf-8')

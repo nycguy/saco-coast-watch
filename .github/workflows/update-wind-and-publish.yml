@@ -70,6 +70,9 @@ jobs:
         run: |
           mkdir -p dist/data
           cp index.html dist/index.html
+          cp manifest.webmanifest dist/manifest.webmanifest
+          cp favicon.svg favicon-16x16.png favicon-32x32.png dist/
+          cp apple-touch-icon.png sacocast-app-icon-192.png dist/
           cp -R css dist/css
           cp -R js dist/js
           cp data/wind.json dist/data/wind.json
@@ -83,6 +86,14 @@ jobs:
       - name: Verify EastCast and coastal history are included in the Pages artifact
         run: |
           test -f dist/eastcast/index.html
+          test -s dist/manifest.webmanifest
+          test -s dist/favicon.svg
+          test -s dist/favicon-16x16.png
+          test -s dist/favicon-32x32.png
+          test -s dist/apple-touch-icon.png
+          test -s dist/sacocast-app-icon-192.png
+          grep -q 'sacocast-app-icon-192.png' dist/index.html
+          grep -q 'sacocast-app-icon-192.png' dist/manifest.webmanifest
           test -f dist/eastcast/favicon.svg
           test -f dist/eastcast/manifest.webmanifest
           test -f dist/eastcast/app.mjs

@@ -6,23 +6,24 @@
 <meta name="theme-color" content="#071a27">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Saco Coast Watch">
+<meta name="apple-mobile-web-app-title" content="SacoCast">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<meta name="description" content="Live coastal water levels, NOAA model guidance and flood alerts for southern Maine, with January 2024 storm benchmarks.">
-<title>Saco Coast Watch | Southern Maine tide and flood dashboard</title>
+<meta name="description" content="SacoCast provides live coastal water levels, NOAA model guidance, flood alerts, tides, weather and local coastal intelligence for Saco Bay and southern Maine.">
+<title>SacoCast | Saco Bay coastal conditions and flood intelligence</title>
 <link rel="stylesheet" href="css/app.css">
 
 </head>
 <body>
-<header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true">≈</div><div><h1>Saco Coast Watch</h1><small>Southern Maine · Coastal flood intelligence</small></div></div><div class="headright"><a class="btn primary" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" aria-label="Sign up for custom Saco Coast Watch email threshold alerts">✉ Get Email Alerts ↗</a><button type="button" class="btn" id="refreshBtn" aria-label="Reload Saco Coast Watch and refresh all dashboard data">↻ Refresh</button><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
+<header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true"><img src="sacocast-app-icon-192.png" alt=""></div><div><h1>SacoCast</h1><small>Coastal conditions · Clearer decisions</small></div></div><div class="headright"><a class="btn primary" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" aria-label="Sign up for custom SacoCast email threshold alerts">✉ Get Email Alerts ↗</a><button type="button" class="btn" id="refreshBtn" aria-label="Reload SacoCast and refresh all dashboard data">↻ Refresh</button><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
 <main class="shell">
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
 <section class="storm-mode-panel adaptive-event-panel" id="stormModePanel" hidden aria-live="polite">
- <div class="storm-mode-head"><div><div class="eyebrow">Automatic event focus</div><h3 id="eventFocusTitle">Adaptive Event Mode</h3><p id="eventFocusDescription">Saco Coast Watch promotes meaningful current and near-term hazards while keeping recent impacts in the fixed-window briefing.</p></div><span class="storm-mode-badge" id="eventFocusBadge">Monitoring</span></div>
+ <div class="storm-mode-head"><div><div class="eyebrow">Automatic event focus</div><h3 id="eventFocusTitle">Adaptive Event Mode</h3><p id="eventFocusDescription">SacoCast promotes meaningful current and near-term hazards while keeping recent impacts in the fixed-window briefing.</p></div><span class="storm-mode-badge" id="eventFocusBadge">Monitoring</span></div>
  <div class="hazard-mode-chips" id="hazardModeChips"></div>
  <div class="storm-mode-reasons" id="stormModeReasons"></div>
  <div class="event-focus-summary"><strong id="eventPeakSummary">Peak timing is being evaluated.</strong><span id="eventConfidence">Confidence is being evaluated.</span></div>
@@ -80,7 +81,7 @@
 </section>
 
 <section class="panel event-history-panel" id="eventHistoryPanel" hidden aria-labelledby="eventHistoryHeading">
- <div class="section-head"><div><div class="eyebrow">Recent event history</div><h3 id="eventHistoryHeading">Recent coastal events</h3><div class="sub">These summaries use only information Saco Coast Watch actually captured. Missing past forecasts are never filled in.</div></div></div>
+ <div class="section-head"><div><div class="eyebrow">Recent event history</div><h3 id="eventHistoryHeading">Recent coastal events</h3><div class="sub">These summaries use only information SacoCast actually captured. Missing past forecasts are never filled in.</div></div></div>
  <div id="eventHistoryCards" class="event-history-cards" aria-live="polite"></div>
 </section>
 

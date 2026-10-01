@@ -192,7 +192,10 @@ def assert_common(page):
     assert "exact ET time" in page.locator("#chartPeriod").inner_text()
 
     # App-wide readability: proper-case labels, higher contrast, and undistorted SVG text.
-    assert page.locator(".brand h1").inner_text().strip()=="Saco Coast Watch"
+    assert page.locator(".brand h1").inner_text().strip()=="SacoCast"
+    assert page.locator(".brand .logomark img").get_attribute("src")=="sacocast-app-icon-192.png"
+    assert page.locator('link[rel="manifest"]').get_attribute("href")=="manifest.webmanifest"
+    assert page.locator('meta[name="apple-mobile-web-app-title"]').get_attribute("content")=="SacoCast"
     label_style=page.locator(".metric .label").first.evaluate("el => ({transform:getComputedStyle(el).textTransform,color:getComputedStyle(el).color,fontWeight:getComputedStyle(el).fontWeight})")
     assert label_style["transform"]=="none",label_style
     eyebrow_style=page.locator(".eyebrow").first.evaluate("el => ({transform:getComputedStyle(el).textTransform,letter:getComputedStyle(el).letterSpacing})")

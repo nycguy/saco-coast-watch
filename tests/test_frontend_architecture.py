@@ -65,6 +65,16 @@ class FrontendArchitectureTests(unittest.TestCase):
   self.assertIn('function renderArchiveThumbnails()',webcams)
   self.assertIn('function setActiveArchiveThumb(',webcams)
 
+ def test_hidden_event_summary_does_not_leak_loading_copy(self):
+  html=INDEX.read_text(encoding='utf-8')
+  css=(ROOT/'css'/'app.css').read_text(encoding='utf-8')
+  self.assertIn('id="briefEventRow" hidden',html)
+  self.assertIn('id="briefEvent"></span>',html)
+  self.assertIn('id="briefEventSection" hidden',html)
+  self.assertIn('id="briefFullEvent"></p>',html)
+  self.assertNotIn('Adaptive event summary is loading',html)
+  self.assertIn('.brief-row[hidden],.brief-section[hidden]{display:none!important}',css)
+
  def test_residual_chart_interaction_contract(self):
   intelligence=(ROOT/'js'/'intelligence.js').read_text(encoding='utf-8')
   css=(ROOT/'css'/'app.css').read_text(encoding='utf-8')

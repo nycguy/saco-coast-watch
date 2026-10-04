@@ -215,6 +215,15 @@ def assert_common(page):
     assert "last visit" in brief_text.lower()
     assert "0.50 ft" in brief_text
     assert "2 public local items" in brief_text
+    # Regression: CSS must honor the hidden attribute so event-loading placeholders never appear as status.
+    event_row=page.locator("#briefEventRow")
+    event_section=page.locator("#briefEventSection")
+    event_row.evaluate("el => el.hidden=true")
+    event_section.evaluate("el => el.hidden=true")
+    assert not event_row.is_visible()
+    assert not event_section.is_visible()
+    event_row.evaluate("el => el.hidden=false")
+    event_section.evaluate("el => el.hidden=false")
     assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
     assert page.locator("#highWaterWindows .high-window").count()>=1
     assert page.locator("#stormModePanel").is_visible()

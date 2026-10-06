@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-06T09:25:00Z",
+  "generated_at": "2026-10-06T16:06:02Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -67875,6 +67875,2011 @@
           }
         }
       }
+    },
+    {
+      "snapshot_at": "2026-10-06T16:06:02Z",
+      "snapshot_kind": "realtime",
+      "provenance": {
+        "forecast": "live_noaa_ofs_capture",
+        "observations": "NOAA CO-OPS station 8418150",
+        "astronomical_tide": "NOAA CO-OPS predictions",
+        "marine": "NDBC realtime2",
+        "alerts": "NWS API active alerts",
+        "weather_forecast": "NWS hourly point forecast",
+        "hazards": "NWS forecast grid + Surf Zone Forecast + marine alerts + NHC CurrentStorms and GIS products"
+      },
+      "water": {
+        "station": "8418150",
+        "latest_observed_ft": 3.07,
+        "latest_observed_at": "2026-10-06T16:00:00Z",
+        "observed_24h_max_ft": 10.44,
+        "observed_24h_max_time": "2026-10-05T23:12:00Z",
+        "residual_current_ft": 0.08,
+        "residual_current_at": "2026-10-06T16:00:00Z",
+        "residual_24h_max_ft": 0.72,
+        "residual_24h_max_time": "2026-10-05T23:12:00Z",
+        "forecast_peak_24h_ft": 10.36,
+        "forecast_peak_24h_time": "2026-10-07T00:18:00Z",
+        "forecast_peak_72h_ft": 11.21,
+        "forecast_peak_72h_time": "2026-10-09T02:12:00Z",
+        "astronomical_tide_at_peak_ft": 10.1,
+        "model_uplift_ft": 1.11,
+        "threshold_margins_ft": {
+          "minor": 0.79,
+          "moderate": 1.79,
+          "major": 2.79
+        },
+        "high_tides": [
+          {
+            "time": "2026-10-07T00:25:00Z",
+            "astronomical_ft": 9.85,
+            "modeled_total_ft": 10.36,
+            "modeled_time": "2026-10-07T00:18:00Z",
+            "modeled_uplift_ft": 0.52
+          },
+          {
+            "time": "2026-10-07T13:05:00Z",
+            "astronomical_ft": 9.3,
+            "modeled_total_ft": 9.88,
+            "modeled_time": "2026-10-07T13:00:00Z",
+            "modeled_uplift_ft": 0.58
+          },
+          {
+            "time": "2026-10-08T01:25:00Z",
+            "astronomical_ft": 10.01,
+            "modeled_total_ft": 11.2,
+            "modeled_time": "2026-10-08T01:18:00Z",
+            "modeled_uplift_ft": 1.19
+          },
+          {
+            "time": "2026-10-08T13:57:00Z",
+            "astronomical_ft": 9.76,
+            "modeled_total_ft": 10.55,
+            "modeled_time": "2026-10-08T13:54:00Z",
+            "modeled_uplift_ft": 0.79
+          },
+          {
+            "time": "2026-10-09T02:18:00Z",
+            "astronomical_ft": 10.11,
+            "modeled_total_ft": 11.21,
+            "modeled_time": "2026-10-09T02:12:00Z",
+            "modeled_uplift_ft": 1.11
+          },
+          {
+            "time": "2026-10-09T14:43:00Z",
+            "astronomical_ft": 10.12,
+            "modeled_total_ft": null,
+            "modeled_time": null,
+            "modeled_uplift_ft": null
+          }
+        ]
+      },
+      "forecast_conditions": {
+        "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+        "next24_max_sustained_wind_mph": 15.0,
+        "next72_max_sustained_wind_mph": 15.0,
+        "next24_max_precip_probability_pct": 0,
+        "next72_max_precip_probability_pct": 5,
+        "next24_summaries": [
+          "Sunny",
+          "Clear"
+        ]
+      },
+      "hazards": {
+        "schema_version": 1,
+        "generated_at": "2026-10-06T16:06:02.795727Z",
+        "location": {
+          "name": "Saco Bay coastal reference",
+          "lat": 43.472,
+          "lon": -70.385
+        },
+        "active_modes": [],
+        "severity": {
+          "rank": 0,
+          "level": "green",
+          "label": "Routine"
+        },
+        "event_state": {
+          "phase": "Recent",
+          "show_focus": false,
+          "primary_display": "Routine Coastal Conditions",
+          "impact": {
+            "rank": 0,
+            "level": "green",
+            "label": "Routine"
+          },
+          "recent_impact": {
+            "rank": 1,
+            "level": "yellow",
+            "label": "Elevated"
+          },
+          "event_identity": null,
+          "active_hazards": [],
+          "official_alerts": [
+            {
+              "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1",
+              "event": "Small Craft Advisory",
+              "severity": "Minor",
+              "certainty": "Likely",
+              "urgency": "Expected",
+              "sent": "2026-10-06T02:45:00-04:00",
+              "effective": "2026-10-06T02:45:00-04:00",
+              "onset": "2026-10-06T02:45:00-04:00",
+              "expires": "2026-10-06T16:45:00-04:00",
+              "ends": "2026-10-06T20:00:00-04:00",
+              "headline": "Small Craft Advisory issued October 6 at 2:45AM EDT until October 6 at 8:00PM EDT by NWS Gray ME",
+              "area": "Coastal Waters from Stonington, ME to Port Clyde, ME out 25 NM; Penobscot Bay; Coastal Waters from Port Clyde, ME to Cape Elizabeth, ME out 25 NM; Casco Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+              "message_type": "Update",
+              "references": [
+                {
+                  "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b55fe465a5c31c61033097f7db35d12b7a62f81c.001.1",
+                  "identifier": "urn:oid:2.49.0.1.840.0.b55fe465a5c31c61033097f7db35d12b7a62f81c.001.1",
+                  "sender": "w-nws.webmaster@noaa.gov",
+                  "sent": "2026-10-05T13:53:00-04:00"
+                },
+                {
+                  "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.18e3df52eb8eeabad93fda94bc15defaf8060c7a.001.1",
+                  "identifier": "urn:oid:2.49.0.1.840.0.18e3df52eb8eeabad93fda94bc15defaf8060c7a.001.1",
+                  "sender": "w-nws.webmaster@noaa.gov",
+                  "sent": "2026-10-05T14:21:00-04:00"
+                }
+              ]
+            },
+            {
+              "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1",
+              "event": "Small Craft Advisory",
+              "severity": "Minor",
+              "urgency": "Expected",
+              "certainty": "Likely",
+              "headline": "Small Craft Advisory issued October 6 at 2:45AM EDT until October 6 at 8:00PM EDT by NWS Gray ME",
+              "onset": "2026-10-06T02:45:00-04:00",
+              "ends": "2026-10-06T20:00:00-04:00",
+              "expires": "2026-10-06T16:45:00-04:00",
+              "area": "Coastal Waters from Stonington, ME to Port Clyde, ME out 25 NM; Penobscot Bay; Coastal Waters from Port Clyde, ME to Cape Elizabeth, ME out 25 NM; Casco Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+              "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1"
+            }
+          ],
+          "recent_impacts": [
+            {
+              "code": "marine_wind",
+              "label": "Buoy 44007 gust",
+              "at": "2026-10-05T19:30:00Z",
+              "value": 35.8,
+              "unit": "mph",
+              "impact_rank": 1
+            }
+          ],
+          "reasons": [],
+          "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
+          "event_timing": {
+            "peak_at": "2026-10-09T02:12:00Z",
+            "window_start": null,
+            "window_end": null,
+            "hours_until_peak": 58.1,
+            "basis": "NOAA OFS modeled total-water peak"
+          },
+          "coastal_impact": {
+            "method": "Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.",
+            "impact": {
+              "score": 8,
+              "rank": 0,
+              "level": "green",
+              "label": "Routine"
+            },
+            "windows": [
+              {
+                "high_tide_at": "2026-10-07T00:25:00Z",
+                "window_start": "2026-10-06T22:55:00Z",
+                "window_end": "2026-10-07T01:55:00Z",
+                "astronomical_ft": 9.85,
+                "modeled_total_ft": 10.36,
+                "modeled_time": "2026-10-07T00:18:00Z",
+                "modeled_uplift_ft": 0.52,
+                "forecast_wind_mph": 5.0,
+                "forecast_wind_direction": "NW",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "10.36 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "9.85 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-07T13:05:00Z",
+                "window_start": "2026-10-07T11:35:00Z",
+                "window_end": "2026-10-07T14:35:00Z",
+                "astronomical_ft": 9.3,
+                "modeled_total_ft": 9.88,
+                "modeled_time": "2026-10-07T13:00:00Z",
+                "modeled_uplift_ft": 0.58,
+                "forecast_wind_mph": 5.0,
+                "forecast_wind_direction": "SW",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "9.88 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "9.30 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-08T01:25:00Z",
+                "window_start": "2026-10-07T23:55:00Z",
+                "window_end": "2026-10-08T02:55:00Z",
+                "astronomical_ft": 10.01,
+                "modeled_total_ft": 11.2,
+                "modeled_time": "2026-10-08T01:18:00Z",
+                "modeled_uplift_ft": 1.19,
+                "forecast_wind_mph": 10.0,
+                "forecast_wind_direction": "SW",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 8,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "11.20 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.01 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-08T13:57:00Z",
+                "window_start": "2026-10-08T12:27:00Z",
+                "window_end": "2026-10-08T15:27:00Z",
+                "astronomical_ft": 9.76,
+                "modeled_total_ft": 10.55,
+                "modeled_time": "2026-10-08T13:54:00Z",
+                "modeled_uplift_ft": 0.79,
+                "forecast_wind_mph": 10.0,
+                "forecast_wind_direction": "SW",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "10.55 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "9.76 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-09T02:18:00Z",
+                "window_start": "2026-10-09T00:48:00Z",
+                "window_end": "2026-10-09T03:48:00Z",
+                "astronomical_ft": 10.11,
+                "modeled_total_ft": 11.21,
+                "modeled_time": "2026-10-09T02:12:00Z",
+                "modeled_uplift_ft": 1.11,
+                "forecast_wind_mph": 5.0,
+                "forecast_wind_direction": "W",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 8,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "11.21 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.11 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-09T14:43:00Z",
+                "window_start": "2026-10-09T13:13:00Z",
+                "window_end": "2026-10-09T16:13:00Z",
+                "astronomical_ft": 10.12,
+                "modeled_total_ft": null,
+                "modeled_time": null,
+                "modeled_uplift_ft": null,
+                "forecast_wind_mph": 10.0,
+                "forecast_wind_direction": "W",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.12 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              }
+            ],
+            "peak_window": {
+              "high_tide_at": "2026-10-08T01:25:00Z",
+              "window_start": "2026-10-07T23:55:00Z",
+              "window_end": "2026-10-08T02:55:00Z",
+              "astronomical_ft": 10.01,
+              "modeled_total_ft": 11.2,
+              "modeled_time": "2026-10-08T01:18:00Z",
+              "modeled_uplift_ft": 1.19,
+              "forecast_wind_mph": 10.0,
+              "forecast_wind_direction": "SW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 8,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "11.20 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.01 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            "hours_until_peak": 33.3,
+            "confidence": {
+              "label": "Moderate",
+              "score": 0.85,
+              "missing": [
+                "NDBC 44007 wave observation"
+              ]
+            },
+            "drivers": [
+              {
+                "label": "NOAA forecast water level",
+                "value": "11.20 ft MLLW",
+                "source": "NOAA OFS"
+              },
+              {
+                "label": "Predicted high tide",
+                "value": "10.01 ft MLLW",
+                "source": "NOAA CO-OPS tide prediction"
+              },
+              {
+                "label": "NWS surf forecast",
+                "value": "4 ft max in the current Coastal York forecast",
+                "source": "NWS Surf Zone Forecast"
+              },
+              {
+                "label": "Wind pushing toward shore",
+                "value": "0 mph",
+                "source": "Calculated from NWS hourly wind direction and speed"
+              },
+              {
+                "label": "Latest buoy onshore-wind component",
+                "value": "0 mph",
+                "source": "Derived from NDBC 44007"
+              }
+            ],
+            "wave_context": {
+              "height_ft": null,
+              "dominant_period_sec": null,
+              "direction_deg": null,
+              "power_proxy_kw_m": null
+            },
+            "onshore_reference": {
+              "shore_normal_from_deg": 120.0,
+              "note": "Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."
+            }
+          }
+        },
+        "alerts": [
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.481be8cd9d65ac0ba6adae5a8d4f0521277e6b31.001.1",
+            "event": "Frost Advisory",
+            "severity": "Minor",
+            "urgency": "Expected",
+            "certainty": "Likely",
+            "headline": "Frost Advisory issued October 6 at 2:25AM EDT until October 7 at 8:00AM EDT by NWS Gray ME",
+            "onset": "2026-10-07T00:00:00-04:00",
+            "ends": "2026-10-07T08:00:00-04:00",
+            "expires": "2026-10-06T15:00:00-04:00",
+            "area": "Central Interior Cumberland; Androscoggin; Kennebec; Interior Waldo; Coastal York; Coastal Cumberland; Sagadahoc; Lincoln; Knox; Coastal Waldo; Strafford; Eastern Hillsborough; Interior Rockingham",
+            "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.481be8cd9d65ac0ba6adae5a8d4f0521277e6b31.001.1"
+          }
+        ],
+        "marine_alerts": [
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1",
+            "event": "Small Craft Advisory",
+            "severity": "Minor",
+            "urgency": "Expected",
+            "certainty": "Likely",
+            "headline": "Small Craft Advisory issued October 6 at 2:45AM EDT until October 6 at 8:00PM EDT by NWS Gray ME",
+            "onset": "2026-10-06T02:45:00-04:00",
+            "ends": "2026-10-06T20:00:00-04:00",
+            "expires": "2026-10-06T16:45:00-04:00",
+            "area": "Coastal Waters from Stonington, ME to Port Clyde, ME out 25 NM; Penobscot Bay; Coastal Waters from Port Clyde, ME to Cape Elizabeth, ME out 25 NM; Casco Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+            "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1"
+          }
+        ],
+        "surf": {
+          "available": true,
+          "zone": "Coastal York",
+          "max_surf_height_ft": 4.0,
+          "rip_current_risk": "Low",
+          "issued_at": "2026-10-06T15:41:00+00:00",
+          "product_id": "4e7839b8-8a7e-4abd-9339-360b9d643132",
+          "source": "https://api.weather.gov/products/types/SRF/locations/GYX/latest"
+        },
+        "winter": {
+          "active": false,
+          "snowfall_24h_in": 0.0,
+          "snowfall_72h_in": 0.0,
+          "ice_72h_in": 0.0,
+          "max_average_snow_rate_24h_in_hr": 0.0,
+          "min_visibility_24h_mi": 10.0,
+          "precip_transition_24h": "No wintry or rainy precipitation signal in hourly guidance"
+        },
+        "rain": {
+          "qpf_24h_in": 0.0,
+          "qpf_72h_in": 0.0
+        },
+        "wind": {
+          "max_sustained_24h_mph": 15.0,
+          "max_sustained_24h_time": "2026-10-06T16:00:00Z",
+          "max_sustained_72h_mph": 15.0,
+          "max_gust_24h_mph": null,
+          "max_gust_24h_time": null,
+          "max_gust_72h_mph": null,
+          "max_gust_72h_time": null
+        },
+        "cold": {
+          "min_temp_24h_f": 48.0,
+          "min_temp_24h_time": "2026-10-07T07:00:00Z"
+        },
+        "tropical": {
+          "active": false,
+          "atlantic_active_count": 0,
+          "storms": [],
+          "errors": []
+        },
+        "hourly": [
+          {
+            "start": "2026-10-06T16:00:00Z",
+            "end": "2026-10-06T17:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T19:00:00Z",
+            "end": "2026-10-06T20:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T22:00:00Z",
+            "end": "2026-10-06T23:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T01:00:00Z",
+            "end": "2026-10-07T02:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T04:00:00Z",
+            "end": "2026-10-07T05:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T07:00:00Z",
+            "end": "2026-10-07T08:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T10:00:00Z",
+            "end": "2026-10-07T11:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T13:00:00Z",
+            "end": "2026-10-07T14:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T16:00:00Z",
+            "end": "2026-10-07T17:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          }
+        ],
+        "hourly_full": [
+          {
+            "start": "2026-10-06T16:00:00Z",
+            "end": "2026-10-06T17:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T17:00:00Z",
+            "end": "2026-10-06T18:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T18:00:00Z",
+            "end": "2026-10-06T19:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T19:00:00Z",
+            "end": "2026-10-06T20:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T20:00:00Z",
+            "end": "2026-10-06T21:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T21:00:00Z",
+            "end": "2026-10-06T22:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T22:00:00Z",
+            "end": "2026-10-06T23:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-06T23:00:00Z",
+            "end": "2026-10-07T00:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T00:00:00Z",
+            "end": "2026-10-07T01:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T01:00:00Z",
+            "end": "2026-10-07T02:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T02:00:00Z",
+            "end": "2026-10-07T03:00:00Z",
+            "temperature_f": 50.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T03:00:00Z",
+            "end": "2026-10-07T04:00:00Z",
+            "temperature_f": 50.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T04:00:00Z",
+            "end": "2026-10-07T05:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T05:00:00Z",
+            "end": "2026-10-07T06:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T06:00:00Z",
+            "end": "2026-10-07T07:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T07:00:00Z",
+            "end": "2026-10-07T08:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T08:00:00Z",
+            "end": "2026-10-07T09:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T09:00:00Z",
+            "end": "2026-10-07T10:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T10:00:00Z",
+            "end": "2026-10-07T11:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T11:00:00Z",
+            "end": "2026-10-07T12:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T12:00:00Z",
+            "end": "2026-10-07T13:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T13:00:00Z",
+            "end": "2026-10-07T14:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T14:00:00Z",
+            "end": "2026-10-07T15:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T15:00:00Z",
+            "end": "2026-10-07T16:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T16:00:00Z",
+            "end": "2026-10-07T17:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T17:00:00Z",
+            "end": "2026-10-07T18:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T18:00:00Z",
+            "end": "2026-10-07T19:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T19:00:00Z",
+            "end": "2026-10-07T20:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T20:00:00Z",
+            "end": "2026-10-07T21:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T21:00:00Z",
+            "end": "2026-10-07T22:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T22:00:00Z",
+            "end": "2026-10-07T23:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-07T23:00:00Z",
+            "end": "2026-10-08T00:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T00:00:00Z",
+            "end": "2026-10-08T01:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T01:00:00Z",
+            "end": "2026-10-08T02:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T02:00:00Z",
+            "end": "2026-10-08T03:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T03:00:00Z",
+            "end": "2026-10-08T04:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T04:00:00Z",
+            "end": "2026-10-08T05:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T05:00:00Z",
+            "end": "2026-10-08T06:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T06:00:00Z",
+            "end": "2026-10-08T07:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T07:00:00Z",
+            "end": "2026-10-08T08:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T08:00:00Z",
+            "end": "2026-10-08T09:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T09:00:00Z",
+            "end": "2026-10-08T10:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T10:00:00Z",
+            "end": "2026-10-08T11:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 2,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T11:00:00Z",
+            "end": "2026-10-08T12:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 2,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T12:00:00Z",
+            "end": "2026-10-08T13:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 2,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T13:00:00Z",
+            "end": "2026-10-08T14:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 3,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T14:00:00Z",
+            "end": "2026-10-08T15:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 3,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T15:00:00Z",
+            "end": "2026-10-08T16:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 4,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T16:00:00Z",
+            "end": "2026-10-08T17:00:00Z",
+            "temperature_f": 65.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 4,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T17:00:00Z",
+            "end": "2026-10-08T18:00:00Z",
+            "temperature_f": 66.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 4,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T18:00:00Z",
+            "end": "2026-10-08T19:00:00Z",
+            "temperature_f": 66.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 5,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T19:00:00Z",
+            "end": "2026-10-08T20:00:00Z",
+            "temperature_f": 67.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 5,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T20:00:00Z",
+            "end": "2026-10-08T21:00:00Z",
+            "temperature_f": 66.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 5,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T21:00:00Z",
+            "end": "2026-10-08T22:00:00Z",
+            "temperature_f": 66.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 5,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T22:00:00Z",
+            "end": "2026-10-08T23:00:00Z",
+            "temperature_f": 64.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 5,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-08T23:00:00Z",
+            "end": "2026-10-09T00:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 4,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T00:00:00Z",
+            "end": "2026-10-09T01:00:00Z",
+            "temperature_f": 61.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T01:00:00Z",
+            "end": "2026-10-09T02:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T02:00:00Z",
+            "end": "2026-10-09T03:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T03:00:00Z",
+            "end": "2026-10-09T04:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T04:00:00Z",
+            "end": "2026-10-09T05:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T05:00:00Z",
+            "end": "2026-10-09T06:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T06:00:00Z",
+            "end": "2026-10-09T07:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T07:00:00Z",
+            "end": "2026-10-09T08:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T08:00:00Z",
+            "end": "2026-10-09T09:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 2,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T09:00:00Z",
+            "end": "2026-10-09T10:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 2,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T10:00:00Z",
+            "end": "2026-10-09T11:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 2,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T11:00:00Z",
+            "end": "2026-10-09T12:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 2,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T12:00:00Z",
+            "end": "2026-10-09T13:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T13:00:00Z",
+            "end": "2026-10-09T14:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T14:00:00Z",
+            "end": "2026-10-09T15:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T15:00:00Z",
+            "end": "2026-10-09T16:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T16:00:00Z",
+            "end": "2026-10-09T17:00:00Z",
+            "temperature_f": 61.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          }
+        ],
+        "errors": {},
+        "sources": {
+          "nws_point": "https://api.weather.gov/points/43.472,-70.385",
+          "nws_hourly": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+          "nws_grid": "https://api.weather.gov/gridpoints/GYX/70,49",
+          "nws_alerts": "https://api.weather.gov/alerts/active?point=43.472,-70.385",
+          "nws_marine_alerts": "https://api.weather.gov/alerts/active?zone=ANZ154",
+          "nws_surf_zone": "https://api.weather.gov/products/types/SRF/locations/GYX/latest",
+          "nhc": "https://www.nhc.noaa.gov/CurrentStorms.json"
+        }
+      },
+      "marine": {
+        "stations": {
+          "44007": {
+            "observed_at": "2026-10-06T15:40:00Z",
+            "speed_mph": 20.1,
+            "gust_mph": 26.8,
+            "direction_deg": 310,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": 1013.1,
+            "pressure_tendency_mb": null,
+            "water_temp_f": 56.7,
+            "air_temp_f": 53.1,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
+            "max_24h_speed_mph": 26.8,
+            "max_24h_speed_at": "2026-10-05T19:00:00Z",
+            "max_24h_gust_mph": 35.8,
+            "max_24h_gust_at": "2026-10-05T19:30:00Z",
+            "max_24h_wave_height_ft": 4.6,
+            "max_24h_wave_at": "2026-10-05T19:20:00Z"
+          },
+          "WEXM1": {
+            "observed_at": "2026-10-06T15:00:00Z",
+            "speed_mph": 9.2,
+            "gust_mph": null,
+            "direction_deg": 280,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": null,
+            "pressure_tendency_mb": null,
+            "water_temp_f": null,
+            "air_temp_f": 52.9,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
+            "max_24h_speed_mph": 9.2,
+            "max_24h_speed_at": "2026-10-05T18:45:00Z",
+            "max_24h_gust_mph": null,
+            "max_24h_gust_at": null,
+            "max_24h_wave_height_ft": null,
+            "max_24h_wave_at": null
+          }
+        }
+      },
+      "alerts": [
+        {
+          "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1",
+          "event": "Small Craft Advisory",
+          "severity": "Minor",
+          "certainty": "Likely",
+          "urgency": "Expected",
+          "sent": "2026-10-06T02:45:00-04:00",
+          "effective": "2026-10-06T02:45:00-04:00",
+          "onset": "2026-10-06T02:45:00-04:00",
+          "expires": "2026-10-06T16:45:00-04:00",
+          "ends": "2026-10-06T20:00:00-04:00",
+          "headline": "Small Craft Advisory issued October 6 at 2:45AM EDT until October 6 at 8:00PM EDT by NWS Gray ME",
+          "area": "Coastal Waters from Stonington, ME to Port Clyde, ME out 25 NM; Penobscot Bay; Coastal Waters from Port Clyde, ME to Cape Elizabeth, ME out 25 NM; Casco Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+          "message_type": "Update",
+          "references": [
+            {
+              "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b55fe465a5c31c61033097f7db35d12b7a62f81c.001.1",
+              "identifier": "urn:oid:2.49.0.1.840.0.b55fe465a5c31c61033097f7db35d12b7a62f81c.001.1",
+              "sender": "w-nws.webmaster@noaa.gov",
+              "sent": "2026-10-05T13:53:00-04:00"
+            },
+            {
+              "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.18e3df52eb8eeabad93fda94bc15defaf8060c7a.001.1",
+              "identifier": "urn:oid:2.49.0.1.840.0.18e3df52eb8eeabad93fda94bc15defaf8060c7a.001.1",
+              "sender": "w-nws.webmaster@noaa.gov",
+              "sent": "2026-10-05T14:21:00-04:00"
+            }
+          ]
+        }
+      ],
+      "event_state": {
+        "phase": "Recent",
+        "show_focus": false,
+        "primary_display": "Routine Coastal Conditions",
+        "impact": {
+          "rank": 0,
+          "level": "green",
+          "label": "Routine"
+        },
+        "recent_impact": {
+          "rank": 1,
+          "level": "yellow",
+          "label": "Elevated"
+        },
+        "event_identity": null,
+        "active_hazards": [],
+        "official_alerts": [
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1",
+            "event": "Small Craft Advisory",
+            "severity": "Minor",
+            "certainty": "Likely",
+            "urgency": "Expected",
+            "sent": "2026-10-06T02:45:00-04:00",
+            "effective": "2026-10-06T02:45:00-04:00",
+            "onset": "2026-10-06T02:45:00-04:00",
+            "expires": "2026-10-06T16:45:00-04:00",
+            "ends": "2026-10-06T20:00:00-04:00",
+            "headline": "Small Craft Advisory issued October 6 at 2:45AM EDT until October 6 at 8:00PM EDT by NWS Gray ME",
+            "area": "Coastal Waters from Stonington, ME to Port Clyde, ME out 25 NM; Penobscot Bay; Coastal Waters from Port Clyde, ME to Cape Elizabeth, ME out 25 NM; Casco Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+            "message_type": "Update",
+            "references": [
+              {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.b55fe465a5c31c61033097f7db35d12b7a62f81c.001.1",
+                "identifier": "urn:oid:2.49.0.1.840.0.b55fe465a5c31c61033097f7db35d12b7a62f81c.001.1",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "sent": "2026-10-05T13:53:00-04:00"
+              },
+              {
+                "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.18e3df52eb8eeabad93fda94bc15defaf8060c7a.001.1",
+                "identifier": "urn:oid:2.49.0.1.840.0.18e3df52eb8eeabad93fda94bc15defaf8060c7a.001.1",
+                "sender": "w-nws.webmaster@noaa.gov",
+                "sent": "2026-10-05T14:21:00-04:00"
+              }
+            ]
+          },
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1",
+            "event": "Small Craft Advisory",
+            "severity": "Minor",
+            "urgency": "Expected",
+            "certainty": "Likely",
+            "headline": "Small Craft Advisory issued October 6 at 2:45AM EDT until October 6 at 8:00PM EDT by NWS Gray ME",
+            "onset": "2026-10-06T02:45:00-04:00",
+            "ends": "2026-10-06T20:00:00-04:00",
+            "expires": "2026-10-06T16:45:00-04:00",
+            "area": "Coastal Waters from Stonington, ME to Port Clyde, ME out 25 NM; Penobscot Bay; Coastal Waters from Port Clyde, ME to Cape Elizabeth, ME out 25 NM; Casco Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+            "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.0a153cc55a8cc665dcdc042c7b00c53ee3bc45c6.001.1"
+          }
+        ],
+        "recent_impacts": [
+          {
+            "code": "marine_wind",
+            "label": "Buoy 44007 gust",
+            "at": "2026-10-05T19:30:00Z",
+            "value": 35.8,
+            "unit": "mph",
+            "impact_rank": 1
+          }
+        ],
+        "reasons": [],
+        "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
+        "event_timing": {
+          "peak_at": "2026-10-09T02:12:00Z",
+          "window_start": null,
+          "window_end": null,
+          "hours_until_peak": 58.1,
+          "basis": "NOAA OFS modeled total-water peak"
+        },
+        "coastal_impact": {
+          "method": "Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.",
+          "impact": {
+            "score": 8,
+            "rank": 0,
+            "level": "green",
+            "label": "Routine"
+          },
+          "windows": [
+            {
+              "high_tide_at": "2026-10-07T00:25:00Z",
+              "window_start": "2026-10-06T22:55:00Z",
+              "window_end": "2026-10-07T01:55:00Z",
+              "astronomical_ft": 9.85,
+              "modeled_total_ft": 10.36,
+              "modeled_time": "2026-10-07T00:18:00Z",
+              "modeled_uplift_ft": 0.52,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "NW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "10.36 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "9.85 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-07T13:05:00Z",
+              "window_start": "2026-10-07T11:35:00Z",
+              "window_end": "2026-10-07T14:35:00Z",
+              "astronomical_ft": 9.3,
+              "modeled_total_ft": 9.88,
+              "modeled_time": "2026-10-07T13:00:00Z",
+              "modeled_uplift_ft": 0.58,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "SW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "9.88 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "9.30 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-08T01:25:00Z",
+              "window_start": "2026-10-07T23:55:00Z",
+              "window_end": "2026-10-08T02:55:00Z",
+              "astronomical_ft": 10.01,
+              "modeled_total_ft": 11.2,
+              "modeled_time": "2026-10-08T01:18:00Z",
+              "modeled_uplift_ft": 1.19,
+              "forecast_wind_mph": 10.0,
+              "forecast_wind_direction": "SW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 8,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "11.20 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.01 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-08T13:57:00Z",
+              "window_start": "2026-10-08T12:27:00Z",
+              "window_end": "2026-10-08T15:27:00Z",
+              "astronomical_ft": 9.76,
+              "modeled_total_ft": 10.55,
+              "modeled_time": "2026-10-08T13:54:00Z",
+              "modeled_uplift_ft": 0.79,
+              "forecast_wind_mph": 10.0,
+              "forecast_wind_direction": "SW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "10.55 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "9.76 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-09T02:18:00Z",
+              "window_start": "2026-10-09T00:48:00Z",
+              "window_end": "2026-10-09T03:48:00Z",
+              "astronomical_ft": 10.11,
+              "modeled_total_ft": 11.21,
+              "modeled_time": "2026-10-09T02:12:00Z",
+              "modeled_uplift_ft": 1.11,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 8,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "11.21 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.11 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-09T14:43:00Z",
+              "window_start": "2026-10-09T13:13:00Z",
+              "window_end": "2026-10-09T16:13:00Z",
+              "astronomical_ft": 10.12,
+              "modeled_total_ft": null,
+              "modeled_time": null,
+              "modeled_uplift_ft": null,
+              "forecast_wind_mph": 10.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.12 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            }
+          ],
+          "peak_window": {
+            "high_tide_at": "2026-10-08T01:25:00Z",
+            "window_start": "2026-10-07T23:55:00Z",
+            "window_end": "2026-10-08T02:55:00Z",
+            "astronomical_ft": 10.01,
+            "modeled_total_ft": 11.2,
+            "modeled_time": "2026-10-08T01:18:00Z",
+            "modeled_uplift_ft": 1.19,
+            "forecast_wind_mph": 10.0,
+            "forecast_wind_direction": "SW",
+            "onshore_component_mph": 0.0,
+            "surf_context_ft": 4.0,
+            "impact": {
+              "score": 8,
+              "rank": 0,
+              "level": "green",
+              "label": "Routine"
+            },
+            "drivers": [
+              {
+                "label": "NOAA forecast water level",
+                "value": "11.20 ft MLLW",
+                "source": "NOAA OFS"
+              },
+              {
+                "label": "Predicted high tide",
+                "value": "10.01 ft MLLW",
+                "source": "NOAA CO-OPS tide prediction"
+              },
+              {
+                "label": "NWS surf forecast",
+                "value": "4 ft max in the current Coastal York forecast",
+                "source": "NWS Surf Zone Forecast"
+              },
+              {
+                "label": "Wind pushing toward shore",
+                "value": "0 mph",
+                "source": "Calculated from NWS hourly wind direction and speed"
+              }
+            ]
+          },
+          "hours_until_peak": 33.3,
+          "confidence": {
+            "label": "Moderate",
+            "score": 0.85,
+            "missing": [
+              "NDBC 44007 wave observation"
+            ]
+          },
+          "drivers": [
+            {
+              "label": "NOAA forecast water level",
+              "value": "11.20 ft MLLW",
+              "source": "NOAA OFS"
+            },
+            {
+              "label": "Predicted high tide",
+              "value": "10.01 ft MLLW",
+              "source": "NOAA CO-OPS tide prediction"
+            },
+            {
+              "label": "NWS surf forecast",
+              "value": "4 ft max in the current Coastal York forecast",
+              "source": "NWS Surf Zone Forecast"
+            },
+            {
+              "label": "Wind pushing toward shore",
+              "value": "0 mph",
+              "source": "Calculated from NWS hourly wind direction and speed"
+            },
+            {
+              "label": "Latest buoy onshore-wind component",
+              "value": "0 mph",
+              "source": "Derived from NDBC 44007"
+            }
+          ],
+          "wave_context": {
+            "height_ft": null,
+            "dominant_period_sec": null,
+            "direction_deg": null,
+            "power_proxy_kw_m": null
+          },
+          "onshore_reference": {
+            "shore_normal_from_deg": 120.0,
+            "note": "Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."
+          }
+        }
+      }
     }
   ],
   "daily_rollups": [
@@ -67992,7 +69997,7 @@
     },
     {
       "date": "2026-10-06",
-      "snapshot_count": 2,
+      "snapshot_count": 3,
       "max_observed_ft": 10.44,
       "max_forecast_peak_ft": 11.22,
       "max_gust_mph": 33.6
@@ -68201,6 +70206,16 @@
       "to_impact": "Elevated",
       "from_display": "Routine Coastal Conditions",
       "to_display": "Marine Hazard"
+    },
+    {
+      "at": "2026-10-06T16:06:02Z",
+      "type": "event_state_transition",
+      "from_phase": "Ongoing",
+      "to_phase": "Recent",
+      "from_impact": "Elevated",
+      "to_impact": "Routine",
+      "from_display": "Marine Hazard",
+      "to_display": "Routine Coastal Conditions"
     }
   ],
   "local_events": [
@@ -68305,11 +70320,11 @@
     },
     {
       "published_at": "2024-06-27T07:00:00Z",
-      "source": "Maine Audubon",
+      "source": "maineaudubon.org",
       "source_type": "news",
       "location": "Scarborough",
-      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
-      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - Maine Audubon",
+      "headline": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
+      "summary": "Scarborough Marsh Canoe Tours: Take tides into account - maineaudubon.org",
       "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxPc25ONk5HMlgyVXFoeW9NNDBWNWtjRV9CQUFqNldaSWczSFpNd0s1QXFQZlZVMFhJWXJLWUlFNThzZ1pUZlZmbDRTbXk0UFBmT2tVWmR3TUtuZGN0X1BYaWV1Q21YMkhjcEc1ald6UHY1djVDaC1zTVJWM01CWHVZanJDV3pBUmh4Rkc3QQ?oc=5",
       "event_category": "coastal conditions",
       "anecdotal": false

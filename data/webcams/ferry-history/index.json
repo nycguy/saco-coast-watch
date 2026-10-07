@@ -4,26 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-10-05T22:49:10Z",
-      "file": "20261005T224910Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Routine Coastal Conditions",
-        "Elevated · Improving"
-      ],
-      "context": {
-        "event": "Routine Coastal Conditions",
-        "phase": "Improving",
-        "impact": "Elevated",
-        "impact_level": "yellow",
-        "water_level_ft": 10.26,
-        "residual_ft": 0.69,
-        "wave_height_ft": 3.9,
-        "dominant_period_sec": null,
-        "gust_mph": 31.3
-      }
-    },
-    {
       "captured_at": "2026-10-06T09:25:33Z",
       "file": "20261006T092533Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -64,8 +44,29 @@
         "dominant_period_sec": 3.0,
         "gust_mph": 24.6
       }
+    },
+    {
+      "captured_at": "2026-10-07T00:26:37Z",
+      "file": "20261007T002637Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Tropical Depression Nine",
+        "Elevated · Outlook",
+        "NHC track/advisory or local NWS tropical alert"
+      ],
+      "context": {
+        "event": "Tropical Depression Nine",
+        "phase": "Outlook",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 9.91,
+        "residual_ft": 0.07,
+        "wave_height_ft": null,
+        "dominant_period_sec": null,
+        "gust_mph": 15.7
+      }
     }
   ],
-  "generated_at": "2026-10-06T20:58:53Z",
+  "generated_at": "2026-10-07T00:26:37Z",
   "retention_hours": 24
 }

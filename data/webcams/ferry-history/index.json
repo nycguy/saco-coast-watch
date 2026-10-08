@@ -4,27 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-10-07T06:17:40Z",
-      "file": "20261007T061740Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Tropical Depression Nine",
-        "Elevated · Outlook",
-        "NHC track/advisory or local NWS tropical alert"
-      ],
-      "context": {
-        "event": "Tropical Depression Nine",
-        "phase": "Outlook",
-        "impact": "Elevated",
-        "impact_level": "yellow",
-        "water_level_ft": 0.36,
-        "residual_ft": 0.04,
-        "wave_height_ft": 0.7,
-        "dominant_period_sec": null,
-        "gust_mph": 11.2
-      }
-    },
-    {
       "captured_at": "2026-10-07T23:49:52Z",
       "file": "20261007T234952Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -46,6 +25,6 @@
       }
     }
   ],
-  "generated_at": "2026-10-08T04:00:12Z",
+  "generated_at": "2026-10-08T11:15:59Z",
   "retention_hours": 24
 }

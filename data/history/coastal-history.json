@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-08T22:49:01Z",
+  "generated_at": "2026-10-09T02:41:22Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -123242,6 +123242,7355 @@
           }
         }
       }
+    },
+    {
+      "snapshot_at": "2026-10-09T02:41:22Z",
+      "snapshot_kind": "realtime",
+      "provenance": {
+        "forecast": "live_noaa_ofs_capture",
+        "observations": "NOAA CO-OPS station 8418150",
+        "astronomical_tide": "NOAA CO-OPS predictions",
+        "marine": "NDBC realtime2",
+        "alerts": "NWS API active alerts",
+        "weather_forecast": "NWS hourly point forecast",
+        "hazards": "NWS forecast grid + Surf Zone Forecast + marine alerts + NHC CurrentStorms and GIS products"
+      },
+      "water": {
+        "station": "8418150",
+        "latest_observed_ft": 10.6,
+        "latest_observed_at": "2026-10-09T02:30:00Z",
+        "observed_24h_max_ft": 10.66,
+        "observed_24h_max_time": "2026-10-09T02:12:00Z",
+        "residual_current_ft": 0.51,
+        "residual_current_at": "2026-10-09T02:30:00Z",
+        "residual_24h_max_ft": 1.02,
+        "residual_24h_max_time": "2026-10-08T15:54:00Z",
+        "forecast_peak_24h_ft": 10.92,
+        "forecast_peak_24h_time": "2026-10-09T02:36:00Z",
+        "forecast_peak_72h_ft": 11.18,
+        "forecast_peak_72h_time": "2026-10-11T16:06:00Z",
+        "astronomical_tide_at_peak_ft": 10.36,
+        "model_uplift_ft": 0.82,
+        "threshold_margins_ft": {
+          "minor": 0.82,
+          "moderate": 1.82,
+          "major": 2.82
+        },
+        "high_tides": [
+          {
+            "time": "2026-10-09T02:18:00Z",
+            "astronomical_ft": 10.11,
+            "modeled_total_ft": 11.05,
+            "modeled_time": "2026-10-09T02:12:00Z",
+            "modeled_uplift_ft": 0.95
+          },
+          {
+            "time": "2026-10-09T14:43:00Z",
+            "astronomical_ft": 10.12,
+            "modeled_total_ft": 10.68,
+            "modeled_time": "2026-10-09T14:42:00Z",
+            "modeled_uplift_ft": 0.56
+          },
+          {
+            "time": "2026-10-10T03:08:00Z",
+            "astronomical_ft": 10.08,
+            "modeled_total_ft": 10.64,
+            "modeled_time": "2026-10-10T03:00:00Z",
+            "modeled_uplift_ft": 0.57
+          },
+          {
+            "time": "2026-10-10T15:27:00Z",
+            "astronomical_ft": 10.32,
+            "modeled_total_ft": 10.62,
+            "modeled_time": "2026-10-10T15:24:00Z",
+            "modeled_uplift_ft": 0.3
+          },
+          {
+            "time": "2026-10-11T03:54:00Z",
+            "astronomical_ft": 9.92,
+            "modeled_total_ft": 10.76,
+            "modeled_time": "2026-10-11T03:48:00Z",
+            "modeled_uplift_ft": 0.85
+          },
+          {
+            "time": "2026-10-11T16:07:00Z",
+            "astronomical_ft": 10.36,
+            "modeled_total_ft": 11.18,
+            "modeled_time": "2026-10-11T16:06:00Z",
+            "modeled_uplift_ft": 0.83
+          }
+        ]
+      },
+      "forecast_conditions": {
+        "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+        "next24_max_sustained_wind_mph": 15.0,
+        "next72_max_sustained_wind_mph": 15.0,
+        "next24_max_precip_probability_pct": 1,
+        "next72_max_precip_probability_pct": 14,
+        "next24_summaries": [
+          "Clear",
+          "Mostly Clear",
+          "Mostly Sunny",
+          "Sunny"
+        ]
+      },
+      "hazards": {
+        "schema_version": 1,
+        "generated_at": "2026-10-09T02:41:22.466631Z",
+        "location": {
+          "name": "Saco Bay coastal reference",
+          "lat": 43.472,
+          "lon": -70.385
+        },
+        "active_modes": [
+          {
+            "code": "tropical",
+            "label": "Tropical Cyclone",
+            "basis": [
+              "NHC track/advisory or local NWS tropical alert"
+            ],
+            "impact_rank": 1
+          }
+        ],
+        "severity": {
+          "rank": 1,
+          "level": "yellow",
+          "label": "Elevated"
+        },
+        "event_state": {
+          "phase": "Outlook",
+          "show_focus": true,
+          "primary_display": "Hurricane Isaias",
+          "impact": {
+            "rank": 1,
+            "level": "yellow",
+            "label": "Elevated"
+          },
+          "recent_impact": {
+            "rank": 1,
+            "level": "yellow",
+            "label": "Elevated"
+          },
+          "event_identity": {
+            "official_name": "Isaias",
+            "official_type": "Hurricane",
+            "label": "Hurricane Isaias",
+            "storm_id": "al092026",
+            "naming_authority": "National Hurricane Center / WMO",
+            "advisory_url": "https://www.nhc.noaa.gov/text/MIATCPAT4.shtml",
+            "last_authoritative_update": "2026-10-09T00:00:00.000Z"
+          },
+          "active_hazards": [
+            {
+              "code": "tropical",
+              "label": "Tropical Cyclone",
+              "basis": [
+                "NHC track/advisory or local NWS tropical alert"
+              ],
+              "impact_rank": 1
+            }
+          ],
+          "official_alerts": [],
+          "recent_impacts": [
+            {
+              "code": "residual",
+              "label": "Portland water-level residual",
+              "at": "2026-10-08T15:54:00Z",
+              "value": 1.02,
+              "unit": "ft",
+              "impact_rank": 1
+            }
+          ],
+          "reasons": [
+            "NHC track/advisory or local NWS tropical alert"
+          ],
+          "summary": "Hurricane Isaias is outlook with elevated local impact potential.",
+          "event_timing": {
+            "peak_at": "2026-10-11T16:06:00Z",
+            "window_start": null,
+            "window_end": null,
+            "hours_until_peak": 61.4,
+            "basis": "NOAA OFS modeled total-water peak"
+          },
+          "coastal_impact": {
+            "method": "Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.",
+            "impact": {
+              "score": 8,
+              "rank": 0,
+              "level": "green",
+              "label": "Routine"
+            },
+            "windows": [
+              {
+                "high_tide_at": "2026-10-09T02:18:00Z",
+                "window_start": "2026-10-09T00:48:00Z",
+                "window_end": "2026-10-09T03:48:00Z",
+                "astronomical_ft": 10.11,
+                "modeled_total_ft": 11.05,
+                "modeled_time": "2026-10-09T02:12:00Z",
+                "modeled_uplift_ft": 0.95,
+                "forecast_wind_mph": 5.0,
+                "forecast_wind_direction": "W",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 8,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "11.05 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.11 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-09T14:43:00Z",
+                "window_start": "2026-10-09T13:13:00Z",
+                "window_end": "2026-10-09T16:13:00Z",
+                "astronomical_ft": 10.12,
+                "modeled_total_ft": 10.68,
+                "modeled_time": "2026-10-09T14:42:00Z",
+                "modeled_uplift_ft": 0.56,
+                "forecast_wind_mph": 15.0,
+                "forecast_wind_direction": "W",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "10.68 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.12 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-10T03:08:00Z",
+                "window_start": "2026-10-10T01:38:00Z",
+                "window_end": "2026-10-10T04:38:00Z",
+                "astronomical_ft": 10.08,
+                "modeled_total_ft": 10.64,
+                "modeled_time": "2026-10-10T03:00:00Z",
+                "modeled_uplift_ft": 0.57,
+                "forecast_wind_mph": 5.0,
+                "forecast_wind_direction": "W",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "10.64 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.08 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-10T15:27:00Z",
+                "window_start": "2026-10-10T13:57:00Z",
+                "window_end": "2026-10-10T16:57:00Z",
+                "astronomical_ft": 10.32,
+                "modeled_total_ft": 10.62,
+                "modeled_time": "2026-10-10T15:24:00Z",
+                "modeled_uplift_ft": 0.3,
+                "forecast_wind_mph": 5.0,
+                "forecast_wind_direction": "NW",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "10.62 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.32 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-11T03:54:00Z",
+                "window_start": "2026-10-11T02:24:00Z",
+                "window_end": "2026-10-11T05:24:00Z",
+                "astronomical_ft": 9.92,
+                "modeled_total_ft": 10.76,
+                "modeled_time": "2026-10-11T03:48:00Z",
+                "modeled_uplift_ft": 0.85,
+                "forecast_wind_mph": 0.0,
+                "forecast_wind_direction": "",
+                "onshore_component_mph": null,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 0,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "10.76 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "9.92 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  }
+                ]
+              },
+              {
+                "high_tide_at": "2026-10-11T16:07:00Z",
+                "window_start": "2026-10-11T14:37:00Z",
+                "window_end": "2026-10-11T17:37:00Z",
+                "astronomical_ft": 10.36,
+                "modeled_total_ft": 11.18,
+                "modeled_time": "2026-10-11T16:06:00Z",
+                "modeled_uplift_ft": 0.83,
+                "forecast_wind_mph": 10.0,
+                "forecast_wind_direction": "SW",
+                "onshore_component_mph": 0.0,
+                "surf_context_ft": 4.0,
+                "impact": {
+                  "score": 8,
+                  "rank": 0,
+                  "level": "green",
+                  "label": "Routine"
+                },
+                "drivers": [
+                  {
+                    "label": "NOAA forecast water level",
+                    "value": "11.18 ft MLLW",
+                    "source": "NOAA OFS"
+                  },
+                  {
+                    "label": "Predicted high tide",
+                    "value": "10.36 ft MLLW",
+                    "source": "NOAA CO-OPS tide prediction"
+                  },
+                  {
+                    "label": "NWS surf forecast",
+                    "value": "4 ft max in the current Coastal York forecast",
+                    "source": "NWS Surf Zone Forecast"
+                  },
+                  {
+                    "label": "Wind pushing toward shore",
+                    "value": "0 mph",
+                    "source": "Calculated from NWS hourly wind direction and speed"
+                  }
+                ]
+              }
+            ],
+            "peak_window": {
+              "high_tide_at": "2026-10-09T02:18:00Z",
+              "window_start": "2026-10-09T00:48:00Z",
+              "window_end": "2026-10-09T03:48:00Z",
+              "astronomical_ft": 10.11,
+              "modeled_total_ft": 11.05,
+              "modeled_time": "2026-10-09T02:12:00Z",
+              "modeled_uplift_ft": 0.95,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 8,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "11.05 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.11 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            "hours_until_peak": -0.4,
+            "confidence": {
+              "label": "Moderate",
+              "score": 0.85,
+              "missing": [
+                "NDBC 44007 wave observation"
+              ]
+            },
+            "drivers": [
+              {
+                "label": "NOAA forecast water level",
+                "value": "11.05 ft MLLW",
+                "source": "NOAA OFS"
+              },
+              {
+                "label": "Predicted high tide",
+                "value": "10.11 ft MLLW",
+                "source": "NOAA CO-OPS tide prediction"
+              },
+              {
+                "label": "NWS surf forecast",
+                "value": "4 ft max in the current Coastal York forecast",
+                "source": "NWS Surf Zone Forecast"
+              },
+              {
+                "label": "Wind pushing toward shore",
+                "value": "0 mph",
+                "source": "Calculated from NWS hourly wind direction and speed"
+              },
+              {
+                "label": "Latest buoy onshore-wind component",
+                "value": "0 mph",
+                "source": "Derived from NDBC 44007"
+              }
+            ],
+            "wave_context": {
+              "height_ft": null,
+              "dominant_period_sec": null,
+              "direction_deg": null,
+              "power_proxy_kw_m": null
+            },
+            "onshore_reference": {
+              "shore_normal_from_deg": 120.0,
+              "note": "Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."
+            }
+          }
+        },
+        "alerts": [],
+        "marine_alerts": [],
+        "surf": {
+          "available": true,
+          "zone": "Coastal York",
+          "max_surf_height_ft": 4.0,
+          "rip_current_risk": "Low",
+          "issued_at": "2026-10-09T00:41:00+00:00",
+          "product_id": "bcdebbc0-d4bc-4e5e-aeb0-904f5b670c02",
+          "source": "https://api.weather.gov/products/types/SRF/locations/GYX/latest"
+        },
+        "winter": {
+          "active": false,
+          "snowfall_24h_in": 0.0,
+          "snowfall_72h_in": 0.0,
+          "ice_72h_in": 0.0,
+          "max_average_snow_rate_24h_in_hr": 0.0,
+          "min_visibility_24h_mi": 10.0,
+          "precip_transition_24h": "No wintry or rainy precipitation signal in hourly guidance"
+        },
+        "rain": {
+          "qpf_24h_in": 0.0,
+          "qpf_72h_in": 0.0
+        },
+        "wind": {
+          "max_sustained_24h_mph": 15.0,
+          "max_sustained_24h_time": "2026-10-09T14:00:00Z",
+          "max_sustained_72h_mph": 15.0,
+          "max_gust_24h_mph": null,
+          "max_gust_24h_time": null,
+          "max_gust_72h_mph": null,
+          "max_gust_72h_time": null
+        },
+        "cold": {
+          "min_temp_24h_f": 52.0,
+          "min_temp_24h_time": "2026-10-09T10:00:00Z"
+        },
+        "tropical": {
+          "active": true,
+          "atlantic_active_count": 1,
+          "storms": [
+            {
+              "id": "al092026",
+              "name": "Isaias",
+              "classification": "HU",
+              "label": "Hurricane Isaias",
+              "intensity_kt": 85.0,
+              "pressure_mb": 974.0,
+              "latitude": 24.9,
+              "longitude": -88.8,
+              "movement_dir_deg": 45.0,
+              "movement_speed_kt": 13.0,
+              "last_update": "2026-10-09T00:00:00.000Z",
+              "current_distance_mi": 1652,
+              "min_forecast_track_distance_mi": 889,
+              "track": [
+                [
+                  24.9,
+                  -88.8
+                ],
+                [
+                  25.7,
+                  -88.4
+                ],
+                [
+                  28.2,
+                  -87.4
+                ],
+                [
+                  31.0,
+                  -87.2
+                ],
+                [
+                  33.2,
+                  -87.8
+                ],
+                [
+                  35.0,
+                  -87.8
+                ],
+                [
+                  37.0,
+                  -85.0
+                ]
+              ],
+              "cone": [
+                [
+                  24.6463,
+                  -88.8881
+                ],
+                [
+                  24.6426,
+                  -88.8643
+                ],
+                [
+                  24.641,
+                  -88.8385
+                ],
+                [
+                  24.641,
+                  -88.8111
+                ],
+                [
+                  24.6426,
+                  -88.783
+                ],
+                [
+                  24.6463,
+                  -88.7553
+                ],
+                [
+                  24.6517,
+                  -88.7287
+                ],
+                [
+                  24.6587,
+                  -88.7033
+                ],
+                [
+                  24.6674,
+                  -88.6796
+                ],
+                [
+                  24.6831,
+                  -88.6468
+                ],
+                [
+                  24.6891,
+                  -88.6365
+                ],
+                [
+                  24.7018,
+                  -88.6169
+                ],
+                [
+                  24.7235,
+                  -88.5901
+                ],
+                [
+                  24.7394,
+                  -88.5735
+                ],
+                [
+                  24.7562,
+                  -88.558
+                ],
+                [
+                  24.7736,
+                  -88.543
+                ],
+                [
+                  24.7909,
+                  -88.528
+                ],
+                [
+                  24.8078,
+                  -88.5124
+                ],
+                [
+                  24.8246,
+                  -88.4969
+                ],
+                [
+                  24.841,
+                  -88.4809
+                ],
+                [
+                  24.8573,
+                  -88.4648
+                ],
+                [
+                  24.8734,
+                  -88.4485
+                ],
+                [
+                  24.8897,
+                  -88.4325
+                ],
+                [
+                  24.9058,
+                  -88.4162
+                ],
+                [
+                  24.9221,
+                  -88.4001
+                ],
+                [
+                  24.9382,
+                  -88.3838
+                ],
+                [
+                  24.9545,
+                  -88.3678
+                ],
+                [
+                  24.9709,
+                  -88.3517
+                ],
+                [
+                  24.9877,
+                  -88.3362
+                ],
+                [
+                  25.0048,
+                  -88.3209
+                ],
+                [
+                  25.0227,
+                  -88.3064
+                ],
+                [
+                  25.0411,
+                  -88.2924
+                ],
+                [
+                  25.0691,
+                  -88.2719
+                ],
+                [
+                  25.0878,
+                  -88.2582
+                ],
+                [
+                  25.0971,
+                  -88.2513
+                ],
+                [
+                  25.1155,
+                  -88.2373
+                ],
+                [
+                  25.1337,
+                  -88.2231
+                ],
+                [
+                  25.1614,
+                  -88.2023
+                ],
+                [
+                  25.1708,
+                  -88.1954
+                ],
+                [
+                  25.1897,
+                  -88.1819
+                ],
+                [
+                  25.2186,
+                  -88.1623
+                ],
+                [
+                  25.2283,
+                  -88.1558
+                ],
+                [
+                  25.258,
+                  -88.1369
+                ],
+                [
+                  25.268,
+                  -88.1307
+                ],
+                [
+                  25.2984,
+                  -88.1126
+                ],
+                [
+                  25.3087,
+                  -88.1066
+                ],
+                [
+                  25.3294,
+                  -88.095
+                ],
+                [
+                  25.3499,
+                  -88.0831
+                ],
+                [
+                  25.3701,
+                  -88.0709
+                ],
+                [
+                  25.4001,
+                  -88.0523
+                ],
+                [
+                  25.41,
+                  -88.046
+                ],
+                [
+                  25.4401,
+                  -88.0275
+                ],
+                [
+                  25.4605,
+                  -88.0155
+                ],
+                [
+                  25.4707,
+                  -88.0096
+                ],
+                [
+                  25.4915,
+                  -87.9979
+                ],
+                [
+                  25.5119,
+                  -87.986
+                ],
+                [
+                  25.5421,
+                  -87.9676
+                ],
+                [
+                  25.5621,
+                  -87.9552
+                ],
+                [
+                  25.5721,
+                  -87.949
+                ],
+                [
+                  25.5921,
+                  -87.9366
+                ],
+                [
+                  25.6225,
+                  -87.9185
+                ],
+                [
+                  25.6431,
+                  -87.9067
+                ],
+                [
+                  25.6535,
+                  -87.9009
+                ],
+                [
+                  25.6841,
+                  -87.8829
+                ],
+                [
+                  25.6942,
+                  -87.8768
+                ],
+                [
+                  25.7242,
+                  -87.8581
+                ],
+                [
+                  25.7441,
+                  -87.8457
+                ],
+                [
+                  25.7541,
+                  -87.8395
+                ],
+                [
+                  25.7845,
+                  -87.8214
+                ],
+                [
+                  25.8052,
+                  -87.8096
+                ],
+                [
+                  25.8155,
+                  -87.8038
+                ],
+                [
+                  25.836,
+                  -87.7919
+                ],
+                [
+                  25.8662,
+                  -87.7735
+                ],
+                [
+                  25.8862,
+                  -87.7611
+                ],
+                [
+                  25.8962,
+                  -87.7549
+                ],
+                [
+                  25.9161,
+                  -87.7425
+                ],
+                [
+                  25.9364,
+                  -87.7303
+                ],
+                [
+                  25.9568,
+                  -87.7184
+                ],
+                [
+                  25.9776,
+                  -87.7067
+                ],
+                [
+                  26.0082,
+                  -87.6887
+                ],
+                [
+                  26.0183,
+                  -87.6827
+                ],
+                [
+                  26.0482,
+                  -87.664
+                ],
+                [
+                  26.0582,
+                  -87.6578
+                ],
+                [
+                  26.0883,
+                  -87.6393
+                ],
+                [
+                  26.0984,
+                  -87.6332
+                ],
+                [
+                  26.1292,
+                  -87.6155
+                ],
+                [
+                  26.1499,
+                  -87.6037
+                ],
+                [
+                  26.1702,
+                  -87.5917
+                ],
+                [
+                  26.1803,
+                  -87.5856
+                ],
+                [
+                  26.2103,
+                  -87.567
+                ],
+                [
+                  26.2302,
+                  -87.5546
+                ],
+                [
+                  26.2402,
+                  -87.5483
+                ],
+                [
+                  26.2604,
+                  -87.5362
+                ],
+                [
+                  26.2812,
+                  -87.5245
+                ],
+                [
+                  26.3024,
+                  -87.5134
+                ],
+                [
+                  26.3237,
+                  -87.5023
+                ],
+                [
+                  26.345,
+                  -87.4911
+                ],
+                [
+                  26.3662,
+                  -87.48
+                ],
+                [
+                  26.3869,
+                  -87.4684
+                ],
+                [
+                  26.4072,
+                  -87.4562
+                ],
+                [
+                  26.4371,
+                  -87.4376
+                ],
+                [
+                  26.4471,
+                  -87.4313
+                ],
+                [
+                  26.4671,
+                  -87.4189
+                ],
+                [
+                  26.4873,
+                  -87.4068
+                ],
+                [
+                  26.508,
+                  -87.3951
+                ],
+                [
+                  26.5399,
+                  -87.3784
+                ],
+                [
+                  26.5505,
+                  -87.3729
+                ],
+                [
+                  26.5721,
+                  -87.362
+                ],
+                [
+                  26.6046,
+                  -87.346
+                ],
+                [
+                  26.6154,
+                  -87.3405
+                ],
+                [
+                  26.6478,
+                  -87.3243
+                ],
+                [
+                  26.6587,
+                  -87.319
+                ],
+                [
+                  26.6802,
+                  -87.3082
+                ],
+                [
+                  26.7014,
+                  -87.297
+                ],
+                [
+                  26.7227,
+                  -87.2859
+                ],
+                [
+                  26.7535,
+                  -87.2682
+                ],
+                [
+                  26.7636,
+                  -87.2621
+                ],
+                [
+                  26.7836,
+                  -87.2497
+                ],
+                [
+                  26.8036,
+                  -87.2372
+                ],
+                [
+                  26.8235,
+                  -87.2248
+                ],
+                [
+                  26.8438,
+                  -87.2126
+                ],
+                [
+                  26.8645,
+                  -87.201
+                ],
+                [
+                  26.8964,
+                  -87.1843
+                ],
+                [
+                  26.907,
+                  -87.1787
+                ],
+                [
+                  26.9286,
+                  -87.1679
+                ],
+                [
+                  26.9503,
+                  -87.1573
+                ],
+                [
+                  26.9718,
+                  -87.1464
+                ],
+                [
+                  27.0042,
+                  -87.1302
+                ],
+                [
+                  27.0151,
+                  -87.1249
+                ],
+                [
+                  27.0367,
+                  -87.114
+                ],
+                [
+                  27.0582,
+                  -87.1032
+                ],
+                [
+                  27.0907,
+                  -87.0871
+                ],
+                [
+                  27.1122,
+                  -87.0763
+                ],
+                [
+                  27.123,
+                  -87.0708
+                ],
+                [
+                  27.1555,
+                  -87.0548
+                ],
+                [
+                  27.1663,
+                  -87.0493
+                ],
+                [
+                  27.1987,
+                  -87.0332
+                ],
+                [
+                  27.2203,
+                  -87.0224
+                ],
+                [
+                  27.2311,
+                  -87.017
+                ],
+                [
+                  27.2636,
+                  -87.0009
+                ],
+                [
+                  27.2857,
+                  -86.9906
+                ],
+                [
+                  27.2967,
+                  -86.9854
+                ],
+                [
+                  27.3305,
+                  -86.9707
+                ],
+                [
+                  27.3537,
+                  -86.9615
+                ],
+                [
+                  27.3769,
+                  -86.9523
+                ],
+                [
+                  27.4001,
+                  -86.9431
+                ],
+                [
+                  27.4233,
+                  -86.9339
+                ],
+                [
+                  27.4349,
+                  -86.9292
+                ],
+                [
+                  27.4572,
+                  -86.9191
+                ],
+                [
+                  27.4902,
+                  -86.9036
+                ],
+                [
+                  27.5013,
+                  -86.8984
+                ],
+                [
+                  27.5335,
+                  -86.8821
+                ],
+                [
+                  27.5443,
+                  -86.8767
+                ],
+                [
+                  27.5663,
+                  -86.8663
+                ],
+                [
+                  27.5884,
+                  -86.856
+                ],
+                [
+                  27.6222,
+                  -86.8413
+                ],
+                [
+                  27.6454,
+                  -86.8321
+                ],
+                [
+                  27.6686,
+                  -86.8229
+                ],
+                [
+                  27.6918,
+                  -86.8137
+                ],
+                [
+                  27.7151,
+                  -86.8046
+                ],
+                [
+                  27.7382,
+                  -86.7953
+                ],
+                [
+                  27.761,
+                  -86.7857
+                ],
+                [
+                  27.7841,
+                  -86.7764
+                ],
+                [
+                  27.8076,
+                  -86.7675
+                ],
+                [
+                  27.8312,
+                  -86.7587
+                ],
+                [
+                  27.843,
+                  -86.7543
+                ],
+                [
+                  27.8793,
+                  -86.742
+                ],
+                [
+                  27.9036,
+                  -86.734
+                ],
+                [
+                  27.9279,
+                  -86.7258
+                ],
+                [
+                  27.9521,
+                  -86.7177
+                ],
+                [
+                  27.9765,
+                  -86.7096
+                ],
+                [
+                  28.0008,
+                  -86.7016
+                ],
+                [
+                  28.0251,
+                  -86.6935
+                ],
+                [
+                  28.0372,
+                  -86.6893
+                ],
+                [
+                  28.0737,
+                  -86.6773
+                ],
+                [
+                  28.0981,
+                  -86.6693
+                ],
+                [
+                  28.1224,
+                  -86.6612
+                ],
+                [
+                  28.1471,
+                  -86.6535
+                ],
+                [
+                  28.1721,
+                  -86.6461
+                ],
+                [
+                  28.1974,
+                  -86.639
+                ],
+                [
+                  28.2229,
+                  -86.6321
+                ],
+                [
+                  28.2487,
+                  -86.6255
+                ],
+                [
+                  28.2746,
+                  -86.6191
+                ],
+                [
+                  28.3006,
+                  -86.6126
+                ],
+                [
+                  28.3265,
+                  -86.6061
+                ],
+                [
+                  28.3524,
+                  -86.5996
+                ],
+                [
+                  28.3783,
+                  -86.5932
+                ],
+                [
+                  28.4043,
+                  -86.5867
+                ],
+                [
+                  28.4302,
+                  -86.5802
+                ],
+                [
+                  28.4561,
+                  -86.5738
+                ],
+                [
+                  28.482,
+                  -86.5673
+                ],
+                [
+                  28.508,
+                  -86.5608
+                ],
+                [
+                  28.5339,
+                  -86.5543
+                ],
+                [
+                  28.5598,
+                  -86.5479
+                ],
+                [
+                  28.5857,
+                  -86.5414
+                ],
+                [
+                  28.5987,
+                  -86.5382
+                ],
+                [
+                  28.6376,
+                  -86.5285
+                ],
+                [
+                  28.6637,
+                  -86.5221
+                ],
+                [
+                  28.69,
+                  -86.516
+                ],
+                [
+                  28.7165,
+                  -86.5102
+                ],
+                [
+                  28.7434,
+                  -86.5046
+                ],
+                [
+                  28.7705,
+                  -86.4993
+                ],
+                [
+                  28.7976,
+                  -86.494
+                ],
+                [
+                  28.8245,
+                  -86.4886
+                ],
+                [
+                  28.8515,
+                  -86.4832
+                ],
+                [
+                  28.8785,
+                  -86.4777
+                ],
+                [
+                  28.9054,
+                  -86.4723
+                ],
+                [
+                  28.9325,
+                  -86.467
+                ],
+                [
+                  28.9596,
+                  -86.4617
+                ],
+                [
+                  28.9866,
+                  -86.4562
+                ],
+                [
+                  29.0,
+                  -86.4535
+                ],
+                [
+                  29.0405,
+                  -86.4454
+                ],
+                [
+                  29.0675,
+                  -86.4399
+                ],
+                [
+                  29.0945,
+                  -86.4347
+                ],
+                [
+                  29.1216,
+                  -86.4293
+                ],
+                [
+                  29.1486,
+                  -86.4239
+                ],
+                [
+                  29.1621,
+                  -86.4212
+                ],
+                [
+                  29.2032,
+                  -86.4137
+                ],
+                [
+                  29.2312,
+                  -86.4093
+                ],
+                [
+                  29.2598,
+                  -86.4055
+                ],
+                [
+                  29.289,
+                  -86.4023
+                ],
+                [
+                  29.3182,
+                  -86.3991
+                ],
+                [
+                  29.3468,
+                  -86.3953
+                ],
+                [
+                  29.3748,
+                  -86.3909
+                ],
+                [
+                  29.4024,
+                  -86.3861
+                ],
+                [
+                  29.4299,
+                  -86.3812
+                ],
+                [
+                  29.4575,
+                  -86.3764
+                ],
+                [
+                  29.4855,
+                  -86.372
+                ],
+                [
+                  29.5138,
+                  -86.3679
+                ],
+                [
+                  29.5418,
+                  -86.3635
+                ],
+                [
+                  29.5694,
+                  -86.3587
+                ],
+                [
+                  29.5969,
+                  -86.3538
+                ],
+                [
+                  29.6245,
+                  -86.349
+                ],
+                [
+                  29.6526,
+                  -86.3447
+                ],
+                [
+                  29.6816,
+                  -86.3413
+                ],
+                [
+                  29.7114,
+                  -86.3388
+                ],
+                [
+                  29.7415,
+                  -86.3364
+                ],
+                [
+                  29.7713,
+                  -86.3338
+                ],
+                [
+                  29.8004,
+                  -86.3305
+                ],
+                [
+                  29.8285,
+                  -86.3262
+                ],
+                [
+                  29.8561,
+                  -86.3214
+                ],
+                [
+                  29.8837,
+                  -86.3166
+                ],
+                [
+                  29.9119,
+                  -86.3123
+                ],
+                [
+                  29.941,
+                  -86.3091
+                ],
+                [
+                  29.9714,
+                  -86.3071
+                ],
+                [
+                  30.0025,
+                  -86.3058
+                ],
+                [
+                  30.0338,
+                  -86.3047
+                ],
+                [
+                  30.065,
+                  -86.3034
+                ],
+                [
+                  30.0953,
+                  -86.3014
+                ],
+                [
+                  30.1245,
+                  -86.2981
+                ],
+                [
+                  30.1526,
+                  -86.2939
+                ],
+                [
+                  30.1802,
+                  -86.2891
+                ],
+                [
+                  30.2078,
+                  -86.2843
+                ],
+                [
+                  30.2359,
+                  -86.28
+                ],
+                [
+                  30.2651,
+                  -86.2768
+                ],
+                [
+                  30.2954,
+                  -86.2747
+                ],
+                [
+                  30.3267,
+                  -86.2735
+                ],
+                [
+                  30.3586,
+                  -86.273
+                ],
+                [
+                  30.3909,
+                  -86.2729
+                ],
+                [
+                  30.4232,
+                  -86.2729
+                ],
+                [
+                  30.4557,
+                  -86.2729
+                ],
+                [
+                  30.4881,
+                  -86.2729
+                ],
+                [
+                  30.5204,
+                  -86.2728
+                ],
+                [
+                  30.5522,
+                  -86.2722
+                ],
+                [
+                  30.5835,
+                  -86.2711
+                ],
+                [
+                  30.6138,
+                  -86.269
+                ],
+                [
+                  30.643,
+                  -86.2658
+                ],
+                [
+                  30.6711,
+                  -86.2615
+                ],
+                [
+                  30.685,
+                  -86.2592
+                ],
+                [
+                  30.7263,
+                  -86.2519
+                ],
+                [
+                  30.7545,
+                  -86.2476
+                ],
+                [
+                  30.7836,
+                  -86.2444
+                ],
+                [
+                  30.814,
+                  -86.2423
+                ],
+                [
+                  30.8452,
+                  -86.2412
+                ],
+                [
+                  30.8771,
+                  -86.2407
+                ],
+                [
+                  30.9094,
+                  -86.2405
+                ],
+                [
+                  30.9418,
+                  -86.2405
+                ],
+                [
+                  30.9742,
+                  -86.2405
+                ],
+                [
+                  31.0066,
+                  -86.2405
+                ],
+                [
+                  31.039,
+                  -86.2405
+                ],
+                [
+                  31.0714,
+                  -86.2405
+                ],
+                [
+                  31.1038,
+                  -86.2405
+                ],
+                [
+                  31.1362,
+                  -86.2405
+                ],
+                [
+                  31.1685,
+                  -86.2407
+                ],
+                [
+                  31.2004,
+                  -86.2412
+                ],
+                [
+                  31.2316,
+                  -86.2423
+                ],
+                [
+                  31.262,
+                  -86.2444
+                ],
+                [
+                  31.2911,
+                  -86.2476
+                ],
+                [
+                  31.3193,
+                  -86.2519
+                ],
+                [
+                  31.3469,
+                  -86.2567
+                ],
+                [
+                  31.3607,
+                  -86.259
+                ],
+                [
+                  31.4026,
+                  -86.2658
+                ],
+                [
+                  31.4318,
+                  -86.269
+                ],
+                [
+                  31.4472,
+                  -86.2698
+                ],
+                [
+                  31.4932,
+                  -86.2724
+                ],
+                [
+                  31.5246,
+                  -86.2734
+                ],
+                [
+                  31.5557,
+                  -86.2747
+                ],
+                [
+                  31.586,
+                  -86.2768
+                ],
+                [
+                  31.6152,
+                  -86.28
+                ],
+                [
+                  31.6433,
+                  -86.2843
+                ],
+                [
+                  31.671,
+                  -86.2891
+                ],
+                [
+                  31.6984,
+                  -86.294
+                ],
+                [
+                  31.726,
+                  -86.2988
+                ],
+                [
+                  31.754,
+                  -86.3032
+                ],
+                [
+                  31.7823,
+                  -86.3073
+                ],
+                [
+                  31.7962,
+                  -86.3096
+                ],
+                [
+                  31.8379,
+                  -86.3165
+                ],
+                [
+                  31.8654,
+                  -86.3214
+                ],
+                [
+                  31.8929,
+                  -86.3263
+                ],
+                [
+                  31.9205,
+                  -86.3311
+                ],
+                [
+                  31.9485,
+                  -86.3355
+                ],
+                [
+                  31.9767,
+                  -86.3397
+                ],
+                [
+                  31.9906,
+                  -86.342
+                ],
+                [
+                  32.0322,
+                  -86.349
+                ],
+                [
+                  32.0592,
+                  -86.3544
+                ],
+                [
+                  32.0856,
+                  -86.3604
+                ],
+                [
+                  32.1117,
+                  -86.3667
+                ],
+                [
+                  32.1376,
+                  -86.3732
+                ],
+                [
+                  32.1507,
+                  -86.3763
+                ],
+                [
+                  32.19,
+                  -86.3856
+                ],
+                [
+                  32.2166,
+                  -86.3914
+                ],
+                [
+                  32.2434,
+                  -86.397
+                ],
+                [
+                  32.2705,
+                  -86.4023
+                ],
+                [
+                  32.2976,
+                  -86.4076
+                ],
+                [
+                  32.3244,
+                  -86.4132
+                ],
+                [
+                  32.351,
+                  -86.419
+                ],
+                [
+                  32.3773,
+                  -86.4251
+                ],
+                [
+                  32.4034,
+                  -86.4314
+                ],
+                [
+                  32.4293,
+                  -86.4379
+                ],
+                [
+                  32.4554,
+                  -86.4442
+                ],
+                [
+                  32.4817,
+                  -86.4503
+                ],
+                [
+                  32.5082,
+                  -86.4561
+                ],
+                [
+                  32.5351,
+                  -86.4617
+                ],
+                [
+                  32.5622,
+                  -86.467
+                ],
+                [
+                  32.5892,
+                  -86.4723
+                ],
+                [
+                  32.6162,
+                  -86.4777
+                ],
+                [
+                  32.6432,
+                  -86.4832
+                ],
+                [
+                  32.6701,
+                  -86.4886
+                ],
+                [
+                  32.6971,
+                  -86.494
+                ],
+                [
+                  32.7242,
+                  -86.4993
+                ],
+                [
+                  32.7513,
+                  -86.5046
+                ],
+                [
+                  32.7648,
+                  -86.5074
+                ],
+                [
+                  32.8052,
+                  -86.5155
+                ],
+                [
+                  32.8322,
+                  -86.521
+                ],
+                [
+                  32.8591,
+                  -86.5264
+                ],
+                [
+                  32.8862,
+                  -86.5317
+                ],
+                [
+                  32.9133,
+                  -86.537
+                ],
+                [
+                  32.9403,
+                  -86.5425
+                ],
+                [
+                  32.9539,
+                  -86.545
+                ],
+                [
+                  32.9949,
+                  -86.5527
+                ],
+                [
+                  33.023,
+                  -86.5569
+                ],
+                [
+                  33.0522,
+                  -86.5602
+                ],
+                [
+                  33.0825,
+                  -86.5622
+                ],
+                [
+                  33.1137,
+                  -86.5634
+                ],
+                [
+                  33.1456,
+                  -86.5639
+                ],
+                [
+                  33.1779,
+                  -86.5641
+                ],
+                [
+                  33.2103,
+                  -86.5641
+                ],
+                [
+                  33.2427,
+                  -86.5641
+                ],
+                [
+                  33.2751,
+                  -86.5641
+                ],
+                [
+                  33.3075,
+                  -86.5641
+                ],
+                [
+                  33.3399,
+                  -86.5641
+                ],
+                [
+                  33.3722,
+                  -86.5642
+                ],
+                [
+                  33.4041,
+                  -86.5647
+                ],
+                [
+                  33.4353,
+                  -86.5659
+                ],
+                [
+                  33.4657,
+                  -86.5679
+                ],
+                [
+                  33.4948,
+                  -86.5712
+                ],
+                [
+                  33.523,
+                  -86.5755
+                ],
+                [
+                  33.5506,
+                  -86.5802
+                ],
+                [
+                  33.5782,
+                  -86.585
+                ],
+                [
+                  33.6063,
+                  -86.5893
+                ],
+                [
+                  33.6355,
+                  -86.5925
+                ],
+                [
+                  33.6658,
+                  -86.5946
+                ],
+                [
+                  33.6971,
+                  -86.5958
+                ],
+                [
+                  33.729,
+                  -86.5963
+                ],
+                [
+                  33.7611,
+                  -86.5965
+                ],
+                [
+                  33.793,
+                  -86.597
+                ],
+                [
+                  33.8242,
+                  -86.5982
+                ],
+                [
+                  33.8546,
+                  -86.6003
+                ],
+                [
+                  33.8837,
+                  -86.6035
+                ],
+                [
+                  33.9119,
+                  -86.6078
+                ],
+                [
+                  33.9395,
+                  -86.6126
+                ],
+                [
+                  33.967,
+                  -86.6172
+                ],
+                [
+                  33.9946,
+                  -86.621
+                ],
+                [
+                  34.0226,
+                  -86.6231
+                ],
+                [
+                  34.0507,
+                  -86.6229
+                ],
+                [
+                  34.0651,
+                  -86.6219
+                ],
+                [
+                  34.1045,
+                  -86.6153
+                ],
+                [
+                  34.1294,
+                  -86.6081
+                ],
+                [
+                  34.1414,
+                  -86.6039
+                ],
+                [
+                  34.1635,
+                  -86.5936
+                ],
+                [
+                  34.1936,
+                  -86.5751
+                ],
+                [
+                  34.2121,
+                  -86.5612
+                ],
+                [
+                  34.221,
+                  -86.554
+                ],
+                [
+                  34.2376,
+                  -86.5382
+                ],
+                [
+                  34.2608,
+                  -86.5128
+                ],
+                [
+                  34.2682,
+                  -86.504
+                ],
+                [
+                  34.2752,
+                  -86.4948
+                ],
+                [
+                  34.2957,
+                  -86.4667
+                ],
+                [
+                  34.3089,
+                  -86.4476
+                ],
+                [
+                  34.3219,
+                  -86.4282
+                ],
+                [
+                  34.3349,
+                  -86.4088
+                ],
+                [
+                  34.3413,
+                  -86.3991
+                ],
+                [
+                  34.3608,
+                  -86.3699
+                ],
+                [
+                  34.3737,
+                  -86.3505
+                ],
+                [
+                  34.3867,
+                  -86.3311
+                ],
+                [
+                  34.3994,
+                  -86.3114
+                ],
+                [
+                  34.4056,
+                  -86.3015
+                ],
+                [
+                  34.424,
+                  -86.2713
+                ],
+                [
+                  34.436,
+                  -86.2509
+                ],
+                [
+                  34.4418,
+                  -86.2405
+                ],
+                [
+                  34.4536,
+                  -86.22
+                ],
+                [
+                  34.4656,
+                  -86.1996
+                ],
+                [
+                  34.4842,
+                  -86.1696
+                ],
+                [
+                  34.4966,
+                  -86.1497
+                ],
+                [
+                  34.5029,
+                  -86.1397
+                ],
+                [
+                  34.5152,
+                  -86.1197
+                ],
+                [
+                  34.5271,
+                  -86.0992
+                ],
+                [
+                  34.5385,
+                  -86.0782
+                ],
+                [
+                  34.5497,
+                  -86.057
+                ],
+                [
+                  34.5608,
+                  -86.0358
+                ],
+                [
+                  34.572,
+                  -86.0146
+                ],
+                [
+                  34.5892,
+                  -85.9833
+                ],
+                [
+                  34.6014,
+                  -85.9631
+                ],
+                [
+                  34.6076,
+                  -85.9531
+                ],
+                [
+                  34.62,
+                  -85.9332
+                ],
+                [
+                  34.6325,
+                  -85.9133
+                ],
+                [
+                  34.6448,
+                  -85.8932
+                ],
+                [
+                  34.6567,
+                  -85.8727
+                ],
+                [
+                  34.6681,
+                  -85.8518
+                ],
+                [
+                  34.6793,
+                  -85.8306
+                ],
+                [
+                  34.6903,
+                  -85.8092
+                ],
+                [
+                  34.7011,
+                  -85.7876
+                ],
+                [
+                  34.7118,
+                  -85.766
+                ],
+                [
+                  34.7227,
+                  -85.7445
+                ],
+                [
+                  34.7335,
+                  -85.7229
+                ],
+                [
+                  34.7442,
+                  -85.7013
+                ],
+                [
+                  34.7551,
+                  -85.6798
+                ],
+                [
+                  34.7659,
+                  -85.6582
+                ],
+                [
+                  34.7821,
+                  -85.6258
+                ],
+                [
+                  34.7875,
+                  -85.6151
+                ],
+                [
+                  34.7983,
+                  -85.5935
+                ],
+                [
+                  34.809,
+                  -85.5719
+                ],
+                [
+                  34.8254,
+                  -85.5397
+                ],
+                [
+                  34.836,
+                  -85.5179
+                ],
+                [
+                  34.8415,
+                  -85.5072
+                ],
+                [
+                  34.8523,
+                  -85.4857
+                ],
+                [
+                  34.8631,
+                  -85.4641
+                ],
+                [
+                  34.8793,
+                  -85.4317
+                ],
+                [
+                  34.8849,
+                  -85.4211
+                ],
+                [
+                  34.9016,
+                  -85.3893
+                ],
+                [
+                  34.9133,
+                  -85.3686
+                ],
+                [
+                  34.9194,
+                  -85.3585
+                ],
+                [
+                  34.9317,
+                  -85.3384
+                ],
+                [
+                  34.9503,
+                  -85.3085
+                ],
+                [
+                  34.9628,
+                  -85.2886
+                ],
+                [
+                  34.9689,
+                  -85.2785
+                ],
+                [
+                  34.9808,
+                  -85.2581
+                ],
+                [
+                  34.9922,
+                  -85.2371
+                ],
+                [
+                  35.0034,
+                  -85.2159
+                ],
+                [
+                  35.0198,
+                  -85.1838
+                ],
+                [
+                  35.0305,
+                  -85.162
+                ],
+                [
+                  35.0359,
+                  -85.1513
+                ],
+                [
+                  35.0468,
+                  -85.1298
+                ],
+                [
+                  35.0575,
+                  -85.1082
+                ],
+                [
+                  35.0737,
+                  -85.0759
+                ],
+                [
+                  35.0792,
+                  -85.0651
+                ],
+                [
+                  35.0953,
+                  -85.0326
+                ],
+                [
+                  35.1062,
+                  -85.0111
+                ],
+                [
+                  35.1116,
+                  -85.0004
+                ],
+                [
+                  35.1224,
+                  -84.9788
+                ],
+                [
+                  35.1386,
+                  -84.9464
+                ],
+                [
+                  35.1495,
+                  -84.9249
+                ],
+                [
+                  35.1548,
+                  -84.9141
+                ],
+                [
+                  35.1655,
+                  -84.8925
+                ],
+                [
+                  35.1764,
+                  -84.871
+                ],
+                [
+                  35.1925,
+                  -84.8385
+                ],
+                [
+                  35.1979,
+                  -84.8278
+                ],
+                [
+                  35.2143,
+                  -84.7956
+                ],
+                [
+                  35.2196,
+                  -84.7847
+                ],
+                [
+                  35.2303,
+                  -84.7631
+                ],
+                [
+                  35.2412,
+                  -84.7416
+                ],
+                [
+                  35.252,
+                  -84.72
+                ],
+                [
+                  35.2627,
+                  -84.6984
+                ],
+                [
+                  35.2736,
+                  -84.6769
+                ],
+                [
+                  35.2897,
+                  -84.6444
+                ],
+                [
+                  35.3006,
+                  -84.6229
+                ],
+                [
+                  35.306,
+                  -84.6122
+                ],
+                [
+                  35.3168,
+                  -84.5906
+                ],
+                [
+                  35.333,
+                  -84.5582
+                ],
+                [
+                  35.3385,
+                  -84.5475
+                ],
+                [
+                  35.3492,
+                  -84.5259
+                ],
+                [
+                  35.36,
+                  -84.5042
+                ],
+                [
+                  35.3709,
+                  -84.4828
+                ],
+                [
+                  35.3869,
+                  -84.4503
+                ],
+                [
+                  35.3924,
+                  -84.4395
+                ],
+                [
+                  35.4034,
+                  -84.4182
+                ],
+                [
+                  35.4145,
+                  -84.397
+                ],
+                [
+                  35.426,
+                  -84.376
+                ],
+                [
+                  35.4379,
+                  -84.3555
+                ],
+                [
+                  35.4502,
+                  -84.3355
+                ],
+                [
+                  35.4689,
+                  -84.3056
+                ],
+                [
+                  35.4813,
+                  -84.2857
+                ],
+                [
+                  35.4874,
+                  -84.2756
+                ],
+                [
+                  35.5052,
+                  -84.2448
+                ],
+                [
+                  35.5107,
+                  -84.2342
+                ],
+                [
+                  35.5275,
+                  -84.2023
+                ],
+                [
+                  35.5329,
+                  -84.1916
+                ],
+                [
+                  35.5437,
+                  -84.17
+                ],
+                [
+                  35.5599,
+                  -84.1376
+                ],
+                [
+                  35.5653,
+                  -84.1269
+                ],
+                [
+                  35.5761,
+                  -84.1053
+                ],
+                [
+                  35.5868,
+                  -84.0837
+                ],
+                [
+                  35.5978,
+                  -84.0623
+                ],
+                [
+                  35.609,
+                  -84.0411
+                ],
+                [
+                  35.6262,
+                  -84.0098
+                ],
+                [
+                  35.6323,
+                  -83.9997
+                ],
+                [
+                  35.6509,
+                  -83.9697
+                ],
+                [
+                  35.6571,
+                  -83.9597
+                ],
+                [
+                  35.6758,
+                  -83.9298
+                ],
+                [
+                  35.6879,
+                  -83.9096
+                ],
+                [
+                  35.6939,
+                  -83.8994
+                ],
+                [
+                  35.7057,
+                  -83.8788
+                ],
+                [
+                  35.7235,
+                  -83.848
+                ],
+                [
+                  35.7296,
+                  -83.8379
+                ],
+                [
+                  35.7481,
+                  -83.8079
+                ],
+                [
+                  35.7608,
+                  -83.7882
+                ],
+                [
+                  35.7673,
+                  -83.7785
+                ],
+                [
+                  35.7867,
+                  -83.7494
+                ],
+                [
+                  35.7932,
+                  -83.7397
+                ],
+                [
+                  35.8126,
+                  -83.7106
+                ],
+                [
+                  35.8191,
+                  -83.7009
+                ],
+                [
+                  35.8321,
+                  -83.6815
+                ],
+                [
+                  35.8518,
+                  -83.6526
+                ],
+                [
+                  35.8653,
+                  -83.6337
+                ],
+                [
+                  35.8793,
+                  -83.6153
+                ],
+                [
+                  35.8938,
+                  -83.5975
+                ],
+                [
+                  35.9091,
+                  -83.5804
+                ],
+                [
+                  35.9327,
+                  -83.5554
+                ],
+                [
+                  35.9407,
+                  -83.5473
+                ],
+                [
+                  35.9568,
+                  -83.531
+                ],
+                [
+                  35.9731,
+                  -83.5149
+                ],
+                [
+                  35.9892,
+                  -83.4986
+                ],
+                [
+                  36.0055,
+                  -83.4826
+                ],
+                [
+                  36.0216,
+                  -83.4663
+                ],
+                [
+                  36.0379,
+                  -83.4502
+                ],
+                [
+                  36.054,
+                  -83.4339
+                ],
+                [
+                  36.0784,
+                  -83.4097
+                ],
+                [
+                  36.0864,
+                  -83.4016
+                ],
+                [
+                  36.1109,
+                  -83.3775
+                ],
+                [
+                  36.1275,
+                  -83.3617
+                ],
+                [
+                  36.1445,
+                  -83.3463
+                ],
+                [
+                  36.1531,
+                  -83.3387
+                ],
+                [
+                  36.1801,
+                  -83.3172
+                ],
+                [
+                  36.1893,
+                  -83.3102
+                ],
+                [
+                  36.2083,
+                  -83.2967
+                ],
+                [
+                  36.2372,
+                  -83.2771
+                ],
+                [
+                  36.2568,
+                  -83.2642
+                ],
+                [
+                  36.2766,
+                  -83.2517
+                ],
+                [
+                  36.2866,
+                  -83.2455
+                ],
+                [
+                  36.3068,
+                  -83.2333
+                ],
+                [
+                  36.3382,
+                  -83.2161
+                ],
+                [
+                  36.3594,
+                  -83.205
+                ],
+                [
+                  36.3808,
+                  -83.194
+                ],
+                [
+                  36.3916,
+                  -83.1885
+                ],
+                [
+                  36.4134,
+                  -83.1779
+                ],
+                [
+                  36.4456,
+                  -83.1616
+                ],
+                [
+                  36.4673,
+                  -83.1509
+                ],
+                [
+                  36.4889,
+                  -83.1401
+                ],
+                [
+                  36.4997,
+                  -83.1347
+                ],
+                [
+                  36.5322,
+                  -83.1187
+                ],
+                [
+                  36.5544,
+                  -83.1084
+                ],
+                [
+                  36.5655,
+                  -83.1034
+                ],
+                [
+                  36.5884,
+                  -83.0938
+                ],
+                [
+                  36.6122,
+                  -83.0853
+                ],
+                [
+                  36.6494,
+                  -83.0739
+                ],
+                [
+                  36.6748,
+                  -83.0669
+                ],
+                [
+                  36.6876,
+                  -83.0635
+                ],
+                [
+                  36.7272,
+                  -83.0545
+                ],
+                [
+                  36.7543,
+                  -83.0492
+                ],
+                [
+                  36.7823,
+                  -83.0448
+                ],
+                [
+                  36.8113,
+                  -83.0414
+                ],
+                [
+                  36.8411,
+                  -83.0388
+                ],
+                [
+                  36.8712,
+                  -83.0365
+                ],
+                [
+                  36.9009,
+                  -83.034
+                ],
+                [
+                  36.9294,
+                  -83.0312
+                ],
+                [
+                  36.9564,
+                  -83.0281
+                ],
+                [
+                  36.9819,
+                  -83.0254
+                ],
+                [
+                  37.0063,
+                  -83.0238
+                ],
+                [
+                  37.0301,
+                  -83.0238
+                ],
+                [
+                  37.0545,
+                  -83.0254
+                ],
+                [
+                  37.08,
+                  -83.0281
+                ],
+                [
+                  37.107,
+                  -83.0312
+                ],
+                [
+                  37.1355,
+                  -83.034
+                ],
+                [
+                  37.1652,
+                  -83.0365
+                ],
+                [
+                  37.1953,
+                  -83.0388
+                ],
+                [
+                  37.2251,
+                  -83.0414
+                ],
+                [
+                  37.254,
+                  -83.0449
+                ],
+                [
+                  37.2816,
+                  -83.0497
+                ],
+                [
+                  37.3081,
+                  -83.0556
+                ],
+                [
+                  37.3206,
+                  -83.0593
+                ],
+                [
+                  37.3584,
+                  -83.0701
+                ],
+                [
+                  37.3827,
+                  -83.0782
+                ],
+                [
+                  37.3949,
+                  -83.0822
+                ],
+                [
+                  37.4313,
+                  -83.0943
+                ],
+                [
+                  37.4431,
+                  -83.0987
+                ],
+                [
+                  37.467,
+                  -83.1073
+                ],
+                [
+                  37.5021,
+                  -83.1207
+                ],
+                [
+                  37.5248,
+                  -83.1304
+                ],
+                [
+                  37.547,
+                  -83.1407
+                ],
+                [
+                  37.569,
+                  -83.151
+                ],
+                [
+                  37.5908,
+                  -83.1616
+                ],
+                [
+                  37.6123,
+                  -83.1725
+                ],
+                [
+                  37.6232,
+                  -83.1778
+                ],
+                [
+                  37.6447,
+                  -83.1887
+                ],
+                [
+                  37.677,
+                  -83.205
+                ],
+                [
+                  37.6983,
+                  -83.2161
+                ],
+                [
+                  37.7191,
+                  -83.2276
+                ],
+                [
+                  37.7392,
+                  -83.2399
+                ],
+                [
+                  37.7587,
+                  -83.2528
+                ],
+                [
+                  37.7776,
+                  -83.2663
+                ],
+                [
+                  37.796,
+                  -83.2803
+                ],
+                [
+                  37.8143,
+                  -83.2944
+                ],
+                [
+                  37.8328,
+                  -83.3082
+                ],
+                [
+                  37.8515,
+                  -83.322
+                ],
+                [
+                  37.8701,
+                  -83.3357
+                ],
+                [
+                  37.8887,
+                  -83.3495
+                ],
+                [
+                  37.9158,
+                  -83.371
+                ],
+                [
+                  37.9243,
+                  -83.3786
+                ],
+                [
+                  37.9413,
+                  -83.394
+                ],
+                [
+                  37.9579,
+                  -83.4098
+                ],
+                [
+                  37.9742,
+                  -83.4259
+                ],
+                [
+                  37.9985,
+                  -83.4502
+                ],
+                [
+                  38.0065,
+                  -83.4584
+                ],
+                [
+                  38.0301,
+                  -83.4833
+                ],
+                [
+                  38.0378,
+                  -83.4919
+                ],
+                [
+                  38.0599,
+                  -83.5183
+                ],
+                [
+                  38.0739,
+                  -83.5367
+                ],
+                [
+                  38.0808,
+                  -83.546
+                ],
+                [
+                  38.1014,
+                  -83.5739
+                ],
+                [
+                  38.1083,
+                  -83.5832
+                ],
+                [
+                  38.1221,
+                  -83.6017
+                ],
+                [
+                  38.1363,
+                  -83.62
+                ],
+                [
+                  38.1574,
+                  -83.6474
+                ],
+                [
+                  38.1643,
+                  -83.6567
+                ],
+                [
+                  38.1779,
+                  -83.6755
+                ],
+                [
+                  38.2043,
+                  -83.7138
+                ],
+                [
+                  38.2108,
+                  -83.7235
+                ],
+                [
+                  38.2238,
+                  -83.7429
+                ],
+                [
+                  38.2302,
+                  -83.7526
+                ],
+                [
+                  38.2432,
+                  -83.772
+                ],
+                [
+                  38.2562,
+                  -83.7915
+                ],
+                [
+                  38.2691,
+                  -83.8109
+                ],
+                [
+                  38.2883,
+                  -83.8402
+                ],
+                [
+                  38.2946,
+                  -83.8502
+                ],
+                [
+                  38.313,
+                  -83.8804
+                ],
+                [
+                  38.3246,
+                  -83.9011
+                ],
+                [
+                  38.3355,
+                  -83.9226
+                ],
+                [
+                  38.3512,
+                  -83.9554
+                ],
+                [
+                  38.3563,
+                  -83.9665
+                ],
+                [
+                  38.3656,
+                  -83.9896
+                ],
+                [
+                  38.3747,
+                  -84.0129
+                ],
+                [
+                  38.384,
+                  -84.0359
+                ],
+                [
+                  38.3976,
+                  -84.0709
+                ],
+                [
+                  38.4021,
+                  -84.0825
+                ],
+                [
+                  38.4165,
+                  -84.1167
+                ],
+                [
+                  38.4259,
+                  -84.1397
+                ],
+                [
+                  38.4304,
+                  -84.1513
+                ],
+                [
+                  38.4436,
+                  -84.1867
+                ],
+                [
+                  38.4522,
+                  -84.2105
+                ],
+                [
+                  38.4563,
+                  -84.2225
+                ],
+                [
+                  38.4644,
+                  -84.2468
+                ],
+                [
+                  38.4764,
+                  -84.2833
+                ],
+                [
+                  38.4804,
+                  -84.2955
+                ],
+                [
+                  38.4916,
+                  -84.3329
+                ],
+                [
+                  38.4952,
+                  -84.3455
+                ],
+                [
+                  38.5056,
+                  -84.3836
+                ],
+                [
+                  38.5122,
+                  -84.4094
+                ],
+                [
+                  38.5185,
+                  -84.4354
+                ],
+                [
+                  38.5245,
+                  -84.4618
+                ],
+                [
+                  38.5274,
+                  -84.4751
+                ],
+                [
+                  38.5349,
+                  -84.5161
+                ],
+                [
+                  38.5393,
+                  -84.5441
+                ],
+                [
+                  38.5434,
+                  -84.5723
+                ],
+                [
+                  38.5478,
+                  -84.6003
+                ],
+                [
+                  38.5526,
+                  -84.6278
+                ],
+                [
+                  38.5576,
+                  -84.6553
+                ],
+                [
+                  38.5624,
+                  -84.6828
+                ],
+                [
+                  38.5667,
+                  -84.7109
+                ],
+                [
+                  38.5699,
+                  -84.74
+                ],
+                [
+                  38.5712,
+                  -84.7549
+                ],
+                [
+                  38.5731,
+                  -84.8015
+                ],
+                [
+                  38.5737,
+                  -84.8333
+                ],
+                [
+                  38.5738,
+                  -84.8655
+                ],
+                [
+                  38.5738,
+                  -84.8979
+                ],
+                [
+                  38.5738,
+                  -84.9303
+                ],
+                [
+                  38.5738,
+                  -84.9626
+                ],
+                [
+                  38.5738,
+                  -84.995
+                ],
+                [
+                  38.5738,
+                  -85.0273
+                ],
+                [
+                  38.5738,
+                  -85.0597
+                ],
+                [
+                  38.5738,
+                  -85.092
+                ],
+                [
+                  38.5738,
+                  -85.1244
+                ],
+                [
+                  38.5737,
+                  -85.1566
+                ],
+                [
+                  38.5731,
+                  -85.1884
+                ],
+                [
+                  38.572,
+                  -85.2196
+                ],
+                [
+                  38.5707,
+                  -85.2345
+                ],
+                [
+                  38.5666,
+                  -85.279
+                ],
+                [
+                  38.5624,
+                  -85.3071
+                ],
+                [
+                  38.5576,
+                  -85.3347
+                ],
+                [
+                  38.5526,
+                  -85.3621
+                ],
+                [
+                  38.5478,
+                  -85.3897
+                ],
+                [
+                  38.5434,
+                  -85.4176
+                ],
+                [
+                  38.5393,
+                  -85.4458
+                ],
+                [
+                  38.537,
+                  -85.4597
+                ],
+                [
+                  38.53,
+                  -85.5012
+                ],
+                [
+                  38.5245,
+                  -85.5281
+                ],
+                [
+                  38.5185,
+                  -85.5545
+                ],
+                [
+                  38.5122,
+                  -85.5805
+                ],
+                [
+                  38.5056,
+                  -85.6063
+                ],
+                [
+                  38.4987,
+                  -85.6318
+                ],
+                [
+                  38.4916,
+                  -85.657
+                ],
+                [
+                  38.4842,
+                  -85.682
+                ],
+                [
+                  38.4764,
+                  -85.7066
+                ],
+                [
+                  38.4684,
+                  -85.7309
+                ],
+                [
+                  38.4603,
+                  -85.7553
+                ],
+                [
+                  38.4523,
+                  -85.7796
+                ],
+                [
+                  38.4442,
+                  -85.8038
+                ],
+                [
+                  38.436,
+                  -85.828
+                ],
+                [
+                  38.4279,
+                  -85.8523
+                ],
+                [
+                  38.4198,
+                  -85.8765
+                ],
+                [
+                  38.4112,
+                  -85.9003
+                ],
+                [
+                  38.4024,
+                  -85.9239
+                ],
+                [
+                  38.3933,
+                  -85.9472
+                ],
+                [
+                  38.3836,
+                  -85.9698
+                ],
+                [
+                  38.3682,
+                  -86.0029
+                ],
+                [
+                  38.363,
+                  -86.0139
+                ],
+                [
+                  38.3524,
+                  -86.0357
+                ],
+                [
+                  38.336,
+                  -86.0679
+                ],
+                [
+                  38.32,
+                  -86.1004
+                ],
+                [
+                  38.32,
+                  -86.1004
+                ],
+                [
+                  38.3034,
+                  -86.1323
+                ],
+                [
+                  38.2978,
+                  -86.143
+                ],
+                [
+                  38.2805,
+                  -86.1743
+                ],
+                [
+                  38.2745,
+                  -86.1844
+                ],
+                [
+                  38.2559,
+                  -86.2144
+                ],
+                [
+                  38.2496,
+                  -86.2242
+                ],
+                [
+                  38.2236,
+                  -86.2631
+                ],
+                [
+                  38.217,
+                  -86.2726
+                ],
+                [
+                  38.2103,
+                  -86.2821
+                ],
+                [
+                  38.1898,
+                  -86.3101
+                ],
+                [
+                  38.1687,
+                  -86.3376
+                ],
+                [
+                  38.1546,
+                  -86.3558
+                ],
+                [
+                  38.1475,
+                  -86.365
+                ],
+                [
+                  38.1407,
+                  -86.3743
+                ],
+                [
+                  38.1132,
+                  -86.4116
+                ],
+                [
+                  38.1063,
+                  -86.4209
+                ],
+                [
+                  38.0923,
+                  -86.4393
+                ],
+                [
+                  38.0702,
+                  -86.4657
+                ],
+                [
+                  38.0625,
+                  -86.4742
+                ],
+                [
+                  38.0547,
+                  -86.4827
+                ],
+                [
+                  38.0311,
+                  -86.5076
+                ],
+                [
+                  38.0156,
+                  -86.5245
+                ],
+                [
+                  38.0003,
+                  -86.5416
+                ],
+                [
+                  37.9858,
+                  -86.5594
+                ],
+                [
+                  37.9718,
+                  -86.5778
+                ],
+                [
+                  37.958,
+                  -86.5964
+                ],
+                [
+                  37.9443,
+                  -86.615
+                ],
+                [
+                  37.923,
+                  -86.6423
+                ],
+                [
+                  37.9158,
+                  -86.6513
+                ],
+                [
+                  37.9007,
+                  -86.6686
+                ],
+                [
+                  37.8857,
+                  -86.686
+                ],
+                [
+                  37.8707,
+                  -86.7033
+                ],
+                [
+                  37.8561,
+                  -86.7212
+                ],
+                [
+                  37.8491,
+                  -86.7304
+                ],
+                [
+                  37.8353,
+                  -86.7489
+                ],
+                [
+                  37.8147,
+                  -86.7768
+                ],
+                [
+                  37.8007,
+                  -86.7952
+                ],
+                [
+                  37.7861,
+                  -86.813
+                ],
+                [
+                  37.7711,
+                  -86.8304
+                ],
+                [
+                  37.7561,
+                  -86.8477
+                ],
+                [
+                  37.741,
+                  -86.8651
+                ],
+                [
+                  37.7195,
+                  -86.8921
+                ],
+                [
+                  37.7125,
+                  -86.9013
+                ],
+                [
+                  37.7056,
+                  -86.9106
+                ],
+                [
+                  37.6782,
+                  -86.9479
+                ],
+                [
+                  37.6713,
+                  -86.9572
+                ],
+                [
+                  37.6573,
+                  -86.9756
+                ],
+                [
+                  37.643,
+                  -86.9937
+                ],
+                [
+                  37.629,
+                  -87.0121
+                ],
+                [
+                  37.6153,
+                  -87.0307
+                ],
+                [
+                  37.6016,
+                  -87.0493
+                ],
+                [
+                  37.5878,
+                  -87.068
+                ],
+                [
+                  37.5738,
+                  -87.0863
+                ],
+                [
+                  37.5593,
+                  -87.1042
+                ],
+                [
+                  37.5442,
+                  -87.1215
+                ],
+                [
+                  37.5292,
+                  -87.1389
+                ],
+                [
+                  37.5142,
+                  -87.1562
+                ],
+                [
+                  37.4997,
+                  -87.1741
+                ],
+                [
+                  37.4788,
+                  -87.2018
+                ],
+                [
+                  37.465,
+                  -87.2204
+                ],
+                [
+                  37.465,
+                  -87.2204
+                ],
+                [
+                  37.4374,
+                  -87.2576
+                ],
+                [
+                  37.4304,
+                  -87.2668
+                ],
+                [
+                  37.4162,
+                  -87.2849
+                ],
+                [
+                  37.4022,
+                  -87.3032
+                ],
+                [
+                  37.3884,
+                  -87.3219
+                ],
+                [
+                  37.3747,
+                  -87.3405
+                ],
+                [
+                  37.3541,
+                  -87.3685
+                ],
+                [
+                  37.3472,
+                  -87.3778
+                ],
+                [
+                  37.3332,
+                  -87.3962
+                ],
+                [
+                  37.319,
+                  -87.4143
+                ],
+                [
+                  37.312,
+                  -87.4235
+                ],
+                [
+                  37.2981,
+                  -87.442
+                ],
+                [
+                  37.2706,
+                  -87.4792
+                ],
+                [
+                  37.2637,
+                  -87.4886
+                ],
+                [
+                  37.2569,
+                  -87.4979
+                ],
+                [
+                  37.236,
+                  -87.5256
+                ],
+                [
+                  37.2217,
+                  -87.5437
+                ],
+                [
+                  37.2077,
+                  -87.5621
+                ],
+                [
+                  37.194,
+                  -87.5807
+                ],
+                [
+                  37.1802,
+                  -87.5993
+                ],
+                [
+                  37.1665,
+                  -87.618
+                ],
+                [
+                  37.1528,
+                  -87.6366
+                ],
+                [
+                  37.1388,
+                  -87.655
+                ],
+                [
+                  37.1245,
+                  -87.6731
+                ],
+                [
+                  37.1105,
+                  -87.6915
+                ],
+                [
+                  37.0968,
+                  -87.7101
+                ],
+                [
+                  37.0761,
+                  -87.7381
+                ],
+                [
+                  37.0761,
+                  -87.7381
+                ],
+                [
+                  37.0553,
+                  -87.7657
+                ],
+                [
+                  37.0408,
+                  -87.7836
+                ],
+                [
+                  37.0182,
+                  -87.8096
+                ],
+                [
+                  37.0032,
+                  -87.827
+                ],
+                [
+                  36.9956,
+                  -87.8356
+                ],
+                [
+                  36.9741,
+                  -87.8627
+                ],
+                [
+                  36.9671,
+                  -87.8719
+                ],
+                [
+                  36.9534,
+                  -87.8905
+                ],
+                [
+                  36.9465,
+                  -87.8998
+                ],
+                [
+                  36.9327,
+                  -87.9183
+                ],
+                [
+                  36.9111,
+                  -87.9454
+                ],
+                [
+                  36.8961,
+                  -87.9627
+                ],
+                [
+                  36.8735,
+                  -87.9887
+                ],
+                [
+                  36.866,
+                  -87.9974
+                ],
+                [
+                  36.8515,
+                  -88.0152
+                ],
+                [
+                  36.8375,
+                  -88.0336
+                ],
+                [
+                  36.8306,
+                  -88.0429
+                ],
+                [
+                  36.81,
+                  -88.0709
+                ],
+                [
+                  36.796,
+                  -88.0893
+                ],
+                [
+                  36.7815,
+                  -88.1071
+                ],
+                [
+                  36.7662,
+                  -88.1242
+                ],
+                [
+                  36.7507,
+                  -88.141
+                ],
+                [
+                  36.7348,
+                  -88.1576
+                ],
+                [
+                  36.7116,
+                  -88.183
+                ],
+                [
+                  36.704,
+                  -88.1915
+                ],
+                [
+                  36.6895,
+                  -88.2094
+                ],
+                [
+                  36.6755,
+                  -88.2277
+                ],
+                [
+                  36.6686,
+                  -88.2371
+                ],
+                [
+                  36.648,
+                  -88.265
+                ],
+                [
+                  36.634,
+                  -88.2834
+                ],
+                [
+                  36.6195,
+                  -88.3012
+                ],
+                [
+                  36.6042,
+                  -88.3183
+                ],
+                [
+                  36.5886,
+                  -88.3352
+                ],
+                [
+                  36.5725,
+                  -88.3515
+                ],
+                [
+                  36.5565,
+                  -88.3678
+                ],
+                [
+                  36.5321,
+                  -88.392
+                ],
+                [
+                  36.5241,
+                  -88.4001
+                ],
+                [
+                  36.5077,
+                  -88.4162
+                ],
+                [
+                  36.4835,
+                  -88.4405
+                ],
+                [
+                  36.4753,
+                  -88.4485
+                ],
+                [
+                  36.4592,
+                  -88.4648
+                ],
+                [
+                  36.4429,
+                  -88.4809
+                ],
+                [
+                  36.4268,
+                  -88.4972
+                ],
+                [
+                  36.4105,
+                  -88.5132
+                ],
+                [
+                  36.3863,
+                  -88.5375
+                ],
+                [
+                  36.3701,
+                  -88.5537
+                ],
+                [
+                  36.362,
+                  -88.5619
+                ],
+                [
+                  36.3376,
+                  -88.5861
+                ],
+                [
+                  36.3296,
+                  -88.5942
+                ],
+                [
+                  36.3133,
+                  -88.6103
+                ],
+                [
+                  36.2972,
+                  -88.6266
+                ],
+                [
+                  36.2809,
+                  -88.6426
+                ],
+                [
+                  36.2648,
+                  -88.6589
+                ],
+                [
+                  36.2485,
+                  -88.675
+                ],
+                [
+                  36.2324,
+                  -88.6913
+                ],
+                [
+                  36.208,
+                  -88.7155
+                ],
+                [
+                  36.2,
+                  -88.7236
+                ],
+                [
+                  36.1836,
+                  -88.7397
+                ],
+                [
+                  36.1676,
+                  -88.756
+                ],
+                [
+                  36.1512,
+                  -88.772
+                ],
+                [
+                  36.127,
+                  -88.7964
+                ],
+                [
+                  36.1188,
+                  -88.8044
+                ],
+                [
+                  36.1028,
+                  -88.8207
+                ],
+                [
+                  36.0864,
+                  -88.8367
+                ],
+                [
+                  36.0701,
+                  -88.8528
+                ],
+                [
+                  36.0532,
+                  -88.8683
+                ],
+                [
+                  36.0272,
+                  -88.8908
+                ],
+                [
+                  36.009,
+                  -88.9051
+                ],
+                [
+                  35.9998,
+                  -88.9121
+                ],
+                [
+                  35.9718,
+                  -88.9326
+                ],
+                [
+                  35.9625,
+                  -88.9395
+                ],
+                [
+                  35.9346,
+                  -88.9602
+                ],
+                [
+                  35.9163,
+                  -88.9743
+                ],
+                [
+                  35.8981,
+                  -88.9884
+                ],
+                [
+                  35.8795,
+                  -89.0023
+                ],
+                [
+                  35.8609,
+                  -89.016
+                ],
+                [
+                  35.8515,
+                  -89.0228
+                ],
+                [
+                  35.8235,
+                  -89.0434
+                ],
+                [
+                  35.805,
+                  -89.0572
+                ],
+                [
+                  35.7958,
+                  -89.0642
+                ],
+                [
+                  35.7683,
+                  -89.0853
+                ],
+                [
+                  35.7494,
+                  -89.0988
+                ],
+                [
+                  35.7299,
+                  -89.1117
+                ],
+                [
+                  35.71,
+                  -89.1242
+                ],
+                [
+                  35.6895,
+                  -89.1361
+                ],
+                [
+                  35.6689,
+                  -89.1478
+                ],
+                [
+                  35.6586,
+                  -89.1538
+                ],
+                [
+                  35.6284,
+                  -89.1722
+                ],
+                [
+                  35.6185,
+                  -89.1784
+                ],
+                [
+                  35.5885,
+                  -89.197
+                ],
+                [
+                  35.5684,
+                  -89.2093
+                ],
+                [
+                  35.5479,
+                  -89.2212
+                ],
+                [
+                  35.5269,
+                  -89.2326
+                ],
+                [
+                  35.5057,
+                  -89.2437
+                ],
+                [
+                  35.495,
+                  -89.2493
+                ],
+                [
+                  35.4626,
+                  -89.2655
+                ],
+                [
+                  35.441,
+                  -89.2762
+                ],
+                [
+                  35.4302,
+                  -89.2816
+                ],
+                [
+                  35.3977,
+                  -89.2977
+                ],
+                [
+                  35.3757,
+                  -89.308
+                ],
+                [
+                  35.3535,
+                  -89.3183
+                ],
+                [
+                  35.3308,
+                  -89.328
+                ],
+                [
+                  35.3075,
+                  -89.337
+                ],
+                [
+                  35.2839,
+                  -89.3458
+                ],
+                [
+                  35.26,
+                  -89.3544
+                ],
+                [
+                  35.2358,
+                  -89.3625
+                ],
+                [
+                  35.2236,
+                  -89.3666
+                ],
+                [
+                  35.1872,
+                  -89.3787
+                ],
+                [
+                  35.1751,
+                  -89.3829
+                ],
+                [
+                  35.1386,
+                  -89.3949
+                ],
+                [
+                  35.1142,
+                  -89.4029
+                ],
+                [
+                  35.0898,
+                  -89.4109
+                ],
+                [
+                  35.0651,
+                  -89.4186
+                ],
+                [
+                  35.0525,
+                  -89.4222
+                ],
+                [
+                  35.0137,
+                  -89.432
+                ],
+                [
+                  34.9873,
+                  -89.438
+                ],
+                [
+                  34.9739,
+                  -89.4408
+                ],
+                [
+                  34.9332,
+                  -89.4487
+                ],
+                [
+                  34.9198,
+                  -89.4514
+                ],
+                [
+                  34.8792,
+                  -89.4595
+                ],
+                [
+                  34.8517,
+                  -89.4644
+                ],
+                [
+                  34.8236,
+                  -89.4686
+                ],
+                [
+                  34.7944,
+                  -89.4719
+                ],
+                [
+                  34.7641,
+                  -89.474
+                ],
+                [
+                  34.7328,
+                  -89.4751
+                ],
+                [
+                  34.7009,
+                  -89.4756
+                ],
+                [
+                  34.6686,
+                  -89.4758
+                ],
+                [
+                  34.6362,
+                  -89.4758
+                ],
+                [
+                  34.6038,
+                  -89.4758
+                ],
+                [
+                  34.5714,
+                  -89.4758
+                ],
+                [
+                  34.539,
+                  -89.4758
+                ],
+                [
+                  34.5066,
+                  -89.4758
+                ],
+                [
+                  34.4742,
+                  -89.4758
+                ],
+                [
+                  34.4418,
+                  -89.4758
+                ],
+                [
+                  34.4094,
+                  -89.4758
+                ],
+                [
+                  34.3771,
+                  -89.4756
+                ],
+                [
+                  34.3452,
+                  -89.4751
+                ],
+                [
+                  34.314,
+                  -89.474
+                ],
+                [
+                  34.2837,
+                  -89.4719
+                ],
+                [
+                  34.2545,
+                  -89.4686
+                ],
+                [
+                  34.2264,
+                  -89.4644
+                ],
+                [
+                  34.2127,
+                  -89.4618
+                ],
+                [
+                  34.1718,
+                  -89.4541
+                ],
+                [
+                  34.1583,
+                  -89.4514
+                ],
+                [
+                  34.1312,
+                  -89.4461
+                ],
+                [
+                  34.0906,
+                  -89.4381
+                ],
+                [
+                  34.0638,
+                  -89.4325
+                ],
+                [
+                  34.0372,
+                  -89.4267
+                ],
+                [
+                  34.0109,
+                  -89.4206
+                ],
+                [
+                  33.9849,
+                  -89.4143
+                ],
+                [
+                  33.972,
+                  -89.4109
+                ],
+                [
+                  33.9335,
+                  -89.4008
+                ],
+                [
+                  33.9082,
+                  -89.3937
+                ],
+                [
+                  33.8959,
+                  -89.3898
+                ],
+                [
+                  33.8591,
+                  -89.3781
+                ],
+                [
+                  33.8354,
+                  -89.3694
+                ],
+                [
+                  33.8119,
+                  -89.3605
+                ],
+                [
+                  33.7888,
+                  -89.3511
+                ],
+                [
+                  33.766,
+                  -89.3416
+                ],
+                [
+                  33.743,
+                  -89.3322
+                ],
+                [
+                  33.7196,
+                  -89.3232
+                ],
+                [
+                  33.6964,
+                  -89.314
+                ],
+                [
+                  33.6732,
+                  -89.3048
+                ],
+                [
+                  33.6499,
+                  -89.2957
+                ],
+                [
+                  33.6268,
+                  -89.2864
+                ],
+                [
+                  33.6154,
+                  -89.2816
+                ],
+                [
+                  33.5809,
+                  -89.2675
+                ],
+                [
+                  33.5576,
+                  -89.2585
+                ],
+                [
+                  33.5344,
+                  -89.2493
+                ],
+                [
+                  33.5112,
+                  -89.2401
+                ],
+                [
+                  33.488,
+                  -89.2309
+                ],
+                [
+                  33.4653,
+                  -89.2212
+                ],
+                [
+                  33.4431,
+                  -89.211
+                ],
+                [
+                  33.4211,
+                  -89.2006
+                ],
+                [
+                  33.3993,
+                  -89.19
+                ],
+                [
+                  33.3778,
+                  -89.1792
+                ],
+                [
+                  33.3561,
+                  -89.1684
+                ],
+                [
+                  33.3345,
+                  -89.1577
+                ],
+                [
+                  33.313,
+                  -89.1468
+                ],
+                [
+                  33.2913,
+                  -89.136
+                ],
+                [
+                  33.2697,
+                  -89.1253
+                ],
+                [
+                  33.2482,
+                  -89.1145
+                ],
+                [
+                  33.2264,
+                  -89.1038
+                ],
+                [
+                  33.2043,
+                  -89.0935
+                ],
+                [
+                  33.1822,
+                  -89.0833
+                ],
+                [
+                  33.1595,
+                  -89.0736
+                ],
+                [
+                  33.1363,
+                  -89.0644
+                ],
+                [
+                  33.1131,
+                  -89.0552
+                ],
+                [
+                  33.0899,
+                  -89.046
+                ],
+                [
+                  33.0665,
+                  -89.0369
+                ],
+                [
+                  33.0433,
+                  -89.0277
+                ],
+                [
+                  33.0201,
+                  -89.0186
+                ],
+                [
+                  32.9964,
+                  -89.0099
+                ],
+                [
+                  32.9721,
+                  -89.0019
+                ],
+                [
+                  32.9473,
+                  -88.9942
+                ],
+                [
+                  32.9224,
+                  -88.9867
+                ],
+                [
+                  32.9101,
+                  -88.9828
+                ],
+                [
+                  32.8856,
+                  -88.975
+                ],
+                [
+                  32.8496,
+                  -88.9624
+                ],
+                [
+                  32.8263,
+                  -88.9532
+                ],
+                [
+                  32.8031,
+                  -88.944
+                ],
+                [
+                  32.7797,
+                  -88.9351
+                ],
+                [
+                  32.7561,
+                  -88.9263
+                ],
+                [
+                  32.744,
+                  -88.9222
+                ],
+                [
+                  32.708,
+                  -88.9096
+                ],
+                [
+                  32.6838,
+                  -88.9014
+                ],
+                [
+                  32.6599,
+                  -88.8929
+                ],
+                [
+                  32.6363,
+                  -88.8841
+                ],
+                [
+                  32.6248,
+                  -88.8794
+                ],
+                [
+                  32.5903,
+                  -88.8653
+                ],
+                [
+                  32.5793,
+                  -88.8602
+                ],
+                [
+                  32.5459,
+                  -88.8449
+                ],
+                [
+                  32.5238,
+                  -88.8347
+                ],
+                [
+                  32.5016,
+                  -88.8244
+                ],
+                [
+                  32.4789,
+                  -88.8147
+                ],
+                [
+                  32.4557,
+                  -88.8055
+                ],
+                [
+                  32.4325,
+                  -88.7964
+                ],
+                [
+                  32.4093,
+                  -88.7872
+                ],
+                [
+                  32.3861,
+                  -88.778
+                ],
+                [
+                  32.375,
+                  -88.7729
+                ],
+                [
+                  32.3413,
+                  -88.7581
+                ],
+                [
+                  32.3192,
+                  -88.7477
+                ],
+                [
+                  32.2867,
+                  -88.7317
+                ],
+                [
+                  32.2759,
+                  -88.7262
+                ],
+                [
+                  32.2651,
+                  -88.7209
+                ],
+                [
+                  32.2326,
+                  -88.7047
+                ],
+                [
+                  32.2219,
+                  -88.6993
+                ],
+                [
+                  32.1895,
+                  -88.6831
+                ],
+                [
+                  32.1678,
+                  -88.6724
+                ],
+                [
+                  32.1463,
+                  -88.6615
+                ],
+                [
+                  32.1247,
+                  -88.6508
+                ],
+                [
+                  32.103,
+                  -88.64
+                ],
+                [
+                  32.0815,
+                  -88.6292
+                ],
+                [
+                  32.0598,
+                  -88.6184
+                ],
+                [
+                  32.0382,
+                  -88.6077
+                ],
+                [
+                  32.0274,
+                  -88.6022
+                ],
+                [
+                  31.995,
+                  -88.5861
+                ],
+                [
+                  31.9734,
+                  -88.5753
+                ],
+                [
+                  31.9519,
+                  -88.5645
+                ],
+                [
+                  31.9302,
+                  -88.5537
+                ],
+                [
+                  31.9086,
+                  -88.543
+                ],
+                [
+                  31.887,
+                  -88.5321
+                ],
+                [
+                  31.8654,
+                  -88.5214
+                ],
+                [
+                  31.8437,
+                  -88.5106
+                ],
+                [
+                  31.8222,
+                  -88.4998
+                ],
+                [
+                  31.8113,
+                  -88.4945
+                ],
+                [
+                  31.7898,
+                  -88.4836
+                ],
+                [
+                  31.7574,
+                  -88.4674
+                ],
+                [
+                  31.7358,
+                  -88.4567
+                ],
+                [
+                  31.7141,
+                  -88.4459
+                ],
+                [
+                  31.7034,
+                  -88.4405
+                ],
+                [
+                  31.6817,
+                  -88.4297
+                ],
+                [
+                  31.6493,
+                  -88.4136
+                ],
+                [
+                  31.6278,
+                  -88.4027
+                ],
+                [
+                  31.606,
+                  -88.3921
+                ],
+                [
+                  31.584,
+                  -88.3817
+                ],
+                [
+                  31.5507,
+                  -88.3665
+                ],
+                [
+                  31.5391,
+                  -88.3618
+                ],
+                [
+                  31.5159,
+                  -88.3526
+                ],
+                [
+                  31.4927,
+                  -88.3434
+                ],
+                [
+                  31.4695,
+                  -88.3342
+                ],
+                [
+                  31.4462,
+                  -88.3252
+                ],
+                [
+                  31.4231,
+                  -88.3159
+                ],
+                [
+                  31.4003,
+                  -88.3063
+                ],
+                [
+                  31.3772,
+                  -88.297
+                ],
+                [
+                  31.3539,
+                  -88.2879
+                ],
+                [
+                  31.3307,
+                  -88.2787
+                ],
+                [
+                  31.3075,
+                  -88.2695
+                ],
+                [
+                  31.2841,
+                  -88.2605
+                ],
+                [
+                  31.2611,
+                  -88.2512
+                ],
+                [
+                  31.2382,
+                  -88.2416
+                ],
+                [
+                  31.2152,
+                  -88.2323
+                ],
+                [
+                  31.1917,
+                  -88.2233
+                ],
+                [
+                  31.168,
+                  -88.2147
+                ],
+                [
+                  31.1437,
+                  -88.2065
+                ],
+                [
+                  31.1312,
+                  -88.2029
+                ],
+                [
+                  31.0936,
+                  -88.1919
+                ],
+                [
+                  31.068,
+                  -88.185
+                ],
+                [
+                  31.0551,
+                  -88.1818
+                ],
+                [
+                  31.0162,
+                  -88.1721
+                ],
+                [
+                  30.9899,
+                  -88.166
+                ],
+                [
+                  30.9633,
+                  -88.1602
+                ],
+                [
+                  30.9498,
+                  -88.1575
+                ],
+                [
+                  30.9094,
+                  -88.1493
+                ],
+                [
+                  30.8823,
+                  -88.144
+                ],
+                [
+                  30.8553,
+                  -88.1386
+                ],
+                [
+                  30.8282,
+                  -88.1333
+                ],
+                [
+                  30.8007,
+                  -88.1284
+                ],
+                [
+                  30.7727,
+                  -88.1239
+                ],
+                [
+                  30.7441,
+                  -88.1202
+                ],
+                [
+                  30.7149,
+                  -88.117
+                ],
+                [
+                  30.6858,
+                  -88.1137
+                ],
+                [
+                  30.6571,
+                  -88.11
+                ],
+                [
+                  30.6291,
+                  -88.1056
+                ],
+                [
+                  30.6015,
+                  -88.1008
+                ],
+                [
+                  30.5739,
+                  -88.096
+                ],
+                [
+                  30.5458,
+                  -88.0917
+                ],
+                [
+                  30.5166,
+                  -88.0885
+                ],
+                [
+                  30.4862,
+                  -88.0864
+                ],
+                [
+                  30.4551,
+                  -88.0851
+                ],
+                [
+                  30.4238,
+                  -88.0841
+                ],
+                [
+                  30.3927,
+                  -88.0828
+                ],
+                [
+                  30.3623,
+                  -88.0807
+                ],
+                [
+                  30.3332,
+                  -88.0775
+                ],
+                [
+                  30.305,
+                  -88.0732
+                ],
+                [
+                  30.2774,
+                  -88.0684
+                ],
+                [
+                  30.2498,
+                  -88.0636
+                ],
+                [
+                  30.2217,
+                  -88.0594
+                ],
+                [
+                  30.1925,
+                  -88.0561
+                ],
+                [
+                  30.1622,
+                  -88.0541
+                ],
+                [
+                  30.1309,
+                  -88.0529
+                ],
+                [
+                  30.099,
+                  -88.0524
+                ],
+                [
+                  30.0668,
+                  -88.0523
+                ],
+                [
+                  30.0344,
+                  -88.0523
+                ],
+                [
+                  30.002,
+                  -88.0523
+                ],
+                [
+                  29.9696,
+                  -88.0523
+                ],
+                [
+                  29.9371,
+                  -88.0523
+                ],
+                [
+                  29.9047,
+                  -88.0523
+                ],
+                [
+                  29.8723,
+                  -88.0523
+                ],
+                [
+                  29.8399,
+                  -88.0523
+                ],
+                [
+                  29.8075,
+                  -88.0523
+                ],
+                [
+                  29.7751,
+                  -88.0523
+                ],
+                [
+                  29.7427,
+                  -88.0523
+                ],
+                [
+                  29.7103,
+                  -88.0523
+                ],
+                [
+                  29.6779,
+                  -88.0523
+                ],
+                [
+                  29.6455,
+                  -88.0523
+                ],
+                [
+                  29.6131,
+                  -88.0523
+                ],
+                [
+                  29.5807,
+                  -88.0523
+                ],
+                [
+                  29.5482,
+                  -88.0523
+                ],
+                [
+                  29.5158,
+                  -88.0523
+                ],
+                [
+                  29.4834,
+                  -88.0523
+                ],
+                [
+                  29.451,
+                  -88.0523
+                ],
+                [
+                  29.4186,
+                  -88.0523
+                ],
+                [
+                  29.3862,
+                  -88.0523
+                ],
+                [
+                  29.3538,
+                  -88.0523
+                ],
+                [
+                  29.3214,
+                  -88.0523
+                ],
+                [
+                  29.289,
+                  -88.0523
+                ],
+                [
+                  29.2566,
+                  -88.0523
+                ],
+                [
+                  29.2242,
+                  -88.0523
+                ],
+                [
+                  29.1918,
+                  -88.0523
+                ],
+                [
+                  29.1594,
+                  -88.0523
+                ],
+                [
+                  29.127,
+                  -88.0523
+                ],
+                [
+                  29.0945,
+                  -88.0523
+                ],
+                [
+                  29.0621,
+                  -88.0523
+                ],
+                [
+                  29.0297,
+                  -88.0523
+                ],
+                [
+                  28.9975,
+                  -88.0524
+                ],
+                [
+                  28.9656,
+                  -88.0529
+                ],
+                [
+                  28.9343,
+                  -88.0541
+                ],
+                [
+                  28.904,
+                  -88.0561
+                ],
+                [
+                  28.8748,
+                  -88.0594
+                ],
+                [
+                  28.8467,
+                  -88.0636
+                ],
+                [
+                  28.8191,
+                  -88.0684
+                ],
+                [
+                  28.7915,
+                  -88.0732
+                ],
+                [
+                  28.7633,
+                  -88.0775
+                ],
+                [
+                  28.7342,
+                  -88.0807
+                ],
+                [
+                  28.7038,
+                  -88.0828
+                ],
+                [
+                  28.6727,
+                  -88.0841
+                ],
+                [
+                  28.6413,
+                  -88.0851
+                ],
+                [
+                  28.6102,
+                  -88.0864
+                ],
+                [
+                  28.5799,
+                  -88.0885
+                ],
+                [
+                  28.5507,
+                  -88.0917
+                ],
+                [
+                  28.5226,
+                  -88.096
+                ],
+                [
+                  28.5087,
+                  -88.0983
+                ],
+                [
+                  28.4674,
+                  -88.1056
+                ],
+                [
+                  28.4394,
+                  -88.11
+                ],
+                [
+                  28.4107,
+                  -88.1137
+                ],
+                [
+                  28.3816,
+                  -88.117
+                ],
+                [
+                  28.3524,
+                  -88.1202
+                ],
+                [
+                  28.3238,
+                  -88.1239
+                ],
+                [
+                  28.3096,
+                  -88.126
+                ],
+                [
+                  28.2681,
+                  -88.1332
+                ],
+                [
+                  28.2405,
+                  -88.1379
+                ],
+                [
+                  28.2125,
+                  -88.1423
+                ],
+                [
+                  28.1839,
+                  -88.1461
+                ],
+                [
+                  28.1547,
+                  -88.1493
+                ],
+                [
+                  28.1256,
+                  -88.1526
+                ],
+                [
+                  28.0969,
+                  -88.1563
+                ],
+                [
+                  28.0689,
+                  -88.1607
+                ],
+                [
+                  28.0414,
+                  -88.1656
+                ],
+                [
+                  28.0143,
+                  -88.1709
+                ],
+                [
+                  27.9874,
+                  -88.1764
+                ],
+                [
+                  27.9603,
+                  -88.1817
+                ],
+                [
+                  27.9332,
+                  -88.187
+                ],
+                [
+                  27.9063,
+                  -88.1925
+                ],
+                [
+                  27.8798,
+                  -88.1984
+                ],
+                [
+                  27.8535,
+                  -88.2044
+                ],
+                [
+                  27.8274,
+                  -88.2108
+                ],
+                [
+                  27.8144,
+                  -88.214
+                ],
+                [
+                  27.7755,
+                  -88.2237
+                ],
+                [
+                  27.7496,
+                  -88.2302
+                ],
+                [
+                  27.7367,
+                  -88.2334
+                ],
+                [
+                  27.6978,
+                  -88.2431
+                ],
+                [
+                  27.672,
+                  -88.2497
+                ],
+                [
+                  27.6464,
+                  -88.2566
+                ],
+                [
+                  27.6212,
+                  -88.2637
+                ],
+                [
+                  27.5961,
+                  -88.2711
+                ],
+                [
+                  27.5714,
+                  -88.2787
+                ],
+                [
+                  27.5466,
+                  -88.2864
+                ],
+                [
+                  27.5216,
+                  -88.2938
+                ],
+                [
+                  27.509,
+                  -88.2974
+                ],
+                [
+                  27.4836,
+                  -88.3044
+                ],
+                [
+                  27.4451,
+                  -88.3144
+                ],
+                [
+                  27.4196,
+                  -88.3213
+                ],
+                [
+                  27.3943,
+                  -88.3284
+                ],
+                [
+                  27.3693,
+                  -88.3358
+                ],
+                [
+                  27.3447,
+                  -88.3436
+                ],
+                [
+                  27.3203,
+                  -88.3516
+                ],
+                [
+                  27.2959,
+                  -88.3596
+                ],
+                [
+                  27.2716,
+                  -88.3676
+                ],
+                [
+                  27.2472,
+                  -88.3757
+                ],
+                [
+                  27.2225,
+                  -88.3834
+                ],
+                [
+                  27.2101,
+                  -88.3872
+                ],
+                [
+                  27.1722,
+                  -88.3979
+                ],
+                [
+                  27.1467,
+                  -88.4048
+                ],
+                [
+                  27.1211,
+                  -88.4115
+                ],
+                [
+                  27.0955,
+                  -88.4184
+                ],
+                [
+                  27.0702,
+                  -88.4255
+                ],
+                [
+                  27.0452,
+                  -88.4329
+                ],
+                [
+                  27.0206,
+                  -88.4406
+                ],
+                [
+                  26.9962,
+                  -88.4486
+                ],
+                [
+                  26.9718,
+                  -88.4567
+                ],
+                [
+                  26.9475,
+                  -88.4647
+                ],
+                [
+                  26.9232,
+                  -88.4728
+                ],
+                [
+                  26.899,
+                  -88.481
+                ],
+                [
+                  26.8746,
+                  -88.489
+                ],
+                [
+                  26.8504,
+                  -88.4972
+                ],
+                [
+                  26.8265,
+                  -88.5057
+                ],
+                [
+                  26.8029,
+                  -88.5145
+                ],
+                [
+                  26.7795,
+                  -88.5234
+                ],
+                [
+                  26.7564,
+                  -88.5328
+                ],
+                [
+                  26.7336,
+                  -88.5423
+                ],
+                [
+                  26.7105,
+                  -88.5516
+                ],
+                [
+                  26.687,
+                  -88.5606
+                ],
+                [
+                  26.6635,
+                  -88.5694
+                ],
+                [
+                  26.6396,
+                  -88.5779
+                ],
+                [
+                  26.6154,
+                  -88.5861
+                ],
+                [
+                  26.591,
+                  -88.5941
+                ],
+                [
+                  26.5667,
+                  -88.6022
+                ],
+                [
+                  26.5425,
+                  -88.6104
+                ],
+                [
+                  26.5181,
+                  -88.6184
+                ],
+                [
+                  26.4938,
+                  -88.6264
+                ],
+                [
+                  26.4695,
+                  -88.6346
+                ],
+                [
+                  26.4453,
+                  -88.6428
+                ],
+                [
+                  26.4209,
+                  -88.6508
+                ],
+                [
+                  26.3965,
+                  -88.6588
+                ],
+                [
+                  26.3723,
+                  -88.6669
+                ],
+                [
+                  26.3481,
+                  -88.6751
+                ],
+                [
+                  26.3237,
+                  -88.6831
+                ],
+                [
+                  26.2993,
+                  -88.6912
+                ],
+                [
+                  26.2751,
+                  -88.6993
+                ],
+                [
+                  26.2508,
+                  -88.7075
+                ],
+                [
+                  26.2265,
+                  -88.7155
+                ],
+                [
+                  26.2021,
+                  -88.7235
+                ],
+                [
+                  26.1779,
+                  -88.7317
+                ],
+                [
+                  26.1536,
+                  -88.7398
+                ],
+                [
+                  26.1292,
+                  -88.7478
+                ],
+                [
+                  26.1049,
+                  -88.7559
+                ],
+                [
+                  26.0806,
+                  -88.764
+                ],
+                [
+                  26.0564,
+                  -88.7722
+                ],
+                [
+                  26.0442,
+                  -88.7762
+                ],
+                [
+                  26.0077,
+                  -88.7882
+                ],
+                [
+                  25.9833,
+                  -88.7962
+                ],
+                [
+                  25.9586,
+                  -88.804
+                ],
+                [
+                  25.9336,
+                  -88.8114
+                ],
+                [
+                  25.9083,
+                  -88.8185
+                ],
+                [
+                  25.8828,
+                  -88.8254
+                ],
+                [
+                  25.8572,
+                  -88.8321
+                ],
+                [
+                  25.8316,
+                  -88.8389
+                ],
+                [
+                  25.8063,
+                  -88.8461
+                ],
+                [
+                  25.7813,
+                  -88.8534
+                ],
+                [
+                  25.7567,
+                  -88.8612
+                ],
+                [
+                  25.7323,
+                  -88.8692
+                ],
+                [
+                  25.708,
+                  -88.8772
+                ],
+                [
+                  25.6958,
+                  -88.8813
+                ],
+                [
+                  25.6592,
+                  -88.8933
+                ],
+                [
+                  25.6346,
+                  -88.901
+                ],
+                [
+                  25.6095,
+                  -88.9084
+                ],
+                [
+                  25.5843,
+                  -88.9156
+                ],
+                [
+                  25.5587,
+                  -88.9224
+                ],
+                [
+                  25.5331,
+                  -88.9291
+                ],
+                [
+                  25.5202,
+                  -88.9325
+                ],
+                [
+                  25.4823,
+                  -88.9431
+                ],
+                [
+                  25.4697,
+                  -88.9467
+                ],
+                [
+                  25.4325,
+                  -88.9581
+                ],
+                [
+                  25.4077,
+                  -88.9658
+                ],
+                [
+                  25.3827,
+                  -88.9731
+                ],
+                [
+                  25.3574,
+                  -88.9803
+                ],
+                [
+                  25.3319,
+                  -88.9871
+                ],
+                [
+                  25.3061,
+                  -88.9937
+                ],
+                [
+                  25.2802,
+                  -89.0002
+                ],
+                [
+                  25.2542,
+                  -89.0066
+                ],
+                [
+                  25.2283,
+                  -89.0131
+                ],
+                [
+                  25.2024,
+                  -89.0196
+                ],
+                [
+                  25.1766,
+                  -89.0262
+                ],
+                [
+                  25.1511,
+                  -89.0331
+                ],
+                [
+                  25.1383,
+                  -89.0365
+                ],
+                [
+                  25.1008,
+                  -89.0475
+                ],
+                [
+                  25.076,
+                  -89.0552
+                ],
+                [
+                  25.0511,
+                  -89.0627
+                ],
+                [
+                  25.0256,
+                  -89.0696
+                ],
+                [
+                  24.9991,
+                  -89.0755
+                ],
+                [
+                  24.9716,
+                  -89.0802
+                ],
+                [
+                  24.9431,
+                  -89.083
+                ],
+                [
+                  24.914,
+                  -89.0839
+                ],
+                [
+                  24.8849,
+                  -89.0829
+                ],
+                [
+                  24.8568,
+                  -89.0796
+                ],
+                [
+                  24.8301,
+                  -89.0742
+                ],
+                [
+                  24.8051,
+                  -89.0668
+                ],
+                [
+                  24.782,
+                  -89.0575
+                ],
+                [
+                  24.7609,
+                  -89.0463
+                ],
+                [
+                  24.7414,
+                  -89.0333
+                ],
+                [
+                  24.715,
+                  -89.0113
+                ],
+                [
+                  24.7073,
+                  -89.0032
+                ],
+                [
+                  24.6798,
+                  -88.968
+                ],
+                [
+                  24.6737,
+                  -88.9592
+                ],
+                [
+                  24.6592,
+                  -88.9303
+                ],
+                [
+                  24.6518,
+                  -88.91
+                ],
+                [
+                  24.6463,
+                  -88.8881
+                ]
+              ],
+              "public_advisory_url": "https://www.nhc.noaa.gov/text/MIATCPAT4.shtml",
+              "forecast_discussion_url": "https://www.nhc.noaa.gov/text/MIATCDAT4.shtml",
+              "forecast_graphics_url": "https://www.nhc.noaa.gov/graphics_at4.shtml",
+              "earliest_arrival_guidance_url": "https://www.nhc.noaa.gov/storm_graphics/api/AL092026_009adv_earliest_reasonable_toa_34.kmz",
+              "most_likely_arrival_guidance_url": "https://www.nhc.noaa.gov/storm_graphics/api/AL092026_009adv_most_likely_toa_34.kmz",
+              "wind_watch_warning_url": "https://www.nhc.noaa.gov/storm_graphics/api/AL092026_009Aadv_WW.kmz",
+              "local_alert": false
+            }
+          ],
+          "errors": []
+        },
+        "hourly": [
+          {
+            "start": "2026-10-09T02:00:00Z",
+            "end": "2026-10-09T03:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T05:00:00Z",
+            "end": "2026-10-09T06:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T08:00:00Z",
+            "end": "2026-10-09T09:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T11:00:00Z",
+            "end": "2026-10-09T12:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T14:00:00Z",
+            "end": "2026-10-09T15:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T17:00:00Z",
+            "end": "2026-10-09T18:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T20:00:00Z",
+            "end": "2026-10-09T21:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T23:00:00Z",
+            "end": "2026-10-10T00:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T02:00:00Z",
+            "end": "2026-10-10T03:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          }
+        ],
+        "hourly_full": [
+          {
+            "start": "2026-10-09T02:00:00Z",
+            "end": "2026-10-09T03:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T03:00:00Z",
+            "end": "2026-10-09T04:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T04:00:00Z",
+            "end": "2026-10-09T05:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T05:00:00Z",
+            "end": "2026-10-09T06:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T06:00:00Z",
+            "end": "2026-10-09T07:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T07:00:00Z",
+            "end": "2026-10-09T08:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T08:00:00Z",
+            "end": "2026-10-09T09:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T09:00:00Z",
+            "end": "2026-10-09T10:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T10:00:00Z",
+            "end": "2026-10-09T11:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T11:00:00Z",
+            "end": "2026-10-09T12:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T12:00:00Z",
+            "end": "2026-10-09T13:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T13:00:00Z",
+            "end": "2026-10-09T14:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T14:00:00Z",
+            "end": "2026-10-09T15:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T15:00:00Z",
+            "end": "2026-10-09T16:00:00Z",
+            "temperature_f": 61.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T16:00:00Z",
+            "end": "2026-10-09T17:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T17:00:00Z",
+            "end": "2026-10-09T18:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T18:00:00Z",
+            "end": "2026-10-09T19:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T19:00:00Z",
+            "end": "2026-10-09T20:00:00Z",
+            "temperature_f": 64.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T20:00:00Z",
+            "end": "2026-10-09T21:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T21:00:00Z",
+            "end": "2026-10-09T22:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T22:00:00Z",
+            "end": "2026-10-09T23:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 15.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-09T23:00:00Z",
+            "end": "2026-10-10T00:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 1,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T00:00:00Z",
+            "end": "2026-10-10T01:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T01:00:00Z",
+            "end": "2026-10-10T02:00:00Z",
+            "temperature_f": 56.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T02:00:00Z",
+            "end": "2026-10-10T03:00:00Z",
+            "temperature_f": 54.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T03:00:00Z",
+            "end": "2026-10-10T04:00:00Z",
+            "temperature_f": 53.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T04:00:00Z",
+            "end": "2026-10-10T05:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T05:00:00Z",
+            "end": "2026-10-10T06:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T06:00:00Z",
+            "end": "2026-10-10T07:00:00Z",
+            "temperature_f": 50.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T07:00:00Z",
+            "end": "2026-10-10T08:00:00Z",
+            "temperature_f": 50.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T08:00:00Z",
+            "end": "2026-10-10T09:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T09:00:00Z",
+            "end": "2026-10-10T10:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T10:00:00Z",
+            "end": "2026-10-10T11:00:00Z",
+            "temperature_f": 47.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T11:00:00Z",
+            "end": "2026-10-10T12:00:00Z",
+            "temperature_f": 46.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T12:00:00Z",
+            "end": "2026-10-10T13:00:00Z",
+            "temperature_f": 47.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T13:00:00Z",
+            "end": "2026-10-10T14:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T14:00:00Z",
+            "end": "2026-10-10T15:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T15:00:00Z",
+            "end": "2026-10-10T16:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T16:00:00Z",
+            "end": "2026-10-10T17:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T17:00:00Z",
+            "end": "2026-10-10T18:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T18:00:00Z",
+            "end": "2026-10-10T19:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T19:00:00Z",
+            "end": "2026-10-10T20:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T20:00:00Z",
+            "end": "2026-10-10T21:00:00Z",
+            "temperature_f": 61.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T21:00:00Z",
+            "end": "2026-10-10T22:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "W",
+            "precip_probability_pct": 0,
+            "summary": "Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T22:00:00Z",
+            "end": "2026-10-10T23:00:00Z",
+            "temperature_f": 59.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "NW",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-10T23:00:00Z",
+            "end": "2026-10-11T00:00:00Z",
+            "temperature_f": 57.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T00:00:00Z",
+            "end": "2026-10-11T01:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T01:00:00Z",
+            "end": "2026-10-11T02:00:00Z",
+            "temperature_f": 52.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T02:00:00Z",
+            "end": "2026-10-11T03:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Clear",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T03:00:00Z",
+            "end": "2026-10-11T04:00:00Z",
+            "temperature_f": 50.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T04:00:00Z",
+            "end": "2026-10-11T05:00:00Z",
+            "temperature_f": 50.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T05:00:00Z",
+            "end": "2026-10-11T06:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T06:00:00Z",
+            "end": "2026-10-11T07:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T07:00:00Z",
+            "end": "2026-10-11T08:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T08:00:00Z",
+            "end": "2026-10-11T09:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T09:00:00Z",
+            "end": "2026-10-11T10:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Partly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T10:00:00Z",
+            "end": "2026-10-11T11:00:00Z",
+            "temperature_f": 48.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T11:00:00Z",
+            "end": "2026-10-11T12:00:00Z",
+            "temperature_f": 47.0,
+            "wind_mph": 0.0,
+            "gust_mph": null,
+            "wind_direction": "",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T12:00:00Z",
+            "end": "2026-10-11T13:00:00Z",
+            "temperature_f": 49.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T13:00:00Z",
+            "end": "2026-10-11T14:00:00Z",
+            "temperature_f": 51.0,
+            "wind_mph": 5.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T14:00:00Z",
+            "end": "2026-10-11T15:00:00Z",
+            "temperature_f": 55.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T15:00:00Z",
+            "end": "2026-10-11T16:00:00Z",
+            "temperature_f": 58.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Mostly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T16:00:00Z",
+            "end": "2026-10-11T17:00:00Z",
+            "temperature_f": 60.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T17:00:00Z",
+            "end": "2026-10-11T18:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 0,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T18:00:00Z",
+            "end": "2026-10-11T19:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 1,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T19:00:00Z",
+            "end": "2026-10-11T20:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "S",
+            "precip_probability_pct": 1,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T20:00:00Z",
+            "end": "2026-10-11T21:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T21:00:00Z",
+            "end": "2026-10-11T22:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Partly Sunny",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T22:00:00Z",
+            "end": "2026-10-11T23:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-11T23:00:00Z",
+            "end": "2026-10-12T00:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 1,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-12T00:00:00Z",
+            "end": "2026-10-12T01:00:00Z",
+            "temperature_f": 63.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 7,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-12T01:00:00Z",
+            "end": "2026-10-12T02:00:00Z",
+            "temperature_f": 62.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 14,
+            "summary": "Mostly Cloudy",
+            "precip_type": "Dry / Clouds"
+          },
+          {
+            "start": "2026-10-12T02:00:00Z",
+            "end": "2026-10-12T03:00:00Z",
+            "temperature_f": 61.0,
+            "wind_mph": 10.0,
+            "gust_mph": null,
+            "wind_direction": "SW",
+            "precip_probability_pct": 20,
+            "summary": "Slight Chance Rain Showers",
+            "precip_type": "Rain"
+          }
+        ],
+        "errors": {},
+        "sources": {
+          "nws_point": "https://api.weather.gov/points/43.472,-70.385",
+          "nws_hourly": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
+          "nws_grid": "https://api.weather.gov/gridpoints/GYX/70,49",
+          "nws_alerts": "https://api.weather.gov/alerts/active?point=43.472,-70.385",
+          "nws_marine_alerts": "https://api.weather.gov/alerts/active?zone=ANZ154",
+          "nws_surf_zone": "https://api.weather.gov/products/types/SRF/locations/GYX/latest",
+          "nhc": "https://www.nhc.noaa.gov/CurrentStorms.json"
+        }
+      },
+      "marine": {
+        "stations": {
+          "44007": {
+            "observed_at": "2026-10-09T02:10:00Z",
+            "speed_mph": 13.4,
+            "gust_mph": 15.7,
+            "direction_deg": 240,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": 1011.7,
+            "pressure_tendency_mb": null,
+            "water_temp_f": 56.5,
+            "air_temp_f": 57.7,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
+            "max_24h_speed_mph": 24.6,
+            "max_24h_speed_at": "2026-10-08T06:20:00Z",
+            "max_24h_gust_mph": 29.1,
+            "max_24h_gust_at": "2026-10-08T03:10:00Z",
+            "max_24h_wave_height_ft": 4.9,
+            "max_24h_wave_at": "2026-10-08T06:50:00Z"
+          },
+          "WEXM1": {
+            "observed_at": "2026-10-09T02:00:00Z",
+            "speed_mph": 3.4,
+            "gust_mph": null,
+            "direction_deg": 230,
+            "wave_height_ft": null,
+            "dominant_period_sec": null,
+            "average_period_sec": null,
+            "wave_direction_deg": null,
+            "pressure_mb": null,
+            "pressure_tendency_mb": null,
+            "water_temp_f": null,
+            "air_temp_f": 50.5,
+            "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
+            "max_24h_speed_mph": 9.2,
+            "max_24h_speed_at": "2026-10-08T04:00:00Z",
+            "max_24h_gust_mph": null,
+            "max_24h_gust_at": null,
+            "max_24h_wave_height_ft": null,
+            "max_24h_wave_at": null
+          }
+        }
+      },
+      "alerts": [],
+      "event_state": {
+        "phase": "Outlook",
+        "show_focus": true,
+        "primary_display": "Hurricane Isaias",
+        "impact": {
+          "rank": 1,
+          "level": "yellow",
+          "label": "Elevated"
+        },
+        "recent_impact": {
+          "rank": 1,
+          "level": "yellow",
+          "label": "Elevated"
+        },
+        "event_identity": {
+          "official_name": "Isaias",
+          "official_type": "Hurricane",
+          "label": "Hurricane Isaias",
+          "storm_id": "al092026",
+          "naming_authority": "National Hurricane Center / WMO",
+          "advisory_url": "https://www.nhc.noaa.gov/text/MIATCPAT4.shtml",
+          "last_authoritative_update": "2026-10-09T00:00:00.000Z"
+        },
+        "active_hazards": [
+          {
+            "code": "tropical",
+            "label": "Tropical Cyclone",
+            "basis": [
+              "NHC track/advisory or local NWS tropical alert"
+            ],
+            "impact_rank": 1
+          }
+        ],
+        "official_alerts": [],
+        "recent_impacts": [
+          {
+            "code": "residual",
+            "label": "Portland water-level residual",
+            "at": "2026-10-08T15:54:00Z",
+            "value": 1.02,
+            "unit": "ft",
+            "impact_rank": 1
+          }
+        ],
+        "reasons": [
+          "NHC track/advisory or local NWS tropical alert"
+        ],
+        "summary": "Hurricane Isaias is outlook with elevated local impact potential.",
+        "event_timing": {
+          "peak_at": "2026-10-11T16:06:00Z",
+          "window_start": null,
+          "window_end": null,
+          "hours_until_peak": 61.4,
+          "basis": "NOAA OFS modeled total-water peak"
+        },
+        "coastal_impact": {
+          "method": "Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.",
+          "impact": {
+            "score": 8,
+            "rank": 0,
+            "level": "green",
+            "label": "Routine"
+          },
+          "windows": [
+            {
+              "high_tide_at": "2026-10-09T02:18:00Z",
+              "window_start": "2026-10-09T00:48:00Z",
+              "window_end": "2026-10-09T03:48:00Z",
+              "astronomical_ft": 10.11,
+              "modeled_total_ft": 11.05,
+              "modeled_time": "2026-10-09T02:12:00Z",
+              "modeled_uplift_ft": 0.95,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 8,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "11.05 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.11 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-09T14:43:00Z",
+              "window_start": "2026-10-09T13:13:00Z",
+              "window_end": "2026-10-09T16:13:00Z",
+              "astronomical_ft": 10.12,
+              "modeled_total_ft": 10.68,
+              "modeled_time": "2026-10-09T14:42:00Z",
+              "modeled_uplift_ft": 0.56,
+              "forecast_wind_mph": 15.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "10.68 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.12 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-10T03:08:00Z",
+              "window_start": "2026-10-10T01:38:00Z",
+              "window_end": "2026-10-10T04:38:00Z",
+              "astronomical_ft": 10.08,
+              "modeled_total_ft": 10.64,
+              "modeled_time": "2026-10-10T03:00:00Z",
+              "modeled_uplift_ft": 0.57,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "10.64 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.08 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-10T15:27:00Z",
+              "window_start": "2026-10-10T13:57:00Z",
+              "window_end": "2026-10-10T16:57:00Z",
+              "astronomical_ft": 10.32,
+              "modeled_total_ft": 10.62,
+              "modeled_time": "2026-10-10T15:24:00Z",
+              "modeled_uplift_ft": 0.3,
+              "forecast_wind_mph": 5.0,
+              "forecast_wind_direction": "NW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "10.62 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.32 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-11T03:54:00Z",
+              "window_start": "2026-10-11T02:24:00Z",
+              "window_end": "2026-10-11T05:24:00Z",
+              "astronomical_ft": 9.92,
+              "modeled_total_ft": 10.76,
+              "modeled_time": "2026-10-11T03:48:00Z",
+              "modeled_uplift_ft": 0.85,
+              "forecast_wind_mph": 0.0,
+              "forecast_wind_direction": "",
+              "onshore_component_mph": null,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "10.76 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "9.92 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                }
+              ]
+            },
+            {
+              "high_tide_at": "2026-10-11T16:07:00Z",
+              "window_start": "2026-10-11T14:37:00Z",
+              "window_end": "2026-10-11T17:37:00Z",
+              "astronomical_ft": 10.36,
+              "modeled_total_ft": 11.18,
+              "modeled_time": "2026-10-11T16:06:00Z",
+              "modeled_uplift_ft": 0.83,
+              "forecast_wind_mph": 10.0,
+              "forecast_wind_direction": "SW",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": 4.0,
+              "impact": {
+                "score": 8,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "NOAA forecast water level",
+                  "value": "11.18 ft MLLW",
+                  "source": "NOAA OFS"
+                },
+                {
+                  "label": "Predicted high tide",
+                  "value": "10.36 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "NWS surf forecast",
+                  "value": "4 ft max in the current Coastal York forecast",
+                  "source": "NWS Surf Zone Forecast"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
+            }
+          ],
+          "peak_window": {
+            "high_tide_at": "2026-10-09T02:18:00Z",
+            "window_start": "2026-10-09T00:48:00Z",
+            "window_end": "2026-10-09T03:48:00Z",
+            "astronomical_ft": 10.11,
+            "modeled_total_ft": 11.05,
+            "modeled_time": "2026-10-09T02:12:00Z",
+            "modeled_uplift_ft": 0.95,
+            "forecast_wind_mph": 5.0,
+            "forecast_wind_direction": "W",
+            "onshore_component_mph": 0.0,
+            "surf_context_ft": 4.0,
+            "impact": {
+              "score": 8,
+              "rank": 0,
+              "level": "green",
+              "label": "Routine"
+            },
+            "drivers": [
+              {
+                "label": "NOAA forecast water level",
+                "value": "11.05 ft MLLW",
+                "source": "NOAA OFS"
+              },
+              {
+                "label": "Predicted high tide",
+                "value": "10.11 ft MLLW",
+                "source": "NOAA CO-OPS tide prediction"
+              },
+              {
+                "label": "NWS surf forecast",
+                "value": "4 ft max in the current Coastal York forecast",
+                "source": "NWS Surf Zone Forecast"
+              },
+              {
+                "label": "Wind pushing toward shore",
+                "value": "0 mph",
+                "source": "Calculated from NWS hourly wind direction and speed"
+              }
+            ]
+          },
+          "hours_until_peak": -0.4,
+          "confidence": {
+            "label": "Moderate",
+            "score": 0.85,
+            "missing": [
+              "NDBC 44007 wave observation"
+            ]
+          },
+          "drivers": [
+            {
+              "label": "NOAA forecast water level",
+              "value": "11.05 ft MLLW",
+              "source": "NOAA OFS"
+            },
+            {
+              "label": "Predicted high tide",
+              "value": "10.11 ft MLLW",
+              "source": "NOAA CO-OPS tide prediction"
+            },
+            {
+              "label": "NWS surf forecast",
+              "value": "4 ft max in the current Coastal York forecast",
+              "source": "NWS Surf Zone Forecast"
+            },
+            {
+              "label": "Wind pushing toward shore",
+              "value": "0 mph",
+              "source": "Calculated from NWS hourly wind direction and speed"
+            },
+            {
+              "label": "Latest buoy onshore-wind component",
+              "value": "0 mph",
+              "source": "Derived from NDBC 44007"
+            }
+          ],
+          "wave_context": {
+            "height_ft": null,
+            "dominant_period_sec": null,
+            "direction_deg": null,
+            "power_proxy_kw_m": null
+          },
+          "onshore_reference": {
+            "shore_normal_from_deg": 120.0,
+            "note": "Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."
+          }
+        }
+      }
     }
   ],
   "daily_rollups": [
@@ -123377,6 +130726,13 @@
       "max_observed_ft": 10.7,
       "max_forecast_peak_ft": 11.18,
       "max_gust_mph": 26.8
+    },
+    {
+      "date": "2026-10-09",
+      "snapshot_count": 1,
+      "max_observed_ft": 10.66,
+      "max_forecast_peak_ft": 11.18,
+      "max_gust_mph": 15.7
     }
   ],
   "alert_events": [
@@ -123532,6 +130888,14 @@
       "event": "Small Craft Advisory",
       "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.05156bfe41a8d6ffa48cdf622e4839b6edd5c0cd.001.2",
       "at": "2026-10-08T14:26:00-04:00",
+      "source": "NWS snapshot comparison",
+      "source_type": "official_alert"
+    },
+    {
+      "change_type": "expired",
+      "event": "Small Craft Advisory",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.05156bfe41a8d6ffa48cdf622e4839b6edd5c0cd.001.2",
+      "at": "2026-10-09T00:00:00Z",
       "source": "NWS snapshot comparison",
       "source_type": "official_alert"
     }
@@ -123725,6 +131089,16 @@
       "from_impact": "Elevated",
       "to_impact": "Elevated",
       "from_display": "Routine Coastal Conditions",
+      "to_display": "Hurricane Isaias"
+    },
+    {
+      "at": "2026-10-09T02:41:22Z",
+      "type": "event_state_transition",
+      "from_phase": "Approaching",
+      "to_phase": "Outlook",
+      "from_impact": "Elevated",
+      "to_impact": "Elevated",
+      "from_display": "Hurricane Isaias",
       "to_display": "Hurricane Isaias"
     }
   ],

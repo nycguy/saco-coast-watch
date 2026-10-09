@@ -85,8 +85,29 @@
         "dominant_period_sec": 6.0,
         "gust_mph": 17.9
       }
+    },
+    {
+      "captured_at": "2026-10-09T16:35:42Z",
+      "file": "20261009T163542Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Hurricane Isaias",
+        "Elevated · Outlook",
+        "NHC track/advisory or local NWS tropical alert"
+      ],
+      "context": {
+        "event": "Hurricane Isaias",
+        "phase": "Outlook",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 8.81,
+        "residual_ft": 0.45,
+        "wave_height_ft": null,
+        "dominant_period_sec": null,
+        "gust_mph": 22.4
+      }
     }
   ],
-  "generated_at": "2026-10-09T09:39:17Z",
+  "generated_at": "2026-10-09T16:35:42Z",
   "retention_hours": 24
 }

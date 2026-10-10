@@ -4,27 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-10-09T02:41:55Z",
-      "file": "20261009T024155Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Hurricane Isaias",
-        "Elevated · Outlook",
-        "NHC track/advisory or local NWS tropical alert"
-      ],
-      "context": {
-        "event": "Hurricane Isaias",
-        "phase": "Outlook",
-        "impact": "Elevated",
-        "impact_level": "yellow",
-        "water_level_ft": 10.6,
-        "residual_ft": 0.51,
-        "wave_height_ft": null,
-        "dominant_period_sec": null,
-        "gust_mph": 15.7
-      }
-    },
-    {
       "captured_at": "2026-10-09T09:39:17Z",
       "file": "20261009T093917Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -107,8 +86,29 @@
         "dominant_period_sec": null,
         "gust_mph": 11.2
       }
+    },
+    {
+      "captured_at": "2026-10-10T07:04:31Z",
+      "file": "20261010T070431Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Potential Tropical Cyclone Isaias",
+        "Elevated · Outlook",
+        "NHC track/advisory or local NWS tropical alert"
+      ],
+      "context": {
+        "event": "Potential Tropical Cyclone Isaias",
+        "phase": "Outlook",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 3.38,
+        "residual_ft": 0.27,
+        "wave_height_ft": null,
+        "dominant_period_sec": null,
+        "gust_mph": 13.4
+      }
     }
   ],
-  "generated_at": "2026-10-10T01:04:32Z",
+  "generated_at": "2026-10-10T07:04:31Z",
   "retention_hours": 24
 }

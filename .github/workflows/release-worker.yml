@@ -71,7 +71,21 @@ jobs:
           print('Existing Worker and email/D1 health are ready; the current email alert state will be checked for exact preservation after deployment.')
           PY
           cd alerts
-          npx wrangler d1 execute saco-coastal-alerts --remote --file=../scripts/d1_schema_snapshot.sql --json > /tmp/d1-before.json
+          if ! npx wrangler d1 info saco-coastal-alerts --json > /tmp/d1-info.json 2> /tmp/d1-info.err; then
+            echo "D1 metadata lookup failed:"
+            cat /tmp/d1-info.err
+            exit 1
+          fi
+          if ! npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="SELECT 1 AS preflight_ok" --json > /tmp/d1-smoke.json 2> /tmp/d1-smoke.err; then
+            echo "D1 trivial read failed:"
+            cat /tmp/d1-smoke.err
+            exit 1
+          fi
+          if ! npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=../scripts/d1_schema_snapshot.sql --json > /tmp/d1-before.json 2> /tmp/d1-schema.err; then
+            echo "D1 schema snapshot failed:"
+            cat /tmp/d1-schema.err
+            exit 1
+          fi
           cd ..
           python3 scripts/verify_d1_schema.py --schema /tmp/d1-before.json
           state="$(python3 scripts/verify_d1_schema.py --migration-state /tmp/d1-before.json | sed -n 's/^MIGRATION_STATE=//p')"

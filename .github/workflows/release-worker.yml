@@ -30,7 +30,7 @@ jobs:
         working-directory: alerts
         run: |
           set -euo pipefail
-          npx wrangler secret list --json > /tmp/worker-secret-names.json
+          npx wrangler secret list --format json > /tmp/worker-secret-names.json
           python3 - <<'PY'
           import json
           from pathlib import Path

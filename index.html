@@ -18,37 +18,45 @@
 
 </head>
 <body>
-<header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true"><img src="sacocast-app-icon-192.png" alt=""></div><div><h1>SacoCast</h1><small>Coastal conditions · Clearer decisions</small></div></div><div class="headright"><a class="btn primary" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" aria-label="Sign up for custom SacoCast email threshold alerts">✉ Get Email Alerts ↗</a><button type="button" class="btn" id="refreshBtn" aria-label="Reload SacoCast and refresh all dashboard data">↻ Refresh</button><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
-<section class="shell panel push-panel" id="pushPanel" hidden aria-labelledby="pushHeading">
- <div class="push-panel-copy"><div class="eyebrow">Optional browser alerts</div><h2 id="pushHeading">Coastal event notifications</h2><p>Get an update when an official coastal alert starts, ends, or meaningfully changes. You control these notifications on this device.</p></div>
- <div class="push-controls"><button class="btn primary" id="pushEnable" type="button">Turn On Notifications</button><button class="btn" id="pushManage" type="button" hidden>Manage Notifications</button><p class="push-status" id="pushStatus" role="status" aria-live="polite">Notifications are off. Choose Turn On to opt in.</p>
-  <div id="pushSettings" hidden>
-   <div class="push-settings-actions"><button class="btn" id="pushTest" type="button">Send Test Notification</button><button class="btn" id="pushDisable" type="button">Turn Off Notifications</button></div>
-   <fieldset id="pushPreferences"><legend>Coastal event notifications</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
-   <fieldset id="thresholdPreferences" class="threshold-alert-settings" hidden>
-    <legend>Custom threshold alerts</legend>
-    <p class="threshold-help">Choose the conditions you care about, then send those threshold crossings by App notification, Email, or both.</p>
-    <div class="threshold-alert-list">
-     <label class="threshold-alert-row"><span><input id="threshold-waterObserved-enabled" type="checkbox"> Observed Portland water level</span><span class="threshold-value">At or above <input id="threshold-waterObserved-value" type="number" min="0" max="30" step="0.1" value="12"> ft MLLW</span></label>
-     <label class="threshold-alert-row"><span><input id="threshold-waterForecast-enabled" type="checkbox"> Forecast Portland peak, next 72h</span><span class="threshold-value">At or above <input id="threshold-waterForecast-value" type="number" min="0" max="30" step="0.1" value="12"> ft MLLW</span></label>
-     <label class="threshold-alert-row"><span><input id="threshold-wind-enabled" type="checkbox"> Offshore sustained wind</span><span class="threshold-value">At or above <input id="threshold-wind-value" type="number" min="0" max="180" step="0.1" value="30"> mph</span></label>
-     <label class="threshold-alert-row"><span><input id="threshold-gust-enabled" type="checkbox"> Offshore wind gust</span><span class="threshold-value">At or above <input id="threshold-gust-value" type="number" min="0" max="220" step="0.1" value="45"> mph</span></label>
-     <label class="threshold-alert-row"><span><input id="threshold-tempHigh-enabled" type="checkbox"> Portland airport temperature high</span><span class="threshold-value">At or above <input id="threshold-tempHigh-value" type="number" min="-40" max="140" step="0.1" value="90"> °F</span></label>
-     <label class="threshold-alert-row"><span><input id="threshold-tempLow-enabled" type="checkbox"> Portland airport temperature low</span><span class="threshold-value">At or below <input id="threshold-tempLow-value" type="number" min="-40" max="140" step="0.1" value="32"> °F</span></label>
+<header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true"><img src="sacocast-app-icon-192.png" alt=""></div><div><h1>SacoCast</h1><small>Coastal conditions · Clearer decisions</small></div></div><div class="headright"><button class="btn primary" id="alertsButton" type="button" aria-haspopup="dialog" aria-controls="alertsDialog">Create Alerts</button><button type="button" class="btn" id="refreshBtn" aria-label="Reload SacoCast and refresh all dashboard data">↻ Refresh</button><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
+<dialog class="alerts-dialog" id="alertsDialog" aria-labelledby="alertsDialogTitle">
+ <div class="alerts-dialog-shell">
+  <div class="alerts-dialog-head"><div><div class="eyebrow">SacoCast Alerts</div><h2 id="alertsDialogTitle">Create Alerts</h2></div><button class="btn alerts-close" id="alertsClose" type="button" aria-label="Close alert settings">Close</button></div>
+  <section class="push-panel" id="pushPanel" aria-labelledby="pushHeading">
+   <div class="push-panel-copy"><h3 id="pushHeading">App Notifications</h3><p id="pushIntro">Receive official coastal-event updates and any custom thresholds you choose on this device.</p></div>
+   <div class="push-controls">
+    <button class="btn primary" id="pushEnable" type="button">Turn On App Notifications</button>
+    <p class="push-status" id="pushStatus" role="status" aria-live="polite">App notifications are off on this device.</p>
+    <div id="pushSettings" hidden>
+     <fieldset id="pushPreferences"><legend>Coastal Event Notifications</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
+     <fieldset id="thresholdPreferences" class="threshold-alert-settings" hidden>
+      <legend>Custom Threshold Alerts</legend>
+      <p class="threshold-help">Choose the conditions you care about, then send those threshold crossings by App notification, Email, or both.</p>
+      <div class="threshold-alert-list">
+       <label class="threshold-alert-row"><span><input id="threshold-waterObserved-enabled" type="checkbox"> Observed Portland water level</span><span class="threshold-value">At or above <input id="threshold-waterObserved-value" type="number" min="0" max="30" step="0.1" value="12"> ft MLLW</span></label>
+       <label class="threshold-alert-row"><span><input id="threshold-waterForecast-enabled" type="checkbox"> Forecast Portland peak, next 72h</span><span class="threshold-value">At or above <input id="threshold-waterForecast-value" type="number" min="0" max="30" step="0.1" value="12"> ft MLLW</span></label>
+       <label class="threshold-alert-row"><span><input id="threshold-wind-enabled" type="checkbox"> Offshore sustained wind</span><span class="threshold-value">At or above <input id="threshold-wind-value" type="number" min="0" max="180" step="0.1" value="30"> mph</span></label>
+       <label class="threshold-alert-row"><span><input id="threshold-gust-enabled" type="checkbox"> Offshore wind gust</span><span class="threshold-value">At or above <input id="threshold-gust-value" type="number" min="0" max="220" step="0.1" value="45"> mph</span></label>
+       <label class="threshold-alert-row"><span><input id="threshold-tempHigh-enabled" type="checkbox"> Portland airport temperature high</span><span class="threshold-value">At or above <input id="threshold-tempHigh-value" type="number" min="-40" max="140" step="0.1" value="90"> °F</span></label>
+       <label class="threshold-alert-row"><span><input id="threshold-tempLow-enabled" type="checkbox"> Portland airport temperature low</span><span class="threshold-value">At or below <input id="threshold-tempLow-value" type="number" min="-40" max="140" step="0.1" value="32"> °F</span></label>
+      </div>
+      <div class="threshold-delivery">
+       <strong>Deliver selected thresholds by</strong>
+       <label><input id="thresholdChannelPush" type="checkbox" checked> App notification</label>
+       <label><input id="thresholdChannelEmail" type="checkbox"> Email</label>
+       <label id="thresholdEmailField" class="threshold-email-field" hidden>Email address <input id="thresholdEmailAddress" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com"></label>
+       <p id="thresholdLinkedEmail" class="threshold-linked-email" hidden></p>
+      </div>
+      <button class="btn primary" id="thresholdSave" type="button">Save Custom Alerts</button>
+      <p class="push-status" id="thresholdStatus" role="status" aria-live="polite">No custom threshold alerts are selected.</p>
+     </fieldset>
+     <div class="push-settings-actions"><button class="btn" id="pushTest" type="button">Send Test Notification</button><button class="btn danger-subtle" id="pushDisable" type="button">Turn Off App Notifications</button></div>
     </div>
-    <div class="threshold-delivery">
-     <strong>Deliver selected thresholds by</strong>
-     <label><input id="thresholdChannelPush" type="checkbox" checked> App notification</label>
-     <label><input id="thresholdChannelEmail" type="checkbox"> Email</label>
-     <label id="thresholdEmailField" class="threshold-email-field" hidden>Email address <input id="thresholdEmailAddress" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com"></label>
-     <p id="thresholdLinkedEmail" class="threshold-linked-email" hidden></p>
-    </div>
-    <button class="btn primary" id="thresholdSave" type="button">Save Custom Alerts</button>
-    <p class="push-status" id="thresholdStatus" role="status" aria-live="polite">No custom threshold alerts are selected.</p>
-   </fieldset>
-  </div>
+    <div class="email-only-entry" id="emailOnlyEntry"><span>Email only?</span><a class="btn" id="emailOnlyLink" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" target="_blank" rel="noopener noreferrer">Create Email-Only Alerts ↗</a></div>
+   </div>
+  </section>
  </div>
-</section>
+</dialog>
 <main class="shell">
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
@@ -292,5 +300,5 @@
 <script src="js/webcams.js"></script>
 
 
-<script type="module" src="js/push-ui.mjs?v=20261013-6"></script>
+<script type="module" src="js/push-ui.mjs?v=20261013-7"></script>
 </body></html>

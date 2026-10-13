@@ -84,7 +84,11 @@ def main():
             mobile_errors=[]
             mobile.on('pageerror',lambda err: mobile_errors.append(str(err)))
             mobile.goto(BASE,wait_until='domcontentloaded',timeout=45000)
-            mobile.locator('.push-panel').wait_for(state='visible',timeout=15000)
+            assert mobile.locator('#alertsButton').is_visible()
+            assert mobile.locator('#alertsDialog').evaluate('(el)=>!el.open')
+            mobile.locator('#alertsButton').click()
+            mobile.locator('#alertsDialog').wait_for(state='visible',timeout=10000)
+            mobile.locator('.push-panel').wait_for(state='visible',timeout=10000)
             mobile_status=mobile.locator('#pushStatus').inner_text()
             assert 'add sacocast to your home screen' in mobile_status.lower(), f'live iPhone status: {mobile_status}'
             assert mobile.locator('#pushEnable').is_disabled()
@@ -109,9 +113,7 @@ def main():
         page.get_by_text('Notifications are on for this device.').wait_for(timeout=10000)
         assert page.evaluate('window.__permissionCalls')==1, 'Permission should be requested only after the explicit click'
         assert page.locator('#pushEnable').is_hidden()
-        assert page.locator('#pushManage').is_visible()
-        assert page.locator('#pushSettings').is_hidden()
-        page.locator('#pushManage').click()
+        assert page.locator('#alertsButton').inner_text() == 'Manage Alerts'
         page.locator('#pushSettings').wait_for(state='visible',timeout=5000)
         assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
         page.locator('#thresholdPreferences').wait_for(state='visible',timeout=5000)
@@ -134,8 +136,8 @@ def main():
         page.locator('#pushDisable').click()
         page.get_by_text('Notifications are off for this device.').wait_for(timeout=10000)
         assert page.locator('#pushSettings').is_hidden()
-        assert page.locator('#pushManage').is_hidden()
         assert page.locator('#pushEnable').is_visible()
+        assert page.locator('#alertsButton').inner_text() == 'Create Alerts'
 
         unavailable=browser.new_page(viewport={'width':390,'height':844})
         unavailable.add_init_script(INIT)
@@ -146,7 +148,11 @@ def main():
         if not LIVE:
             unavailable.route(WORKER+'/**',unavailable_worker)
             unavailable.goto(BASE,wait_until='domcontentloaded',timeout=45000)
-            unavailable.locator('.push-panel').wait_for(state='hidden',timeout=10000)
+            assert unavailable.locator('#alertsButton').is_visible()
+            unavailable.locator('#alertsButton').click()
+            unavailable.locator('#alertsDialog').wait_for(state='visible',timeout=5000)
+            assert unavailable.locator('#pushEnable').is_disabled()
+            assert unavailable.locator('#emailOnlyLink').is_visible()
             assert unavailable_calls == [WORKER+'/push/config']
             assert unavailable.evaluate('window.__permissionCalls')==0
             unavailable.close()
@@ -160,22 +166,26 @@ def main():
             mobile.route(WORKER+'/**',mock_worker)
         mobile.on('pageerror',lambda err: browser_errors.append('mobile: '+str(err)))
         mobile.goto(BASE,wait_until='domcontentloaded',timeout=45000)
+        assert mobile.locator('#alertsButton').is_visible()
+        assert mobile.locator('#alertsDialog').evaluate('(el)=>!el.open')
+        mobile.locator('#alertsButton').click()
+        mobile.locator('#alertsDialog').wait_for(state='visible',timeout=5000)
         mobile.locator('#pushStatus').wait_for()
         mobile_status=mobile.locator('#pushStatus').inner_text()
         assert 'add sacocast to your home screen' in mobile_status.lower(), f'iPhone status: {mobile_status}'
         assert mobile.locator('#pushEnable').is_disabled()
         touch_target=mobile.locator('#pushEnable').bounding_box()
         assert touch_target and touch_target['width']>=44 and touch_target['height']>=44, f'mobile tap target too small: {touch_target}'
-        mobile_panel=mobile.locator('.push-panel').bounding_box()
-        assert mobile_panel and mobile_panel['x']>=0 and mobile_panel['x']+mobile_panel['width']<=390
-        mobile.locator('.push-panel').screenshot(path='push-notifications-smoke-iphone-guidance.png')
+        mobile_dialog=mobile.locator('#alertsDialog').bounding_box()
+        assert mobile_dialog and mobile_dialog['x']>=0 and mobile_dialog['x']+mobile_dialog['width']<=390
+        mobile.locator('#alertsDialog').screenshot(path='push-notifications-smoke-iphone-guidance.png')
         mobile.evaluate("document.documentElement.style.fontSize='200%'")
-        expanded=mobile.locator('.push-panel').bounding_box()
+        expanded=mobile.locator('#alertsDialog').bounding_box()
         overflow=mobile.evaluate('document.documentElement.scrollWidth-window.innerWidth')
         assert expanded and expanded['x']>=0 and expanded['x']+expanded['width']<=390 and overflow<=3, f'expanded text overflows: {expanded}, {overflow}px'
         assert not browser_errors, f'browser errors: {browser_errors}'
         browser.close()
-    print('PASS: '+('live desktop/mobile layout with no enrollment prompt' if LIVE else 'desktop opt-in/preferences, permission only after tap, and iPhone Home Screen guidance'))
+    print('PASS: '+('live single Alerts entry point and modal manager' if LIVE else 'single Create/Manage Alerts entry point, modal settings, permission only after tap, and iPhone guidance'))
 
 if __name__=='__main__':
     main()

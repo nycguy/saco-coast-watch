@@ -1,15 +1,21 @@
+updateAlertsEntryState();
 import {
   pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
   updateCoastalNotificationPreferences, disableCoastalNotifications, getCoastalThresholdPreferences,
   saveCoastalThresholdPreferences, requestCoastalThresholdEmail,
-} from './push-subscriptions.mjs?v=20261013-6';
+} from './push-subscriptions.mjs?v=20261013-7';
 
 const byId = id => document.getElementById(id);
+const alertsButton = byId('alertsButton');
+const alertsDialog = byId('alertsDialog');
+const alertsDialogTitle = byId('alertsDialogTitle');
+const alertsClose = byId('alertsClose');
 const status = byId('pushStatus');
 const panel = byId('pushPanel');
 const enable = byId('pushEnable');
-const manage = byId('pushManage');
 const settings = byId('pushSettings');
+const emailOnlyEntry = byId('emailOnlyEntry');
+const emailOnlyLink = byId('emailOnlyLink');
 const sendTest = byId('pushTest');
 const disable = byId('pushDisable');
 const preferences = byId('pushPreferences');
@@ -22,6 +28,7 @@ const thresholdLinkedEmail = byId('thresholdLinkedEmail');
 const thresholdSave = byId('thresholdSave');
 const thresholdStatus = byId('thresholdStatus');
 const prefsStorageKey = 'sacocast.push.preferences.v1';
+const emailLinkedStorageKey = 'sacocast.alerts.email-linked.v1';
 let pushConfig = null;
 let thresholdSettingsLoaded = false;
 let linkedThresholdEmail = null;
@@ -38,13 +45,31 @@ function setPrefs(value) {
   for (const [name, key] of [['pushStarts', 'starts'], ['pushEnds', 'ends'], ['pushChanges', 'changes']]) byId(name).checked = value[key];
 }
 function currentPrefs() { return { starts: byId('pushStarts').checked, ends: byId('pushEnds').checked, changes: byId('pushChanges').checked }; }
-function showEnrolled({ expanded = false } = {}) {
+function hasKnownEmailAlerts() { return localStorage.getItem(emailLinkedStorageKey) === 'true'; }
+function hasSavedAlerts() { return Boolean(readPushCredential() || hasKnownEmailAlerts()); }
+function updateAlertsEntryState() {
+  const saved = hasSavedAlerts();
+  alertsButton.textContent = saved ? 'Manage Alerts' : 'Create Alerts';
+  alertsDialogTitle.textContent = saved ? 'Manage Alerts' : 'Create Alerts';
+  emailOnlyLink.href = hasKnownEmailAlerts()
+    ? 'https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts/manage'
+    : 'https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts';
+  emailOnlyLink.textContent = hasKnownEmailAlerts() ? 'Manage Email Alerts ↗' : 'Create Email-Only Alerts ↗';
+}
+function showEnrolled() {
   panel.classList.add('enrolled');
   enable.hidden = true;
-  manage.hidden = false;
-  settings.hidden = !expanded;
-  manage.textContent = expanded ? 'Done' : 'Manage Notifications';
+  settings.hidden = false;
+  emailOnlyEntry.hidden = true;
   setPrefs(getPrefs());
+  updateAlertsEntryState();
+}
+function showNotEnrolled() {
+  panel.classList.remove('enrolled');
+  settings.hidden = true;
+  enable.hidden = false;
+  emailOnlyEntry.hidden = false;
+  updateAlertsEntryState();
 }
 
 
@@ -76,7 +101,9 @@ function renderThresholdPreferences(result) {
   thresholdChannelPush.checked = prefs.channels?.push === true;
   thresholdChannelEmail.checked = prefs.channels?.email === true;
   linkedThresholdEmail = result.linkedEmail || null;
+  if (linkedThresholdEmail) localStorage.setItem(emailLinkedStorageKey, 'true');
   renderThresholdEmailState();
+  updateAlertsEntryState();
   const count = Object.values(prefs.metrics || {}).filter(item => item?.enabled === true).length;
   thresholdStatus.textContent = count ? `${count} custom threshold alert${count === 1 ? '' : 's'} configured.` : 'No custom threshold alerts are selected.';
 }
@@ -96,13 +123,20 @@ async function loadThresholdPreferences() {
 }
 
 async function initialize() {
+  updateAlertsEntryState();
+  showNotEnrolled();
   try {
     pushConfig = await getCoastalPushConfiguration();
-    if (!pushConfig) return;
+    if (!pushConfig) {
+      enable.disabled = true;
+      status.textContent = 'App notifications are temporarily unavailable. Email alerts remain available.';
+      return;
+    }
   } catch (_) {
+    enable.disabled = true;
+    status.textContent = 'App notifications could not be checked. Email alerts remain available.';
     return;
   }
-  panel.hidden = false;
   const standalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const capability = pushCapability({
     secureContext: window.isSecureContext,
@@ -130,7 +164,7 @@ async function initialize() {
     try {
       const saved = await getCoastalNotificationPreferences();
       if (saved) { localStorage.setItem(prefsStorageKey, JSON.stringify(saved)); setPrefs(saved); }
-      status.textContent = 'Notifications are on for this device.';
+      status.textContent = 'App notifications are on for this device.';
       await loadThresholdPreferences();
     } catch (_) {
       status.textContent = 'Notifications are on, but saved preferences could not be refreshed. Your current choices remain shown.';
@@ -149,31 +183,40 @@ enable.addEventListener('click', async () => {
     const next = { starts: true, ends: true, changes: true };
     localStorage.setItem(prefsStorageKey, JSON.stringify(next));
     showEnrolled();
-    status.textContent = 'Notifications are on for this device.';
+    status.textContent = 'App notifications are on for this device.';
     await loadThresholdPreferences();
   } catch (error) {
     status.textContent = error?.message || 'Could not enable notifications. Try again later.';
   } finally { enable.disabled = Notification.permission === 'denied'; }
 });
 
-manage.addEventListener('click', async () => {
-  const expanded = settings.hidden;
-  settings.hidden = !expanded;
-  manage.textContent = expanded ? 'Done' : 'Manage Notifications';
-  if (expanded && !thresholdSettingsLoaded) await loadThresholdPreferences();
+alertsButton.addEventListener('click', async () => {
+  updateAlertsEntryState();
+  if (typeof alertsDialog.showModal === 'function') alertsDialog.showModal();
+  else alertsDialog.setAttribute('open', '');
+  if (readPushCredential() && !thresholdSettingsLoaded) await loadThresholdPreferences();
+});
+alertsClose.addEventListener('click', () => {
+  if (typeof alertsDialog.close === 'function') alertsDialog.close();
+  else alertsDialog.removeAttribute('open');
+});
+alertsDialog.addEventListener('click', event => {
+  if (event.target === alertsDialog) {
+    if (typeof alertsDialog.close === 'function') alertsDialog.close();
+    else alertsDialog.removeAttribute('open');
+  }
 });
 
 disable.addEventListener('click', async () => {
   disable.disabled = true;
   try {
     const result = await disableCoastalNotifications();
-    panel.classList.remove('enrolled');
-    settings.hidden = true;
-    manage.hidden = true;
-    enable.hidden = false; enable.disabled = false;
+    showNotEnrolled();
+    enable.disabled = false;
     status.textContent = result?.serverDisabled === false
-      ? 'Notifications are off on this device. Server cleanup could not be confirmed, but this browser subscription was removed.'
-      : 'Notifications are off for this device.';
+      ? 'App notifications are off on this device. Server cleanup could not be confirmed, but this browser subscription was removed.'
+      : 'App notifications are off on this device.';
+    updateAlertsEntryState();
   } catch (error) { status.textContent = error?.message || 'Could not turn off notifications. Try again.'; }
   finally { disable.disabled = false; }
 });
@@ -237,6 +280,7 @@ thresholdSave.addEventListener('click', async () => {
       thresholdStatus.textContent = selected ? 'Custom alert preferences saved.' : 'Custom threshold alerts are off.';
     }
     renderThresholdEmailState();
+    updateAlertsEntryState();
   } catch (error) {
     thresholdStatus.textContent = error?.message || 'Could not save custom alert preferences.';
   } finally {

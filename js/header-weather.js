@@ -33,7 +33,7 @@
   if(condition)items.push({type:condition==='blizzard'?'snow':condition,label:condition==='sun'?'Clear / Sunny':condition==='cloud'?'Cloudy':condition==='freezing'?'Freezing Rain':condition==='sleet'?'Wintry Mix':condition==='thunder'?'Thunderstorms':condition[0].toUpperCase()+condition.slice(1),source:'NWS hourly forecast'});
   if(wind!==null&&wind>=8)items.push({type:'wind',label:wind>=39?'Strong Wind':wind>=25?'Windy':'Breezy',source:'Observed '+Math.round(wind)+' mph'});
   if(storm)items.push({type:'storm',label:storm,source:'Official / event classification'});
-  host.replaceChildren();
+  if(!items.length)items.push({type:'cloud',label:'Weather Unavailable',source:'No current NWS forecast or wind observation'});\n  host.replaceChildren();
   for(const item of items.slice(0,3)){
    const el=document.createElement('div');el.className='header-weather-item';el.setAttribute('role','img');el.setAttribute('aria-label',item.label+' — '+item.source);
    el.innerHTML=icon(item.type);

@@ -135,9 +135,9 @@ jobs:
         working-directory: alerts
         run: |
           set -euo pipefail
-          npx wrangler d1 execute saco-coastal-alerts --remote --file=migrations/0002_event_notifications.sql
-          npx wrangler d1 execute saco-coastal-alerts --remote --file=migrations/0003_push_devices.sql
-          npx wrangler d1 execute saco-coastal-alerts --remote --file=migrations/0004_push_delivery_queue.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0002_event_notifications.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0003_push_devices.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0004_push_delivery_queue.sql
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -149,8 +149,41 @@ jobs:
         run: |
           set -euo pipefail
           cd alerts
-          npx wrangler d1 execute saco-coastal-alerts --remote --file=../scripts/d1_schema_snapshot.sql --json > /tmp/d1-after.json
-          npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-after.json
+          rm -f /tmp/d1-schema-after-parts.ndjson
+          schema_queries=(
+            "SELECT 'object:' || type || ':' || name AS schema_item FROM sqlite_schema WHERE type IN ('table','index')"
+            "SELECT 'subscribers.' || name AS schema_item FROM pragma_table_info('subscribers')"
+            "SELECT 'push_subscriptions.' || name AS schema_item FROM pragma_table_info('push_subscriptions')"
+            "SELECT 'tokens.' || name AS schema_item FROM pragma_table_info('tokens')"
+            "SELECT 'alert_state.' || name AS schema_item FROM pragma_table_info('alert_state')"
+            "SELECT 'request_limits.' || name AS schema_item FROM pragma_table_info('request_limits')"
+            "SELECT 'coastal_event_snapshots.' || name AS schema_item FROM pragma_table_info('coastal_event_snapshots')"
+            "SELECT 'coastal_event_deliveries.' || name AS schema_item FROM pragma_table_info('coastal_event_deliveries')"
+            "SELECT 'push_devices.' || name AS schema_item FROM pragma_table_info('push_devices')"
+            "SELECT 'push_device_deliveries.' || name AS schema_item FROM pragma_table_info('push_device_deliveries')"
+            "SELECT 'push_delivery_queue.' || name AS schema_item FROM pragma_table_info('push_delivery_queue')"
+          )
+          for query in "${schema_queries[@]}"; do
+            npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="$query" --json >> /tmp/d1-schema-after-parts.ndjson
+          done
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          docs=[]
+          raw=Path('/tmp/d1-schema-after-parts.ndjson').read_text()
+          decoder=json.JSONDecoder()
+          idx=0
+          while idx < len(raw):
+              while idx < len(raw) and raw[idx].isspace():
+                  idx += 1
+              if idx >= len(raw):
+                  break
+              doc,end=decoder.raw_decode(raw,idx)
+              docs.append(doc)
+              idx=end
+          Path('/tmp/d1-after.json').write_text(json.dumps(docs))
+          PY
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-after.json
           cd ..
           python3 scripts/verify_d1_schema.py --push-schema /tmp/d1-after.json --before /tmp/subscribers-before.json --after /tmp/subscribers-after.json
       - name: Preserve or create VAPID identity, enable push, and deploy Worker
@@ -163,7 +196,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ "$VAPID_STATE" = "none" ]; then
-            npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS device_count FROM push_devices" --json > /tmp/push-devices-before-vapid.json
+            npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="SELECT COUNT(*) AS device_count FROM push_devices" --json > /tmp/push-devices-before-vapid.json
             device_count="$(python3 - <<'PY'
           import json
           d=json.load(open('/tmp/push-devices-before-vapid.json'))

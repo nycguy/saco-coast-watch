@@ -28,3 +28,12 @@ test('standalone push device migration does not modify email subscribers', () =>
   assert.match(devices, /token_hash TEXT NOT NULL/);
   assert.doesNotMatch(devices, /\b(?:DROP|DELETE|TRUNCATE|ALTER|UPDATE)\b\s+(?:TABLE\s+)?(?:subscribers|alert_state|push_subscriptions)\b/i);
 });
+
+
+const thresholdPrefs = readFileSync(new URL('../migrations/0005_push_threshold_preferences.sql', import.meta.url), 'utf8');
+test('custom threshold migration is additive and preserves existing email and push rows', () => {
+  assert.match(thresholdPrefs, /CREATE TABLE IF NOT EXISTS push_threshold_preferences/);
+  assert.match(thresholdPrefs, /FOREIGN KEY \(device_id\) REFERENCES push_devices/);
+  assert.match(thresholdPrefs, /FOREIGN KEY \(linked_subscriber_id\) REFERENCES subscribers/);
+  assert.doesNotMatch(thresholdPrefs, /\b(?:DROP|DELETE|TRUNCATE|ALTER|UPDATE)\b\s+(?:TABLE\s+)?(?:subscribers|push_devices|alert_state|push_subscriptions)\b/i);
+});

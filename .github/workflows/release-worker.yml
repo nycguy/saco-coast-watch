@@ -125,7 +125,7 @@ jobs:
           state="$(python3 scripts/verify_d1_schema.py --migration-state /tmp/d1-before.json | sed -n 's/^MIGRATION_STATE=//p')"
           test "$state" = absent -o "$state" = thresholds_pending -o "$state" = complete
           echo "migration_state=$state" >> "$GITHUB_OUTPUT"
-          if [ "$state" = "complete" ] && [ "${{ steps.vapid.outputs.state }}" = "complete" ]; then
+          if [ "$state" != "absent" ] && [ "${{ steps.vapid.outputs.state }}" = "complete" ]; then
             curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-push-preflight.json
             python3 - <<'PY'
           import json
@@ -274,7 +274,7 @@ jobs:
                python3 - <<'PY'
           import json,re
           d=json.load(open('/tmp/push-config.json'))
-          if d.get('enabled') is not True or not re.fullmatch(r'[A-Za-z0-9_-]{87,88}',d.get('publicKey','')):
+          if d.get('enabled') is not True or d.get('thresholdsEnabled') is not True or not re.fullmatch(r'[A-Za-z0-9_-]{87,88}',d.get('publicKey','')):
               raise SystemExit(1)
           PY
             then
@@ -285,7 +285,7 @@ jobs:
             sleep 3
           done
           test "$configured" = true || { echo 'Public push configuration did not initialize; no subscriber test was sent.' >&2; exit 1; }
-          echo 'Push configuration is enabled for the public origin. No test push or hazard notification was sent.'
+          echo 'Push and custom-threshold configuration are enabled for the public origin. No test push or hazard notification was sent.'
       - name: Record read-only preflight result
         if: ${{ !inputs.apply_migrations_and_deploy }}
         run: echo 'Preflight only. No migration, Worker deployment, secret change, or notification was performed.'

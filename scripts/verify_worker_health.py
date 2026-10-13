@@ -15,10 +15,12 @@ if before.get('emailAlertsEnabled') != after.get('emailAlertsEnabled'):
     raise SystemExit('Email alert enablement changed during Worker deployment')
 if not after.get('configurationReady') or not after.get('databaseConnected'):
     raise SystemExit('Deployed Worker or existing email-alert configuration is unhealthy')
-if after.get('missingTables') or after.get('pushTablesMissing'):
+if after.get('missingTables') or after.get('pushTablesMissing') or after.get('thresholdTablesMissing'):
     raise SystemExit('Deployed Worker reports missing D1 tables')
 if not after.get('webPushEnabled'):
     raise SystemExit('Deployed Worker reports Web Push disabled')
+if not after.get('thresholdPushEnabled'):
+    raise SystemExit('Deployed Worker reports custom-threshold Web Push disabled')
 if after.get('cronRequiresSetup') is not False:
     raise SystemExit('Worker cron schedule is not confirmed by source configuration')
-print(json.dumps({'preexistingEmailAlertsEnabled': before.get('emailAlertsEnabled'), 'emailAlertsEnabledAfter': after.get('emailAlertsEnabled'), 'databaseConnected': True, 'webPushEnabled': True, 'missingTables': [], 'pushTablesMissing': []}))
+print(json.dumps({'preexistingEmailAlertsEnabled': before.get('emailAlertsEnabled'), 'emailAlertsEnabledAfter': after.get('emailAlertsEnabled'), 'databaseConnected': True, 'webPushEnabled': True, 'thresholdPushEnabled': True, 'missingTables': [], 'pushTablesMissing': [], 'thresholdTablesMissing': []}))

@@ -35,8 +35,9 @@ def launch_chromium(chromium, suite, extra_args=()):
     try:
         browser = chromium.launch(
             headless=True,
+            channel="chromium",
             timeout=timeout_ms,
-            args=["--no-sandbox", *extra_args],
+            args=list(extra_args),
         )
     except Exception as error:
         print(

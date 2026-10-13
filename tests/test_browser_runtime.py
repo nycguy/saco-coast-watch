@@ -35,8 +35,8 @@ class BrowserRuntimeTests(unittest.TestCase):
         self.assertEqual(browser.version, "test-browser")
         self.assertEqual(
             chromium.calls,
-            [{"headless": True, "timeout": DEFAULT_LAUNCH_TIMEOUT_MS,
-              "args": ["--no-sandbox", "--disable-dev-shm-usage"]}],
+            [{"headless": True, "channel": "chromium", "timeout": DEFAULT_LAUNCH_TIMEOUT_MS,
+              "args": ["--disable-dev-shm-usage"]}],
         )
         records = [json.loads(line.split(" ", 1)[1]) for line in output.getvalue().splitlines()]
         self.assertEqual([line.split(" ", 1)[0] for line in output.getvalue().splitlines()],

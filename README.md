@@ -20,6 +20,9 @@ The dashboard derives a Portland water-level residual (observed level minus astr
 
 During significant conditions, the history workflow can archive low-resolution Ferry Beach frames at approximately 15-minute intervals for a rolling 24-hour scrubber. The Abellona Inn feed remains live-only because no reliable public still-image archive source is used.
 
+## Notifications
+SacoCast supports two independent opt-in notification types. Coastal event notifications cover official alert starts, ends, and meaningful changes. Custom threshold alerts cover selected Portland water-level, NOAA model-peak, offshore wind/gust, and Portland Jetport temperature thresholds. On an enrolled device, custom thresholds can be delivered by **App**, **Email**, or **Both**. Email delivery requires a one-time confirmation; App-only custom thresholds do not require an email address. Notification delivery is best effort and never replaces official NWS warnings or local emergency guidance.
+
 ## Important limitations
 The static map does not depict actual floodwater. Alert areas are official warning polygons, not inundation footprints. Portland tide-gauge levels are regional references and do not establish flood elevation at an individual Saco Bay property. Model guidance and astronomical tide predictions are not interchangeable, and wave runup is not included in gauge level comparisons. Verify local conditions with NWS Gray and NOAA.
 

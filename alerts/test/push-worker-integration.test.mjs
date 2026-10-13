@@ -33,7 +33,9 @@ test('push config returns the public VAPID key only for the configured site orig
   const DB={prepare:()=>({all:async()=>({results:[]})})};
   const response = await worker.fetch(request, { ...env, DB, PUSH_API_ENABLED: 'true', PUSH_EVENTS_ENABLED: 'true', VAPID_PUBLIC_KEY: validSubscription.keys.p256dh });
   assert.equal(response.status, 200);
-  assert.equal((await response.json()).publicKey, validSubscription.keys.p256dh);
+  const config = await response.json();
+  assert.equal(config.publicKey, validSubscription.keys.p256dh);
+  assert.equal(config.thresholdsEnabled, true);
 });
 
 test('push config is denied to unrelated origins', async () => {

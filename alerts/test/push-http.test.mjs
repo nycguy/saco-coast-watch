@@ -118,3 +118,39 @@ test('threshold preference endpoint accepts App-only custom thresholds', async (
   assert.equal((await response.json()).emailConfirmationRequired,false);
   assert.equal(calls.some(call=>/push_threshold_preferences/.test(call.sql)),true);
 });
+
+
+test('authenticated device can request one-time email confirmation for Both delivery', async () => {
+  const calls=[];
+  const database={
+    prepare(sql){const call={sql,args:[]};calls.push(call);return{
+      bind(...args){call.args=args;return this;},
+      async first(){
+        if(sql.startsWith('SELECT id FROM push_devices')) return {id:'11111111-1111-4111-8111-111111111111'};
+        if(sql.startsWith('SELECT linked_subscriber_id')) return null;
+        return null;
+      },
+      async run(){return {meta:{changes:1}};}
+    };}
+  };
+  const preferences={metrics:{
+    waterObserved:{enabled:false,threshold:12},waterForecast:{enabled:false,threshold:12},wind:{enabled:false,threshold:30},
+    gust:{enabled:false,threshold:45},tempHigh:{enabled:true,threshold:85},tempLow:{enabled:false,threshold:32}
+  },channels:{push:true,email:true}};
+  const previousFetch=globalThis.fetch;
+  const deliveries=[];
+  globalThis.fetch=async (url,options)=>{deliveries.push({url:String(url),options});return new Response('{}',{status:202,headers:{'content-type':'application/json'}});};
+  try{
+    const req=new Request('https://worker.example.test/push/devices/thresholds/email',{
+      method:'POST',
+      headers:{Origin:'https://nycguy.github.io','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.20',Authorization:'Bearer '+'a'.repeat(64)},
+      body:JSON.stringify({deviceId:'11111111-1111-4111-8111-111111111111',email:'person@example.com',preferences})
+    });
+    const response=await handlePushApi(req,{...env(database),PUSH_API_ENABLED:'true',RESEND_API_KEY:'secret',FROM_EMAIL:'SacoCast <alerts@example.org>',WORKER_PUBLIC_URL:'https://worker.example.test',SUPPORT_EMAIL:'support@example.org'});
+    assert.equal(response.status,202);
+    assert.equal((await response.json()).confirmationSent,true);
+    assert.equal(deliveries.length,1);
+    assert.equal(deliveries[0].url,'https://api.resend.com/emails');
+    assert.equal(calls.some(call=>/purpose,payload_json,expires_at/.test(call.sql)),true);
+  }finally{globalThis.fetch=previousFetch;}
+});

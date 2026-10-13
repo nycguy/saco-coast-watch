@@ -135,6 +135,7 @@ def run_live(browser):
     mobile.goto(BASE, wait_until='domcontentloaded', timeout=45000)
     assert_dialog_hidden(mobile)
     open_alerts(mobile)
+    mobile.wait_for_function("document.querySelector('#pushStatus').textContent.toLowerCase().includes('add sacocast to your home screen')", timeout=10000)
     mobile_status=mobile.locator('#pushStatus').inner_text()
     assert 'add sacocast to your home screen' in mobile_status.lower(), mobile_status
     assert mobile.locator('#pushEnable').is_disabled()

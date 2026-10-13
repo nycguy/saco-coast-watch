@@ -1,7 +1,7 @@
 import {
   pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
   updateCoastalNotificationPreferences, disableCoastalNotifications,
-} from './push-subscriptions.mjs';
+} from './push-subscriptions.mjs?v=20261013-3';
 
 const byId = id => document.getElementById(id);
 const status = byId('pushStatus');
@@ -86,10 +86,12 @@ enable.addEventListener('click', async () => {
 disable.addEventListener('click', async () => {
   disable.disabled = true;
   try {
-    await disableCoastalNotifications();
+    const result = await disableCoastalNotifications();
     disable.hidden = true; enable.hidden = false; enable.disabled = false; preferences.hidden = true;
     sendTest.hidden = true;
-    status.textContent = 'Notifications are off for this device.';
+    status.textContent = result?.serverDisabled === false
+      ? 'Notifications are off on this device. Server cleanup could not be confirmed, but this browser subscription was removed.'
+      : 'Notifications are off for this device.';
   } catch (error) { status.textContent = error?.message || 'Could not turn off notifications. Try again.'; }
   finally { disable.disabled = false; }
 });
@@ -109,13 +111,20 @@ preferences.addEventListener('change', async event => {
   if (event.target?.type !== 'checkbox') return;
   const before = getPrefs();
   const next = currentPrefs();
+  const inputs = [...preferences.querySelectorAll('input[type="checkbox"]')];
+  inputs.forEach(input => { input.disabled = true; });
+  status.textContent = 'Saving notification preferences…';
   try {
-    await updateCoastalNotificationPreferences(next);
-    localStorage.setItem(prefsStorageKey, JSON.stringify(next));
+    const result = await updateCoastalNotificationPreferences(next);
+    const confirmed = result?.preferences || next;
+    localStorage.setItem(prefsStorageKey, JSON.stringify(confirmed));
+    setPrefs(confirmed);
     status.textContent = 'Notification preferences updated.';
   } catch (error) {
     setPrefs(before);
-    status.textContent = error?.message || 'Could not save notification preferences.';
+    status.textContent = (error?.message || 'Could not save notification preferences.') + ' Your previous choices were restored.';
+  } finally {
+    inputs.forEach(input => { input.disabled = false; });
   }
 });
 

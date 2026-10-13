@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pushCapability, decodeVapidPublicKey, enrollPushFromGesture, enrollCoastalNotifications } from '../../js/push-subscriptions.mjs';
+import { pushCapability, decodeVapidPublicKey, enrollPushFromGesture, enrollCoastalNotifications, disableCoastalNotifications } from '../../js/push-subscriptions.mjs';
 
 test('push capability requires HTTPS and supported browser', () => {
   assert.equal(pushCapability({ secureContext: false }).supported, false);
@@ -91,6 +91,29 @@ test('coastal enrollment requests permission before any network call', async () 
     assert.equal(events[0], 'permission');
     assert.equal(events.some(event => event.endsWith('/push/config')), false);
     assert.match(events.find(event => event.startsWith('network:')) || '', /\/push\/devices$/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+
+test('turn off succeeds locally when server cleanup is temporarily unavailable', async () => {
+  let unsubscribed = false;
+  const storage = {
+    value: JSON.stringify({ deviceId: '12345678-1234-4234-8234-123456789abc', token: 'a'.repeat(64) }),
+    getItem() { return this.value; },
+    removeItem() { this.value = null; },
+  };
+  const serviceWorker = { getRegistration: async () => ({ pushManager: { getSubscription: async () => ({ unsubscribe: async () => { unsubscribed = true; return true; } }) } }) };
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({ error: 'temporary failure' }), { status: 503, headers: { 'content-type': 'application/json' } });
+  try {
+    const result = await disableCoastalNotifications({ serviceWorker, storage });
+    assert.equal(result.disabled, true);
+    assert.equal(result.serverDisabled, false);
+    assert.equal(result.localDisabled, true);
+    assert.equal(unsubscribed, true);
+    assert.equal(storage.value, null);
   } finally {
     globalThis.fetch = originalFetch;
   }

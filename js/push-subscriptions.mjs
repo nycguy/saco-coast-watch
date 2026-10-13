@@ -43,7 +43,11 @@ export function readPushCredential(storage = localStorage) {
 async function api(path, { method = 'GET', body, token } = {}) {
   const response = await fetch(API + path, { method, headers: { ...(body ? { 'content-type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || `Notification service returned ${response.status}`);
+  if (!response.ok) {
+    const error = new Error(data.error || `Notification service returned ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }
 export async function getCoastalPushConfiguration() {
@@ -70,7 +74,14 @@ export async function enrollCoastalNotifications({ serviceWorker = navigator.ser
 export async function updateCoastalNotificationPreferences(preferences, { storage = localStorage } = {}) {
   const credential = readPushCredential(storage);
   if (!credential) throw new Error('This browser does not have the saved notification control token. Turn notifications off, then enroll again.');
-  await api('/push/devices/preferences', { method: 'PUT', body: { deviceId: credential.deviceId, preferences }, token: credential.token });
+  const request = () => api('/push/devices/preferences', { method: 'PUT', body: { deviceId: credential.deviceId, preferences }, token: credential.token });
+  try {
+    return await request();
+  } catch (error) {
+    if (error?.status && error.status < 500) throw error;
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return request();
+  }
 }
 export async function getCoastalNotificationPreferences({ storage = localStorage } = {}) {
   const credential = readPushCredential(storage);
@@ -85,9 +96,31 @@ export async function sendCoastalTestNotification({ storage = localStorage } = {
 }
 export async function disableCoastalNotifications({ serviceWorker = navigator.serviceWorker, storage = localStorage } = {}) {
   const credential = readPushCredential(storage);
-  if (credential) await api('/push/devices/disable', { method: 'POST', body: { deviceId: credential.deviceId }, token: credential.token });
-  const registration = await serviceWorker.getRegistration('./');
-  const subscription = await registration?.pushManager?.getSubscription();
-  if (subscription) await subscription.unsubscribe();
+  let serverDisabled = !credential;
+  let serverError = null;
+  if (credential) {
+    try {
+      await api('/push/devices/disable', { method: 'POST', body: { deviceId: credential.deviceId }, token: credential.token });
+      serverDisabled = true;
+    } catch (error) {
+      serverError = error;
+    }
+  }
+
+  let localDisabled = false;
+  let localError = null;
+  try {
+    const registration = await serviceWorker.getRegistration('./');
+    const subscription = await registration?.pushManager?.getSubscription();
+    if (!subscription) localDisabled = true;
+    else localDisabled = (await subscription.unsubscribe()) !== false;
+  } catch (error) {
+    localError = error;
+  }
+
+  // Either successful server deletion or successful browser unsubscribe is enough
+  // to stop this device from receiving future SacoCast pushes.
+  if (!serverDisabled && !localDisabled) throw serverError || localError || new Error('Could not turn off notifications. Try again.');
   storage.removeItem(CREDENTIAL_KEY);
+  return { disabled: true, serverDisabled, localDisabled };
 }

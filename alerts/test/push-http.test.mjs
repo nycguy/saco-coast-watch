@@ -72,3 +72,24 @@ test('test delivery fails closed when the platform client address is unavailable
   assert.equal(response.status, 503);
   assert.equal(database.calls.length, 0);
 });
+
+
+test('preference update accepts false selectors with valid device ownership', async () => {
+  const database = db();
+  const req = new Request('https://worker.example.test/push/devices/preferences', {
+    method: 'PUT',
+    headers: {
+      Origin: 'https://nycguy.github.io',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + 'a'.repeat(64),
+    },
+    body: JSON.stringify({
+      deviceId: '11111111-1111-4111-8111-111111111111',
+      preferences: { starts: false, ends: false, changes: false },
+    }),
+  });
+  const response = await handlePushApi(req, env(database));
+  assert.equal(response.status, 200);
+  assert.match(database.calls.at(-1).sql, /UPDATE push_devices SET event_prefs_json/);
+  assert.equal(database.calls.at(-1).args[0], JSON.stringify({ starts: false, ends: false, changes: false }));
+});

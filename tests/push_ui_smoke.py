@@ -53,6 +53,17 @@ def main():
             target=page.locator('#pushEnable').bounding_box()
             assert target and target['width']>=44 and target['height']>=44, f'live desktop tap target too small: {target}'
             assert page.evaluate('document.documentElement.scrollWidth-window.innerWidth')<=3
+            # Read-only live contract check: invalid ownership must reach the real PUT route
+            # and return a normal 404 response rather than failing CORS/preflight.
+            preference_probe = page.evaluate("""async () => {
+              const response = await fetch('https://saco-coastal-alerts.mikewiley-nyc.workers.dev/push/devices/preferences', {
+                method: 'PUT',
+                headers: {'content-type':'application/json','authorization':'Bearer ' + 'a'.repeat(64)},
+                body: JSON.stringify({deviceId:'11111111-1111-4111-8111-111111111111',preferences:{starts:false,ends:false,changes:false}})
+              });
+              return {status:response.status, body:await response.json()};
+            }""")
+            assert preference_probe['status']==404, f"live preference PUT route failed: {preference_probe}"
             mobile=browser.new_page(
                 viewport={'width':390,'height':844},
                 user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
@@ -90,8 +101,10 @@ def main():
         assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
         page.locator('#pushTest').click()
         page.get_by_text('Test notification sent. Check this device’s notification center.').wait_for(timeout=10000)
-        page.locator('[name="pushEnds"]').uncheck()
-        page.get_by_text('Notification preferences updated.').wait_for(timeout=10000)
+        for name in ('pushStarts','pushEnds','pushChanges'):
+            page.locator(f'[name="{name}"]').uncheck()
+            page.get_by_text('Notification preferences updated.').wait_for(timeout=10000)
+            assert not page.locator(f'[name="{name}"]').is_checked()
         assert page.locator('#pushDisable').is_visible()
         page.locator('#pushDisable').click()
         page.get_by_text('Notifications are off for this device.').wait_for(timeout=10000)

@@ -23,13 +23,17 @@ PUSH = {
     'push_delivery_queue': {'id','device_id','event_key','transition_kind','event_fingerprint','payload_json','status','attempts','next_attempt_at','created_at','sent_at','last_error'},
 }
 INDEXES = {'coastal_event_deliveries_subscriber_idx','coastal_event_deliveries_pending_idx','push_devices_enabled_idx','push_device_deliveries_pending_idx','push_delivery_queue_pending_idx','push_delivery_queue_device_idx'}
+THRESHOLD = {'push_threshold_preferences': {'device_id','linked_subscriber_id','prefs_json','updated_at'}}
+THRESHOLD_INDEXES = {'push_threshold_preferences_subscriber_idx'}
 
-def schema_items(include_push=False):
+def schema_items(include_push=False, include_threshold=False):
     tables = dict(BASE)
     if include_push: tables.update(PUSH)
+    if include_threshold: tables.update(THRESHOLD)
     items = ['object:table:' + table for table in tables]
     items += [f'{table}.{column}' for table, columns in tables.items() for column in columns]
     if include_push: items += ['object:index:' + name for name in INDEXES]
+    if include_threshold: items += ['object:index:' + name for name in THRESHOLD_INDEXES]
     return items
 
 def output(items):
@@ -51,11 +55,14 @@ class D1SchemaGuardTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('refusing Worker release', result.stderr)
 
-    def test_push_schema_state_distinguishes_absent_and_complete(self):
+    def test_push_schema_state_distinguishes_absent_pending_and_complete(self):
         absent = self.invoke(['--migration-state'], output(schema_items()))
-        complete = self.invoke(['--migration-state'], output(schema_items(include_push=True)))
+        pending = self.invoke(['--migration-state'], output(schema_items(include_push=True)))
+        complete = self.invoke(['--migration-state'], output(schema_items(include_push=True, include_threshold=True)))
         self.assertEqual(absent.returncode, 0, absent.stderr)
         self.assertIn('MIGRATION_STATE=absent', absent.stdout)
+        self.assertEqual(pending.returncode, 0, pending.stderr)
+        self.assertIn('MIGRATION_STATE=thresholds_pending', pending.stdout)
         self.assertEqual(complete.returncode, 0, complete.stderr)
         self.assertIn('MIGRATION_STATE=complete', complete.stdout)
 
@@ -64,10 +71,13 @@ class D1SchemaGuardTests(unittest.TestCase):
         incomplete = schema_items(include_push=True)
         incomplete.remove('object:index:push_delivery_queue_device_idx')
         no_index = self.invoke(['--migration-state'], output(incomplete))
+        partial_threshold = self.invoke(['--migration-state'], output(schema_items(include_push=True) + ['object:table:push_threshold_preferences']))
         self.assertNotEqual(partial.returncode, 0)
         self.assertNotEqual(no_index.returncode, 0)
+        self.assertNotEqual(partial_threshold.returncode, 0)
         self.assertIn('partial/incomplete', partial.stderr)
         self.assertIn('partial/incomplete', no_index.stderr)
+        self.assertIn('partial/incomplete', partial_threshold.stderr)
 
     def test_count_check_fails_if_email_rows_change(self):
         before = output([]).replace('"results": []', '"results": [{"subscriber_count": 8}]')

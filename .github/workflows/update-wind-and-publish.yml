@@ -32,7 +32,7 @@ jobs:
       - name: Build adaptive NWS / NHC hazard snapshot
         run: python3 scripts/fetch_hazards.py --output data/hazards.json
       - name: Test coastal history and briefing logic
-        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_fetch_webcam_snapshots.py tests/test_frontend_architecture.py tests/test_fetch_hazards.py tests/test_fetch_wind.py tests/test_archive_ferry_camera.py
+        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_fetch_webcam_snapshots.py tests/test_frontend_architecture.py tests/test_fetch_hazards.py tests/test_fetch_wind.py tests/test_archive_ferry_camera.py tests/test_d1_schema_guard.py
       - name: Validate adaptive front-end syntax
         run: |
           node --check js/hazards.js

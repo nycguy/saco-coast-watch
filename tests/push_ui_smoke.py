@@ -98,6 +98,11 @@ def main():
         except Exception as exc:
             raise AssertionError(f"explicit opt-in failed: {page.locator('#pushStatus').inner_text()}; worker calls={calls}; page errors={browser_errors}") from exc
         assert page.evaluate('window.__permissionCalls')==1, 'Permission should be requested only after the explicit click'
+        assert page.locator('#pushEnable').is_hidden()
+        assert page.locator('#pushManage').is_visible()
+        assert page.locator('#pushSettings').is_hidden()
+        page.locator('#pushManage').click()
+        page.locator('#pushSettings').wait_for(state='visible',timeout=5000)
         assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
         page.locator('#pushTest').click()
         page.get_by_text('Test notification sent. Check this device’s notification center.').wait_for(timeout=10000)
@@ -108,7 +113,9 @@ def main():
         assert page.locator('#pushDisable').is_visible()
         page.locator('#pushDisable').click()
         page.get_by_text('Notifications are off for this device.').wait_for(timeout=10000)
-        assert page.locator('#pushPreferences').is_hidden()
+        assert page.locator('#pushSettings').is_hidden()
+        assert page.locator('#pushManage').is_hidden()
+        assert page.locator('#pushEnable').is_visible()
 
         unavailable=browser.new_page(viewport={'width':390,'height':844})
         unavailable.add_init_script(INIT)

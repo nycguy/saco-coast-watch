@@ -7,6 +7,8 @@ const byId = id => document.getElementById(id);
 const status = byId('pushStatus');
 const panel = byId('pushPanel');
 const enable = byId('pushEnable');
+const manage = byId('pushManage');
+const settings = byId('pushSettings');
 const sendTest = byId('pushTest');
 const disable = byId('pushDisable');
 const preferences = byId('pushPreferences');
@@ -22,7 +24,14 @@ function setPrefs(value) {
   for (const [name, key] of [['pushStarts', 'starts'], ['pushEnds', 'ends'], ['pushChanges', 'changes']]) byId(name).checked = value[key];
 }
 function currentPrefs() { return { starts: byId('pushStarts').checked, ends: byId('pushEnds').checked, changes: byId('pushChanges').checked }; }
-function showEnrolled() { enable.hidden = true; sendTest.hidden = false; disable.hidden = false; preferences.hidden = false; setPrefs(getPrefs()); }
+function showEnrolled({ expanded = false } = {}) {
+  panel.classList.add('enrolled');
+  enable.hidden = true;
+  manage.hidden = false;
+  settings.hidden = !expanded;
+  manage.textContent = expanded ? 'Done' : 'Manage Notifications';
+  setPrefs(getPrefs());
+}
 
 async function initialize() {
   try {
@@ -77,18 +86,26 @@ enable.addEventListener('click', async () => {
     const next = { starts: true, ends: true, changes: true };
     localStorage.setItem(prefsStorageKey, JSON.stringify(next));
     showEnrolled();
-    status.textContent = 'Notifications are on. Coastal event starts, ends, and meaningful changes are enabled.';
+    status.textContent = 'Notifications are on for this device.';
   } catch (error) {
     status.textContent = error?.message || 'Could not enable notifications. Try again later.';
   } finally { enable.disabled = Notification.permission === 'denied'; }
+});
+
+manage.addEventListener('click', () => {
+  const expanded = settings.hidden;
+  settings.hidden = !expanded;
+  manage.textContent = expanded ? 'Done' : 'Manage Notifications';
 });
 
 disable.addEventListener('click', async () => {
   disable.disabled = true;
   try {
     const result = await disableCoastalNotifications();
-    disable.hidden = true; enable.hidden = false; enable.disabled = false; preferences.hidden = true;
-    sendTest.hidden = true;
+    panel.classList.remove('enrolled');
+    settings.hidden = true;
+    manage.hidden = true;
+    enable.hidden = false; enable.disabled = false;
     status.textContent = result?.serverDisabled === false
       ? 'Notifications are off on this device. Server cleanup could not be confirmed, but this browser subscription was removed.'
       : 'Notifications are off for this device.';

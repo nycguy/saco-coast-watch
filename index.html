@@ -21,8 +21,12 @@
 <header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true"><img src="sacocast-app-icon-192.png" alt=""></div><div><h1>SacoCast</h1><small>Coastal conditions · Clearer decisions</small></div></div><div class="headright"><a class="btn primary" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" aria-label="Sign up for custom SacoCast email threshold alerts">✉ Get Email Alerts ↗</a><button type="button" class="btn" id="refreshBtn" aria-label="Reload SacoCast and refresh all dashboard data">↻ Refresh</button><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
 <section class="shell panel push-panel" id="pushPanel" hidden aria-labelledby="pushHeading">
  <div class="push-panel-copy"><div class="eyebrow">Optional browser alerts</div><h2 id="pushHeading">Coastal event notifications</h2><p>Get an update when an official coastal alert starts, ends, or meaningfully changes. You control these notifications on this device.</p></div>
- <div class="push-controls"><button class="btn primary" id="pushEnable" type="button">Turn On Notifications</button><button class="btn" id="pushTest" type="button" hidden>Send Test Notification</button><button class="btn" id="pushDisable" type="button" hidden>Turn Off Notifications</button><p class="push-status" id="pushStatus" role="status" aria-live="polite">Notifications are off. Choose Turn On to opt in.</p>
-  <fieldset id="pushPreferences" hidden><legend>Notify me about</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
+ <div class="push-controls"><button class="btn primary" id="pushEnable" type="button">Turn On Notifications</button><button class="btn" id="pushManage" type="button" hidden>Manage Notifications</button><p class="push-status" id="pushStatus" role="status" aria-live="polite">Notifications are off. Choose Turn On to opt in.</p>
+  <div id="pushSettings" hidden>
+   <div class="push-settings-actions"><button class="btn" id="pushTest" type="button">Send Test Notification</button><button class="btn" id="pushDisable" type="button">Turn Off Notifications</button></div>
+   <fieldset id="pushPreferences"><legend>Notify me about</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
+   <div id="thresholdSettingsMount"></div>
+  </div>
  </div>
 </section>
 <main class="shell">
@@ -268,5 +272,5 @@
 <script src="js/webcams.js"></script>
 
 
-<script type="module" src="js/push-ui.mjs?v=20261013-3"></script>
+<script type="module" src="js/push-ui.mjs?v=20261013-4"></script>
 </body></html>

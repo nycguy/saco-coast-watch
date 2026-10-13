@@ -157,3 +157,22 @@ jobs:
       - name: Publish GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify live production after Pages deployment
+        if: github.event_name == 'push'
+        env:
+          SACOCAST_SMOKE_URL: ${{ steps.deployment.outputs.page_url }}
+          SACOCAST_LIVE_SMOKE: '1'
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --show-error "${SACOCAST_SMOKE_URL%/}/push-sw.js" -o /tmp/live-push-sw.js &&
+               curl --fail --silent --show-error "${SACOCAST_SMOKE_URL%/}/manifest.webmanifest" -o /tmp/live-manifest.webmanifest &&
+               /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py; then
+              echo "Live Pages production verification passed."
+              exit 0
+            fi
+            echo "Waiting for GitHub Pages production deployment to propagate (attempt $attempt/20)..."
+            sleep 5
+          done
+          echo "Live Pages production verification failed after propagation window." >&2
+          exit 1

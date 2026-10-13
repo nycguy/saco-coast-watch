@@ -47,21 +47,33 @@ def main():
         page.goto(BASE,wait_until='domcontentloaded',timeout=45000)
         panel=page.locator('.push-panel')
         if LIVE:
-            panel.wait_for(state='hidden',timeout=10000)
-            assert page.evaluate('window.__permissionCalls')==0, 'Permission was requested while live push is disabled'
-            mobile=browser.new_page(viewport={'width':390,'height':844})
+            panel.wait_for(state='visible',timeout=15000)
+            assert page.locator('#pushEnable').is_enabled(), 'Live desktop push enrollment is not available'
+            assert page.evaluate('window.__permissionCalls')==0, 'Permission was requested on live page load'
+            target=page.locator('#pushEnable').bounding_box()
+            assert target and target['width']>=44 and target['height']>=44, f'live desktop tap target too small: {target}'
+            assert page.evaluate('document.documentElement.scrollWidth-window.innerWidth')<=3
+            mobile=browser.new_page(
+                viewport={'width':390,'height':844},
+                user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
+            )
             mobile.add_init_script(INIT)
             mobile_errors=[]
             mobile.on('pageerror',lambda err: mobile_errors.append(str(err)))
             mobile.goto(BASE,wait_until='domcontentloaded',timeout=45000)
-            mobile.locator('.push-panel').wait_for(state='hidden',timeout=10000)
+            mobile.locator('.push-panel').wait_for(state='visible',timeout=15000)
+            mobile_status=mobile.locator('#pushStatus').inner_text()
+            assert 'add sacocast to your home screen' in mobile_status.lower(), f'live iPhone status: {mobile_status}'
+            assert mobile.locator('#pushEnable').is_disabled()
+            touch_target=mobile.locator('#pushEnable').bounding_box()
+            assert touch_target and touch_target['width']>=44 and touch_target['height']>=44, f'live mobile tap target too small: {touch_target}'
             assert mobile.evaluate('document.documentElement.scrollWidth-window.innerWidth')<=3
             assert mobile.evaluate('window.__permissionCalls')==0
             assert not mobile_errors, f'live mobile browser errors: {mobile_errors}'
             mobile.close()
             assert not browser_errors, f'live browser errors: {browser_errors}'
             browser.close()
-            print('PASS: live desktop/mobile layout leaves disabled Web Push unavailable without a broken opt-in prompt')
+            print('PASS: live desktop Web Push opt-in is visible without auto-permission; iPhone shows Home Screen guidance with no overflow')
             return
         panel.wait_for(state='visible',timeout=10000)
         assert page.evaluate('window.__permissionCalls')==0, 'Permission was requested on page load'

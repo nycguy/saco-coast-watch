@@ -81,11 +81,44 @@ jobs:
             cat /tmp/d1-smoke.err
             exit 1
           fi
-          if ! npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=../scripts/d1_schema_snapshot.sql --json > /tmp/d1-before.json 2> /tmp/d1-schema.err; then
-            echo "D1 schema snapshot failed:"
-            cat /tmp/d1-schema.err
-            exit 1
-          fi
+          rm -f /tmp/d1-schema-parts.ndjson
+          schema_queries=(
+            "SELECT 'object:' || type || ':' || name AS schema_item FROM sqlite_schema WHERE type IN ('table','index')"
+            "SELECT 'subscribers.' || name AS schema_item FROM pragma_table_info('subscribers')"
+            "SELECT 'push_subscriptions.' || name AS schema_item FROM pragma_table_info('push_subscriptions')"
+            "SELECT 'tokens.' || name AS schema_item FROM pragma_table_info('tokens')"
+            "SELECT 'alert_state.' || name AS schema_item FROM pragma_table_info('alert_state')"
+            "SELECT 'request_limits.' || name AS schema_item FROM pragma_table_info('request_limits')"
+            "SELECT 'coastal_event_snapshots.' || name AS schema_item FROM pragma_table_info('coastal_event_snapshots')"
+            "SELECT 'coastal_event_deliveries.' || name AS schema_item FROM pragma_table_info('coastal_event_deliveries')"
+            "SELECT 'push_devices.' || name AS schema_item FROM pragma_table_info('push_devices')"
+            "SELECT 'push_device_deliveries.' || name AS schema_item FROM pragma_table_info('push_device_deliveries')"
+            "SELECT 'push_delivery_queue.' || name AS schema_item FROM pragma_table_info('push_delivery_queue')"
+          )
+          for query in "${schema_queries[@]}"; do
+            if ! npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="$query" --json >> /tmp/d1-schema-parts.ndjson 2> /tmp/d1-schema.err; then
+              echo "D1 schema snapshot failed:"
+              cat /tmp/d1-schema.err
+              exit 1
+            fi
+          done
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          docs=[]
+          raw=Path('/tmp/d1-schema-parts.ndjson').read_text()
+          decoder=json.JSONDecoder()
+          idx=0
+          while idx < len(raw):
+              while idx < len(raw) and raw[idx].isspace():
+                  idx += 1
+              if idx >= len(raw):
+                  break
+              doc,end=decoder.raw_decode(raw,idx)
+              docs.append(doc)
+              idx=end
+          Path('/tmp/d1-before.json').write_text(json.dumps(docs))
+          PY
           cd ..
           python3 scripts/verify_d1_schema.py --schema /tmp/d1-before.json
           state="$(python3 scripts/verify_d1_schema.py --migration-state /tmp/d1-before.json | sed -n 's/^MIGRATION_STATE=//p')"

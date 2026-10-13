@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Browser regression for continuous Leaflet map tiles. Run before publishing."""
-import json, os, shutil, time
+import json
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch_chromium
 
 def main():
-    binary=next((shutil.which(s) for s in ("google-chrome","google-chrome-stable","chromium","chromium-browser") if shutil.which(s)),None)
-    print("BROWSER_EXECUTABLE",binary,flush=True)
     with sync_playwright() as p:
-        browser=p.chromium.launch(headless=True,executable_path=binary,args=["--no-sandbox"]) if binary else p.chromium.launch(headless=True,args=["--no-sandbox"])
+        browser=launch_chromium(p.chromium,"map")
         page=browser.new_page(viewport={"width":1600,"height":1000},device_scale_factor=1)
         errors=[]
         page.on("pageerror",lambda err: errors.append(str(err)))

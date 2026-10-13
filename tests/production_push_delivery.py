@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """End-to-end production check: real browser subscription, Worker, push provider, service worker."""
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch_chromium
 
 SITE='https://nycguy.github.io/saco-coast-watch/'
 SCRIPT=r"""
@@ -41,7 +42,7 @@ async () => {
 
 def main():
     with sync_playwright() as playwright:
-        browser=playwright.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
+        browser=launch_chromium(playwright.chromium,"production-push-delivery",extra_args=("--disable-dev-shm-usage",))
         context=browser.new_context(viewport={'width':1280,'height':900})
         context.grant_permissions(['notifications'],origin='https://nycguy.github.io')
         page=context.new_page()

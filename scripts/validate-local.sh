@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 PYTHON_BIN="${SACOCAST_PYTHON:-python3}"
 if ! "$PYTHON_BIN" -c 'import playwright, PIL' >/dev/null 2>&1; then
-  echo 'Browser checks require Playwright and Pillow. Install with: python3 -m pip install playwright pillow && python3 -m playwright install chromium' >&2
+  echo 'Browser checks require Playwright and Pillow. Install with: python3 -m pip install -r tests/requirements-browser.txt && python3 -m playwright install chromium' >&2
   exit 2
 fi
 "$PYTHON_BIN" -m unittest discover -s tests -v

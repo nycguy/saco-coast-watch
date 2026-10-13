@@ -124,7 +124,7 @@ jobs:
         if: github.event_name != 'schedule'
         run: |
           python3 -m venv /tmp/saco-map-venv
-          /tmp/saco-map-venv/bin/python -m pip install --disable-pip-version-check playwright pillow
+          /tmp/saco-map-venv/bin/python -m pip install --disable-pip-version-check -r tests/requirements-browser.txt
           /tmp/saco-map-venv/bin/python -m playwright install chromium
           python3 -m http.server 8765 --directory dist > /tmp/saco-map-http.log 2>&1 &
           /tmp/saco-map-venv/bin/python tests/map_smoke.py

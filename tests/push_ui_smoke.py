@@ -109,6 +109,7 @@ def run_live(browser):
     assert page.locator('#alertsButton').inner_text() in ('Alerts','Create Alerts','Manage Alerts')
     assert page.evaluate('window.__permissionCalls') == 0
     open_alerts(page)
+    page.wait_for_function('window.__registerCalls >= 1', timeout=10000)
     assert page.evaluate('window.__registerCalls') >= 1
     assert page.locator('#pushEnable').is_enabled()
     target=page.locator('#pushEnable').bounding_box()

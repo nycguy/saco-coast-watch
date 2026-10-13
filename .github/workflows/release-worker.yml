@@ -26,21 +26,31 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Verify required Cloudflare secret names
+      - name: Inspect VAPID secret state
+        id: vapid
         working-directory: alerts
         run: |
           set -euo pipefail
           npx wrangler secret list --format json > /tmp/worker-secret-names.json
           python3 - <<'PY'
-          import json
+          import json, os
           from pathlib import Path
           raw=Path('/tmp/worker-secret-names.json').read_text()
           doc=json.loads(raw[raw.find('['):] if '[' in raw else raw)
           names={item.get('name') for item in doc if isinstance(item,dict)}
-          needed={'VAPID_PUBLIC_KEY','VAPID_PRIVATE_KEY'}
-          if not needed <= names:
-              raise SystemExit('Existing VAPID key pair is incomplete; refusing release without rotation.')
-          print('Both existing VAPID secret names are configured; no key values were read or changed.')
+          has_public='VAPID_PUBLIC_KEY' in names
+          has_private='VAPID_PRIVATE_KEY' in names
+          if has_public and has_private:
+              state='complete'
+              print('Existing VAPID key pair is complete; no key values were read or changed.')
+          elif not has_public and not has_private:
+              state='none'
+              print('No VAPID key pair exists yet. Preflight may continue; deployment will create the first pair only after confirming there are no existing push devices.')
+          else:
+              missing='VAPID_PRIVATE_KEY' if has_public else 'VAPID_PUBLIC_KEY'
+              raise SystemExit(f'Partial VAPID configuration detected ({missing} missing); refusing release to avoid rotating an existing production identity.')
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as out:
+              out.write(f'state={state}\n')
           PY
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -96,14 +106,40 @@ jobs:
           npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-after.json
           cd ..
           python3 scripts/verify_d1_schema.py --push-schema /tmp/d1-after.json --before /tmp/subscribers-before.json --after /tmp/subscribers-after.json
-      - name: Enable push behind existing VAPID identity and deploy Worker
+      - name: Preserve or create VAPID identity, enable push, and deploy Worker
         if: inputs.apply_migrations_and_deploy
         working-directory: alerts
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          VAPID_STATE: ${{ steps.vapid.outputs.state }}
         run: |
           set -euo pipefail
+          if [ "$VAPID_STATE" = "none" ]; then
+            npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS device_count FROM push_devices" --json > /tmp/push-devices-before-vapid.json
+            device_count="$(python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/push-devices-before-vapid.json'))
+          rows=(d[0].get('results') or []) if isinstance(d,list) and d else []
+          print(int((rows[0] if rows else {}).get('device_count') or 0))
+          PY
+            )"
+            test "$device_count" = "0" || { echo "Push devices already exist but no complete VAPID pair is configured; refusing to create a new identity." >&2; exit 1; }
+            umask 077
+            node - <<'NODE' > /tmp/sacocast-vapid.json
+          const { createECDH } = require('node:crypto');
+          const ecdh = createECDH('prime256v1'); ecdh.generateKeys();
+          console.log(JSON.stringify({
+            VAPID_PUBLIC_KEY: ecdh.getPublicKey().toString('base64url'),
+            VAPID_PRIVATE_KEY: ecdh.getPrivateKey().toString('base64url')
+          }));
+          NODE
+            npx wrangler secret bulk /tmp/sacocast-vapid.json
+            rm -f /tmp/sacocast-vapid.json
+            echo "Created the first VAPID key pair after confirming zero existing push devices."
+          else
+            echo "Existing VAPID identity retained."
+          fi
           printf %s true | npx wrangler secret put PUSH_API_ENABLED
           printf %s true | npx wrangler secret put PUSH_EVENTS_ENABLED
           npx wrangler deploy --keep-vars

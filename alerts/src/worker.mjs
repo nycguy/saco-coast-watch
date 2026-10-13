@@ -321,20 +321,24 @@ const ALERTS=THRESHOLD_SPECS.map(spec=>[spec.id,spec.label,spec.unit,spec.defaul
 const liveAlerts=e=>configured(e)&&e.LIVE_ALERTS==="true";
 const siteUrl=e=>e.WORKER_PUBLIC_URL.replace(/\/$/,"");
 function publicPage(e,title,body,status=200){return html(title,body+'<p><a href="'+escapeHtml(e.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p><p>Support: '+escapeHtml(e.SUPPORT_EMAIL)+'</p>',status);}
-function alertFields(values={}){
- return ALERTS.map(([id,label,unit,def,low,high])=>{
- const p=values[id]||{enabled:id==="waterObserved"||id==="waterForecast",threshold:def};
- return '<label style="display:block;margin:14px 0"><input type="checkbox" name="'+id+'_enabled" '+(p.enabled?'checked':'')+'> '+escapeHtml(label)+' <input type="number" style="width:80px" name="'+id+'_threshold" min="'+low+'" max="'+high+'" step="0.1" value="'+escapeHtml(p.threshold)+'"> '+unit+'</label>';
- }).join("");
+function alertFields(values={}) {
+ return '<fieldset class="threshold-group"><legend>Custom Threshold Alerts</legend><p>Choose the conditions you care about. Email alerts are sent when selected thresholds are crossed.</p>'+
+ ALERTS.map(([id,label,unit,def,low,high])=>{
+  const p=values[id]||{enabled:id==="waterObserved"||id==="waterForecast",threshold:def};
+  const direction=id==="tempLow"?"At or below":"At or above";
+  return '<label class="threshold-row"><span class="threshold-name"><input type="checkbox" name="'+id+'_enabled" '+(p.enabled?'checked':'')+'> '+escapeHtml(label)+'</span><span class="threshold-value">'+direction+' <input type="number" inputmode="decimal" name="'+id+'_threshold" min="'+low+'" max="'+high+'" step="0.1" value="'+escapeHtml(p.threshold)+'"> '+escapeHtml(unit)+'</span></label>';
+ }).join("")+'</fieldset>';
 }
 function alertForm(e){
  if(!liveAlerts(e))return publicPage(e,"Alerts not yet open","<p>The email notification service is being prepared.</p>",503);
- return publicPage(e,"Subscribe to coastal email alerts",
- '<p>Select custom thresholds for Portland gauge water level, offshore wind and airport temperature. Not a property-level flood prediction or official NWS warning. Notifications may be delayed or unavailable.</p>'+
- '<form action="/alerts/subscribe" method="post"><label>Your email <input type="email" name="email" maxlength="254" required></label>'+alertFields()+
+ return publicPage(e,"Create Email Alerts",
+ '<style>.threshold-group{border:1px solid #426273;border-radius:12px;padding:16px;margin:20px 0}.threshold-group legend{font-weight:700;font-size:1.15rem;padding:0 8px}.threshold-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid #355266;padding:15px 0;margin:0}.threshold-name{display:flex;align-items:center;gap:8px;flex:1 1 225px}.threshold-name input{width:20px;height:20px;flex-shrink:0}.threshold-value{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.threshold-value input{width:76px;max-width:25vw;border-radius:7px;border:1px solid #758b99}.email-field input{display:block;box-sizing:border-box;width:100%;max-width:440px;border:1px solid #758b99;border-radius:8px}.email-submit{min-height:48px;padding:12px 18px}.delivery-note{border-left:3px solid #26ceb7;padding-left:12px}@media(max-width:480px){main{padding:16px}.threshold-row{align-items:flex-start}.threshold-value{padding-left:28px}.threshold-group{padding:12px}}</style>'+
+ '<p>Use the same custom threshold choices as SacoCast app notifications. Email delivery requires address verification. Notifications may be delayed or unavailable and are not official NWS warnings or property-level flood predictions.</p>'+
+ '<form action="/alerts/subscribe" method="post"><label class="email-field">Email address <input type="email" name="email" maxlength="254" autocomplete="email" inputmode="email" required></label>'+alertFields()+
+ '<p class="delivery-note"><strong>Delivery method:</strong> Email. To receive app notifications as well, open SacoCast on a supported device and enable them there.</p>'+
  '<label><input type="checkbox" name="consent" required> I request emails about my selected thresholds and agree to the <a href="/alerts/terms">terms</a> and <a href="/alerts/privacy">privacy information</a>.</label>'+
  '<div class="cf-turnstile" data-sitekey="'+escapeHtml(e.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div>'+
- '<button type="submit">Email me a confirmation link</button></form><p><a href="/alerts/manage">Manage existing alerts</a></p><p>Browser push is not yet available.</p>');
+ '<button class="email-submit" type="submit">Send Verification Email</button></form><p><a href="/alerts/manage">Manage Existing Email Alerts</a></p>');
 }
 function validAddress(s){return typeof s==="string"&&s.length<255&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);}
 function thresholds(form){

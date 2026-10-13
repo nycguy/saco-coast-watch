@@ -46,36 +46,66 @@ def main():
             page.route(WORKER+'/**',mock_worker)
         page.goto(BASE,wait_until='domcontentloaded',timeout=45000)
         panel=page.locator('.push-panel')
+        if LIVE:
+            panel.wait_for(state='hidden',timeout=10000)
+            assert page.evaluate('window.__permissionCalls')==0, 'Permission was requested while live push is disabled'
+            mobile=browser.new_page(viewport={'width':390,'height':844})
+            mobile.add_init_script(INIT)
+            mobile_errors=[]
+            mobile.on('pageerror',lambda err: mobile_errors.append(str(err)))
+            mobile.goto(BASE,wait_until='domcontentloaded',timeout=45000)
+            mobile.locator('.push-panel').wait_for(state='hidden',timeout=10000)
+            assert mobile.evaluate('document.documentElement.scrollWidth-window.innerWidth')<=3
+            assert mobile.evaluate('window.__permissionCalls')==0
+            assert not mobile_errors, f'live mobile browser errors: {mobile_errors}'
+            mobile.close()
+            assert not browser_errors, f'live browser errors: {browser_errors}'
+            browser.close()
+            print('PASS: live desktop/mobile layout leaves disabled Web Push unavailable without a broken opt-in prompt')
+            return
         panel.wait_for(state='visible',timeout=10000)
         assert page.evaluate('window.__permissionCalls')==0, 'Permission was requested on page load'
         assert page.locator('#pushEnable').is_enabled()
         target=page.locator('#pushEnable').bounding_box()
         assert target and target['width']>=44 and target['height']>=44, f'desktop tap target too small: {target}'
-        assert not any(url.endswith('/push/config') for url in calls), 'Page load contacted push enrollment config'
-        if LIVE:
-            assert not any(url.endswith('/push/config') for url in calls), 'Live page requested push enrollment config on load'
-        else:
-            page.locator('#pushEnable').click()
-            try:
-                page.locator('#pushPreferences').wait_for(state='visible',timeout=10000)
-            except Exception as exc:
-                raise AssertionError(f"explicit opt-in failed: {page.locator('#pushStatus').inner_text()}; worker calls={calls}; page errors={browser_errors}") from exc
-            assert page.evaluate('window.__permissionCalls')==1, 'Permission should be requested only after the explicit click'
-            assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
-            page.locator('#pushTest').click()
-            page.get_by_text('Test notification sent. Check this device’s notification center.').wait_for(timeout=10000)
-            page.locator('[name="pushEnds"]').uncheck()
-            page.get_by_text('Notification preferences updated.').wait_for(timeout=10000)
-            assert page.locator('#pushDisable').is_visible()
-            page.locator('#pushDisable').click()
-            page.get_by_text('Notifications are off for this device.').wait_for(timeout=10000)
-            assert page.locator('#pushPreferences').is_hidden()
+        assert calls.count(WORKER+'/push/config') == 1, 'Page load should perform one safe readiness check only'
+        page.locator('#pushEnable').click()
+        try:
+            page.locator('#pushPreferences').wait_for(state='visible',timeout=10000)
+        except Exception as exc:
+            raise AssertionError(f"explicit opt-in failed: {page.locator('#pushStatus').inner_text()}; worker calls={calls}; page errors={browser_errors}") from exc
+        assert page.evaluate('window.__permissionCalls')==1, 'Permission should be requested only after the explicit click'
+        assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
+        page.locator('#pushTest').click()
+        page.get_by_text('Test notification sent. Check this device’s notification center.').wait_for(timeout=10000)
+        page.locator('[name="pushEnds"]').uncheck()
+        page.get_by_text('Notification preferences updated.').wait_for(timeout=10000)
+        assert page.locator('#pushDisable').is_visible()
+        page.locator('#pushDisable').click()
+        page.get_by_text('Notifications are off for this device.').wait_for(timeout=10000)
+        assert page.locator('#pushPreferences').is_hidden()
+
+        unavailable=browser.new_page(viewport={'width':390,'height':844})
+        unavailable.add_init_script(INIT)
+        unavailable_calls=[]
+        def unavailable_worker(route):
+            unavailable_calls.append(route.request.url)
+            route.fulfill(status=200,headers={'Access-Control-Allow-Origin':route.request.headers.get('origin','http://127.0.0.1:8765'),'content-type':'application/json'},body='{"enabled":false}')
+        if not LIVE:
+            unavailable.route(WORKER+'/**',unavailable_worker)
+            unavailable.goto(BASE,wait_until='domcontentloaded',timeout=45000)
+            unavailable.locator('.push-panel').wait_for(state='hidden',timeout=10000)
+            assert unavailable_calls == [WORKER+'/push/config']
+            assert unavailable.evaluate('window.__permissionCalls')==0
+            unavailable.close()
         box=panel.bounding_box()
         assert box and box['width']>500
         panel.screenshot(path='push-notifications-smoke-desktop.png')
 
         mobile=browser.new_page(viewport={'width':390,'height':844},user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1')
         mobile.add_init_script(INIT)
+        if not LIVE:
+            mobile.route(WORKER+'/**',mock_worker)
         mobile.on('pageerror',lambda err: browser_errors.append('mobile: '+str(err)))
         mobile.goto(BASE,wait_until='domcontentloaded',timeout=45000)
         mobile.locator('#pushStatus').wait_for()

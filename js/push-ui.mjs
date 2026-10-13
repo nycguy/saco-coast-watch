@@ -1,10 +1,11 @@
 import {
-  pushCapability, readPushCredential, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
+  pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
   updateCoastalNotificationPreferences, disableCoastalNotifications,
 } from './push-subscriptions.mjs';
 
 const byId = id => document.getElementById(id);
 const status = byId('pushStatus');
+const panel = byId('pushPanel');
 const enable = byId('pushEnable');
 const sendTest = byId('pushTest');
 const disable = byId('pushDisable');
@@ -23,6 +24,13 @@ function currentPrefs() { return { starts: byId('pushStarts').checked, ends: byI
 function showEnrolled() { enable.hidden = true; sendTest.hidden = false; disable.hidden = false; preferences.hidden = false; setPrefs(getPrefs()); }
 
 async function initialize() {
+  try {
+    const config = await getCoastalPushConfiguration();
+    if (!config) return;
+  } catch (_) {
+    return;
+  }
+  panel.hidden = false;
   const standalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const capability = pushCapability({
     secureContext: window.isSecureContext,

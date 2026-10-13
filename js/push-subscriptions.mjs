@@ -46,9 +46,16 @@ async function api(path, { method = 'GET', body, token } = {}) {
   if (!response.ok) throw new Error(data.error || `Notification service returned ${response.status}`);
   return data;
 }
+export async function getCoastalPushConfiguration() {
+  const config = await api('/push/config');
+  if (config.enabled !== true) return null;
+  decodeVapidPublicKey(config.publicKey);
+  return config;
+}
 export async function enrollCoastalNotifications({ serviceWorker = navigator.serviceWorker, notification = window.Notification, storage = localStorage, onSave }) {
   // Must be called from a direct click or tap. No page-load permission request.
-  const config = await api('/push/config');
+  const config = await getCoastalPushConfiguration();
+  if (!config) throw new Error('Coastal notifications are not available yet. Try again later.');
   const result = await enrollPushFromGesture({
     serviceWorker, notification, vapidPublicKey: config.publicKey,
     saveSubscription: async (subscription) => {

@@ -291,6 +291,7 @@ def run_mocked(browser):
     stale.route(WORKER+'/**', worker_mock([]))
     stale.goto(BASE, wait_until='domcontentloaded', timeout=45000)
     stale.wait_for_function("document.querySelector('#alertsButton').textContent==='Create Alerts'", timeout=5000)
+    open_alerts(stale)
     assert stale.locator('#pushEnable').is_visible()
     stale.close()
 

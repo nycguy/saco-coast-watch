@@ -52,12 +52,12 @@ export async function getCoastalPushConfiguration() {
   decodeVapidPublicKey(config.publicKey);
   return config;
 }
-export async function enrollCoastalNotifications({ serviceWorker = navigator.serviceWorker, notification = window.Notification, storage = localStorage, onSave }) {
-  // Must be called from a direct click or tap. No page-load permission request.
-  const config = await getCoastalPushConfiguration();
-  if (!config) throw new Error('Coastal notifications are not available yet. Try again later.');
+export async function enrollCoastalNotifications({ serviceWorker = navigator.serviceWorker, notification = window.Notification, storage = localStorage, onSave, vapidPublicKey }) {
+  // iOS requires Notification.requestPermission() to happen in the same user gesture.
+  // The caller must preload the public VAPID key before the tap; do not fetch here.
+  if (!vapidPublicKey) throw new Error('Notification setup needs to refresh. Reload SacoCast and try again.');
   const result = await enrollPushFromGesture({
-    serviceWorker, notification, vapidPublicKey: config.publicKey,
+    serviceWorker, notification, vapidPublicKey,
     saveSubscription: async (subscription) => {
       const preferences = { starts: true, ends: true, changes: true };
       const registered = await api('/push/devices', { method: 'POST', body: { subscription, preferences } });

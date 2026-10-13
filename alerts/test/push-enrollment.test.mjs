@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pushCapability, decodeVapidPublicKey, enrollPushFromGesture } from '../../js/push-subscriptions.mjs';
+import { pushCapability, decodeVapidPublicKey, enrollPushFromGesture, enrollCoastalNotifications } from '../../js/push-subscriptions.mjs';
 
 test('push capability requires HTTPS and supported browser', () => {
   assert.equal(pushCapability({ secureContext: false }).supported, false);
@@ -46,4 +46,52 @@ test('failed server enrollment preserves an existing browser subscription', asyn
   const serviceWorker = { register: async () => ({ pushManager: { getSubscription: async () => prior, subscribe: async () => { throw Error('must not resubscribe'); } } }) };
   await assert.rejects(enrollPushFromGesture({ serviceWorker, notification: { requestPermission: async () => 'granted' }, vapidPublicKey: key, saveSubscription: async () => { throw Error('server unavailable'); } }));
   assert.equal(unsubscribed, false);
+});
+
+
+test('coastal enrollment requests permission before any network call', async () => {
+  const key = Buffer.from([4, ...Array(64).fill(1)]).toString('base64url');
+  const events = [];
+  const subscription = {
+    toJSON: () => ({
+      endpoint: 'https://web.push.apple.com/test-device',
+      keys: { p256dh: 'BGsX0fLhLEJH-Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU', auth: 'BwcHBwcHBwcHBwcHBwcHBw' }
+    }),
+    unsubscribe: async () => true,
+  };
+  const serviceWorker = {
+    register: async () => {
+      events.push('register');
+      return { pushManager: { getSubscription: async () => null, subscribe: async () => subscription } };
+    },
+  };
+  const notification = {
+    requestPermission: async () => {
+      events.push('permission');
+      return 'granted';
+    },
+  };
+  const storage = {
+    value: null,
+    setItem(_key, value) { this.value = value; },
+    getItem() { return this.value; },
+    removeItem() { this.value = null; },
+  };
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    events.push('network:' + String(url));
+    return new Response(JSON.stringify({
+      deviceId: '12345678-1234-4234-8234-123456789abc',
+      token: 'a'.repeat(64),
+    }), { status: 201, headers: { 'content-type': 'application/json' } });
+  };
+  try {
+    const result = await enrollCoastalNotifications({ serviceWorker, notification, storage, vapidPublicKey: key });
+    assert.equal(result.enrolled, true);
+    assert.equal(events[0], 'permission');
+    assert.equal(events.some(event => event.endsWith('/push/config')), false);
+    assert.match(events.find(event => event.startsWith('network:')) || '', /\/push\/devices$/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

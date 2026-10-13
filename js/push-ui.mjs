@@ -11,6 +11,7 @@ const sendTest = byId('pushTest');
 const disable = byId('pushDisable');
 const preferences = byId('pushPreferences');
 const prefsStorageKey = 'sacocast.push.preferences.v1';
+let pushConfig = null;
 const getPrefs = () => {
   try {
     const stored = JSON.parse(localStorage.getItem(prefsStorageKey) || 'null');
@@ -25,8 +26,8 @@ function showEnrolled() { enable.hidden = true; sendTest.hidden = false; disable
 
 async function initialize() {
   try {
-    const config = await getCoastalPushConfiguration();
-    if (!config) return;
+    pushConfig = await getCoastalPushConfiguration();
+    if (!pushConfig) return;
   } catch (_) {
     return;
   }
@@ -71,7 +72,7 @@ enable.addEventListener('click', async () => {
   enable.disabled = true;
   status.textContent = 'Connecting this device…';
   try {
-    const result = await enrollCoastalNotifications({ onSave: setPrefs });
+    const result = await enrollCoastalNotifications({ onSave: setPrefs, vapidPublicKey: pushConfig?.publicKey });
     if (!result.enrolled) { status.textContent = 'Notifications were not enabled. You can try again whenever you like.'; return; }
     const next = { starts: true, ends: true, changes: true };
     localStorage.setItem(prefsStorageKey, JSON.stringify(next));

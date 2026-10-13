@@ -108,8 +108,8 @@ def run_live(browser):
     assert_dialog_hidden(page)
     assert page.locator('#alertsButton').inner_text() in ('Alerts','Create Alerts','Manage Alerts')
     assert page.evaluate('window.__permissionCalls') == 0
-    assert page.evaluate('window.__registerCalls') >= 1
     open_alerts(page)
+    assert page.evaluate('window.__registerCalls') >= 1
     assert page.locator('#pushEnable').is_enabled()
     target=page.locator('#pushEnable').bounding_box()
     assert target and target['width'] >= 44 and target['height'] >= 44

@@ -3,6 +3,7 @@ import { processCoastalPushEvents } from './coastal-push-events.mjs';
 import { sendThresholdPush } from './push-delivery.mjs';
 import { THRESHOLD_SPECS, normalizeThresholdPreferences } from './threshold-preferences.mjs';
 import { linkDeviceThresholdSubscriber } from './push-device-store.mjs';
+import { syncLinkedThresholdDevices } from './email-device-sync.mjs';
 // SacoCast alert Worker. Existing email behavior remains independent of browser push.
 // Push stays inert until its explicit runtime flags, VAPID pair, and additive D1 schema are ready.
 const NEEDED=["DB","PUBLIC_SITE","ALLOWED_ORIGIN","WORKER_PUBLIC_URL","FROM_EMAIL","SUPPORT_EMAIL","RESEND_API_KEY","TURNSTILE_SITE_KEY","TURNSTILE_SECRET","TOKEN_SECRET"];
@@ -405,12 +406,16 @@ async function confirmEmail(req,e){
  if(!await takePublicToken(e,raw))return publicPage(e,"Link already used","<p>Request another.</p>",409);
  const now=stamp(),prefs=JSON.stringify({metrics:payload.metrics,channels:{email:true,push:false},emailOptInAt:now,termsVersion:payload.termsVersion});
  const prior=await e.DB.prepare("SELECT id FROM subscribers WHERE email=?").bind(row.email).first();
+ let subscriberId;
  if(prior){
-  await e.DB.prepare("UPDATE subscribers SET email_confirmed=1,unsubscribed=0,prefs_json=?,updated_at=? WHERE id=?").bind(prefs,now,prior.id).run();
-  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(prior.id).run();
+  subscriberId=prior.id;
+  await e.DB.prepare("UPDATE subscribers SET email_confirmed=1,unsubscribed=0,prefs_json=?,updated_at=? WHERE id=?").bind(prefs,now,subscriberId).run();
+  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(subscriberId).run();
  }else{
-  await e.DB.prepare("INSERT INTO subscribers(id,email,email_confirmed,prefs_json,unsubscribed,created_at,updated_at) VALUES(?,?,?,?,?,?,?)").bind(crypto.randomUUID(),row.email,1,prefs,0,now,now).run();
+  subscriberId=crypto.randomUUID();
+  await e.DB.prepare("INSERT INTO subscribers(id,email,email_confirmed,prefs_json,unsubscribed,created_at,updated_at) VALUES(?,?,?,?,?,?,?)").bind(subscriberId,row.email,1,prefs,0,now,now).run();
  }
+ await syncLinkedThresholdDevices(e.DB,subscriberId,payload.metrics,true,now);
  return publicPage(e,"Email alerts activated","<p>Your selected thresholds are active for scheduled checks. Delivery is best effort, not an emergency warning system.</p>");
 }
 async function confirmPushThresholdEmail(req,e){
@@ -446,17 +451,6 @@ async function confirmPushThresholdEmail(req,e){
   return publicPage(e,"Email delivery activated","<p>Your selected custom thresholds can now be delivered by app notification, email, or both according to the choices saved on this device.</p>");
 }
 
-async function syncLinkedThresholdDevices(e,subscriberId,metrics,emailEnabled){
-  const rows=await e.DB.prepare("SELECT device_id,prefs_json FROM push_threshold_preferences WHERE linked_subscriber_id=?").bind(subscriberId).all();
-  for(const row of rows.results||[]){
-    let prefs;try{prefs=normalizeThresholdPreferences(JSON.parse(row.prefs_json));}catch(_){prefs=null;}
-    if(!prefs)continue;
-    prefs={metrics,channels:{push:prefs.channels.push,email:emailEnabled}};
-    await e.DB.prepare("UPDATE push_threshold_preferences SET prefs_json=?,updated_at=? WHERE device_id=?").bind(JSON.stringify(prefs),stamp(),row.device_id).run();
-    await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='push'").bind(row.device_id).run();
-  }
-}
-
 async function unsubscribeLink(e,s){
  const sig=await hmac(e.TOKEN_SECRET,"unsub:"+s.id+":"+s.email);
  return siteUrl(e)+"/alerts/unsubscribe?token="+s.id+"."+sig;
@@ -470,7 +464,10 @@ async function unsubscribeEmail(req,e){
  if(!s||await hmac(e.TOKEN_SECRET,"unsub:"+s.id+":"+s.email)!==m[2])return publicPage(e,"Invalid link","<p>Contact support to unsubscribe.</p>",400);
  if(req.method==="GET")return publicPage(e,"Stop coastal alerts",
   '<p>Stop all alert emails to '+escapeHtml(s.email)+'?</p><form method="post" action="/alerts/unsubscribe"><input type="hidden" name="token" value="'+escapeHtml(raw)+'"><button type="submit">Stop alerts</button></form>');
- await e.DB.prepare("UPDATE subscribers SET unsubscribed=1,email_confirmed=0,updated_at=? WHERE id=?").bind(stamp(),s.id).run();
+ const now=stamp();
+ await e.DB.prepare("UPDATE subscribers SET unsubscribed=1,email_confirmed=0,updated_at=? WHERE id=?").bind(now,s.id).run();
+ let subscriberPrefs;try{subscriberPrefs=JSON.parse(s.prefs_json||"{}");}catch(_){subscriberPrefs={};}
+ await syncLinkedThresholdDevices(e.DB,s.id,subscriberPrefs.metrics,false,now);
  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=?").bind(s.id).run();
  await e.DB.prepare("DELETE FROM push_subscriptions WHERE subscriber_id=?").bind(s.id).run();
  return publicPage(e,"Unsubscribed","<p>Alerts to this address have been stopped.</p>");
@@ -526,6 +523,7 @@ async function managementEdit(req,e){
  if(!await takePublicToken(e,raw))return publicPage(e,"Link already used","<p>Request another management link.</p>",409);
  await e.DB.prepare("UPDATE subscribers SET prefs_json=?,updated_at=? WHERE id=?")
   .bind(JSON.stringify({...pref,metrics:next,channels:{email:true,push:false}}),stamp(),sub.id).run();
+ await syncLinkedThresholdDevices(e.DB,sub.id,next,true,stamp());
  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(sub.id).run();
  return publicPage(e,"Thresholds saved","<p>Your new preferences are active. This management link can no longer be used.</p>");
 }

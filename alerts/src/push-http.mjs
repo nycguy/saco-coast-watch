@@ -3,6 +3,7 @@ import { registerDevice, setDevicePreferences, getDevicePreferences, disableDevi
 import { validatePushSubscription, validateEventPreferences } from './push-validation.mjs';
 import { normalizeThresholdPreferences } from './threshold-preferences.mjs';
 import { sendControlledTestPush } from './push-delivery.mjs';
+import { syncLinkedThresholdDevices } from './email-device-sync.mjs';
 
 const hex = bytes => Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
 const validEmail = value => typeof value === 'string' && value.length < 255 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -135,6 +136,7 @@ export async function handlePushApi(req, env) {
         await env.DB.prepare('UPDATE subscribers SET prefs_json=?,updated_at=? WHERE id=?').bind(JSON.stringify(next), now, subscriber.id).run();
         linkedEmail = subscriber.email;
         await env.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(subscriber.id).run();
+        await syncLinkedThresholdDevices(env.DB, subscriber.id, preferences.metrics, preferences.channels.email, now);
       }
     }
     await env.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='push'").bind(body.deviceId).run();

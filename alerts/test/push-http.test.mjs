@@ -119,6 +119,40 @@ test('threshold preference endpoint accepts App-only custom thresholds', async (
   assert.equal(calls.some(call=>/push_threshold_preferences/.test(call.sql)),true);
 });
 
+test('changing linked threshold delivery keeps App channels independent across devices', async () => {
+  const calls=[];
+  const currentId='11111111-1111-4111-8111-111111111111';
+  const rows=[
+    {device_id:currentId,prefs_json:JSON.stringify({metrics:{},channels:{push:true,email:true}})},
+    {device_id:'22222222-2222-4222-8222-222222222222',prefs_json:JSON.stringify({metrics:{},channels:{push:false,email:true}})},
+  ];
+  const database={
+    prepare(sql){const call={sql,args:[]};calls.push(call);return{
+      bind(...args){call.args=args;return this;},
+      async first(){
+        if(sql.startsWith('SELECT id FROM push_devices')) return {id:currentId};
+        if(sql.startsWith('SELECT linked_subscriber_id')) return {linked_subscriber_id:'subscriber-1'};
+        if(sql.startsWith('SELECT id,email,prefs_json')) return {id:'subscriber-1',email:'person@example.com',email_confirmed:1,unsubscribed:0,prefs_json:'{}'};
+        return null;
+      },
+      async all(){return {results:rows};},
+      async run(){return {meta:{changes:1}};}
+    };}
+  };
+  const preferences={metrics:{
+    waterObserved:{enabled:false,threshold:12},waterForecast:{enabled:false,threshold:12},wind:{enabled:false,threshold:30},
+    gust:{enabled:false,threshold:45},tempHigh:{enabled:true,threshold:85},tempLow:{enabled:false,threshold:32}
+  },channels:{push:true,email:false}};
+  const req=new Request('https://worker.example.test/push/devices/thresholds',{method:'PUT',headers:{Origin:'https://nycguy.github.io','Content-Type':'application/json',Authorization:'Bearer '+'a'.repeat(64)},body:JSON.stringify({deviceId:currentId,preferences})});
+  const response=await handlePushApi(req,{...env(database),PUSH_API_ENABLED:'true'});
+  assert.equal(response.status,200);
+  assert.equal((await response.json()).linkedEmail,'person@example.com');
+  const updates=calls.filter(call=>call.sql.startsWith('UPDATE push_threshold_preferences'));
+  assert.equal(updates.length,2);
+  assert.deepEqual(JSON.parse(updates[0].args[0]).channels,{push:true,email:false});
+  assert.deepEqual(JSON.parse(updates[1].args[0]).channels,{push:false,email:false});
+});
+
 
 test('authenticated device can request one-time email confirmation for Both delivery', async () => {
   const calls=[];

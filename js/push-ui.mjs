@@ -27,9 +27,9 @@ const thresholdLinkedEmail = byId('thresholdLinkedEmail');
 const thresholdSave = byId('thresholdSave');
 const thresholdStatus = byId('thresholdStatus');
 const prefsStorageKey = 'sacocast.push.preferences.v1';
-const emailLinkedStorageKey = 'sacocast.alerts.email-linked.v1';
 let pushConfig = null;
-let thresholdSettingsLoaded = false;
+let appPushVerified = null;
+let thresholdLoadInFlight = null;
 let linkedThresholdEmail = null;
 const thresholdSpecs = [
   ['waterObserved', 12], ['waterForecast', 12], ['wind', 30], ['gust', 45], ['tempHigh', 90], ['tempLow', 32],
@@ -45,22 +45,22 @@ function setPrefs(value) {
   for (const [name, key] of [['pushStarts', 'starts'], ['pushEnds', 'ends'], ['pushChanges', 'changes']]) byId(name).checked = value[key];
 }
 function currentPrefs() { return { starts: byId('pushStarts').checked, ends: byId('pushEnds').checked, changes: byId('pushChanges').checked }; }
-function hasKnownEmailAlerts() { return localStorage.getItem(emailLinkedStorageKey) === 'true'; }
-function hasSavedAlerts() { return Boolean(readPushCredential() || hasKnownEmailAlerts()); }
 function updateAlertsEntryState() {
-  const saved = hasSavedAlerts();
-  alertsButton.textContent = saved ? 'Manage Alerts' : 'Create Alerts';
-  alertsDialogTitle.textContent = saved ? 'Manage Alerts' : 'Create Alerts';
-  emailOnlyLink.href = hasKnownEmailAlerts()
-    ? 'https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts/manage'
-    : 'https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts';
-  emailOnlyLink.textContent = hasKnownEmailAlerts() ? 'Manage Email Alerts ↗' : 'Create Email-Only Alerts ↗';
+  const label = appPushVerified === null ? 'Alerts' : appPushVerified ? 'Manage Alerts' : 'Create Alerts';
+  alertsButton.textContent = label;
+  alertsDialogTitle.textContent = label;
+  // Email subscriptions are identified through their verified address, not a
+  // browser-local flag. The Worker page offers both signup and email-link
+  // management without exposing cross-device account discovery.
+  emailOnlyLink.href = 'https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts';
+  emailOnlyLink.textContent = 'Email Alerts (Create or Manage) ↗';
 }
 function showEnrolled() {
+  appPushVerified = true;
   panel.classList.add('enrolled');
   enable.hidden = true;
   settings.hidden = false;
-  emailOnlyEntry.hidden = true;
+  emailOnlyEntry.hidden = false;
   setPrefs(getPrefs());
   updateAlertsEntryState();
 }
@@ -101,7 +101,6 @@ function renderThresholdPreferences(result) {
   thresholdChannelPush.checked = prefs.channels?.push === true;
   thresholdChannelEmail.checked = prefs.channels?.email === true;
   linkedThresholdEmail = result.linkedEmail || null;
-  if (linkedThresholdEmail) localStorage.setItem(emailLinkedStorageKey, 'true');
   renderThresholdEmailState();
   updateAlertsEntryState();
   const count = Object.values(prefs.metrics || {}).filter(item => item?.enabled === true).length;
@@ -112,14 +111,18 @@ async function loadThresholdPreferences() {
     thresholdPreferences.hidden = true;
     return;
   }
+  if (thresholdLoadInFlight) return thresholdLoadInFlight;
   thresholdPreferences.hidden = false;
-  try {
-    const result = await getCoastalThresholdPreferences();
-    renderThresholdPreferences(result);
-    thresholdSettingsLoaded = true;
-  } catch (error) {
-    thresholdStatus.textContent = error?.message || 'Custom threshold settings could not be loaded.';
-  }
+  thresholdLoadInFlight = (async () => {
+    try {
+      const result = await getCoastalThresholdPreferences();
+      renderThresholdPreferences(result);
+    } catch (error) {
+      thresholdStatus.textContent = error?.message || 'Custom threshold settings could not be loaded.';
+      throw error;
+    } finally { thresholdLoadInFlight = null; }
+  })();
+  return thresholdLoadInFlight;
 }
 
 async function initialize() {
@@ -159,18 +162,56 @@ async function initialize() {
   }
   const registration = await navigator.serviceWorker.register('./push-sw.js', { scope: './' }).catch(() => navigator.serviceWorker.getRegistration('./').catch(() => null));
   const existing = await registration?.pushManager?.getSubscription().catch(() => null);
-  if (existing && readPushCredential()) {
-    showEnrolled();
+  const credential = readPushCredential();
+  if (existing && credential) {
+    status.textContent = 'Checking this device’s saved notification settings…';
     try {
       const saved = await getCoastalNotificationPreferences();
+      if (!saved) throw new Error('This device’s notification settings could not be verified.');
+      showEnrolled();
       if (saved) { localStorage.setItem(prefsStorageKey, JSON.stringify(saved)); setPrefs(saved); }
       status.textContent = 'App notifications are on for this device.';
-      await loadThresholdPreferences();
-    } catch (_) {
-      status.textContent = 'Notifications are on, but saved preferences could not be refreshed. Your current choices remain shown.';
+      await loadThresholdPreferences().catch(() => {});
+    } catch (error) {
+      if (error?.status === 404 || error?.status === 401) {
+        try {
+          await disableCoastalNotifications();
+          appPushVerified = false;
+          showNotEnrolled();
+          status.textContent = 'This device is no longer enrolled for App notifications. You can set it up again if you want.';
+        } catch (_) {
+          appPushVerified = null;
+          showNotEnrolled();
+          enable.disabled = true;
+          status.textContent = 'The saved App subscription could not be verified or removed. Check this browser’s notification settings before enrolling again.';
+        }
+      } else {
+        appPushVerified = null;
+        showNotEnrolled();
+        enable.disabled = true;
+        status.textContent = 'App notification settings could not be checked. Try again later; the existing subscription was left unchanged.';
+      }
     }
   } else if (existing) {
+    appPushVerified = null;
+    updateAlertsEntryState();
+    enable.disabled = true;
     status.textContent = 'A browser subscription already exists, but its saved control credential is missing. Keep it until you can turn it off in browser settings, then enroll again.';
+  } else if (credential) {
+    try {
+      await disableCoastalNotifications();
+      appPushVerified = false;
+      showNotEnrolled();
+      status.textContent = 'The saved App subscription is no longer active in this browser. You can set it up again if you want.';
+    } catch (_) {
+      appPushVerified = null;
+      showNotEnrolled();
+      enable.disabled = true;
+      status.textContent = 'App notification settings could not be checked. Try again later; your saved server record was left unchanged.';
+    }
+  } else {
+    appPushVerified = false;
+    updateAlertsEntryState();
   }
 }
 
@@ -194,8 +235,15 @@ alertsButton.addEventListener('click', async () => {
   updateAlertsEntryState();
   if (typeof alertsDialog.showModal === 'function') alertsDialog.showModal();
   else alertsDialog.setAttribute('open', '');
-  if (readPushCredential() && !thresholdSettingsLoaded) await loadThresholdPreferences();
+  if (readPushCredential()) await loadThresholdPreferences().catch(() => {});
 });
+async function refreshConfirmedEmailLink() {
+  if (!document.hidden && alertsDialog.open && readPushCredential()) {
+    await loadThresholdPreferences().catch(() => {});
+  }
+}
+window.addEventListener('focus', refreshConfirmedEmailLink);
+document.addEventListener('visibilitychange', refreshConfirmedEmailLink);
 alertsClose.addEventListener('click', () => {
   if (typeof alertsDialog.close === 'function') alertsDialog.close();
   else alertsDialog.removeAttribute('open');
@@ -211,6 +259,7 @@ disable.addEventListener('click', async () => {
   disable.disabled = true;
   try {
     const result = await disableCoastalNotifications();
+    appPushVerified = false;
     showNotEnrolled();
     enable.disabled = false;
     status.textContent = result?.serverDisabled === false

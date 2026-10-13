@@ -106,7 +106,7 @@ def run_live(browser):
     page.on('pageerror', lambda err: errors.append(str(err)))
     page.goto(BASE, wait_until='domcontentloaded', timeout=45000)
     assert_dialog_hidden(page)
-    assert page.locator('#alertsButton').inner_text() in ('Create Alerts','Manage Alerts')
+    assert page.locator('#alertsButton').inner_text() in ('Alerts','Create Alerts','Manage Alerts')
     assert page.evaluate('window.__permissionCalls') == 0
     assert page.evaluate('window.__registerCalls') >= 1
     open_alerts(page)

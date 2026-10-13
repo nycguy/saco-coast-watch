@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out application code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
       - name: Check out durable history branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           ref: coastal-history
           path: .history-store

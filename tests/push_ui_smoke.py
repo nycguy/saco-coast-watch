@@ -16,7 +16,7 @@ INIT = r"""
 (() => {
   window.__permissionCalls = 0;
   window.__registerCalls = 0;
-  Object.defineProperty(window, 'Notification', {configurable:true, value:{permission:'default', requestPermission:async()=>{window.__permissionCalls++;return 'granted';}}});
+  Object.defineProperty(window, 'Notification', {configurable:true, value:{permission:window.__testPermission||'default', requestPermission:async()=>{window.__permissionCalls++;return 'granted';}}});
   Object.defineProperty(window, 'PushManager', {configurable:true, value:function PushManager(){}});
   const subscription={toJSON:()=>({endpoint:'https://fcm.googleapis.com/fcm/send/test-device',keys:{p256dh:'BGsX0fLhLEJH-Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU',auth:'BwcHBwcHBwcHBwcHBwcHBw'}}),unsubscribe:async()=>true};
   let current=localStorage.getItem('sacocast.test-existing')==='true'?subscription:null;
@@ -27,6 +27,9 @@ INIT = r"""
   }});
 })();
 """
+
+def init_script(permission='default'):
+    return f"window.__testPermission={json.dumps(permission)};\n" + INIT
 
 def worker_mock(calls, state=None):
     if state is None:
@@ -101,7 +104,7 @@ def open_alerts(page):
 
 def run_live(browser):
     page = browser.new_page(viewport={'width':1440,'height':1000})
-    page.add_init_script(INIT)
+    page.add_init_script(init_script())
     errors=[]
     page.on('pageerror', lambda err: errors.append(str(err)))
     page.goto(BASE, wait_until='domcontentloaded', timeout=45000)
@@ -130,7 +133,7 @@ def run_live(browser):
         viewport={'width':390,'height':844},
         user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
     )
-    mobile.add_init_script(INIT)
+    mobile.add_init_script(init_script())
     mobile_errors=[]
     mobile.on('pageerror', lambda err: mobile_errors.append(str(err)))
     mobile.goto(BASE, wait_until='domcontentloaded', timeout=45000)
@@ -154,7 +157,7 @@ def run_mocked(browser):
     calls=[]
     state={}
     page=browser.new_page(viewport={'width':1440,'height':1000})
-    page.add_init_script(INIT)
+    page.add_init_script(init_script())
     errors=[]
     page.on('pageerror', lambda err: errors.append(str(err)))
     page.route(WORKER+'/**', worker_mock(calls,state))
@@ -232,7 +235,7 @@ def run_mocked(browser):
     assert_dialog_hidden(page)
 
     unavailable=browser.new_page(viewport={'width':390,'height':844})
-    unavailable.add_init_script(INIT)
+    unavailable.add_init_script(init_script())
     unavailable_calls=[]
     def unavailable_worker(route):
         unavailable_calls.append(route.request.url)
@@ -250,11 +253,35 @@ def run_mocked(browser):
     assert unavailable.evaluate('window.__permissionCalls') == 0
     unavailable.close()
 
+    denied=browser.new_page(viewport={'width':390,'height':844})
+    denied.add_init_script(init_script('denied'))
+    denied.route(WORKER+'/**', worker_mock([]))
+    denied.goto(BASE, wait_until='domcontentloaded', timeout=45000)
+    assert_dialog_hidden(denied)
+    open_alerts(denied)
+    assert denied.locator('#pushEnable').is_disabled()
+    assert 'blocked in browser settings' in denied.locator('#pushStatus').inner_text().lower()
+    assert denied.locator('#emailOnlyLink').is_visible()
+    assert denied.evaluate('window.__permissionCalls') == 0
+    denied.close()
+
+    network_failure=browser.new_page(viewport={'width':390,'height':844})
+    network_failure.add_init_script(init_script())
+    network_failure.route(WORKER+'/**', lambda route: route.abort())
+    network_failure.goto(BASE, wait_until='domcontentloaded', timeout=45000)
+    assert_dialog_hidden(network_failure)
+    open_alerts(network_failure)
+    assert network_failure.locator('#pushEnable').is_disabled()
+    assert 'could not be checked' in network_failure.locator('#pushStatus').inner_text().lower()
+    assert network_failure.locator('#emailOnlyLink').is_visible()
+    assert network_failure.evaluate('window.__permissionCalls') == 0
+    network_failure.close()
+
     mobile=browser.new_page(
         viewport={'width':390,'height':844},
         user_agent='Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1'
     )
-    mobile.add_init_script(INIT)
+    mobile.add_init_script(init_script())
     mobile.route(WORKER+'/**', worker_mock([]))
     mobile_errors=[]
     mobile.on('pageerror', lambda err: mobile_errors.append(str(err)))
@@ -278,7 +305,7 @@ def run_mocked(browser):
     # A local credential only produces Manage Alerts after the Worker confirms
     # that the matching push device still exists.
     active=browser.new_page(viewport={'width':390,'height':844})
-    active.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+INIT)
+    active.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script())
     active.route(WORKER+'/**', worker_mock([]))
     active.goto(BASE, wait_until='domcontentloaded', timeout=45000)
     active.wait_for_function("document.querySelector('#alertsButton').textContent==='Manage Alerts'", timeout=5000)
@@ -289,13 +316,37 @@ def run_mocked(browser):
     active.close()
 
     stale=browser.new_page(viewport={'width':390,'height':844})
-    stale.add_init_script("localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+INIT)
+    stale.add_init_script("localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script())
     stale.route(WORKER+'/**', worker_mock([]))
     stale.goto(BASE, wait_until='domcontentloaded', timeout=45000)
     stale.wait_for_function("document.querySelector('#alertsButton').textContent==='Create Alerts'", timeout=5000)
     open_alerts(stale)
     assert stale.locator('#pushEnable').is_visible()
     stale.close()
+
+    unverifiable=browser.new_page(viewport={'width':390,'height':844})
+    unverifiable.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script())
+    unchanged=[]
+    def preferences_unavailable(route):
+        request=route.request
+        if request.method=='OPTIONS':
+            route.fulfill(status=204,headers={'Access-Control-Allow-Origin':request.headers.get('origin','http://127.0.0.1:8765'),'Access-Control-Allow-Methods':'GET, POST, PUT, OPTIONS','Access-Control-Allow-Headers':'authorization, content-type'})
+        elif request.url.endswith('/push/config'):
+            route.fulfill(status=200,headers={'Access-Control-Allow-Origin':request.headers.get('origin','http://127.0.0.1:8765'),'content-type':'application/json'},body='{"enabled":true,"publicKey":"'+PUBLIC_KEY+'","thresholdsEnabled":true}')
+        elif '/push/devices/preferences?' in request.url:
+            route.fulfill(status=503,headers={'Access-Control-Allow-Origin':request.headers.get('origin','http://127.0.0.1:8765'),'content-type':'application/json'},body='{"error":"temporarily unavailable"}')
+        else:
+            unchanged.append(request.url)
+            route.fulfill(status=500,headers={'content-type':'application/json'},body='{}')
+    unverifiable.route(WORKER+'/**',preferences_unavailable)
+    unverifiable.goto(BASE,wait_until='domcontentloaded',timeout=45000)
+    unverifiable.wait_for_function("document.querySelector('#alertsButton').textContent==='Alerts'",timeout=5000)
+    open_alerts(unverifiable)
+    assert unverifiable.locator('#pushEnable').is_disabled()
+    assert 'existing subscription was left unchanged' in unverifiable.locator('#pushStatus').inner_text().lower()
+    assert unverifiable.locator('#emailOnlyEntry').is_visible()
+    assert not any(url.endswith('/push/devices/disable') for url in unchanged)
+    unverifiable.close()
 
     assert not errors, f'desktop browser errors: {errors}'
     page.close()

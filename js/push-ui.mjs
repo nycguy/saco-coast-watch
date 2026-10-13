@@ -1,4 +1,3 @@
-updateAlertsEntryState();
 import {
   pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
   updateCoastalNotificationPreferences, disableCoastalNotifications, getCoastalThresholdPreferences,
@@ -35,6 +34,7 @@ let linkedThresholdEmail = null;
 const thresholdSpecs = [
   ['waterObserved', 12], ['waterForecast', 12], ['wind', 30], ['gust', 45], ['tempHigh', 90], ['tempLow', 32],
 ];
+updateAlertsEntryState();
 const getPrefs = () => {
   try {
     const stored = JSON.parse(localStorage.getItem(prefsStorageKey) || 'null');

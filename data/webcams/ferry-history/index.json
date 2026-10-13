@@ -22,8 +22,28 @@
         "dominant_period_sec": null,
         "gust_mph": 26.8
       }
+    },
+    {
+      "captured_at": "2026-10-13T12:28:21Z",
+      "file": "20261013T122821Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Routine Coastal Conditions",
+        "Elevated · Improving"
+      ],
+      "context": {
+        "event": "Routine Coastal Conditions",
+        "phase": "Improving",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 2.54,
+        "residual_ft": 1.11,
+        "wave_height_ft": null,
+        "dominant_period_sec": null,
+        "gust_mph": 22.4
+      }
     }
   ],
-  "generated_at": "2026-10-13T11:06:31Z",
+  "generated_at": "2026-10-13T12:28:21Z",
   "retention_hours": 24
 }

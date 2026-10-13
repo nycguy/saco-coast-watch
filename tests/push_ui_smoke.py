@@ -93,10 +93,7 @@ def main():
         assert target and target['width']>=44 and target['height']>=44, f'desktop tap target too small: {target}'
         assert calls.count(WORKER+'/push/config') == 1, 'Page load should perform one safe readiness check only'
         page.locator('#pushEnable').click()
-        try:
-            page.locator('#pushPreferences').wait_for(state='visible',timeout=10000)
-        except Exception as exc:
-            raise AssertionError(f"explicit opt-in failed: {page.locator('#pushStatus').inner_text()}; worker calls={calls}; page errors={browser_errors}") from exc
+        page.get_by_text('Notifications are on for this device.').wait_for(timeout=10000)
         assert page.evaluate('window.__permissionCalls')==1, 'Permission should be requested only after the explicit click'
         assert page.locator('#pushEnable').is_hidden()
         assert page.locator('#pushManage').is_visible()

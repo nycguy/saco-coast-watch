@@ -13,12 +13,13 @@ TOKEN = 'a' * 64
 INIT = r"""
 (() => {
   window.__permissionCalls = 0;
+  window.__registerCalls = 0;
   Object.defineProperty(window, 'Notification', {configurable:true, value:{permission:'default', requestPermission:async()=>{window.__permissionCalls++;return 'granted';}}});
   Object.defineProperty(window, 'PushManager', {configurable:true, value:function PushManager(){}});
   const subscription={toJSON:()=>({endpoint:'https://fcm.googleapis.com/fcm/send/test-device',keys:{p256dh:'BGsX0fLhLEJH-Lzm5WOkQPJ3A32BLeszoPShOUXYmMKWT-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU',auth:'BwcHBwcHBwcHBwcHBwcHBw'}}),unsubscribe:async()=>true};
   let current=null;
   const manager={getSubscription:async()=>current,subscribe:async()=>{current=subscription;return subscription;}};
-  Object.defineProperty(navigator,'serviceWorker',{configurable:true,value:{getRegistration:async()=>({pushManager:manager}),register:async()=>({pushManager:manager})}});
+  Object.defineProperty(navigator,'serviceWorker',{configurable:true,value:{getRegistration:async()=>({pushManager:manager}),register:async()=>{window.__registerCalls++;return {pushManager:manager};}}});
 })();
 """
 
@@ -99,6 +100,7 @@ def main():
             return
         panel.wait_for(state='visible',timeout=10000)
         assert page.evaluate('window.__permissionCalls')==0, 'Permission was requested on page load'
+        assert page.evaluate('window.__registerCalls')>=1, 'Push service worker update check did not run'
         assert page.locator('#pushEnable').is_enabled()
         target=page.locator('#pushEnable').bounding_box()
         assert target and target['width']>=44 and target['height']>=44, f'desktop tap target too small: {target}'

@@ -2,7 +2,7 @@ import {
   pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
   updateCoastalNotificationPreferences, disableCoastalNotifications, getCoastalThresholdPreferences,
   saveCoastalThresholdPreferences, requestCoastalThresholdEmail,
-} from './push-subscriptions.mjs?v=20261013-5';
+} from './push-subscriptions.mjs?v=20261013-6';
 
 const byId = id => document.getElementById(id);
 const status = byId('pushStatus');
@@ -123,7 +123,7 @@ async function initialize() {
     status.textContent = 'Notifications are blocked in browser settings. Change the SacoCast site permission there if you want to enable them.';
     return;
   }
-  const registration = await navigator.serviceWorker.getRegistration('./').catch(() => null);
+  const registration = await navigator.serviceWorker.register('./push-sw.js', { scope: './' }).catch(() => navigator.serviceWorker.getRegistration('./').catch(() => null));
   const existing = await registration?.pushManager?.getSubscription().catch(() => null);
   if (existing && readPushCredential()) {
     showEnrolled();

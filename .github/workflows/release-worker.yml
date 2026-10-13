@@ -124,8 +124,18 @@ jobs:
           state="$(python3 scripts/verify_d1_schema.py --migration-state /tmp/d1-before.json | sed -n 's/^MIGRATION_STATE=//p')"
           test "$state" = absent -o "$state" = complete
           echo "migration_state=$state" >> "$GITHUB_OUTPUT"
+          if [ "$state" = "complete" ] && [ "${{ steps.vapid.outputs.state }}" = "complete" ]; then
+            curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-push-preflight.json
+            python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/worker-push-preflight.json'))
+          if d.get('webPushEnabled') is not True or d.get('pushApiEnabled') is not True or d.get('pushEventsEnabled') is not True or d.get('pushTablesMissing'):
+              raise SystemExit('Complete production push schema/VAPID state exists, but the live Worker does not report Web Push fully enabled.')
+          print('Existing production Web Push state is fully enabled.')
+          PY
+          fi
           cd alerts
-          npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-before.json
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-before.json
           cd ..
           count="$(python3 -c "import runpy; m=runpy.run_path('scripts/verify_d1_schema.py'); print(m['subscriber_count']('/tmp/subscribers-before.json'))")"
           echo "subscriber_count=$count" >> "$GITHUB_OUTPUT"
@@ -230,16 +240,40 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-after.json
-          python3 scripts/verify_worker_health.py /tmp/worker-before.json /tmp/worker-after.json
-          curl --fail --silent --show-error -H 'Origin: https://nycguy.github.io' https://saco-coastal-alerts.mikewiley-nyc.workers.dev/push/config -o /tmp/push-config.json
-          python3 - <<'PY'
+          healthy=false
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-after.json &&
+               python3 scripts/verify_worker_health.py /tmp/worker-before.json /tmp/worker-after.json >/tmp/worker-health-check.txt 2>/tmp/worker-health-check.err; then
+              healthy=true
+              cat /tmp/worker-health-check.txt
+              break
+            fi
+            echo "Waiting for deployed Worker health to propagate (attempt $attempt/20)..."
+            sleep 3
+          done
+          if [ "$healthy" != true ]; then
+            cat /tmp/worker-health-check.err >&2 || true
+            exit 1
+          fi
+
+          configured=false
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --show-error -H 'Origin: https://nycguy.github.io' https://saco-coastal-alerts.mikewiley-nyc.workers.dev/push/config -o /tmp/push-config.json &&
+               python3 - <<'PY'
           import json,re
           d=json.load(open('/tmp/push-config.json'))
           if d.get('enabled') is not True or not re.fullmatch(r'[A-Za-z0-9_-]{87,88}',d.get('publicKey','')):
-              raise SystemExit('Public push configuration did not initialize; no subscriber test was sent.')
-          print('Push configuration is enabled for the public origin. No test push or hazard notification was sent.')
+              raise SystemExit(1)
           PY
+            then
+              configured=true
+              break
+            fi
+            echo "Waiting for public push configuration to propagate (attempt $attempt/20)..."
+            sleep 3
+          done
+          test "$configured" = true || { echo 'Public push configuration did not initialize; no subscriber test was sent.' >&2; exit 1; }
+          echo 'Push configuration is enabled for the public origin. No test push or hazard notification was sent.'
       - name: Record read-only preflight result
         if: ${{ !inputs.apply_migrations_and_deploy }}
         run: echo 'Preflight only. No migration, Worker deployment, secret change, or notification was performed.'

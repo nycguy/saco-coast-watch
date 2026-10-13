@@ -116,6 +116,7 @@ export async function handlePushApi(req, env) {
   if (!((path === '/push/devices' && req.method === 'POST') || (path === '/push/devices/preferences' && req.method === 'PUT') || (path === '/push/devices/disable' && req.method === 'POST') || (path === '/push/devices/thresholds' && req.method === 'PUT') || (path === '/push/devices/thresholds/email' && req.method === 'POST'))) return reply({ error: 'Not found' }, 404);
   if (path === '/push/devices' && (!validatePushSubscription(body.subscription) || !validateEventPreferences(body.preferences))) return reply({ error: 'Invalid subscription or preferences' }, 400);
   if (!ip && new URL(req.url).pathname === '/push/devices') return reply({ error: 'Enrollment unavailable' }, 503);
+  const now = Math.floor(Date.now() / 1000);
   if (path === '/push/devices/thresholds' && req.method === 'PUT') {
     const token = parseDeviceAuthorization(req.headers.get('Authorization'));
     const preferences = normalizeThresholdPreferences(body.preferences);
@@ -165,7 +166,6 @@ export async function handlePushApi(req, env) {
     const result = await env.DB.prepare('INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts WHERE request_limits.until_ts<?').bind(ipKey, Math.floor(Date.now()/1000)+60, Math.floor(Date.now()/1000)).run();
     if (result.meta?.changes !== 1) return reply({ error: 'Please wait before trying again' }, 429);
   }
-  const now = Math.floor(Date.now() / 1000);
   if (path === '/push/devices' && req.method === 'POST') {
     const credential = createDeviceCredential();
     const tokenHash = await hashDeviceToken(credential.token);

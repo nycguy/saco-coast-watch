@@ -45,6 +45,6 @@ test('rejects malformed kinds and offsite destinations', async () => {
 
 
 test('service worker accepts custom threshold notification kind', async () => {
-  const source = await readFile(new URL('../../push-sw.js', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../../push-sw.js', import.meta.url), 'utf8');
   assert.match(source, /'threshold'/);
 });

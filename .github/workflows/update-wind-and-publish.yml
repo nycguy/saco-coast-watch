@@ -38,6 +38,8 @@ jobs:
           node --check js/hazards.js
           node --check js/intelligence.js
           node --check js/weather.js
+          node --check js/header-weather.js
+          node --test tests/header_weather_unit.mjs
           node --check js/app.js
           node --check js/map.js
           node --test tests/hazard_modes_unit.mjs

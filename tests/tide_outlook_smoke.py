@@ -62,6 +62,11 @@ def install_noaa_fixture(page):
         else:
             route.continue_()
     page.route("**/api/prod/datagetter**",handler)
+    # Keep parallel browser-direct NWS requests deterministic too. A live
+    # station response could otherwise replace the seeded observation between
+    # the fixture render and its assertion.
+    page.route("https://api.weather.gov/**",lambda route: route.fulfill(
+        status=503,content_type="application/geo+json",body=json.dumps({"title":"Fixture: NWS unavailable"})))
 
     peak_at=(now+timedelta(hours=4)).isoformat().replace("+00:00","Z")
     event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Coastal Impact","basis":["Synthetic coastal impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Highest Saco Coast Watch compound coastal-impact window"},"coastal_impact":{"method":"Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"confidence":{"label":"High","score":1.0,"missing":[]},"drivers":[{"label":"NOAA forecast water level","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"NWS surf forecast","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Wind pushing toward shore","value":"24 mph","source":"Calculated from NWS hourly wind direction and speed"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
@@ -114,6 +119,7 @@ def install_noaa_fixture(page):
 
 def assert_common(page):
     page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
+    page.wait_for_function("state.lastFetched.weatherObservation && state.lastFetched.weatherForecast",timeout=20000)
     page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
     page.wait_for_function("document.querySelector('#briefPast').textContent.includes('past 24 hours')",timeout=10000)
     page.wait_for_function("document.querySelectorAll('#ferryArchiveThumbs .ferry-archive-thumb').length===2",timeout=10000)

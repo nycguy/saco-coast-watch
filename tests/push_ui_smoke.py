@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Browser smoke for explicit opt-in, preference controls, disable, and iPhone guidance."""
+import json
 import os
 from playwright.sync_api import sync_playwright
 
@@ -41,7 +42,10 @@ def main():
                 body='{"preferences":{"metrics":{"waterObserved":{"enabled":false,"threshold":12},"waterForecast":{"enabled":false,"threshold":12},"wind":{"enabled":false,"threshold":30},"gust":{"enabled":false,"threshold":45},"tempHigh":{"enabled":false,"threshold":90},"tempLow":{"enabled":false,"threshold":32}},"channels":{"push":false,"email":false}},"linkedEmail":null}'
                 route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body=body)
             elif request.url.endswith('/push/devices/thresholds') and request.method=='PUT':
-                route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body='{"updated":true,"linkedEmail":null,"emailConfirmationRequired":false}')
+                payload=json.loads(request.post_data or '{}')
+                wants_email=payload.get('preferences',{}).get('channels',{}).get('email') is True
+                body=json.dumps({"updated":True,"linkedEmail":None,"emailConfirmationRequired":wants_email})
+                route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body=body)
             elif request.url.endswith('/push/devices/thresholds/email') and request.method=='POST':
                 route.fulfill(status=202,headers={**cors,'content-type':'application/json'},body='{"confirmationSent":true,"maskedEmail":"t***@example.com"}')
             elif request.url.endswith('/push/devices/test'):

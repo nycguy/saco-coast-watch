@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Deterministic browser regression for the 14-day tide + NOAA OFS outlook."""
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 import base64
 import json
 from playwright.sync_api import sync_playwright
@@ -12,7 +13,9 @@ def stamp(dt):
     return dt.strftime("%Y-%m-%d %H:%M")
 
 def install_noaa_fixture(page):
-    start=datetime.now(timezone.utc).date()
+    # Daily summaries are keyed in America/New_York; keep fixture day zero aligned
+    # even when UTC has crossed midnight before the local coastal day changes.
+    start=datetime.now(ZoneInfo("America/New_York")).date()
     highs=[]
     for i,value in enumerate(VALUES):
         dt=datetime.combine(start+timedelta(days=i),datetime.min.time(),tzinfo=timezone.utc)+timedelta(hours=16)
@@ -150,8 +153,15 @@ def assert_common(page):
     page.locator('#tideTrend .tide-hit[data-index="0"]').click()
     selected=page.locator("#tideTrendSelection").inner_text()
     assert "astronomical high 9.84 ft MLLW" in selected,selected
-    assert "NOAA OFS forecast peak" in selected,selected
-    assert "vs astronomical tide at that time" in selected,selected
+    # A current-day forecast peak may fall after local midnight near the edge of
+    # the Eastern day. Select the first actual forecast day instead of assuming
+    # that every test run's current day has future model guidance.
+    forecast_index=int(page.locator("#tideTrend .ofs-trend-point").first.get_attribute("data-index"))
+    if forecast_index != 0:
+        page.locator(f'#tideTrend .tide-hit[data-index="{forecast_index}"]').click()
+    forecast_selected=page.locator("#tideTrendSelection").inner_text()
+    assert "NOAA OFS forecast peak" in forecast_selected,forecast_selected
+    assert "vs astronomical tide at that time" in forecast_selected,forecast_selected
     assert page.locator("#tideTrend .tide-point.selected").count()==1
     assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
     assert "NOAA OFS total-water peak" in section.inner_text()

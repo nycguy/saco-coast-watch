@@ -1,9 +1,26 @@
 #!/usr/bin/env python3
 import sys
 from pathlib import Path
+import json
 from playwright.sync_api import sync_playwright
 
 BASE="http://127.0.0.1:8765/eastcast/"
+# Browser layout fixture only: neutral cards with no invented measurements. The
+# production collector and artifact remain independently validated.
+COASTAL_FIXTURE={
+    "schema_version":2,"generated_at":"2026-01-01T00:00:00Z",
+    "summary":{"active_alerts":0,"warnings":0,"states_affected":0,"state_counts":{},"top_states":[],"top_events":[]},
+    "alerts":{"type":"FeatureCollection","features":[]},"state_alerts":{},"outlooks":{},"tropical":[],
+    "coastal_pulse":[
+        {"state":"ME","name":"Portland fixture","lat":43.659,"lon":-70.257,"coops":"8418150","buoy":"44007"},
+        {"state":"MA","name":"Boston fixture","lat":42.360,"lon":-71.058,"coops":"8443970","buoy":"44013"},
+        {"state":"NY","name":"Montauk fixture","lat":41.035,"lon":-71.954,"coops":"8510560","buoy":"44017"},
+        {"state":"FL","name":"Miami fixture","lat":25.762,"lon":-80.192,"coops":"8723214","buoy":"42001"}
+    ],"sources":{"coastal_pulse":{"ok":False,"note":"Browser layout fixture; no observation data"},"wpc_outlooks":{"ok":False}}
+}
+
+def install_snapshot_fixture(page):
+    page.route("**/eastcast/data/snapshot.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(COASTAL_FIXTURE)))
 
 def main():
     errors=[]
@@ -11,6 +28,7 @@ def main():
         browser=p.chromium.launch()
         page=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=2)
         page.on("pageerror",lambda exc: errors.append("pageerror: "+str(exc)))
+        install_snapshot_fixture(page)
         page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
         page.wait_for_function("document.querySelector('#metricAlerts') && document.querySelector('#metricAlerts').textContent.trim() !== '…'",timeout=25000)
 
@@ -53,6 +71,7 @@ def main():
         # Installed iPhone PWAs have a native status-area overlay. Simulate a
         # non-zero safe-area inset and verify the header actions remain usable.
         safe=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=3)
+        install_snapshot_fixture(safe)
         safe.goto(BASE,wait_until="domcontentloaded",timeout=30000)
         safe.add_style_tag(content=":root{--test-safe-top:47px}.site-header{padding-top:max(env(safe-area-inset-top),var(--test-safe-top))}")
         safe.wait_for_timeout(100)
@@ -72,6 +91,7 @@ def main():
 
         # Desktop layout and key hierarchy.
         desktop=browser.new_page(viewport={"width":1440,"height":1000})
+        install_snapshot_fixture(desktop)
         desktop.goto(BASE,wait_until="domcontentloaded",timeout=30000)
         desktop.wait_for_function("document.querySelector('#metricAlerts').textContent.trim() !== '…'",timeout=25000)
         desktop.wait_for_function("document.querySelector('#eastMap .leaflet-pane') !== null",timeout=20000)

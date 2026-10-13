@@ -19,6 +19,12 @@
 </head>
 <body>
 <header class="mast"><div class="shell mastin"><div class="brand"><div class="logomark" aria-hidden="true"><img src="sacocast-app-icon-192.png" alt=""></div><div><h1>SacoCast</h1><small>Coastal conditions · Clearer decisions</small></div></div><div class="headright"><a class="btn primary" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" aria-label="Sign up for custom SacoCast email threshold alerts">✉ Get Email Alerts ↗</a><button type="button" class="btn" id="refreshBtn" aria-label="Reload SacoCast and refresh all dashboard data">↻ Refresh</button><span class="pill"><span id="liveDot" class="dot warn"></span><span id="liveText">Connecting to NOAA</span></span></div></div></header>
+<section class="shell panel push-panel" aria-labelledby="pushHeading">
+ <div class="push-panel-copy"><div class="eyebrow">Optional browser alerts</div><h2 id="pushHeading">Coastal event notifications</h2><p>Get an update when an official coastal alert starts, ends, or meaningfully changes. You control these notifications on this device.</p></div>
+ <div class="push-controls"><button class="btn primary" id="pushEnable" type="button">Turn On Notifications</button><button class="btn" id="pushTest" type="button" hidden>Send Test Notification</button><button class="btn" id="pushDisable" type="button" hidden>Turn Off Notifications</button><p class="push-status" id="pushStatus" role="status" aria-live="polite">Notifications are off. Choose Turn On to opt in.</p>
+  <fieldset id="pushPreferences" hidden><legend>Notify me about</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
+ </div>
+</section>
 <main class="shell">
 <section class="intro"><div><div class="eyebrow">Portland gauge · regional reference for Saco Bay</div><h2>When the ocean rises,<br>know where you stand.</h2><p>Observed water levels, astronomical tides, NOAA model guidance, and coastal flood alerts. All heights are feet above Mean Lower Low Water (MLLW) at the <strong>Portland, Maine gauge</strong>, not water depth at a Saco address. NOAA model guidance includes weather-driven water-level effects but not wave runup at individual properties.</p></div><div class="sync">Eastern time · <span id="currentClock">--</span><br><span id="syncTime">Automatic refresh every 60 seconds · no successful refresh yet</span></div></section>
 <div id="notice" class="notice hidden" role="status"><span class="icon">⚠</span><div id="noticeText"></div></div>
@@ -262,4 +268,5 @@
 <script src="js/webcams.js"></script>
 
 
+<script type="module" src="js/push-ui.mjs"></script>
 </body></html>

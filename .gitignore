@@ -1,0 +1,6 @@
+dist/
+map-smoke*.png
+tide-outlook-smoke-*.png
+eastcast-smoke-*.png
+push-notifications-smoke-*.png
+__pycache__/

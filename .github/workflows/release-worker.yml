@@ -1,0 +1,129 @@
+name: Release coastal alerts Worker
+on:
+  workflow_dispatch:
+    inputs:
+      apply_migrations_and_deploy:
+        description: Apply reviewed additive D1 migrations if absent, then deploy the Worker and enable its configured 10-minute event check. No test alert is sent.
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: saco-worker-production-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Wrangler
+        working-directory: alerts
+        run: npm install --no-save --no-package-lock --no-audit --no-fund wrangler@4
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify required Cloudflare secret names
+        working-directory: alerts
+        run: |
+          set -euo pipefail
+          npx wrangler secret list --json > /tmp/worker-secret-names.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          raw=Path('/tmp/worker-secret-names.json').read_text()
+          doc=json.loads(raw[raw.find('['):] if '[' in raw else raw)
+          names={item.get('name') for item in doc if isinstance(item,dict)}
+          needed={'VAPID_PUBLIC_KEY','VAPID_PRIVATE_KEY'}
+          if not needed <= names:
+              raise SystemExit('Existing VAPID key pair is incomplete; refusing release without rotation.')
+          print('Both existing VAPID secret names are configured; no key values were read or changed.')
+          PY
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verify the live email Worker and D1 schema before any write
+        id: preflight
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-before.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/worker-before.json'))
+          if d.get('service')!='saco-coastal-alerts' or not d.get('configurationReady') or not d.get('databaseConnected') or d.get('missingTables') or not isinstance(d.get('emailAlertsEnabled'), bool):
+              raise SystemExit('Existing live email Worker/D1 health is not verified; stopped before migration or deployment.')
+          print('Existing Worker and email/D1 health are ready; the current email alert state will be checked for exact preservation after deployment.')
+          PY
+          cd alerts
+          npx wrangler d1 execute saco-coastal-alerts --remote --file=../scripts/d1_schema_snapshot.sql --json > /tmp/d1-before.json
+          cd ..
+          python3 scripts/verify_d1_schema.py --schema /tmp/d1-before.json
+          state="$(python3 scripts/verify_d1_schema.py --migration-state /tmp/d1-before.json | sed -n 's/^MIGRATION_STATE=//p')"
+          test "$state" = absent -o "$state" = complete
+          echo "migration_state=$state" >> "$GITHUB_OUTPUT"
+          cd alerts
+          npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-before.json
+          cd ..
+          count="$(python3 -c "import runpy; m=runpy.run_path('scripts/verify_d1_schema.py'); print(m['subscriber_count']('/tmp/subscribers-before.json'))")"
+          echo "subscriber_count=$count" >> "$GITHUB_OUTPUT"
+          echo "Production preflight passed. Additive schema state: $state. Subscriber count captured privately for preservation check."
+      - name: Apply additive event and push migrations when absent
+        if: inputs.apply_migrations_and_deploy && steps.preflight.outputs.migration_state == 'absent'
+        working-directory: alerts
+        run: |
+          set -euo pipefail
+          npx wrangler d1 execute saco-coastal-alerts --remote --file=migrations/0002_event_notifications.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --file=migrations/0003_push_devices.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --file=migrations/0004_push_delivery_queue.sql
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Confirm complete schema and unchanged subscriber count
+        if: inputs.apply_migrations_and_deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          cd alerts
+          npx wrangler d1 execute saco-coastal-alerts --remote --file=../scripts/d1_schema_snapshot.sql --json > /tmp/d1-after.json
+          npx wrangler d1 execute saco-coastal-alerts --remote --command="SELECT COUNT(*) AS subscriber_count FROM subscribers" --json > /tmp/subscribers-after.json
+          cd ..
+          python3 scripts/verify_d1_schema.py --push-schema /tmp/d1-after.json --before /tmp/subscribers-before.json --after /tmp/subscribers-after.json
+      - name: Enable push behind existing VAPID identity and deploy Worker
+        if: inputs.apply_migrations_and_deploy
+        working-directory: alerts
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          printf %s true | npx wrangler secret put PUSH_API_ENABLED
+          printf %s true | npx wrangler secret put PUSH_EVENTS_ENABLED
+          npx wrangler deploy --keep-vars
+      - name: Verify deployed Worker health and non-delivery of synthetic alerts
+        if: inputs.apply_migrations_and_deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-after.json
+          python3 scripts/verify_worker_health.py /tmp/worker-before.json /tmp/worker-after.json
+          curl --fail --silent --show-error -H 'Origin: https://nycguy.github.io' https://saco-coastal-alerts.mikewiley-nyc.workers.dev/push/config -o /tmp/push-config.json
+          python3 - <<'PY'
+          import json,re
+          d=json.load(open('/tmp/push-config.json'))
+          if d.get('enabled') is not True or not re.fullmatch(r'[A-Za-z0-9_-]{87,88}',d.get('publicKey','')):
+              raise SystemExit('Public push configuration did not initialize; no subscriber test was sent.')
+          print('Push configuration is enabled for the public origin. No test push or hazard notification was sent.')
+          PY
+      - name: Record read-only preflight result
+        if: ${{ !inputs.apply_migrations_and_deploy }}
+        run: echo 'Preflight only. No migration, Worker deployment, secret change, or notification was performed.'

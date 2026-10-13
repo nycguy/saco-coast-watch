@@ -1,7 +1,10 @@
-// Saco Coast Watch: owner-only email confirmation pilot.
-// No public signup, Web Push, or scheduled threshold notifications are enabled.
+import { handlePushApi, pushConfiguration } from './push-http.mjs';
+import { processCoastalPushEvents } from './coastal-push-events.mjs';
+// SacoCast alert Worker. Existing email behavior remains independent of browser push.
+// Push stays inert until its explicit runtime flags, VAPID pair, and additive D1 schema are ready.
 const NEEDED=["DB","PUBLIC_SITE","ALLOWED_ORIGIN","WORKER_PUBLIC_URL","FROM_EMAIL","SUPPORT_EMAIL","RESEND_API_KEY","TURNSTILE_SITE_KEY","TURNSTILE_SECRET","TOKEN_SECRET"];
 const TABLES=["subscribers","push_subscriptions","tokens","alert_state","request_limits"];
+const PUSH_TABLES=["coastal_event_snapshots","coastal_event_deliveries","push_devices","push_device_deliveries","push_delivery_queue"];
 const encoder=new TextEncoder();
 const stamp=()=>Math.floor(Date.now()/1000);
 function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff"}});}
@@ -16,7 +19,10 @@ async function health(env){
   let databaseConnected=false,missingTables=TABLES,databaseError=null;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);databaseConnected=true;missingTables=TABLES.filter(x=>!found.includes(x));}}
   catch(_){databaseError="Could not query the D1 database";}
-  return json({service:"saco-coastal-alerts",phase:"email-release",pilotBuild:"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled:false,cronRequiresSetup:true});
+  let pushTablesMissing=PUSH_TABLES;
+  try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);pushTablesMissing=PUSH_TABLES.filter(x=>!found.includes(x));}}catch(_){/* Keep push disabled if schema inspection fails. */}
+  const webPushEnabled=env.PUSH_API_ENABLED==="true"&&env.PUSH_EVENTS_ENABLED==="true"&&!!env.VAPID_PUBLIC_KEY&&!!env.VAPID_PRIVATE_KEY&&databaseConnected&&!pushTablesMissing.length;
+  return json({service:"saco-coastal-alerts",phase:webPushEnabled?"email-and-web-push":"email-release",pilotBuild:webPushEnabled?"web-push-v1":"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled,pushApiEnabled:env.PUSH_API_ENABLED==="true",pushEventsEnabled:env.PUSH_EVENTS_ENABLED==="true",pushTablesMissing,cronRequiresSetup:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -556,6 +562,23 @@ export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
     try{
+      if(path.startsWith('/push/')) {
+        const allowed = req.headers.get('Origin') === env.ALLOWED_ORIGIN;
+        if (req.method === 'OPTIONS') {
+          if (!allowed) return json({ error: 'Origin not allowed' }, 403);
+          return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN, 'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS', 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Max-Age': '600', 'Vary': 'Origin' } });
+        }
+        if(path==='/push/config'&&req.method==='GET'){
+          if(!allowed)return json({error:'Origin not allowed'},403);
+          const result=await pushConfiguration(env);const headers=new Headers(result.headers);headers.set('Access-Control-Allow-Origin',env.ALLOWED_ORIGIN);headers.set('Vary','Origin');return new Response(result.body,{status:result.status,headers});
+        }
+        const result = await handlePushApi(req, env);
+        if (!allowed) return result;
+        const headers = new Headers(result.headers);
+        headers.set('Access-Control-Allow-Origin', env.ALLOWED_ORIGIN);
+        headers.set('Vary', 'Origin');
+        return new Response(result.body, { status: result.status, headers });
+      }
       if(path==="/health"&&req.method==="GET")return health(env);
       if(path==="/"&&req.method==="GET")return json({service:"Saco Coast Watch Alerts",status:"Owner-only email pilot; no public signup or active coastal notifications",pilot:"/pilot"});
       if(path==="/alerts"&&req.method==="GET")return alertForm(env);
@@ -578,5 +601,11 @@ export default{
       return json({error:"Not found; public signup and notifications are disabled."},404);
     }catch(e){console.error("Pilot Worker error",String(e));return json({error:"Service temporarily unavailable"},503);}
   },
-  async scheduled(_event,env,ctx){ctx.waitUntil(liveEmailChecks(env));}
+  async scheduled(_event,env,ctx){
+    // Push processing fails independently; it must never prevent the existing email checker.
+    ctx.waitUntil(Promise.allSettled([
+      liveEmailChecks(env),
+      env.PUSH_EVENTS_ENABLED==='true'?processCoastalPushEvents(env).catch(error=>{console.error('Web Push event check failed',String(error));}):Promise.resolve(),
+    ]));
+  }
 };

@@ -12,6 +12,6 @@ migrations_dir = "migrations"
 [triggers]
 crons = ["*/10 * * * *"]
 
-# Set LIVE_ALERTS=true and all runtime variables and secrets in Cloudflare Worker Settings.
-# Dashboard-based deployment also requires adding this Cron Trigger in Cloudflare UI.
-# This release sends EMAIL ONLY. Web Push remains disabled.
+# Production releases run through the public repository's manually dispatched Worker workflow.
+# Wrangler applies this 10-minute cron during deployment; --keep-vars preserves existing runtime variables.
+# The Worker gates Web Push behind existing VAPID secrets and explicit feature flags.

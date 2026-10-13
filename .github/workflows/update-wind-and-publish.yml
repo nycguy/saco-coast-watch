@@ -73,6 +73,7 @@ jobs:
           cp manifest.webmanifest dist/manifest.webmanifest
           cp favicon.svg favicon-16x16.png favicon-32x32.png dist/
           cp apple-touch-icon.png sacocast-app-icon-192.png dist/
+          cp push-sw.js dist/push-sw.js
           cp -R css dist/css
           cp -R js dist/js
           cp data/wind.json dist/data/wind.json
@@ -137,6 +138,7 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/map_smoke.py
           /tmp/saco-map-venv/bin/python tests/tide_outlook_smoke.py
           /tmp/saco-map-venv/bin/python tests/eastcast_smoke.py
+          /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
       - name: Save map test screenshot
         if: always() && github.event_name == 'push'
         uses: actions/upload-artifact@v4
@@ -146,6 +148,7 @@ jobs:
             map-smoke*.png
             tide-outlook-smoke-*.png
             eastcast-smoke-*.png
+            push-notifications-smoke-*.png
           if-no-files-found: ignore
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

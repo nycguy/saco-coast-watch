@@ -36,7 +36,7 @@ function renderMarine(){
  }
  $('marineFeedNote').textContent=state.marineFetchError?
   'Marine snapshot warning: '+state.marineFetchError+'. Station timestamps determine whether values are fresh; old readings are withheld. The webpage retries every 60 seconds.':
-  'NDBC measured winds, not at your property. Station readings older than 60 minutes are withheld; missing gusts show Not reported. Webpage checks each minute; the local updater or GitHub workflow normally refreshes snapshots every five minutes (GitHub runs may be delayed).';
+  'NDBC measured winds, not at your property. Station readings older than 60 minutes are withheld; missing gusts show Not reported. Webpage checks each minute; the local updater normally refreshes snapshots every five minutes, and GitHub Actions every ten minutes (scheduled runs may be delayed).';
 }
 async function loadMarine(){
  try{

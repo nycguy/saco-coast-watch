@@ -8,6 +8,6 @@ SacoCast should remain operable with $0 recurring development, CI, deployment, a
 
 ## Local validation
 
-Run `bash scripts/validate-local.sh` before committing. It runs Python and Node checks, assembles and verifies the deployable site artifact, then runs the Chromium desktop/mobile map, tide/briefing, EastCast, and mocked Web Push enrollment browser suites. Install browser dependencies with `python3 -m pip install playwright pillow` and `python3 -m playwright install chromium`.
+Run `bash scripts/validate-local.sh` before committing. It runs all Python and Node tests, syntax checks, assembles and verifies the deployable site artifact, then runs the Chromium desktop/mobile map, tide/briefing/header-weather, EastCast, and mocked Web Push enrollment browser suites. Install browser dependencies with `python3 -m pip install playwright pillow` and `python3 -m playwright install chromium`.
 
 Never run the production delivery smoke test without an explicit owner-controlled browser/session; it sends a single test notification to that enrolled device and removes its temporary subscription on cleanup.

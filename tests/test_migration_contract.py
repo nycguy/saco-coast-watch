@@ -52,13 +52,19 @@ class MigrationContractTests(unittest.TestCase):
 
     def test_production_schema_snapshot_query_covers_tables_columns_and_indexes(self):
         db = sqlite3.connect(':memory:')
-        for name in ('0001_init.sql', '0002_event_notifications.sql', '0003_push_devices.sql', '0004_push_delivery_queue.sql'):
+        for name in ('0001_init.sql', '0002_event_notifications.sql', '0003_push_devices.sql', '0004_push_delivery_queue.sql', '0005_push_threshold_preferences.sql'):
             db.executescript((ROOT / 'alerts/migrations' / name).read_text(encoding='utf-8'))
-        rows={row[0] for row in db.execute((ROOT / 'scripts/d1_schema_snapshot.sql').read_text(encoding='utf-8'))}
+        sql=(ROOT / 'scripts/d1_schema_snapshot.sql').read_text(encoding='utf-8')
+        rows=set()
+        for statement in sql.split(';'):
+            if statement.strip():
+                rows.update(row[0] for row in db.execute(statement))
         self.assertIn('object:table:subscribers', rows)
         self.assertIn('subscribers.email', rows)
         self.assertIn('object:index:push_delivery_queue_device_idx', rows)
         self.assertIn('push_delivery_queue.next_attempt_at', rows)
+        self.assertIn('object:table:push_threshold_preferences', rows)
+        self.assertIn('push_threshold_preferences.prefs_json', rows)
         db.close()
 
     def test_release_workflow_is_manual_and_requires_explicit_apply_input(self):

@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,29 +32,19 @@ jobs:
       - name: Build adaptive NWS / NHC hazard snapshot
         run: python3 scripts/fetch_hazards.py --output data/hazards.json
       - name: Test coastal history and briefing logic
-        run: python3 -m unittest tests/test_history_core.py tests/test_capture_history.py tests/test_fetch_briefing.py tests/test_fetch_webcam_snapshots.py tests/test_frontend_architecture.py tests/test_fetch_hazards.py tests/test_fetch_wind.py tests/test_archive_ferry_camera.py tests/test_d1_schema_guard.py
+        if: github.event_name != 'schedule'
+        run: python3 -m unittest discover -s tests -v
       - name: Validate adaptive front-end syntax
+        if: github.event_name != 'schedule'
         run: |
-          node --check js/hazards.js
-          node --check js/intelligence.js
-          node --check js/weather.js
-          node --check js/header-weather.js
-          node --test tests/header_weather_unit.mjs
-          node --check js/app.js
-          node --check js/map.js
-          node --test tests/hazard_modes_unit.mjs
+          for file in js/*.js js/*.mjs eastcast/*.mjs alerts/src/*.mjs; do node --check "$file"; done
+          node --check push-sw.js
+          node --test tests/*.mjs
       - name: Build fixed-window coastal briefing
         run: python3 scripts/fetch_briefing.py --history-input .history-store/data/history/coastal-history.json --output data/coastal-briefing.json --history-output data/coastal-history.json
       - name: Validate alert thresholds and backend syntax
-        run: |
-          node --check alerts/src/worker.mjs
-          node --test alerts/test/*.test.mjs
-      - name: Run EastCast unit tests
-        run: |
-          node --check eastcast/core.mjs
-          node --check eastcast/app.mjs
-          node --test tests/eastcast_unit.mjs
-          python3 -m unittest tests/test_fetch_eastcast.py
+        if: github.event_name != 'schedule'
+        run: node --test alerts/test/*.test.mjs
       - name: Capture current coastal webcam previews
         shell: bash
         run: |
@@ -131,7 +121,7 @@ jobs:
           PY
           python3 -c "import json; d=json.load(open('dist/eastcast/data/snapshot.json')); assert d['schema_version']==2; assert 'summary' in d and 'alerts' in d and 'outlooks' in d; assert len(d.get('coastal_pulse',[])) >= 4; assert d.get('sources',{}).get('coastal_pulse',{}).get('ok')"
       - name: Browser map smoke test before publishing
-        if: github.event_name == 'push'
+        if: github.event_name != 'schedule'
         run: |
           python3 -m venv /tmp/saco-map-venv
           /tmp/saco-map-venv/bin/python -m pip install --disable-pip-version-check playwright pillow
@@ -142,7 +132,7 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/eastcast_smoke.py
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
       - name: Save map test screenshot
-        if: always() && github.event_name == 'push'
+        if: always() && github.event_name != 'schedule'
         uses: actions/upload-artifact@v4
         with:
           name: dashboard-browser-test-images
@@ -160,7 +150,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
       - name: Verify live production after Pages deployment
-        if: github.event_name == 'push'
+        if: github.event_name != 'schedule'
         env:
           SACOCAST_SMOKE_URL: ${{ steps.deployment.outputs.page_url }}
           SACOCAST_LIVE_SMOKE: '1'

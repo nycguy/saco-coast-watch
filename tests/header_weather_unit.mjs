@@ -14,7 +14,9 @@ function setup({forecast=[],observation=null,hazards=null,alerts=[]}={}){
  };
  const state={weatherForecast:forecast,weatherObservation:observation,hazards,alerts};
  const window={};
- const context={window,document,state,Date,setInterval(){}};
+ // Hold the clock fixed so an observation exactly at the freshness boundary
+ // cannot become stale between fixture creation and render().
+ const context={window,document,state,Date:{now:()=>now},setInterval(){}};
  vm.runInNewContext(script,context);
  return {host,children,api:window.SacoHeaderWeather,state};
 }
@@ -49,10 +51,41 @@ test('precipitation classification is exclusive and prioritizes hazards',()=>{
  assert.equal(api.classify('Freezing Rain and Snow'),'freezing');
  assert.equal(api.classify('Wintry Mix of Rain and Snow'),'sleet');
  assert.equal(api.classify('Fog'),'fog');
+ assert.equal(api.classify('Blizzard'),'blizzard');
+ assert.equal(api.classify('Sleet'),'sleet');
+ assert.equal(api.classify('Heavy Rain'),'rain');
+ assert.equal(api.classify('Mostly Cloudy'),'cloud');
+ assert.equal(api.classify('Sunny'),'sun');
+ assert.equal(api.classify(''),null);
 });
-test('official storm event is a separate graphic',()=>{
+test('official storm event is a separate graphic with official provenance',()=>{
  const {children}=setup({forecast:[period('Cloudy')],hazards:{alerts:[{event:'Coastal Flood Warning'}]}});
  assert.deepEqual(children.map(x=>x.caption),['Cloudy','Coastal Flood']);
+ assert.match(children[1].attrs['aria-label'],/Official NWS alert/);
+});
+test('direct browser NWS alerts remain visible when the published hazard snapshot has none',()=>{
+ const {children}=setup({alerts:[{properties:{event:'High Surf Warning'}}]});
+ assert.equal(children[0].caption,'High Surf');
+ assert.match(children[0].attrs['aria-label'],/Official NWS alert/);
+ assert.equal(children[0].attrs['aria-label'].includes('SacoCast hazard classification'),false);
+});
+test('derived event classification is labeled separately from an official alert',()=>{
+ const {children}=setup({hazards:{active_modes:[{label:'High Surf / Wave Impact'}]}});
+ assert.equal(children[0].caption,'High Surf');
+ assert.match(children[0].attrs['aria-label'],/SacoCast hazard classification/);
+});
+test('official coastal event labels remain distinct across hazard families',()=>{
+ const {api}=setup();
+ for(const [event,label] of [
+  ['High Surf Warning','High Surf'],['Storm Surge Warning','Storm Surge'],
+  ['Hurricane Warning','Hurricane'],['Tropical Storm Warning','Tropical Storm'],
+  ['Blizzard Warning','Blizzard'],['Nor’easter Statement','Nor’easter'],
+ ]) assert.equal(api.stormLabel([{event}]),label,event);
+ assert.deepEqual([
+  api.stormIcon('Blizzard'),api.stormIcon('Hurricane'),api.stormIcon('Tropical Storm'),
+  api.stormIcon('Nor’easter'),api.stormIcon('Coastal Flood'),api.stormIcon('High Surf'),
+  api.stormIcon('Storm Surge'),api.stormIcon('Winter Storm')
+ ],['blizzard','storm','storm','noreaster','coastal','surf','surge','blizzard']);
 });
 test('render updates when forecast becomes available',()=>{
  const {api,state,children}=setup();

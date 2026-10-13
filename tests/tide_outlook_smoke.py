@@ -116,6 +116,7 @@ def assert_common(page):
     page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
     page.wait_for_function("document.querySelector('#briefPast').textContent.includes('past 24 hours')",timeout=10000)
     page.wait_for_function("document.querySelectorAll('#ferryArchiveThumbs .ferry-archive-thumb').length===2",timeout=10000)
+    assert_header_weather(page)
     section=page.locator(".calendar-panel")
     section.scroll_into_view_if_needed()
     page.wait_for_timeout(300)
@@ -320,6 +321,38 @@ def assert_common(page):
     assert details.evaluate("el => el.open")
     assert page.locator("#highTideCalendar .daytile").first.is_visible()
     return section
+
+def assert_header_weather(page):
+    page.evaluate("""() => {
+      const now=Date.now();
+      state.weatherForecast=[{t:now-60000,end:now+3600000,summary:'Heavy Rain'}];
+      state.weatherObservation={t:now,wind:27};
+      state.hazards={alerts:[{event:'Coastal Flood Warning'}],active_modes:[]};
+      window.SacoHeaderWeather.render();
+    }""")
+    items=page.locator('#headerWeather .header-weather-item')
+    assert items.count()==3,items.count()
+    captions=items.locator('span').all_inner_texts()
+    assert captions==['Rain','Windy','Coastal Flood'],captions
+    labels=items.evaluate_all("els => els.map(el => el.getAttribute('aria-label'))")
+    assert 'NWS hourly forecast' in labels[0]
+    assert 'Observed 27 mph' in labels[1]
+    assert 'Official NWS alert' in labels[2]
+    assert page.evaluate('document.documentElement.scrollWidth-window.innerWidth')<=3
+
+    page.emulate_media(reduced_motion='reduce')
+    duration=page.locator('#headerWeather .wx-drops').evaluate('el => getComputedStyle(el).animationDuration')
+    assert duration=='0s',duration
+    page.emulate_media(reduced_motion='no-preference')
+
+    page.evaluate("""() => {
+      state.weatherForecast=[];
+      state.weatherObservation={t:Date.now()-3*3600000,wind:40};
+      state.hazards={alerts:[],active_modes:[]};
+      window.SacoHeaderWeather.render();
+    }""")
+    assert page.locator('#headerWeather .header-weather-item').count()==1
+    assert page.locator('#headerWeather .header-weather-item span').inner_text()=='Weather Unavailable'
 
 def main():
     errors=[]

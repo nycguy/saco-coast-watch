@@ -382,13 +382,21 @@ async function subscribeEmail(req,e){
  catch(err){console.error("Confirmation send failed",String(err));return publicPage(e,"Email unavailable","<p>Try again later.</p>",503);}
  return publicPage(e,"Check your inbox","<p>Follow the verification link to activate your chosen alerts.</p>");
 }
+function replacementChoice(raw,action,existing){
+ const token='<input type="hidden" name="token" value="'+escapeHtml(raw)+'">';
+ if(!existing)return '<form method="post" action="'+action+'">'+token+'<button type="submit">Confirm and activate</button></form>';
+ return '<p><strong>Existing email alerts found.</strong> Your current alerts will remain unchanged unless you explicitly replace them.</p><form method="post" action="'+action+'">'+token+'<button type="submit" name="choice" value="replace">Replace Existing Alerts</button> <button type="submit" name="choice" value="keep">Keep Existing Alerts</button></form><p>Choose Keep to leave your current alerts unchanged. You can manage them using an email verification link.</p>';
+}
 async function confirmEmail(req,e){
  if(!liveAlerts(e))return publicPage(e,"Unavailable","<p>Contact support.</p>",503);
- const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String((await req.formData()).get("token")||"");
+ const form=req.method==="POST"?await req.formData():null;
+ const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String(form.get("token")||"");
  const row=await lookToken(e,raw,"alerts-confirm");
  if(!row)return publicPage(e,"Invalid confirmation link","<p>Request a new signup link.</p>",400);
- if(req.method==="GET")return publicPage(e,"Confirm coastal email alerts",
-  '<p>Activate email alerts for '+escapeHtml(row.email)+'?</p><form method="post" action="/alerts/confirm"><input type="hidden" name="token" value="'+escapeHtml(raw)+'"><button type="submit">Confirm and activate</button></form>');
+ const existing=await e.DB.prepare("SELECT id FROM subscribers WHERE email=? AND email_confirmed=1 AND unsubscribed=0").bind(row.email).first();
+ if(req.method==="GET")return publicPage(e,"Confirm coastal email alerts",replacementChoice(raw,"/alerts/confirm",!!existing));
+ if(existing&&form.get("choice")==="keep")return publicPage(e,"Existing alerts kept","<p>Your current alerts have not been changed.</p>");
+ if(existing&&form.get("choice")!=="replace")return publicPage(e,"Choose an option","<p>Explicit confirmation is required to replace existing alerts.</p>",400);
  let payload;try{payload=JSON.parse(row.payload_json);if(!payload.metrics||!payload.requestedAt)throw Error("Invalid");}catch(_){return publicPage(e,"Invalid link","<p>Request another.</p>",400);}
  if(!await takePublicToken(e,raw))return publicPage(e,"Link already used","<p>Request another.</p>",409);
  const now=stamp(),prefs=JSON.stringify({metrics:payload.metrics,channels:{email:true,push:false},emailOptInAt:now,termsVersion:payload.termsVersion});
@@ -403,12 +411,15 @@ async function confirmEmail(req,e){
 }
 async function confirmPushThresholdEmail(req,e){
   if(!liveAlerts(e))return publicPage(e,"Unavailable","<p>Contact support.</p>",503);
-  const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String((await req.formData()).get("token")||"");
+  const form=req.method==="POST"?await req.formData():null;
+  const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String(form.get("token")||"");
   const row=await lookToken(e,raw,"push-threshold-email-confirm");
   if(!row)return publicPage(e,"Invalid confirmation link","<p>Request a new email confirmation from SacoCast.</p>",400);
   let payload;try{payload=JSON.parse(row.payload_json);if(!payload.deviceId)throw Error("Invalid");}catch(_){return publicPage(e,"Invalid link","<p>Request another confirmation from SacoCast.</p>",400);}
-  if(req.method==="GET")return publicPage(e,"Confirm custom alert email delivery",
-   '<p>Send the custom thresholds selected on this SacoCast device to <strong>'+escapeHtml(row.email)+'</strong> as well as any app channel you selected?</p><form method="post" action="/alerts/push-confirm"><input type="hidden" name="token" value="'+escapeHtml(raw)+'"><button type="submit">Confirm email delivery</button></form>');
+  const existing=await e.DB.prepare("SELECT id FROM subscribers WHERE email=? AND email_confirmed=1 AND unsubscribed=0").bind(row.email).first();
+  if(req.method==="GET")return publicPage(e,"Confirm custom alert email delivery",replacementChoice(raw,"/alerts/push-confirm",!!existing));
+  if(existing&&form.get("choice")==="keep")return publicPage(e,"Existing alerts kept","<p>Your current email alerts have not been changed.</p>");
+  if(existing&&form.get("choice")!=="replace")return publicPage(e,"Choose an option","<p>Explicit confirmation is required to replace existing email alerts.</p>",400);
   const device=await e.DB.prepare("SELECT p.prefs_json FROM push_devices d JOIN push_threshold_preferences p ON p.device_id=d.id WHERE d.id=? AND d.enabled=1").bind(payload.deviceId).first();
   let thresholdPrefs;
   try{thresholdPrefs=normalizeThresholdPreferences(JSON.parse(device?.prefs_json||""));}catch(_){thresholdPrefs=null;}

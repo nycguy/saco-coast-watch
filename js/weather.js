@@ -1,5 +1,6 @@
 'use strict';
-function renderWeather(){\n if(window.SacoHeaderWeather)window.SacoHeaderWeather.render();
+function renderWeather(){
+ if(window.SacoHeaderWeather)window.SacoHeaderWeather.render();
  const o=state.weatherObservation,age=o?now()-o.t:Infinity,fresh=o&&age<=2*3600000;
  const w=fresh?o.wind:null,temperature=fresh?o.temp:null;
  metricNumber('windNow',w,'mph');metricNumber('tempNow',temperature,'°F');

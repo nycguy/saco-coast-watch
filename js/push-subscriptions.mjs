@@ -124,3 +124,22 @@ export async function disableCoastalNotifications({ serviceWorker = navigator.se
   storage.removeItem(CREDENTIAL_KEY);
   return { disabled: true, serverDisabled, localDisabled };
 }
+
+
+function pushCredentialOrThrow(storage = localStorage) {
+  const credential = readPushCredential(storage);
+  if (!credential) throw new Error('This browser does not have the saved notification control token.');
+  return credential;
+}
+export async function getCoastalThresholdPreferences({ storage = localStorage } = {}) {
+  const credential = pushCredentialOrThrow(storage);
+  return api(`/push/devices/thresholds?deviceId=${encodeURIComponent(credential.deviceId)}`, { token: credential.token });
+}
+export async function saveCoastalThresholdPreferences(preferences, { storage = localStorage } = {}) {
+  const credential = pushCredentialOrThrow(storage);
+  return api('/push/devices/thresholds', { method: 'PUT', body: { deviceId: credential.deviceId, preferences }, token: credential.token });
+}
+export async function requestCoastalThresholdEmail(email, preferences, { storage = localStorage } = {}) {
+  const credential = pushCredentialOrThrow(storage);
+  return api('/push/devices/thresholds/email', { method: 'POST', body: { deviceId: credential.deviceId, email, preferences }, token: credential.token });
+}

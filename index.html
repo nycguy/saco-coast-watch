@@ -24,8 +24,28 @@
  <div class="push-controls"><button class="btn primary" id="pushEnable" type="button">Turn On Notifications</button><button class="btn" id="pushManage" type="button" hidden>Manage Notifications</button><p class="push-status" id="pushStatus" role="status" aria-live="polite">Notifications are off. Choose Turn On to opt in.</p>
   <div id="pushSettings" hidden>
    <div class="push-settings-actions"><button class="btn" id="pushTest" type="button">Send Test Notification</button><button class="btn" id="pushDisable" type="button">Turn Off Notifications</button></div>
-   <fieldset id="pushPreferences"><legend>Notify me about</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
-   <div id="thresholdSettingsMount"></div>
+   <fieldset id="pushPreferences"><legend>Coastal event notifications</legend><label><input id="pushStarts" type="checkbox" name="pushStarts" checked> Coastal event starts</label><label><input id="pushEnds" type="checkbox" name="pushEnds" checked> Coastal event ends</label><label><input id="pushChanges" type="checkbox" name="pushChanges" checked> Meaningful event changes</label></fieldset>
+   <fieldset id="thresholdPreferences" class="threshold-alert-settings" hidden>
+    <legend>Custom threshold alerts</legend>
+    <p class="threshold-help">Choose the conditions you care about, then send those threshold crossings by App notification, Email, or both.</p>
+    <div class="threshold-alert-list">
+     <label class="threshold-alert-row"><span><input id="threshold-waterObserved-enabled" type="checkbox"> Observed Portland water level</span><span class="threshold-value">At or above <input id="threshold-waterObserved-value" type="number" min="0" max="30" step="0.1" value="12"> ft MLLW</span></label>
+     <label class="threshold-alert-row"><span><input id="threshold-waterForecast-enabled" type="checkbox"> Forecast Portland peak, next 72h</span><span class="threshold-value">At or above <input id="threshold-waterForecast-value" type="number" min="0" max="30" step="0.1" value="12"> ft MLLW</span></label>
+     <label class="threshold-alert-row"><span><input id="threshold-wind-enabled" type="checkbox"> Offshore sustained wind</span><span class="threshold-value">At or above <input id="threshold-wind-value" type="number" min="0" max="180" step="0.1" value="30"> mph</span></label>
+     <label class="threshold-alert-row"><span><input id="threshold-gust-enabled" type="checkbox"> Offshore wind gust</span><span class="threshold-value">At or above <input id="threshold-gust-value" type="number" min="0" max="220" step="0.1" value="45"> mph</span></label>
+     <label class="threshold-alert-row"><span><input id="threshold-tempHigh-enabled" type="checkbox"> Portland airport temperature high</span><span class="threshold-value">At or above <input id="threshold-tempHigh-value" type="number" min="-40" max="140" step="0.1" value="90"> °F</span></label>
+     <label class="threshold-alert-row"><span><input id="threshold-tempLow-enabled" type="checkbox"> Portland airport temperature low</span><span class="threshold-value">At or below <input id="threshold-tempLow-value" type="number" min="-40" max="140" step="0.1" value="32"> °F</span></label>
+    </div>
+    <div class="threshold-delivery">
+     <strong>Deliver selected thresholds by</strong>
+     <label><input id="thresholdChannelPush" type="checkbox" checked> App notification</label>
+     <label><input id="thresholdChannelEmail" type="checkbox"> Email</label>
+     <label id="thresholdEmailField" class="threshold-email-field" hidden>Email address <input id="thresholdEmailAddress" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com"></label>
+     <p id="thresholdLinkedEmail" class="threshold-linked-email" hidden></p>
+    </div>
+    <button class="btn primary" id="thresholdSave" type="button">Save Custom Alerts</button>
+    <p class="push-status" id="thresholdStatus" role="status" aria-live="polite">No custom threshold alerts are selected.</p>
+   </fieldset>
   </div>
  </div>
 </section>
@@ -272,5 +292,5 @@
 <script src="js/webcams.js"></script>
 
 
-<script type="module" src="js/push-ui.mjs?v=20261013-4"></script>
+<script type="module" src="js/push-ui.mjs?v=20261013-5"></script>
 </body></html>

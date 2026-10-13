@@ -36,7 +36,14 @@ def main():
             if request.method=='OPTIONS':
                 route.fulfill(status=204,headers=cors)
             elif request.url.endswith('/push/config'):
-                route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body='{"enabled":true,"publicKey":"'+PUBLIC_KEY+'"}')
+                route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body='{"enabled":true,"publicKey":"'+PUBLIC_KEY+'","thresholdsEnabled":true}')
+            elif '/push/devices/thresholds?' in request.url and request.method=='GET':
+                body='{"preferences":{"metrics":{"waterObserved":{"enabled":false,"threshold":12},"waterForecast":{"enabled":false,"threshold":12},"wind":{"enabled":false,"threshold":30},"gust":{"enabled":false,"threshold":45},"tempHigh":{"enabled":false,"threshold":90},"tempLow":{"enabled":false,"threshold":32}},"channels":{"push":false,"email":false}},"linkedEmail":null}'
+                route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body=body)
+            elif request.url.endswith('/push/devices/thresholds') and request.method=='PUT':
+                route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body='{"updated":true,"linkedEmail":null,"emailConfirmationRequired":false}')
+            elif request.url.endswith('/push/devices/thresholds/email') and request.method=='POST':
+                route.fulfill(status=202,headers={**cors,'content-type':'application/json'},body='{"confirmationSent":true,"maskedEmail":"t***@example.com"}')
             elif request.url.endswith('/push/devices/test'):
                 route.fulfill(status=200,headers={**cors,'content-type':'application/json'},body='{"sent":true}')
             else:
@@ -101,6 +108,16 @@ def main():
         page.locator('#pushManage').click()
         page.locator('#pushSettings').wait_for(state='visible',timeout=5000)
         assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
+        page.locator('#thresholdPreferences').wait_for(state='visible',timeout=5000)
+        page.locator('#threshold-tempHigh-enabled').check()
+        page.locator('#threshold-tempHigh-value').fill('85')
+        page.locator('#thresholdChannelPush').check()
+        page.locator('#thresholdSave').click()
+        page.get_by_text('Custom alert preferences saved.').wait_for(timeout=10000)
+        page.locator('#thresholdChannelEmail').check()
+        page.locator('#thresholdEmailAddress').fill('test@example.com')
+        page.locator('#thresholdSave').click()
+        page.get_by_text('Check t***@example.com to confirm Email delivery.').wait_for(timeout=10000)
         page.locator('#pushTest').click()
         page.get_by_text('Test notification sent. Check this device’s notification center.').wait_for(timeout=10000)
         for name in ('pushStarts','pushEnds','pushChanges'):

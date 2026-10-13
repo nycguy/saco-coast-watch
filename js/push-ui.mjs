@@ -1,7 +1,8 @@
 import {
   pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
-  updateCoastalNotificationPreferences, disableCoastalNotifications,
-} from './push-subscriptions.mjs?v=20261013-3';
+  updateCoastalNotificationPreferences, disableCoastalNotifications, getCoastalThresholdPreferences,
+  saveCoastalThresholdPreferences, requestCoastalThresholdEmail,
+} from './push-subscriptions.mjs?v=20261013-5';
 
 const byId = id => document.getElementById(id);
 const status = byId('pushStatus');
@@ -12,8 +13,21 @@ const settings = byId('pushSettings');
 const sendTest = byId('pushTest');
 const disable = byId('pushDisable');
 const preferences = byId('pushPreferences');
+const thresholdPreferences = byId('thresholdPreferences');
+const thresholdChannelPush = byId('thresholdChannelPush');
+const thresholdChannelEmail = byId('thresholdChannelEmail');
+const thresholdEmailField = byId('thresholdEmailField');
+const thresholdEmailAddress = byId('thresholdEmailAddress');
+const thresholdLinkedEmail = byId('thresholdLinkedEmail');
+const thresholdSave = byId('thresholdSave');
+const thresholdStatus = byId('thresholdStatus');
 const prefsStorageKey = 'sacocast.push.preferences.v1';
 let pushConfig = null;
+let thresholdSettingsLoaded = false;
+let linkedThresholdEmail = null;
+const thresholdSpecs = [
+  ['waterObserved', 12], ['waterForecast', 12], ['wind', 30], ['gust', 45], ['tempHigh', 90], ['tempLow', 32],
+];
 const getPrefs = () => {
   try {
     const stored = JSON.parse(localStorage.getItem(prefsStorageKey) || 'null');
@@ -31,6 +45,54 @@ function showEnrolled({ expanded = false } = {}) {
   settings.hidden = !expanded;
   manage.textContent = expanded ? 'Done' : 'Manage Notifications';
   setPrefs(getPrefs());
+}
+
+
+function thresholdPrefsFromForm() {
+  const metrics = {};
+  let selected = 0;
+  for (const [id, fallback] of thresholdSpecs) {
+    const enabled = byId(`threshold-${id}-enabled`).checked;
+    const threshold = Number(byId(`threshold-${id}-value`).value || fallback);
+    metrics[id] = { enabled, threshold };
+    if (enabled) selected++;
+  }
+  return { preferences: { metrics, channels: { push: thresholdChannelPush.checked, email: thresholdChannelEmail.checked } }, selected };
+}
+function renderThresholdEmailState() {
+  const wantsEmail = thresholdChannelEmail.checked;
+  thresholdEmailField.hidden = !wantsEmail || !!linkedThresholdEmail;
+  thresholdLinkedEmail.hidden = !linkedThresholdEmail;
+  thresholdLinkedEmail.textContent = linkedThresholdEmail ? `Email delivery linked to ${linkedThresholdEmail}.` : '';
+}
+function renderThresholdPreferences(result) {
+  const prefs = result?.preferences;
+  if (!prefs) return;
+  for (const [id, fallback] of thresholdSpecs) {
+    const item = prefs.metrics?.[id] || { enabled: false, threshold: fallback };
+    byId(`threshold-${id}-enabled`).checked = item.enabled === true;
+    byId(`threshold-${id}-value`).value = Number.isFinite(Number(item.threshold)) ? item.threshold : fallback;
+  }
+  thresholdChannelPush.checked = prefs.channels?.push === true;
+  thresholdChannelEmail.checked = prefs.channels?.email === true;
+  linkedThresholdEmail = result.linkedEmail || null;
+  renderThresholdEmailState();
+  const count = Object.values(prefs.metrics || {}).filter(item => item?.enabled === true).length;
+  thresholdStatus.textContent = count ? `${count} custom threshold alert${count === 1 ? '' : 's'} configured.` : 'No custom threshold alerts are selected.';
+}
+async function loadThresholdPreferences() {
+  if (!pushConfig?.thresholdsEnabled || !readPushCredential()) {
+    thresholdPreferences.hidden = true;
+    return;
+  }
+  thresholdPreferences.hidden = false;
+  try {
+    const result = await getCoastalThresholdPreferences();
+    renderThresholdPreferences(result);
+    thresholdSettingsLoaded = true;
+  } catch (error) {
+    thresholdStatus.textContent = error?.message || 'Custom threshold settings could not be loaded.';
+  }
 }
 
 async function initialize() {
@@ -68,7 +130,8 @@ async function initialize() {
     try {
       const saved = await getCoastalNotificationPreferences();
       if (saved) { localStorage.setItem(prefsStorageKey, JSON.stringify(saved)); setPrefs(saved); }
-      status.textContent = 'Notifications are on for this device. Choose the updates you want below.';
+      status.textContent = 'Notifications are on for this device.';
+      await loadThresholdPreferences();
     } catch (_) {
       status.textContent = 'Notifications are on, but saved preferences could not be refreshed. Your current choices remain shown.';
     }
@@ -87,15 +150,17 @@ enable.addEventListener('click', async () => {
     localStorage.setItem(prefsStorageKey, JSON.stringify(next));
     showEnrolled();
     status.textContent = 'Notifications are on for this device.';
+    await loadThresholdPreferences();
   } catch (error) {
     status.textContent = error?.message || 'Could not enable notifications. Try again later.';
   } finally { enable.disabled = Notification.permission === 'denied'; }
 });
 
-manage.addEventListener('click', () => {
+manage.addEventListener('click', async () => {
   const expanded = settings.hidden;
   settings.hidden = !expanded;
   manage.textContent = expanded ? 'Done' : 'Manage Notifications';
+  if (expanded && !thresholdSettingsLoaded) await loadThresholdPreferences();
 });
 
 disable.addEventListener('click', async () => {
@@ -140,6 +205,40 @@ preferences.addEventListener('change', async event => {
   } catch (error) {
     setPrefs(before);
     status.textContent = (error?.message || 'Could not save notification preferences.') + ' Your previous choices were restored.';
+  } finally {
+    inputs.forEach(input => { input.disabled = false; });
+  }
+});
+
+thresholdChannelEmail.addEventListener('change', renderThresholdEmailState);
+
+thresholdSave.addEventListener('click', async () => {
+  const { preferences: next, selected } = thresholdPrefsFromForm();
+  if (selected > 0 && !next.channels.push && !next.channels.email) {
+    thresholdStatus.textContent = 'Choose App notification, Email, or both for the selected thresholds.';
+    return;
+  }
+  if (next.channels.email && !linkedThresholdEmail && !thresholdEmailAddress.validity.valid) {
+    thresholdEmailField.hidden = false;
+    thresholdEmailAddress.reportValidity();
+    thresholdStatus.textContent = 'Enter the email address you want to use for threshold alerts.';
+    return;
+  }
+  const inputs = [...thresholdPreferences.querySelectorAll('input,button')];
+  inputs.forEach(input => { input.disabled = true; });
+  thresholdStatus.textContent = 'Saving custom alert preferences…';
+  try {
+    const result = await saveCoastalThresholdPreferences(next);
+    if (result.linkedEmail) linkedThresholdEmail = result.linkedEmail;
+    if (result.emailConfirmationRequired) {
+      const confirmation = await requestCoastalThresholdEmail(thresholdEmailAddress.value.trim(), next);
+      thresholdStatus.textContent = `App settings saved. Check ${confirmation.maskedEmail || 'your email'} to confirm Email delivery.`;
+    } else {
+      thresholdStatus.textContent = selected ? 'Custom alert preferences saved.' : 'Custom threshold alerts are off.';
+    }
+    renderThresholdEmailState();
+  } catch (error) {
+    thresholdStatus.textContent = error?.message || 'Could not save custom alert preferences.';
   } finally {
     inputs.forEach(input => { input.disabled = false; });
   }

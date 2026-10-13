@@ -1,10 +1,14 @@
 import { handlePushApi, pushConfiguration } from './push-http.mjs';
 import { processCoastalPushEvents } from './coastal-push-events.mjs';
+import { sendThresholdPush } from './push-delivery.mjs';
+import { THRESHOLD_SPECS, normalizeThresholdPreferences } from './threshold-preferences.mjs';
+import { linkDeviceThresholdSubscriber } from './push-device-store.mjs';
 // SacoCast alert Worker. Existing email behavior remains independent of browser push.
 // Push stays inert until its explicit runtime flags, VAPID pair, and additive D1 schema are ready.
 const NEEDED=["DB","PUBLIC_SITE","ALLOWED_ORIGIN","WORKER_PUBLIC_URL","FROM_EMAIL","SUPPORT_EMAIL","RESEND_API_KEY","TURNSTILE_SITE_KEY","TURNSTILE_SECRET","TOKEN_SECRET"];
 const TABLES=["subscribers","push_subscriptions","tokens","alert_state","request_limits"];
 const PUSH_TABLES=["coastal_event_snapshots","coastal_event_deliveries","push_devices","push_device_deliveries","push_delivery_queue"];
+const THRESHOLD_TABLES=["push_threshold_preferences"];
 const encoder=new TextEncoder();
 const stamp=()=>Math.floor(Date.now()/1000);
 function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","x-content-type-options":"nosniff"}});}
@@ -21,8 +25,11 @@ async function health(env){
   catch(_){databaseError="Could not query the D1 database";}
   let pushTablesMissing=PUSH_TABLES;
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);pushTablesMissing=PUSH_TABLES.filter(x=>!found.includes(x));}}catch(_){/* Keep push disabled if schema inspection fails. */}
+  let thresholdTablesMissing=THRESHOLD_TABLES;
+  try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);thresholdTablesMissing=THRESHOLD_TABLES.filter(x=>!found.includes(x));}}catch(_){/* Keep custom threshold push disabled. */}
   const webPushEnabled=env.PUSH_API_ENABLED==="true"&&env.PUSH_EVENTS_ENABLED==="true"&&!!env.VAPID_PUBLIC_KEY&&!!env.VAPID_PRIVATE_KEY&&databaseConnected&&!pushTablesMissing.length;
-  return json({service:"saco-coastal-alerts",phase:webPushEnabled?"email-and-web-push":"email-release",pilotBuild:webPushEnabled?"web-push-v1":"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled,pushApiEnabled:env.PUSH_API_ENABLED==="true",pushEventsEnabled:env.PUSH_EVENTS_ENABLED==="true",pushTablesMissing,cronRequiresSetup:false});
+  const thresholdPushEnabled=webPushEnabled&&!thresholdTablesMissing.length;
+  return json({service:"saco-coastal-alerts",phase:webPushEnabled?"email-and-web-push":"email-release",pilotBuild:thresholdPushEnabled?"web-push-thresholds-v1":webPushEnabled?"web-push-v1":"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled,thresholdPushEnabled,pushApiEnabled:env.PUSH_API_ENABLED==="true",pushEventsEnabled:env.PUSH_EVENTS_ENABLED==="true",pushTablesMissing,thresholdTablesMissing,cronRequiresSetup:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -310,14 +317,7 @@ async function sendSimulatedOwnerAlert(req,env) {
 }
 
 // Public email release is gated; pilot-verified email alone does NOT imply alert consent.
-const ALERTS=[
- ["waterObserved","Observed Portland water level","ft MLLW",12,0,30],
- ["waterForecast","Forecast Portland peak in next 72 hours","ft MLLW",12,0,30],
- ["wind","Offshore sustained wind","mph",30,0,180],
- ["gust","Offshore wind gust","mph",45,0,220],
- ["tempHigh","Portland airport temperature above","°F",90,-40,140],
- ["tempLow","Portland airport temperature below","°F",32,-40,140]
-];
+const ALERTS=THRESHOLD_SPECS.map(spec=>[spec.id,spec.label,spec.unit,spec.defaultThreshold,spec.min,spec.max]);
 const liveAlerts=e=>configured(e)&&e.LIVE_ALERTS==="true";
 const siteUrl=e=>e.WORKER_PUBLIC_URL.replace(/\/$/,"");
 function publicPage(e,title,body,status=200){return html(title,body+'<p><a href="'+escapeHtml(e.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p><p>Support: '+escapeHtml(e.SUPPORT_EMAIL)+'</p>',status);}
@@ -401,6 +401,47 @@ async function confirmEmail(req,e){
  }
  return publicPage(e,"Email alerts activated","<p>Your selected thresholds are active for scheduled checks. Delivery is best effort, not an emergency warning system.</p>");
 }
+async function confirmPushThresholdEmail(req,e){
+  if(!liveAlerts(e))return publicPage(e,"Unavailable","<p>Contact support.</p>",503);
+  const raw=req.method==="GET"?new URL(req.url).searchParams.get("token"):String((await req.formData()).get("token")||"");
+  const row=await lookToken(e,raw,"push-threshold-email-confirm");
+  if(!row)return publicPage(e,"Invalid confirmation link","<p>Request a new email confirmation from SacoCast.</p>",400);
+  let payload;try{payload=JSON.parse(row.payload_json);if(!payload.deviceId)throw Error("Invalid");}catch(_){return publicPage(e,"Invalid link","<p>Request another confirmation from SacoCast.</p>",400);}
+  if(req.method==="GET")return publicPage(e,"Confirm custom alert email delivery",
+   '<p>Send the custom thresholds selected on this SacoCast device to <strong>'+escapeHtml(row.email)+'</strong> as well as any app channel you selected?</p><form method="post" action="/alerts/push-confirm"><input type="hidden" name="token" value="'+escapeHtml(raw)+'"><button type="submit">Confirm email delivery</button></form>');
+  const device=await e.DB.prepare("SELECT p.prefs_json FROM push_devices d JOIN push_threshold_preferences p ON p.device_id=d.id WHERE d.id=? AND d.enabled=1").bind(payload.deviceId).first();
+  let thresholdPrefs;
+  try{thresholdPrefs=normalizeThresholdPreferences(JSON.parse(device?.prefs_json||""));}catch(_){thresholdPrefs=null;}
+  if(!thresholdPrefs||thresholdPrefs.channels.email!==true)return publicPage(e,"Email delivery no longer requested","<p>Email delivery is currently off on this device. Re-enable it in SacoCast if you want to link an address.</p>",409);
+  if(!await takePublicToken(e,raw))return publicPage(e,"Link already used","<p>Request another confirmation from SacoCast.</p>",409);
+  const now=stamp();
+  const prior=await e.DB.prepare("SELECT id,prefs_json FROM subscribers WHERE email=?").bind(row.email).first();
+  let subscriberId;
+  const emailPrefs={metrics:thresholdPrefs.metrics,channels:{email:true,push:thresholdPrefs.channels.push},emailOptInAt:now,termsVersion:"2026-10"};
+  if(prior){
+    subscriberId=prior.id;
+    await e.DB.prepare("UPDATE subscribers SET email_confirmed=1,unsubscribed=0,prefs_json=?,updated_at=? WHERE id=?").bind(JSON.stringify(emailPrefs),now,subscriberId).run();
+  }else{
+    subscriberId=crypto.randomUUID();
+    await e.DB.prepare("INSERT INTO subscribers(id,email,email_confirmed,prefs_json,unsubscribed,created_at,updated_at) VALUES(?,?,?,?,?,?,?)").bind(subscriberId,row.email,1,JSON.stringify(emailPrefs),0,now,now).run();
+  }
+  if(!await linkDeviceThresholdSubscriber(e.DB,payload.deviceId,subscriberId,thresholdPrefs,now))return publicPage(e,"Device unavailable","<p>The app notification device is no longer enrolled. Reopen SacoCast and save your settings again.</p>",409);
+  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(subscriberId).run();
+  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='push'").bind(payload.deviceId).run();
+  return publicPage(e,"Email delivery activated","<p>Your selected custom thresholds can now be delivered by app notification, email, or both according to the choices saved on this device.</p>");
+}
+
+async function syncLinkedThresholdDevices(e,subscriberId,metrics,emailEnabled){
+  const rows=await e.DB.prepare("SELECT device_id,prefs_json FROM push_threshold_preferences WHERE linked_subscriber_id=?").bind(subscriberId).all();
+  for(const row of rows.results||[]){
+    let prefs;try{prefs=normalizeThresholdPreferences(JSON.parse(row.prefs_json));}catch(_){prefs=null;}
+    if(!prefs)continue;
+    prefs={metrics,channels:{push:prefs.channels.push,email:emailEnabled}};
+    await e.DB.prepare("UPDATE push_threshold_preferences SET prefs_json=?,updated_at=? WHERE device_id=?").bind(JSON.stringify(prefs),stamp(),row.device_id).run();
+    await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='push'").bind(row.device_id).run();
+  }
+}
+
 async function unsubscribeLink(e,s){
  const sig=await hmac(e.TOKEN_SECRET,"unsub:"+s.id+":"+s.email);
  return siteUrl(e)+"/alerts/unsubscribe?token="+s.id+"."+sig;

@@ -1,4 +1,5 @@
 import { validatePushSubscription, validateEventPreferences } from './push-validation.mjs';
+import { defaultThresholdMetrics, normalizeThresholdPreferences } from './threshold-preferences.mjs';
 
 function validCredential(id, tokenHash) {
   return typeof id === 'string' && /^[0-9a-f-]{36}$/i.test(id) && typeof tokenHash === 'string' && /^[0-9a-f]{64}$/.test(tokenHash);
@@ -38,4 +39,45 @@ export async function disableDevice(db, id, tokenHash, now) {
   const result = await db.prepare('DELETE FROM push_devices WHERE id=? AND token_hash=? AND enabled=1')
     .bind(id, tokenHash).run();
   return result.meta?.changes === 1;
+}
+
+
+export async function getDeviceThresholdPreferences(db, id, tokenHash) {
+  if (!validCredential(id, tokenHash)) return null;
+  const row = await db.prepare(
+    "SELECT p.prefs_json,p.linked_subscriber_id,s.email FROM push_devices d LEFT JOIN push_threshold_preferences p ON p.device_id=d.id LEFT JOIN subscribers s ON s.id=p.linked_subscriber_id AND s.email_confirmed=1 AND s.unsubscribed=0 WHERE d.id=? AND d.token_hash=? AND d.enabled=1"
+  ).bind(id, tokenHash).first();
+  if (!row) return null;
+  let preferences = { metrics: defaultThresholdMetrics(), channels: { push: false, email: false } };
+  if (row.prefs_json) {
+    try { preferences = normalizeThresholdPreferences(JSON.parse(row.prefs_json)) || preferences; } catch (_) {}
+  }
+  return {
+    preferences,
+    linkedSubscriberId: typeof row.linked_subscriber_id === 'string' ? row.linked_subscriber_id : null,
+    linkedEmail: typeof row.email === 'string' ? row.email : null,
+  };
+}
+
+export async function setDeviceThresholdPreferences(db, id, tokenHash, preferenceData, now) {
+  const preferences = normalizeThresholdPreferences(preferenceData);
+  if (!preferences || !Number.isSafeInteger(now) || !validCredential(id, tokenHash)) return null;
+  const owned = await db.prepare('SELECT id FROM push_devices WHERE id=? AND token_hash=? AND enabled=1').bind(id, tokenHash).first();
+  if (!owned) return null;
+  const previous = await db.prepare('SELECT linked_subscriber_id FROM push_threshold_preferences WHERE device_id=?').bind(id).first();
+  await db.prepare(
+    'INSERT INTO push_threshold_preferences(device_id,linked_subscriber_id,prefs_json,updated_at) VALUES(?,?,?,?) ON CONFLICT(device_id) DO UPDATE SET prefs_json=excluded.prefs_json,updated_at=excluded.updated_at'
+  ).bind(id, previous?.linked_subscriber_id || null, JSON.stringify(preferences), now).run();
+  return { preferences, linkedSubscriberId: previous?.linked_subscriber_id || null };
+}
+
+export async function linkDeviceThresholdSubscriber(db, deviceId, subscriberId, preferenceData, now) {
+  const preferences = normalizeThresholdPreferences(preferenceData);
+  if (!preferences || !Number.isSafeInteger(now) || typeof subscriberId !== 'string' || !/^[0-9a-f-]{36}$/i.test(subscriberId)) return false;
+  const device = await db.prepare('SELECT id FROM push_devices WHERE id=? AND enabled=1').bind(deviceId).first();
+  if (!device) return false;
+  await db.prepare(
+    'INSERT INTO push_threshold_preferences(device_id,linked_subscriber_id,prefs_json,updated_at) VALUES(?,?,?,?) ON CONFLICT(device_id) DO UPDATE SET linked_subscriber_id=excluded.linked_subscriber_id,prefs_json=excluded.prefs_json,updated_at=excluded.updated_at'
+  ).bind(deviceId, subscriberId, JSON.stringify(preferences), now).run();
+  return true;
 }

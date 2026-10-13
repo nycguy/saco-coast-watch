@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
-import { enqueuePushTransition, deliverQueuedPush } from '../src/push-delivery.mjs';
+import { enqueuePushTransition, deliverQueuedPush, sendThresholdPush } from '../src/push-delivery.mjs';
 import { validSubscription } from './fixtures.mjs';
 
 const device = { id: '11111111-1111-4111-8111-111111111111', event_prefs_json: JSON.stringify({ starts: true, ends: true, changes: true }) };
@@ -65,5 +65,18 @@ test('expired subscriptions are removed from device storage', async()=>{
     const result=await deliverQueuedPush({DB:database,VAPID_PUBLIC_KEY:pair.public,VAPID_PRIVATE_KEY:pair.private,SUPPORT_EMAIL:'alerts@example.org',PUSH_EVENTS_ENABLED:'true'},3000);
     assert.equal(result.pushExpired,1);
     assert.equal(database.calls.some(c=>/DELETE FROM push_devices WHERE id/.test(c.sql)),true);
+  }finally{globalThis.fetch=previous;}
+});
+
+
+test('custom threshold push uses the same encrypted Web Push transport', async()=>{
+  const pair=await vapidPair(), previous=globalThis.fetch;
+  const database=db();
+  globalThis.fetch=async()=>new Response(null,{status:201});
+  try{
+    const result=await sendThresholdPush({DB:database,VAPID_PUBLIC_KEY:pair.public,VAPID_PRIVATE_KEY:pair.private,SUPPORT_EMAIL:'alerts@example.org'},{
+      id:device.id,endpoint:'https://fcm.googleapis.com/fcm/send/x',p256dh:validSubscription.keys.p256dh,auth:validSubscription.keys.auth
+    },{metric:'tempHigh',title:'SacoCast threshold reached',body:'85 °F',url:'https://nycguy.github.io/saco-coast-watch/'},4000);
+    assert.equal(result.sent,true);
   }finally{globalThis.fetch=previous;}
 });

@@ -12,14 +12,14 @@ BASE_COLUMNS = {
     'alert_state': {'subscriber_id', 'channel', 'metric', 'active', 'last_sent'},
     'request_limits': {'ip_hash', 'until_ts'},
 }
-PUSH_COLUMNS = {
+CORE_PUSH_COLUMNS = {
     'coastal_event_snapshots': {'event_key', 'active', 'fingerprint', 'source_observed_at', 'updated_at'},
     'coastal_event_deliveries': {'id', 'subscriber_id', 'event_key', 'transition_kind', 'event_fingerprint', 'created_at', 'sent_at', 'status'},
     'push_devices': {'id', 'endpoint', 'p256dh', 'auth', 'token_hash', 'event_prefs_json', 'enabled', 'created_at', 'updated_at'},
     'push_device_deliveries': {'id', 'device_id', 'event_key', 'transition_kind', 'event_fingerprint', 'status', 'created_at', 'sent_at'},
     'push_delivery_queue': {'id', 'device_id', 'event_key', 'transition_kind', 'event_fingerprint', 'payload_json', 'status', 'attempts', 'next_attempt_at', 'created_at', 'sent_at', 'last_error'},
 }
-PUSH_INDEXES = {
+CORE_PUSH_INDEXES = {
     'coastal_event_deliveries_subscriber_idx', 'coastal_event_deliveries_pending_idx',
     'push_devices_enabled_idx', 'push_device_deliveries_pending_idx',
     'push_delivery_queue_pending_idx', 'push_delivery_queue_device_idx',
@@ -80,25 +80,39 @@ def verify_schema(path):
         raise SystemExit('Live D1 does not match the expected existing email schema; refusing Worker release. Missing tables: '+str(missing)+'; columns: '+str(columns_missing))
     print('Live D1 contains the expected pre-existing email-alert tables and columns.')
 
+THRESHOLD_COLUMNS = {
+    'push_threshold_preferences': {'device_id', 'linked_subscriber_id', 'prefs_json', 'updated_at'},
+}
+THRESHOLD_INDEXES = {'push_threshold_preferences_subscriber_idx'}
+
+def _verify_named_schema(items, columns, indexes_expected, label):
+    tables = _tables(items)
+    missing_tables = sorted(set(columns) - tables)
+    columns_missing = sorted(f'{table}.{col}' for table, cols in columns.items() for col in cols if f'{table}.{col}' not in items)
+    indexes = {x.removeprefix('object:index:') for x in items if x.startswith('object:index:')}
+    missing_indexes = sorted(indexes_expected - indexes)
+    if missing_tables or columns_missing or missing_indexes:
+        raise SystemExit(f'D1 has a partial/incomplete {label} schema; refusing to guess migration state. Missing tables: {missing_tables}; columns: {columns_missing}; indexes: {missing_indexes}')
+
 def migration_state(path):
     items = schema_items(path)
-    present_tables = _tables(items) & set(PUSH_COLUMNS)
-    present_indexes = {x.removeprefix('object:index:') for x in items if x.startswith('object:index:')} & PUSH_INDEXES
-    if not present_tables and not present_indexes:
+    tables = _tables(items)
+    indexes = {x.removeprefix('object:index:') for x in items if x.startswith('object:index:')}
+    core_present = bool((tables & set(CORE_PUSH_COLUMNS)) or (indexes & CORE_PUSH_INDEXES))
+    threshold_present = bool((tables & set(THRESHOLD_COLUMNS)) or (indexes & THRESHOLD_INDEXES))
+    if not core_present and not threshold_present:
         return 'absent'
-    verify_push_schema(path)
+    _verify_named_schema(items, CORE_PUSH_COLUMNS, CORE_PUSH_INDEXES, 'core push')
+    if not threshold_present:
+        return 'thresholds_pending'
+    _verify_named_schema(items, THRESHOLD_COLUMNS, THRESHOLD_INDEXES, 'custom threshold push')
     return 'complete'
 
 def verify_push_schema(path):
     items = schema_items(path)
-    tables = _tables(items)
-    missing_tables = sorted(set(PUSH_COLUMNS) - tables)
-    columns_missing = sorted(f'{table}.{col}' for table, cols in PUSH_COLUMNS.items() for col in cols if f'{table}.{col}' not in items)
-    indexes = {x.removeprefix('object:index:') for x in items if x.startswith('object:index:')}
-    missing_indexes = sorted(PUSH_INDEXES - indexes)
-    if missing_tables or columns_missing or missing_indexes:
-        raise SystemExit('D1 has a partial/incomplete additive push schema; refusing to guess migration state. Missing tables: '+str(missing_tables)+'; columns: '+str(columns_missing)+'; indexes: '+str(missing_indexes))
-    print('D1 contains all expected additive event/push tables, columns, and indexes.')
+    _verify_named_schema(items, CORE_PUSH_COLUMNS, CORE_PUSH_INDEXES, 'core push')
+    _verify_named_schema(items, THRESHOLD_COLUMNS, THRESHOLD_INDEXES, 'custom threshold push')
+    print('D1 contains all expected additive event/push/custom-threshold tables, columns, and indexes.')
 
 def subscriber_count(path):
     values = field_values(read_wrangler_json(path), 'subscriber_count')

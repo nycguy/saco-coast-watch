@@ -8,7 +8,7 @@ self.addEventListener('push', event => {
     if (!event.data) return;
     let message;
     try { message = event.data.json(); } catch (_) { return; }
-    if (!message || message.application !== 'SacoCast' || !['start', 'end', 'change'].includes(message.kind)) return;
+    if (!message || message.application !== 'SacoCast' || !['start', 'end', 'change', 'threshold'].includes(message.kind)) return;
     const title = typeof message.title === 'string' ? message.title.slice(0, 120) : 'SacoCast Coastal Update';
     const body = typeof message.body === 'string' ? message.body.slice(0, 280) : 'Coastal conditions have changed.';
     const url = typeof message.url === 'string' ? new URL(message.url, SITE_SCOPE) : SITE_SCOPE;

@@ -13,3 +13,5 @@ SELECT 'coastal_event_deliveries.' || name AS schema_item FROM pragma_table_info
 SELECT 'push_devices.' || name AS schema_item FROM pragma_table_info('push_devices');
 SELECT 'push_device_deliveries.' || name AS schema_item FROM pragma_table_info('push_device_deliveries');
 SELECT 'push_delivery_queue.' || name AS schema_item FROM pragma_table_info('push_delivery_queue');
+
+SELECT 'push_threshold_preferences.' || name AS schema_item FROM pragma_table_info('push_threshold_preferences');

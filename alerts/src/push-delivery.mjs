@@ -89,3 +89,24 @@ export async function deliverQueuedPush(env, now = Math.floor(Date.now() / 1000)
   }
   return { pushAttempted: attempted, pushSent: sent, pushExpired: expired, pushDeferred: false };
 }
+
+
+/** Direct best-effort custom-threshold delivery. Failed sends leave threshold state unchanged so the next scheduled check can retry. */
+export async function sendThresholdPush(env, device, message, now = Math.floor(Date.now() / 1000)) {
+  const eventId = hex(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('threshold\0' + device.id + '\0' + message.metric))));
+  const payload = {
+    application: 'SacoCast',
+    kind: 'threshold',
+    eventId,
+    title: message.title,
+    body: message.body,
+    url: message.url,
+  };
+  const response = await sendPush(device.endpoint, { p256dh: device.p256dh, auth: device.auth }, payload, env, now);
+  if (response.status === 404 || response.status === 410) {
+    await env.DB.prepare('DELETE FROM push_devices WHERE id=?').bind(device.id).run();
+    return { sent: false, expired: true };
+  }
+  if (!response.ok) throw new Error(`Push provider returned ${response.status}`);
+  return { sent: true, expired: false };
+}

@@ -42,3 +42,9 @@ test('rejects malformed kinds and offsite destinations', async () => {
   await push(h, { application: 'SacoCast', kind: 'start', url: '/elsewhere' });
   assert.equal(h.notifications.length, 0);
 });
+
+
+test('service worker accepts custom threshold notification kind', async () => {
+  const source = await readFile(new URL('../../push-sw.js', import.meta.url), 'utf8');
+  assert.match(source, /'threshold'/);
+});

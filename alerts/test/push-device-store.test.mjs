@@ -2,7 +2,7 @@ const deviceId = '11111111-1111-4111-8111-111111111111';
 const credentialHash = 'c'.repeat(64);
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { registerDevice, setDevicePreferences, getDevicePreferences, disableDevice } from '../src/push-device-store.mjs';
+import { registerDevice, setDevicePreferences, getDevicePreferences, disableDevice, getDeviceThresholdPreferences, setDeviceThresholdPreferences } from '../src/push-device-store.mjs';
 import { validSubscription } from './fixtures.mjs';
 const subscription = { ...validSubscription, endpoint: 'https://web.push.apple.com/device' };
 function mockDb(existing = null, changes = 1) {
@@ -63,4 +63,30 @@ test('an unsuccessful insert is not reported as enrolled', async () => {
   const db = mockDb(null, 0);
   const result = await registerDevice(db, subscription, null, 104, { id: deviceId, tokenHash: credentialHash });
   assert.notEqual(result?.id, deviceId);
+});
+
+
+test('threshold preferences are owned by the same device credential and default safely', async () => {
+  const prefs={metrics:{
+    waterObserved:{enabled:false,threshold:12},waterForecast:{enabled:false,threshold:12},wind:{enabled:false,threshold:30},
+    gust:{enabled:false,threshold:45},tempHigh:{enabled:true,threshold:85},tempLow:{enabled:false,threshold:32}
+  },channels:{push:true,email:false}};
+  const calls=[];
+  const db={
+    prepare(sql){const call={sql,args:[]};calls.push(call);return{
+      bind(...args){call.args=args;return this;},
+      async first(){
+        if(sql.startsWith('SELECT id FROM push_devices')) return {id:deviceId};
+        if(sql.startsWith('SELECT linked_subscriber_id')) return null;
+        if(sql.includes('LEFT JOIN push_threshold_preferences')) return {prefs_json:null,linked_subscriber_id:null,email:null};
+        return null;
+      },
+      async run(){return {meta:{changes:1}};}
+    };}
+  };
+  const saved=await setDeviceThresholdPreferences(db,deviceId,credentialHash,prefs,200);
+  assert.equal(saved.preferences.metrics.tempHigh.threshold,85);
+  const loaded=await getDeviceThresholdPreferences(db,deviceId,credentialHash);
+  assert.equal(loaded.preferences.channels.push,false);
+  assert.equal(loaded.preferences.metrics.tempHigh.threshold,90);
 });

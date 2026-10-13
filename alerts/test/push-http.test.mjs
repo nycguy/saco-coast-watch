@@ -93,3 +93,28 @@ test('preference update accepts false selectors with valid device ownership', as
   assert.match(database.calls.at(-1).sql, /UPDATE push_devices SET event_prefs_json/);
   assert.equal(database.calls.at(-1).args[0], JSON.stringify({ starts: false, ends: false, changes: false }));
 });
+
+
+test('threshold preference endpoint accepts App-only custom thresholds', async () => {
+  const calls=[];
+  const database={
+    prepare(sql){const call={sql,args:[]};calls.push(call);return{
+      bind(...args){call.args=args;return this;},
+      async first(){
+        if(sql.startsWith('SELECT id FROM push_devices')) return {id:'11111111-1111-4111-8111-111111111111'};
+        if(sql.startsWith('SELECT linked_subscriber_id')) return null;
+        return null;
+      },
+      async run(){return {meta:{changes:1}};}
+    };}
+  };
+  const preferences={metrics:{
+    waterObserved:{enabled:false,threshold:12},waterForecast:{enabled:false,threshold:12},wind:{enabled:false,threshold:30},
+    gust:{enabled:false,threshold:45},tempHigh:{enabled:true,threshold:85},tempLow:{enabled:false,threshold:32}
+  },channels:{push:true,email:false}};
+  const req=new Request('https://worker.example.test/push/devices/thresholds',{method:'PUT',headers:{Origin:'https://nycguy.github.io','Content-Type':'application/json',Authorization:'Bearer '+'a'.repeat(64)},body:JSON.stringify({deviceId:'11111111-1111-4111-8111-111111111111',preferences})});
+  const response=await handlePushApi(req,env(database));
+  assert.equal(response.status,200);
+  assert.equal((await response.json()).emailConfirmationRequired,false);
+  assert.equal(calls.some(call=>/push_threshold_preferences/.test(call.sql)),true);
+});

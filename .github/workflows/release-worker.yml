@@ -94,6 +94,7 @@ jobs:
             "SELECT 'push_devices.' || name AS schema_item FROM pragma_table_info('push_devices')"
             "SELECT 'push_device_deliveries.' || name AS schema_item FROM pragma_table_info('push_device_deliveries')"
             "SELECT 'push_delivery_queue.' || name AS schema_item FROM pragma_table_info('push_delivery_queue')"
+            "SELECT 'push_threshold_preferences.' || name AS schema_item FROM pragma_table_info('push_threshold_preferences')"
           )
           for query in "${schema_queries[@]}"; do
             if ! npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="$query" --json >> /tmp/d1-schema-parts.ndjson 2> /tmp/d1-schema.err; then
@@ -122,7 +123,7 @@ jobs:
           cd ..
           python3 scripts/verify_d1_schema.py --schema /tmp/d1-before.json
           state="$(python3 scripts/verify_d1_schema.py --migration-state /tmp/d1-before.json | sed -n 's/^MIGRATION_STATE=//p')"
-          test "$state" = absent -o "$state" = complete
+          test "$state" = absent -o "$state" = thresholds_pending -o "$state" = complete
           echo "migration_state=$state" >> "$GITHUB_OUTPUT"
           if [ "$state" = "complete" ] && [ "${{ steps.vapid.outputs.state }}" = "complete" ]; then
             curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-push-preflight.json
@@ -148,6 +149,16 @@ jobs:
           npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0002_event_notifications.sql
           npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0003_push_devices.sql
           npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0004_push_delivery_queue.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0005_push_threshold_preferences.sql
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Apply custom threshold push migration when pending
+        if: inputs.apply_migrations_and_deploy && steps.preflight.outputs.migration_state == 'thresholds_pending'
+        working-directory: alerts
+        run: |
+          set -euo pipefail
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0005_push_threshold_preferences.sql
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -172,6 +183,7 @@ jobs:
             "SELECT 'push_devices.' || name AS schema_item FROM pragma_table_info('push_devices')"
             "SELECT 'push_device_deliveries.' || name AS schema_item FROM pragma_table_info('push_device_deliveries')"
             "SELECT 'push_delivery_queue.' || name AS schema_item FROM pragma_table_info('push_delivery_queue')"
+            "SELECT 'push_threshold_preferences.' || name AS schema_item FROM pragma_table_info('push_threshold_preferences')"
           )
           for query in "${schema_queries[@]}"; do
             npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="$query" --json >> /tmp/d1-schema-after-parts.ndjson

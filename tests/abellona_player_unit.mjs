@@ -99,6 +99,7 @@ test('YouTube embed errors show an explicit fallback instead of presenting the p
   await f.enterViewport();
   f.playerConfig.events.onError({ data: 150 });
   assert.equal(f.controller.getPlaybackState(), 'fallback');
+  assert.equal(f.camera.dataset.playerErrorCode, '150');
   assert.equal(f.elements.get('abellonaWatchLive').hidden, false);
   assert.match(f.elements.get('abellonaGateMessage').textContent, /unavailable in this browser/);
   assert.match(f.elements.get('abellonaStatus').textContent, /open the camera on YouTube/);

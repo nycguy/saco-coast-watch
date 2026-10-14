@@ -34,6 +34,7 @@ class WebcamSnapshotTests(unittest.TestCase):
   html=(ROOT/'index.html').read_text(encoding='utf-8')
   player=(ROOT/'js'/'abellona-player.mjs').read_text(encoding='utf-8')
   self.assertIn('id="abellonaPlayer"',html)
+  self.assertIn('<meta name="referrer" content="strict-origin-when-cross-origin">',html)
   self.assertIn('id="abellonaWatchLive" type="button" hidden>Watch Live</button>',html)
   self.assertIn('src="js/abellona-player.mjs"',html)
   self.assertIn("ABELLONA_VIDEO_ID = 'HSQpqIWLViI'",player)

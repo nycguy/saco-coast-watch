@@ -116,7 +116,10 @@ export function createAbellonaPlayer({
     }
   }
 
-  function onPlayerError() {
+  function onPlayerError(event) {
+    // Keep YouTube's numeric diagnostic out of user-facing copy, but retain it
+    // for production smoke tests and browser debugging.
+    if (camera) camera.dataset.playerErrorCode = String(event?.data ?? 'unknown');
     clearFallbackTimer();
     showFallback('The embedded live video is unavailable in this browser.');
   }

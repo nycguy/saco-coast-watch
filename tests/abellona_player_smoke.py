@@ -39,6 +39,9 @@ def check_viewport(browser, width, height, fallback=False):
     page.goto(BASE, wait_until="domcontentloaded", timeout=45000)
     player = page.locator("#abellonaPlayer")
     player.scroll_into_view_if_needed()
+    # IntersectionObserver initialization is asynchronous. On the fallback path
+    # wait for the API player to exist before simulating its error state.
+    page.wait_for_function("Boolean(window.__abellonaConfig)", timeout=15000)
     page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'", timeout=15000) if not fallback else None
     config = page.evaluate("window.__abellonaConfig && ({videoId:window.__abellonaConfig.videoId,vars:window.__abellonaConfig.playerVars})")
     assert config and config["videoId"] == "HSQpqIWLViI", config

@@ -140,6 +140,14 @@ function modelWindowForHigh(high){
   return {high,model,contribution:tideAtModel?model.v-tideAtModel.v:null,margin:12-model.v};
 }
 
+function floodThresholdDistance(value){
+  if(value===null||value===undefined||value==='')return 'Unavailable';const level=Number(value);if(!Number.isFinite(level))return 'Unavailable';
+  if(level<12)return (12-level).toFixed(2)+' ft below Minor Flood';
+  if(level<13)return (13-level).toFixed(2)+' ft below Moderate Flood';
+  if(level<14)return (14-level).toFixed(2)+' ft below Major Flood';
+  return (level-14).toFixed(2)+' ft above Major Flood';
+}
+
 function renderHighWaterWindows(){
   const root=$('highWaterWindows');if(!root)return;root.replaceChildren();
   const impactWindows=typeof normalizedEventState==='function'?(normalizedEventState().coastal_impact?.windows||[]):[];
@@ -153,8 +161,9 @@ function renderHighWaterWindows(){
       const grid=document.createElement('div');grid.className='high-window-grid';
       const impact=w.impact||{},pairs=[
         ['Coastal impact',impact.label?impact.label+(Number.isFinite(Number(impact.score))?' · '+impact.score+'/100':''):'Routine'],
-        ['Predicted high tide',Number.isFinite(Number(w.astronomical_ft))?Number(w.astronomical_ft).toFixed(2)+' ft':'Unavailable'],
-        ['NOAA forecast water level',Number.isFinite(Number(w.modeled_total_ft))?Number(w.modeled_total_ft).toFixed(2)+' ft':'Unavailable'],
+        ['Predicted high tide',Number.isFinite(Number(w.astronomical_ft))?Number(w.astronomical_ft).toFixed(2)+' ft MLLW':'Unavailable'],
+        ['NOAA forecast water level',Number.isFinite(Number(w.modeled_total_ft))?Number(w.modeled_total_ft).toFixed(2)+' ft MLLW':'Unavailable'],
+        ['Distance to next flood threshold',floodThresholdDistance(w.modeled_total_ft)],
         ['Forecast above predicted tide',Number.isFinite(Number(w.modeled_uplift_ft))?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':'Unavailable'],
         ['Wind pushing toward shore',Number.isFinite(Number(w.onshore_component_mph))?Math.round(w.onshore_component_mph)+' mph':'Unavailable'],
         ['NWS surf forecast',Number.isFinite(Number(w.surf_context_ft))?Math.round(w.surf_context_ft)+' ft max':'Unavailable']
@@ -173,7 +182,7 @@ function renderHighWaterWindows(){
     const band=riskBand(w.model?.v);card.className='high-window risk-'+band;
     const title=document.createElement('div');title.className='high-window-time';title.textContent=dayTime(high.t)+' ET';
     const grid=document.createElement('div');grid.className='high-window-grid';
-    const pairs=[['Predicted tide',fmtN(high.v)+' ft'],['NOAA forecast water level',w.model?fmtN(w.model.v)+' ft':'Unavailable'],['Forecast above predicted tide',w.contribution===null||w.contribution===undefined?'Unavailable':(w.contribution>=0?'+':'')+fmtN(w.contribution)+' ft'],['Distance from Minor Flood',w.margin===null||w.margin===undefined?'Unavailable':Math.abs(w.margin).toFixed(2)+' ft '+(w.margin>=0?'below':'above')]];
+    const pairs=[['Predicted tide',fmtN(high.v)+' ft MLLW'],['NOAA forecast water level',w.model?fmtN(w.model.v)+' ft MLLW':'Unavailable'],['Forecast above predicted tide',w.contribution===null||w.contribution===undefined?'Unavailable':(w.contribution>=0?'+':'')+fmtN(w.contribution)+' ft'],['Distance to next flood threshold',floodThresholdDistance(w.model?.v)]];
     for(const [label,value] of pairs){const d=document.createElement('div');d.innerHTML='<span></span><strong></strong>';d.querySelector('span').textContent=label;d.querySelector('strong').textContent=value;grid.append(d);}
     card.append(title,grid);root.append(card);
   }

@@ -591,6 +591,10 @@ def _coastal_alert_points(alerts):
     return points,list(dict.fromkeys(labels))
 
 def coastal_impact_state(hazards,water,buoy,alerts,now):
+    # ``None`` means this producer did not request the source. An empty mapping
+    # means the source was requested but yielded no usable product.
+    water_assessed=water is not None
+    buoy_assessed=buoy is not None
     surf=hazards.get("surf") or {}; hourly=hazards.get("hourly_full") or hazards.get("hourly") or []
     high_tides=list((water or {}).get("high_tides") or [])
     alert_points,alert_labels=_coastal_alert_points(alerts)
@@ -618,9 +622,11 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
         windows.append({"high_tide_at":iso(at),"window_start":iso(at-dt.timedelta(minutes=90)),"window_end":iso(at+dt.timedelta(minutes=90)),"astronomical_ft":num(item.get("astronomical_ft")),"modeled_total_ft":total,"modeled_time":item.get("modeled_time"),"modeled_uplift_ft":num(item.get("modeled_uplift_ft")),"forecast_wind_mph":gust,"forecast_wind_direction":(row or {}).get("wind_direction"),"onshore_component_mph":onshore,"surf_context_ft":surf_ft,"impact":impact,"drivers":drivers})
     peak=max(windows,key=lambda item:(item["impact"]["score"],-(parse_iso(item["high_tide_at"])-now).total_seconds())) if windows else None
     peak_at=parse_iso((peak or {}).get("high_tide_at")); hours_until=round((peak_at-now).total_seconds()/3600,1) if peak_at else None
-    checks={"NOAA forecast water level":any(num(item.get("modeled_total_ft")) is not None for item in high_tides),"NOAA tide predictions":bool(high_tides),"NWS surf forecast":surf_ft is not None,"NWS wind forecast":bool(hourly),"NDBC 44007 wave observation":wave_ft is not None}
-    available=[name for name,ok in checks.items() if ok]
-    data_coverage={"available":len(available),"total":len(checks),"available_sources":available,"missing":[name for name,ok in checks.items() if not ok]}
+    checks={"NOAA forecast water level":(water_assessed,any(num(item.get("modeled_total_ft")) is not None for item in high_tides)),"NOAA tide predictions":(water_assessed,bool(high_tides)),"NWS surf forecast":(True,surf_ft is not None),"NWS wind forecast":(True,bool(hourly)),"NDBC 44007 wave observation":(buoy_assessed,wave_ft is not None)}
+    available=[name for name,(assessed,ok) in checks.items() if assessed and ok]
+    missing=[name for name,(assessed,ok) in checks.items() if assessed and not ok]
+    unassessed=[name for name,(assessed,ok) in checks.items() if not assessed]
+    data_coverage={"available":len(available),"assessed":len(checks)-len(unassessed),"total":len(checks),"available_sources":available,"missing":missing,"unassessed":unassessed}
     impact=(peak or {}).get("impact") or _impact_from_score(0)
     drivers=list((peak or {}).get("drivers") or [])
     if wave_ft is not None:
@@ -757,7 +763,7 @@ def _primary_display(codes, identity=None):
 
 
 def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
-    now=now or now_utc(); hazards=hazards or {}; water=water or {}
+    now=now or now_utc(); hazards=hazards or {}; water_assessed=water is not None; marine_assessed=marine is not None; water=water or {}
     alerts=alerts if alerts is not None else hazards.get("alerts") or []
     marine_alerts=hazards.get("marine_alerts") or []
     stations=(marine or {}).get("stations") if isinstance(marine,dict) and "stations" in marine else (marine or {})
@@ -769,7 +775,7 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
     if max([v for v in (forecast72,forecast24,observed) if v is not None],default=-999)>=12: add("coastal_flood","Coastal Flood","Portland observed or NOAA forecast water reaches Minor Flood")
     if (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25: add("marine_hazard","Marine Hazard","NDBC 44007 measured offshore conditions are elevated")
     all_alerts=list(alerts)+list(marine_alerts)
-    coastal_impact=coastal_impact_state(hazards,water,buoy,all_alerts,now)
+    coastal_impact=coastal_impact_state(hazards,water if water_assessed else None,buoy if marine_assessed else None,all_alerts,now)
     if (coastal_impact.get("impact") or {}).get("rank",0)>=1: add("coastal_impact","Coastal Impact","Saco Coast Watch combines high tide, NOAA water forecast, surf and wind signals")
     active_hazards=[]
     for mode in modes:

@@ -69,6 +69,22 @@ class HazardTests(unittest.TestCase):
   coverage=state["coastal_impact"]["data_coverage"]
   self.assertEqual((coverage["available"],coverage["total"]),(0,5))
   self.assertEqual(len(coverage["missing"]),5)
+  self.assertEqual(coverage["assessed"],5)
+  self.assertEqual(coverage["unassessed"],[])
+ def test_unrequested_sources_are_not_reported_as_missing(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  hazards={"surf":{"max_surf_height_ft":6},"hourly_full":[{"start":"2026-09-29T13:00:00Z","wind_mph":8}],"alerts":[],"marine_alerts":[],"active_modes":[]}
+  coverage=h.derive_event_state(hazards,now=now)["coastal_impact"]["data_coverage"]
+  self.assertEqual((coverage["available"],coverage["assessed"],coverage["total"]),(2,2,5))
+  self.assertEqual(coverage["missing"],[])
+  self.assertEqual(len(coverage["unassessed"]),3)
+ def test_requested_but_empty_sources_are_reported_as_missing(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  hazards={"surf":{},"hourly_full":[],"alerts":[],"marine_alerts":[],"active_modes":[]}
+  coverage=h.derive_event_state(hazards,water={},marine={"stations":{}},now=now)["coastal_impact"]["data_coverage"]
+  self.assertEqual((coverage["available"],coverage["assessed"],coverage["total"]),(0,5,5))
+  self.assertEqual(len(coverage["missing"]),5)
+  self.assertEqual(coverage["unassessed"],[])
  def test_compound_model_stays_routine_for_current_benign_case(self):
   now=dt.datetime(2026,9,29,12,tzinfo=UTC)
   hazards={"surf":{"max_surf_height_ft":5},"hourly_full":[{"start":"2026-09-29T16:00:00Z","wind_mph":7,"gust_mph":10,"wind_direction":"W"}],"active_modes":[],"alerts":[],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"tropical":{}}

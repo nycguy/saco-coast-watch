@@ -12,6 +12,7 @@ function sourceHazards(){return state.briefing?.current_snapshot?.hazards||state
 function hazardModeList(){return normalizedEventState().active_hazards||[];}
 function hazardSeverity(){return normalizedEventState().impact||{level:'green',label:'Routine',rank:0};}
 function eventDisplayTitle(eventState=normalizedEventState()){return eventState?.event_identity?.label||eventState?.primary_display||'Adaptive Event';}
+function formatDataCoverage(coverage={}){const missing=coverage.missing||[],unassessed=coverage.unassessed||[];if(!Number.isFinite(coverage.available)||!Number.isFinite(coverage.total))return 'Data coverage unavailable';const assessed=Number.isFinite(coverage.assessed)?coverage.assessed:coverage.total;let text=`Data available: ${coverage.available} of ${coverage.total} source types`;if(assessed<coverage.total)text+=` · ${coverage.total-assessed} not checked in this feed`;if(missing.length)text+=` · No current data: ${missing.slice(0,2).join(', ')}`;if(unassessed.length&&assessed===coverage.total)text+=` · Not checked: ${unassessed.slice(0,2).join(', ')}`;return text;}
 function eventMetric(label,value,detail){const node=document.createElement('div');node.className='event-metric';const caption=document.createElement('span');caption.textContent=label;const strong=document.createElement('strong');strong.textContent=value||'--';node.append(caption,strong);if(detail){const small=document.createElement('small');small.textContent=detail;node.append(small);}return node;}
 function fmtHaz(value,digits=1,suffix=''){const n=Number(value);return Number.isFinite(n)?n.toFixed(digits)+suffix:'--';}
 
@@ -35,8 +36,7 @@ function renderEventFocus(){
   }else peakNode.textContent='Peak timing is unavailable from the current authoritative guidance.';
  }
  const coastal=eventState.coastal_impact||{},coverage=coastal.data_coverage||{};
- const coverageNode=$('eventDataCoverage');
- if(coverageNode){const missing=coverage.missing||[];coverageNode.textContent=Number.isFinite(coverage.available)&&Number.isFinite(coverage.total)?`Data coverage: ${coverage.available} of ${coverage.total} source types available`:'Data coverage unavailable';if(missing.length)coverageNode.textContent+=` · Missing ${missing.slice(0,2).join(', ')}`;}
+ const coverageNode=$('eventDataCoverage');if(coverageNode)coverageNode.textContent=formatDataCoverage(coverage);
  const chips=$('hazardModeChips');chips.replaceChildren();
  for(const mode of hazardModeList()){const span=document.createElement('span');span.className='hazard-chip hazard-'+mode.code;span.textContent=mode.label;chips.append(span);}
  const reasonRoot=$('stormModeReasons');reasonRoot.replaceChildren();const reasons=[...(eventState.reasons||[])];

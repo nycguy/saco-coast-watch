@@ -12,11 +12,23 @@ const api=context.api;
 const state=api.state;
 const timestamp=ms=>new Date(ms).toISOString().replace('T',' ').slice(0,19);
 
+const intelligenceContext={Date:FixedDate,Number,Math,document:{},state:{},now:()=>now};
+vm.runInNewContext(readFileSync(new URL('../js/intelligence.js',import.meta.url),'utf8')+'\nglobalThis.floodThresholdDistance=floodThresholdDistance;',intelligenceContext);
+
 test('NOAA dates reject rollover and malformed timestamps',()=>{
  assert.ok(Number.isNaN(api.toDate('2026-02-30 12:00')));
  assert.ok(Number.isNaN(api.toDate('2026-10-13 25:00')));
  assert.ok(Number.isNaN(api.toDate('2026-10-13 16:00Z')));
  assert.equal(api.toDate('2026-10-13 16:00'),now);
+});
+
+test('high-water threshold distance follows Portland Minor Moderate and Major boundaries',()=>{
+ const distance=intelligenceContext.floodThresholdDistance;
+ assert.equal(distance(11.5),'0.50 ft below Minor Flood');
+ assert.equal(distance(12),'1.00 ft below Moderate Flood');
+ assert.equal(distance(13),'1.00 ft below Major Flood');
+ assert.equal(distance(14),'0.00 ft above Major Flood');
+ assert.equal(distance(null),'Unavailable');
 });
 
 test('NOAA series ignore empty and malformed measurements and deduplicate times',()=>{

@@ -82,7 +82,7 @@ flowchart LR
 
 Collectors retain source timestamps and provenance, reject malformed or stale inputs where required, and record unavailable source status rather than inventing a value. UI loading and outage states do not convert missing data to zero or an all-clear. Weather header observations older than two hours are not presented as current; wind below 8 mph does not produce a wind graphic. Reduced-motion preferences disable header animation.
 
-The browser briefing payload contains current and derived summary fields only. Durable historical snapshots are served from `data/coastal-history.json`; raw history arrays are not duplicated into `data/coastal-briefing.json`. The Pages artifact validator enforces this separation and a 1 MB briefing payload ceiling for mobile users. The coastal impact panel reports the number and names of available source types. That value measures data coverage only; it is not a forecast probability or skill score.
+The browser briefing payload contains current and derived summary fields only. Durable historical snapshots are served from `data/coastal-history.json`; raw history arrays are not duplicated into `data/coastal-briefing.json`. The Pages artifact validator enforces this separation and a 1 MB briefing payload ceiling for mobile users. The coastal impact panel reports available source types, sources checked with no current data, and sources a particular producer did not check. A source not requested by the standalone hazard feed is not reported as an outage. This value measures data coverage only; it is not a forecast probability or skill score. The integrated briefing checks NOAA water/tide, NWS surf/wind, and NDBC buoy inputs together; a missing wave field in the latest buoy row remains unavailable even if a prior 24-hour wave maximum exists.
 
 ## History and freshness
 
@@ -97,6 +97,8 @@ The browser briefing payload contains current and derived summary fields only. D
 Email subscribers and push devices are separate identities. The browser stores only the device identifier and its random owner token; D1 stores the token hash. Authenticated device APIs require the matching bearer credential and configured Pages origin. The client does not search across devices or discover accounts by email. The Create/Manage button reports a push device as enrolled only after the Worker verifies that credential; email alert options remain available beside App settings, and email-only management uses a verified-address link. Returning to an open dashboard after email confirmation refreshes linked threshold settings. Updates made through email management or unsubscribe synchronize to explicitly linked devices while preserving each device's App-delivery preference. Push subscriptions, threshold preferences, confirmed email links, and delivery retry state live in D1.
 
 Migrations 0002–0005 are additive. Production release uses the manually dispatched workflow in default read-only preflight mode; applying migrations and deploying requires the explicit workflow input. The workflow checks schema shape and aggregate subscriber-count preservation, never reads or prints secret values, never rotates an existing VAPID key, and never sends synthetic notifications. See [deployment](DEPLOYMENT.md) for the full release gate.
+
+The comprehensive requirements and their verified status are tracked in [the product improvement matrix](PRODUCT-IMPROVEMENT-MATRIX.md).
 
 ## Cost and dependency guardrails
 

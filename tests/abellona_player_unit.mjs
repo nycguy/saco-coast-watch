@@ -16,6 +16,8 @@ function fixture(apiLoaderOverride) {
   let observed;
   const win = {
     location: { origin: 'https://nycguy.github.io' },
+    opened: [],
+    open(...args) { this.opened.push(args); },
     setTimeout(fn, ms) { timers.push({ fn, ms }); return timers.length; },
     clearTimeout(id) { if (id) timers[id - 1].cleared = true; },
     IntersectionObserver: class {
@@ -101,8 +103,11 @@ test('YouTube embed errors show an explicit fallback instead of presenting the p
   assert.equal(f.controller.getPlaybackState(), 'fallback');
   assert.equal(f.camera.dataset.playerErrorCode, '150');
   assert.equal(f.elements.get('abellonaWatchLive').hidden, false);
-  assert.match(f.elements.get('abellonaGateMessage').textContent, /unavailable in this browser/);
-  assert.match(f.elements.get('abellonaStatus').textContent, /open the camera on YouTube/);
+  assert.equal(f.elements.get('abellonaWatchLive').textContent, 'Watch on YouTube');
+  assert.match(f.elements.get('abellonaGateMessage').textContent, /not allowing this stream/);
+  f.elements.get('abellonaWatchLive').click();
+  assert.deepEqual(f.win.opened, [['https://www.youtube.com/watch?v=HSQpqIWLViI','_blank','noopener,noreferrer']]);
+  assert.match(f.elements.get('abellonaStatus').textContent, /official stream/);
 });
 
 test('IFrame API load failures also reveal the Watch Live fallback', async () => {

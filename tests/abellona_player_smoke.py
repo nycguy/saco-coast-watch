@@ -49,11 +49,12 @@ def check_viewport(browser, width, height, fallback=False):
     if fallback:
         page.evaluate("window.__abellonaMode='error'; window.__abellonaConfig.events.onError({data:150})")
         page.locator("#abellonaWatchLive").wait_for(state="visible", timeout=3000)
-        assert "unavailable" in page.locator("#abellonaStatus").inner_text().lower()
-        page.evaluate("window.__abellonaMode='playing'")
+        assert page.locator("#abellonaWatchLive").inner_text() == "Watch on YouTube"
+        assert "not allowing this stream" in page.locator("#abellonaStatus").inner_text().lower()
+        page.evaluate("window.open = (url, target, features) => window.__openedWatchUrl = {url,target,features}")
         page.locator("#abellonaWatchLive").click()
-        page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'", timeout=5000)
-        assert page.locator("#abellonaPlayerGate").is_hidden()
+        assert page.evaluate("window.__openedWatchUrl?.url") == "https://www.youtube.com/watch?v=HSQpqIWLViI"
+        assert page.locator("#abellonaPlayerGate").is_visible()
     else:
         assert page.locator("#abellonaPlayerGate").is_hidden()
         assert "video is playing" in page.locator("#abellonaStatus").inner_text().lower()

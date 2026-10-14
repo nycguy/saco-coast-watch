@@ -1,4 +1,5 @@
 export const ABELLONA_VIDEO_ID = 'HSQpqIWLViI';
+const YOUTUBE_WATCH_URL = `https://www.youtube.com/watch?v=${ABELLONA_VIDEO_ID}`;
 const API_URL = 'https://www.youtube.com/iframe_api';
 const PLAYING = 1;
 const DEFAULT_FALLBACK_MS = 9000;
@@ -56,6 +57,7 @@ export function createAbellonaPlayer({
   let hasPlayed = false;
   let fallbackTimer = null;
   let started = false;
+  let watchOnYouTube = false;
 
   function setStatus(message) {
     status.textContent = message;
@@ -66,15 +68,18 @@ export function createAbellonaPlayer({
     fallbackTimer = null;
   }
 
-  function showFallback(message) {
+  function showFallback(message, { external = false } = {}) {
     playback = 'fallback';
+    watchOnYouTube = external;
     if (camera) camera.dataset.playbackState = playback;
     gate.hidden = false;
     gateMessage.textContent = message;
     watchButton.hidden = false;
     watchButton.disabled = false;
-    watchButton.textContent = 'Watch Live';
-    setStatus(message + ' Select Watch Live to try again, or open the camera on YouTube.');
+    watchButton.textContent = external ? 'Watch on YouTube' : 'Watch Live';
+    setStatus(external
+      ? message + ' Select Watch on YouTube to watch the official stream.'
+      : message + ' Select Watch Live to try again, or open the camera on YouTube.');
   }
 
   function waitForPlayback(message = 'Starting muted live video…') {
@@ -121,7 +126,13 @@ export function createAbellonaPlayer({
     // for production smoke tests and browser debugging.
     if (camera) camera.dataset.playerErrorCode = String(event?.data ?? 'unknown');
     clearFallbackTimer();
-    showFallback('The embedded live video is unavailable in this browser.');
+    const embedDenied = event?.data === 101 || event?.data === 150;
+    showFallback(
+      embedDenied
+        ? 'YouTube is not allowing this stream to play inside SacoCast right now.'
+        : 'The embedded live video is unavailable in this browser.',
+      { external: embedDenied },
+    );
   }
 
   function requestPlayback(fromGesture = false) {
@@ -172,6 +183,10 @@ export function createAbellonaPlayer({
   }
 
   watchButton.addEventListener('click', () => {
+    if (watchOnYouTube) {
+      win.open?.(YOUTUBE_WATCH_URL, '_blank', 'noopener,noreferrer');
+      return;
+    }
     if (!player) {
       started = false;
       initialize();

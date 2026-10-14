@@ -2,7 +2,6 @@ export const ABELLONA_VIDEO_ID = 'HSQpqIWLViI';
 const YOUTUBE_WATCH_URL = `https://www.youtube.com/watch?v=${ABELLONA_VIDEO_ID}`;
 const API_URL = 'https://www.youtube.com/iframe_api';
 const PLAYING = 1;
-const DEFAULT_FALLBACK_MS = 9000;
 
 let sharedApiLoad;
 
@@ -41,7 +40,6 @@ function loadYouTubeApi(win, doc) {
 export function createAbellonaPlayer({
   win = globalThis.window,
   doc = globalThis.document,
-  fallbackMs = DEFAULT_FALLBACK_MS,
   apiLoader = loadYouTubeApi,
 } = {}) {
   const iframe = doc?.getElementById('abellonaPlayer');
@@ -55,17 +53,13 @@ export function createAbellonaPlayer({
   let player = null;
   let playback = 'waiting';
   let hasPlayed = false;
-  let fallbackTimer = null;
   let started = false;
   let watchOnYouTube = false;
+  let userRequestedPlayback = false;
+  let initialPlaybackRequested = false;
 
   function setStatus(message) {
     status.textContent = message;
-  }
-
-  function clearFallbackTimer() {
-    if (fallbackTimer !== null) win.clearTimeout(fallbackTimer);
-    fallbackTimer = null;
   }
 
   function showFallback(message, { external = false } = {}) {
@@ -83,17 +77,14 @@ export function createAbellonaPlayer({
   }
 
   function waitForPlayback(message = 'Starting muted live video…') {
-    clearFallbackTimer();
     playback = 'starting';
     if (camera) camera.dataset.playbackState = playback;
     gate.hidden = false;
     gateMessage.textContent = message;
-    watchButton.hidden = true;
+    watchButton.hidden = false;
     watchButton.disabled = false;
-    setStatus(message);
-    fallbackTimer = win.setTimeout(() => {
-      if (!hasPlayed) showFallback('Autoplay did not start.');
-    }, fallbackMs);
+    watchButton.textContent = 'Watch Live';
+    setStatus(message + ' If the video does not start, select Watch Live.');
   }
 
   function onPlayerState(event) {
@@ -101,7 +92,6 @@ export function createAbellonaPlayer({
     if (state === PLAYING) {
       hasPlayed = true;
       playback = 'playing';
-      clearFallbackTimer();
       if (camera) camera.dataset.playbackState = playback;
       gate.hidden = true;
       watchButton.hidden = true;
@@ -109,7 +99,6 @@ export function createAbellonaPlayer({
       return;
     }
     if (state === 0 && !hasPlayed) {
-      clearFallbackTimer();
       showFallback('The embedded live video has ended or is unavailable.');
     } else if (state === 3 && !hasPlayed) {
       gateMessage.textContent = 'Connecting to the live video…';
@@ -121,11 +110,18 @@ export function createAbellonaPlayer({
     }
   }
 
+  function onAutoplayBlocked() {
+    if (hasPlayed) return;
+    showFallback(userRequestedPlayback
+      ? 'Video playback was blocked by this browser.'
+      : 'Automatic playback is blocked by this browser.');
+  }
+
   function onPlayerError(event) {
+    if (hasPlayed) return;
     // Keep YouTube's numeric diagnostic out of user-facing copy, but retain it
     // for production smoke tests and browser debugging.
     if (camera) camera.dataset.playerErrorCode = String(event?.data ?? 'unknown');
-    clearFallbackTimer();
     const embedDenied = event?.data === 101 || event?.data === 150;
     showFallback(
       embedDenied
@@ -136,7 +132,10 @@ export function createAbellonaPlayer({
   }
 
   function requestPlayback(fromGesture = false) {
-    if (!player) return;
+    if (!player || hasPlayed) return;
+    if (!fromGesture && initialPlaybackRequested) return;
+    if (!fromGesture) initialPlaybackRequested = true;
+    if (fromGesture) userRequestedPlayback = true;
     waitForPlayback(fromGesture ? 'Trying to start muted live video…' : 'Starting muted live video…');
     try {
       player.mute();
@@ -164,9 +163,11 @@ export function createAbellonaPlayer({
         events: {
           onReady: (event) => {
             event?.target?.getIframe?.()?.setAttribute('title', 'Abellona Inn Old Orchard Beach live camera');
-            requestPlayback(false);
+            if (event?.target?.getPlayerState?.() === PLAYING) onPlayerState({ data: PLAYING });
+            else requestPlayback(false);
           },
           onStateChange: onPlayerState,
+          onAutoplayBlocked,
           onError: onPlayerError,
         },
       });

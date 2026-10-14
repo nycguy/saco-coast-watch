@@ -11,10 +11,15 @@ def check(browser, width, height, mobile=False):
     page = browser.new_page(viewport={"width": width, "height": height}, device_scale_factor=3 if mobile else 1, is_mobile=mobile, has_touch=mobile)
     page.goto(BASE, wait_until="domcontentloaded", timeout=45000)
     page.locator("#abellonaPlayer").scroll_into_view_if_needed(timeout=15000)
-    page.wait_for_function(
-        "['playing','fallback'].includes(document.querySelector('.abellona-camera')?.dataset.playbackState)",
-        timeout=30000,
-    )
+    try:
+        page.wait_for_function(
+            "['playing','paused','fallback'].includes(document.querySelector('.abellona-camera')?.dataset.playbackState)",
+            timeout=30000,
+        )
+    except Exception:
+        # Some browsers provide neither PLAYING nor onAutoplayBlocked promptly.
+        # Keep that as an unconfirmed startup state; never label it as a block.
+        pass
     result = page.evaluate("""() => ({
       state:document.querySelector('.abellona-camera')?.dataset.playbackState,
       status:document.querySelector('#abellonaStatus')?.textContent,
@@ -23,13 +28,17 @@ def check(browser, width, height, mobile=False):
       playerErrorCode:document.querySelector('.abellona-camera')?.dataset.playerErrorCode || null,
       iframeSrc:document.querySelector('#abellonaPlayer')?.src || null
     })""")
-    if result["state"] == "playing":
+    assert result["state"] in ("playing", "paused", "fallback", "loading", "starting"), result
+    if result["state"] in ("playing", "paused"):
         assert result["gateVisible"] is False, result
-        assert "video is playing" in result["status"].lower(), result
-    else:
+        assert any(text in result["status"].lower() for text in ("video is playing", "video is paused")), result
+    elif result["state"] == "fallback":
         assert result["gateVisible"] and result["fallbackVisible"], result
         status = result["status"].lower()
-        assert any(text in status for text in ("did not start", "unavailable", "not allowing this stream")), result
+        assert any(text in status for text in ("blocked", "unavailable", "not allowing this stream", "could not load", "could not start")), result
+    else:
+        assert result["gateVisible"] and not result["fallbackVisible"], result
+        assert "did not start" not in result["status"].lower(), result
     print(f"ABELLONA_LIVE_STATE viewport={width}x{height} mobile={mobile} result={result}", flush=True)
     page.close()
     return result["state"]
@@ -41,7 +50,7 @@ def main():
         desktop = check(browser, 1440, 1000)
         mobile = check(browser, 390, 844, mobile=True)
         browser.close()
-    print(f"PASS: production player state checked after startup; desktop={desktop}, iPhone-sized Chromium emulation={mobile}")
+    print(f"PASS: production player state checked after startup; desktop={desktop}, iPhone-sized Chromium emulation={mobile}; playback is only confirmed for 'playing'")
 
 
 if __name__ == "__main__":

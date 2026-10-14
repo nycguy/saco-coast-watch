@@ -2,6 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ABELLONA_VIDEO_ID, createAbellonaPlayer } from '../js/abellona-player.mjs';
 
+function deferred() {
+  let resolve;
+  const promise = new Promise((done) => { resolve = done; });
+  return { promise, resolve };
+}
+
 function fixture(apiLoaderOverride) {
   const elements = new Map();
   for (const id of ['abellonaPlayer','abellonaPlayerGate','abellonaGateMessage','abellonaWatchLive','abellonaStatus']) {
@@ -13,14 +19,18 @@ function fixture(apiLoaderOverride) {
     });
   }
   const camera = { dataset: {} };
-  const timers = [];
   let observed;
+  let constructors = 0;
+  let playerConfig;
+  let playerElement;
+  const calls = [];
   const win = {
     location: { origin: 'https://nycguy.github.io' },
     opened: [],
     open(...args) { this.opened.push(args); },
-    setTimeout(fn, ms) { timers.push({ fn, ms }); return timers.length; },
-    clearTimeout(id) { if (id) timers[id - 1].cleared = true; },
+    // A playback watchdog would incorrectly turn delayed startup into failure.
+    setTimeout() { throw new Error('unexpected autoplay watchdog'); },
+    clearTimeout() {},
     IntersectionObserver: class {
       constructor(callback, options) { observed = { callback, options, disconnected: false }; }
       observe(target) { observed.target = target; }
@@ -31,28 +41,23 @@ function fixture(apiLoaderOverride) {
     getElementById(id) { return elements.get(id); },
     querySelector() { return camera; },
   };
-  let playerConfig;
-  let playerElement;
-  const calls = [];
-  let playPublishesState = false;
   const apiLoader = async () => ({
     Player: class {
-      constructor(element, config) { playerElement = element; playerConfig = config; }
+      constructor(element, config) { constructors += 1; playerElement = element; playerConfig = config; }
       mute() { calls.push('mute'); }
       setVolume(value) { calls.push(`volume:${value}`); }
-      playVideo() {
-        calls.push('play');
-        if (playPublishesState) playerConfig.events.onStateChange({ data: 1 });
-      }
+      playVideo() { calls.push('play'); }
+      getPlayerState() { return -1; }
     },
   });
-  const controller = createAbellonaPlayer({ win, doc, fallbackMs: 9000, apiLoader: apiLoaderOverride || apiLoader });
+  const controller = createAbellonaPlayer({ win, doc, apiLoader: apiLoaderOverride || apiLoader });
   return {
-    controller, elements, camera, timers, calls, win,
+    controller, elements, camera, calls, win,
     get playerConfig() { return playerConfig; },
+    set playerConfig(value) { playerConfig = value; },
     get playerElement() { return playerElement; },
+    get constructors() { return constructors; },
     get observed() { return observed; },
-    set playPublishesState(value) { playPublishesState = value; },
     async enterViewport() {
       observed.callback([{ isIntersecting: true }]);
       await new Promise((resolve) => setImmediate(resolve));
@@ -60,7 +65,7 @@ function fixture(apiLoaderOverride) {
   };
 }
 
-test('visible Abellona iframe uses the official live ID muted and inline, then confirms the PLAYING event', async () => {
+test('visible Abellona iframe attempts muted inline autoplay and confirms actual PLAYING state', async () => {
   const f = fixture();
   assert.equal(f.controller.getPlaybackState(), 'waiting');
   assert.equal(f.observed.options.rootMargin, '240px 0px');
@@ -74,6 +79,8 @@ test('visible Abellona iframe uses the official live ID muted and inline, then c
   f.playerConfig.events.onReady({});
   assert.deepEqual(f.calls, ['mute','volume:0','play']);
   assert.equal(f.elements.get('abellonaPlayerGate').hidden, false);
+  assert.match(f.elements.get('abellonaGateMessage').textContent, /Starting muted/);
+  assert.equal(f.elements.get('abellonaWatchLive').hidden, false);
   f.playerConfig.events.onStateChange({ data: 1 });
   assert.equal(f.controller.getPlaybackState(), 'playing');
   assert.equal(f.camera.dataset.playbackState, 'playing');
@@ -81,25 +88,56 @@ test('visible Abellona iframe uses the official live ID muted and inline, then c
   assert.match(f.elements.get('abellonaStatus').textContent, /video is playing/);
 });
 
-test('autoplay timeout covers the poster and offers a user-gesture Watch Live retry', async () => {
+test('delayed API/player initialization stays in a loading state and later playback is accepted', async () => {
+  const api = deferred();
+  const f = fixture(() => api.promise);
+  await f.enterViewport();
+  assert.equal(f.controller.getPlaybackState(), 'loading');
+  assert.equal(f.elements.get('abellonaWatchLive').hidden, true);
+  assert.doesNotMatch(f.elements.get('abellonaStatus').textContent, /did not start|blocked/i);
+  api.resolve({ Player: class {
+    constructor(_element, config) { f.playerConfig = config; }
+    mute() {}
+    setVolume() {}
+    playVideo() {}
+  } });
+  await new Promise((resolve) => setImmediate(resolve));
+  f.playerConfig.events.onReady({});
+  assert.equal(f.controller.getPlaybackState(), 'starting');
+  assert.equal(f.elements.get('abellonaWatchLive').hidden, false);
+  assert.doesNotMatch(f.elements.get('abellonaGateMessage').textContent, /did not start|blocked/i);
+  f.playerConfig.events.onStateChange({ data: 1 });
+  assert.equal(f.controller.getPlaybackState(), 'playing');
+});
+
+test('documented autoplay-block event shows the in-frame Watch Live fallback', async () => {
   const f = fixture();
   await f.enterViewport();
   f.playerConfig.events.onReady({});
-  const timer = f.timers.at(-1);
-  assert.equal(timer.ms, 9000);
-  timer.fn();
+  f.playerConfig.events.onAutoplayBlocked();
   assert.equal(f.controller.getPlaybackState(), 'fallback');
-  assert.equal(f.elements.get('abellonaPlayerGate').hidden, false);
   assert.equal(f.elements.get('abellonaWatchLive').hidden, false);
-  assert.match(f.elements.get('abellonaGateMessage').textContent, /Autoplay did not start/);
-  f.playPublishesState = true;
-  f.elements.get('abellonaWatchLive').click();
-  assert.deepEqual(f.calls.slice(-3), ['mute','volume:0','play']);
-  assert.equal(f.controller.getPlaybackState(), 'playing');
-  assert.equal(f.elements.get('abellonaWatchLive').hidden, true);
+  assert.equal(f.elements.get('abellonaWatchLive').textContent, 'Watch Live');
+  assert.match(f.elements.get('abellonaGateMessage').textContent, /Automatic playback is blocked/);
+  assert.match(f.elements.get('abellonaStatus').textContent, /Watch Live/);
 });
 
-test('YouTube embed errors show an explicit fallback instead of presenting the poster as live', async () => {
+test('user-initiated playback uses the existing player and closes fallback only after PLAYING', async () => {
+  const f = fixture();
+  await f.enterViewport();
+  f.playerConfig.events.onReady({});
+  f.playerConfig.events.onAutoplayBlocked();
+  f.elements.get('abellonaWatchLive').click();
+  assert.equal(f.controller.getPlaybackState(), 'starting');
+  assert.equal(f.elements.get('abellonaWatchLive').hidden, false);
+  assert.deepEqual(f.calls, ['mute','volume:0','play','mute','volume:0','play']);
+  f.playerConfig.events.onStateChange({ data: 1 });
+  assert.equal(f.controller.getPlaybackState(), 'playing');
+  assert.equal(f.elements.get('abellonaPlayerGate').hidden, true);
+  assert.equal(f.constructors, 1);
+});
+
+test('player errors reveal a clear fallback and embed-denied errors link to the official stream', async () => {
   const f = fixture();
   await f.enterViewport();
   f.playerConfig.events.onError({ data: 150 });
@@ -110,10 +148,33 @@ test('YouTube embed errors show an explicit fallback instead of presenting the p
   assert.match(f.elements.get('abellonaGateMessage').textContent, /not allowing this stream/);
   f.elements.get('abellonaWatchLive').click();
   assert.deepEqual(f.win.opened, [['https://www.youtube.com/watch?v=HSQpqIWLViI','_blank','noopener,noreferrer']]);
-  assert.match(f.elements.get('abellonaStatus').textContent, /official stream/);
 });
 
-test('IFrame API load failures also reveal the Watch Live fallback', async () => {
+test('late blocked/error events cannot cover video after playback has begun', async () => {
+  const f = fixture();
+  await f.enterViewport();
+  f.playerConfig.events.onReady({});
+  f.playerConfig.events.onStateChange({ data: 1 });
+  f.playerConfig.events.onAutoplayBlocked();
+  f.playerConfig.events.onError({ data: 150 });
+  assert.equal(f.controller.getPlaybackState(), 'playing');
+  assert.equal(f.elements.get('abellonaPlayerGate').hidden, true);
+});
+
+test('player initialization waits until visible and duplicate visibility/manual requests create one player', async () => {
+  const f = fixture();
+  f.observed.callback([{ isIntersecting: false }]);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(f.controller.getPlaybackState(), 'waiting');
+  assert.equal(f.constructors, 0);
+  await f.enterViewport();
+  await f.controller.initialize();
+  f.observed.callback([{ isIntersecting: true }]);
+  assert.equal(f.constructors, 1);
+  assert.equal(f.observed.disconnected, true);
+});
+
+test('YouTube API load failures show a safe Watch Live fallback without exposing error details', async () => {
   const f = fixture(async () => { throw new Error('network detail stays private'); });
   await f.enterViewport();
   await new Promise((resolve) => setImmediate(resolve));

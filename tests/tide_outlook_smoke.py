@@ -280,7 +280,7 @@ def assert_common(page):
     history_text=history_card.inner_text()
     assert "Recorded for 18.0h" in history_text
     assert "how much of the event Saco Coast Watch captured" in history_text
-    assert "One earlier surf value was corrected" in history_text
+    assert "An earlier surf reading was replaced" in history_text
     assert "Water above predicted tide" in history_text
     assert "Highest NOAA forecast" in history_text
     assert "Residual" not in history_text

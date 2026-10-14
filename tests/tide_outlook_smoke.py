@@ -31,6 +31,9 @@ def install_noaa_fixture(page):
             tide.append({"t":stamp(day+timedelta(hours=hour)),"v":f"{value+delta:.2f}"})
 
     now=datetime.now(timezone.utc).replace(second=0,microsecond=0)
+    observed=now-timedelta(minutes=10); wave_observed=now-timedelta(minutes=20)
+    marine={"generated_at":now.isoformat().replace("+00:00","Z"),"stations":{"44007":{"id":"44007","observed_at":observed.isoformat().replace("+00:00","Z"),"wave_observed_at":wave_observed.isoformat().replace("+00:00","Z"),"speed_mph":6.7,"gust_mph":8.9,"wave_height_ft":4.6,"dominant_period_sec":7.0,"wave_direction_deg":96,"pressure_mb":1006.5},"WEXM1":{"id":"WEXM1","observed_at":observed.isoformat().replace("+00:00","Z"),"speed_mph":3.4,"gust_mph":None}}}
+    page.route("**/data/wind.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(marine)))
     observed_values=[7.2,8.5,9.8,8.4,7.1,8.6,9.9,8.5,7.3]
     obs=[]
     for i,value in enumerate(observed_values):
@@ -69,7 +72,7 @@ def install_noaa_fixture(page):
         status=503,content_type="application/geo+json",body=json.dumps({"title":"Fixture: NWS unavailable"})))
 
     peak_at=(now+timedelta(hours=4)).isoformat().replace("+00:00","Z")
-    event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Coastal Impact","basis":["Synthetic coastal impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Highest Saco Coast Watch compound coastal-impact window"},"coastal_impact":{"method":"SacoCast combines official forecasts and observations into this local coastal-impact rating. The rating is not an official NOAA/NWS forecast.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"data_coverage":{"available":4,"assessed":5,"total":5,"available_sources":["NOAA forecast water level","NOAA tide predictions","NWS surf forecast","NWS wind forecast"],"missing":["NDBC 44007 wave observation"],"unassessed":[]},"drivers":[{"label":"NOAA forecast water level","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"NWS surf forecast","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Wind pushing toward shore","value":"24 mph","source":"Calculated from NWS hourly wind direction and speed"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
+    event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Coastal Impact","basis":["Synthetic coastal impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Highest Saco Coast Watch compound coastal-impact window"},"coastal_impact":{"method":"SacoCast combines official forecasts and observations into this local coastal-impact rating. The rating is not an official NOAA/NWS forecast.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"data_coverage":{"available":4,"assessed":5,"total":5,"available_sources":["NOAA forecast water level","NOAA tide predictions","NWS surf forecast","NWS wind forecast"],"missing":["NDBC 44007 wave observation"],"unassessed":[],"sources":[{"name":"NOAA forecast water level","status":"available"},{"name":"NOAA tide predictions","status":"available"},{"name":"NWS surf forecast","status":"available"},{"name":"NWS wind forecast","status":"available"},{"name":"NDBC 44007 wave observation","status":"missing"}]},"drivers":[{"label":"NOAA forecast water level","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"NWS surf forecast","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Wind pushing toward shore","value":"24 mph","source":"Calculated from NWS hourly wind direction and speed"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
     event_history=[{"title":"Coastal Storm","started_at":(now-timedelta(hours=18)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"captured_coverage_hours":18.0,"duration_hours":18.0,"coverage_basis":"This is how much of the event Saco Coast Watch captured, not how long the storm itself lasted.","phase":"Recent","highest_impact":{"rank":2,"label":"Significant"},"max_observed_water_ft":11.4,"max_residual_ft":1.1,"max_modeled_water_ft":11.9,"max_wave_ft":None,"max_gust_mph":None,"max_surf_ft":9.0,"official_products":["High Surf Advisory"],"snapshot_count":12,"data_quality":[{"type":"superseded_surf_parse","count":1,"message":"One earlier surf value was corrected after the same NWS forecast was re-read. This summary uses the corrected value."}]}]
     briefing={
         "schema_version":1,
@@ -249,6 +252,8 @@ def assert_common(page):
     assert page.locator("#stormModePanel").is_visible()
     assert page.locator("#eventFocusTitle").inner_text().strip()=="Coastal Storm"
     assert page.locator("#eventFocusBadge").inner_text().strip()=="Elevated · Approaching"
+    assert page.locator("#marine44007Wave").inner_text().strip()=="4.6 ft"
+    assert "Wave reading" in page.locator("#marine44007Meta").inner_text()
     assert "Data available: 4 of 5 source types" in page.locator("#eventDataCoverage").inner_text()
     assert "NDBC 44007 wave observation" in page.locator("#eventDataCoverage").inner_text()
     assert "Peak coastal-impact window" in page.locator("#eventPeakSummary").inner_text()
@@ -304,6 +309,10 @@ def assert_common(page):
     assert "Past 24 hours" in dialog.inner_text()
     assert "What changed versus ~24 hours ago" in dialog.inner_text()
     assert "Next 72 hours" in dialog.inner_text()
+    assert "NDBC 44007 wave observation: no current value" in page.locator("#briefDataAvailability").inner_text()
+    assert "does not mean conditions are safe" in page.locator("#briefDataAvailability").inner_text()
+    assert "NDBC 44007 wave observation: no current value" in page.locator("#briefDataAvailability").inner_text()
+    assert "does not mean conditions are safe" in page.locator("#briefDataAvailability").inner_text()
     assert dialog.locator(".brief-pulse-item").count()==2
     assert dialog.locator("#briefTimeline .impact-item").count()==1
     assert "Portland observed water level test event" in dialog.inner_text()

@@ -16,6 +16,7 @@ import io
 import json
 import math
 import re
+import urllib.error
 import urllib.request
 import zipfile
 import xml.etree.ElementTree as ET
@@ -65,8 +66,12 @@ def fetch_json(url):
 def safe_json(url):
     try:
         return fetch_json(url), None
+    except json.JSONDecodeError as exc:
+        return None, "malformed response: " + str(exc)[:180]
+    except urllib.error.HTTPError as exc:
+        return None, f"upstream returned HTTP {exc.code}"
     except Exception as exc:
-        return None, str(exc)[:220]
+        return None, "upstream unavailable: " + str(exc)[:180]
 
 
 def num(value):
@@ -350,6 +355,13 @@ def surf_zone_snapshot(doc):
     }
 
 
+def surf_product_is_fresh(surf,now):
+    issued=parse_iso((surf or {}).get("issued_at"))
+    if not issued: return True
+    age=(now-issued).total_seconds()/3600
+    return -0.25<=age<=24
+
+
 def tropical_snapshot(nhc_doc, alerts):
     local_tropical = any(
         re.search(r"hurricane|tropical storm|storm surge", alert.get("event") or "", re.I)
@@ -598,7 +610,7 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
     surf=hazards.get("surf") or {}; hourly=hazards.get("hourly_full") or hazards.get("hourly") or []
     high_tides=list((water or {}).get("high_tides") or [])
     alert_points,alert_labels=_coastal_alert_points(alerts)
-    surf_ft=num(surf.get("max_surf_height_ft")); wave_ft=num((buoy or {}).get("wave_height_ft")); wave_period=num((buoy or {}).get("dominant_period_sec"))
+    surf_ft=num(surf.get("max_surf_height_ft")); surf_usable_ft=surf_ft if surf_product_is_fresh(surf,now) else None; wave_ft=num((buoy or {}).get("wave_height_ft")); wave_period=num((buoy or {}).get("dominant_period_sec"))
     wave_power=wave_power_proxy_kw_m(wave_ft,wave_period)
     buoy_onshore=onshore_component((buoy or {}).get("gust_mph") or (buoy or {}).get("speed_mph"),(buoy or {}).get("direction_deg"))
     windows=[]
@@ -609,24 +621,47 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
         gust=num((row or {}).get("gust_mph")) or num((row or {}).get("wind_mph"))
         onshore=onshore_component(gust,(row or {}).get("wind_direction"))
         total=num(item.get("modeled_total_ft"))
-        water_points=_water_points(total); surf_points=_surf_points(surf_ft); onshore_points=_onshore_points(onshore)
+        water_points=_water_points(total); surf_points=_surf_points(surf_usable_ft); onshore_points=_onshore_points(onshore)
         factor_count=sum(1 for value in (water_points,surf_points,onshore_points,alert_points) if value>0)
         compound_bonus=10 if factor_count>=3 else 5 if factor_count>=2 else 0
         impact=_impact_from_score(water_points+surf_points+onshore_points+alert_points+compound_bonus)
         drivers=[]
         if total is not None: drivers.append({"label":"NOAA forecast water level","value":f"{total:.2f} ft MLLW","source":"NOAA OFS"})
         if num(item.get("astronomical_ft")) is not None: drivers.append({"label":"Predicted high tide","value":f"{float(item['astronomical_ft']):.2f} ft MLLW","source":"NOAA CO-OPS tide prediction"})
-        if surf_ft is not None: drivers.append({"label":"NWS surf forecast","value":f"{surf_ft:.0f} ft max in the current Coastal York forecast","source":"NWS Surf Zone Forecast"})
+        if surf_usable_ft is not None: drivers.append({"label":"NWS surf forecast","value":f"{surf_usable_ft:.0f} ft max in the current Coastal York forecast","source":"NWS Surf Zone Forecast"})
         if onshore is not None: drivers.append({"label":"Wind pushing toward shore","value":f"{onshore:.0f} mph","source":"Calculated from NWS hourly wind direction and speed"})
         for event in alert_labels[:2]: drivers.append({"label":"Official coastal product","value":event,"source":"National Weather Service"})
-        windows.append({"high_tide_at":iso(at),"window_start":iso(at-dt.timedelta(minutes=90)),"window_end":iso(at+dt.timedelta(minutes=90)),"astronomical_ft":num(item.get("astronomical_ft")),"modeled_total_ft":total,"modeled_time":item.get("modeled_time"),"modeled_uplift_ft":num(item.get("modeled_uplift_ft")),"forecast_wind_mph":gust,"forecast_wind_direction":(row or {}).get("wind_direction"),"onshore_component_mph":onshore,"surf_context_ft":surf_ft,"impact":impact,"drivers":drivers})
+        windows.append({"high_tide_at":iso(at),"window_start":iso(at-dt.timedelta(minutes=90)),"window_end":iso(at+dt.timedelta(minutes=90)),"astronomical_ft":num(item.get("astronomical_ft")),"modeled_total_ft":total,"modeled_time":item.get("modeled_time"),"modeled_uplift_ft":num(item.get("modeled_uplift_ft")),"forecast_wind_mph":gust,"forecast_wind_direction":(row or {}).get("wind_direction"),"onshore_component_mph":onshore,"surf_context_ft":surf_usable_ft,"impact":impact,"drivers":drivers})
     peak=max(windows,key=lambda item:(item["impact"]["score"],-(parse_iso(item["high_tide_at"])-now).total_seconds())) if windows else None
     peak_at=parse_iso((peak or {}).get("high_tide_at")); hours_until=round((peak_at-now).total_seconds()/3600,1) if peak_at else None
-    checks={"NOAA forecast water level":(water_assessed,any(num(item.get("modeled_total_ft")) is not None for item in high_tides)),"NOAA tide predictions":(water_assessed,bool(high_tides)),"NWS surf forecast":(True,surf_ft is not None),"NWS wind forecast":(True,bool(hourly)),"NDBC 44007 wave observation":(buoy_assessed,wave_ft is not None)}
-    available=[name for name,(assessed,ok) in checks.items() if assessed and ok]
-    missing=[name for name,(assessed,ok) in checks.items() if assessed and not ok]
-    unassessed=[name for name,(assessed,ok) in checks.items() if not assessed]
-    data_coverage={"available":len(available),"assessed":len(checks)-len(unassessed),"total":len(checks),"available_sources":available,"missing":missing,"unassessed":unassessed}
+    water_errors=(water or {}).get("source_errors") or {}; errors=hazards.get("errors") or {}
+    def source_status(name,assessed,has_data,error=None,observed_at=None,max_age_hours=None,missing_reason="No usable value was returned.",supported=True):
+        if not assessed: return {"name":name,"status":"not_checked","message":"This producer did not check this source."}
+        if not supported: return {"name":name,"status":"unsupported","message":"This station does not report this measurement."}
+        if error:
+            category="malformed" if str(error).lower().startswith("malformed response:") else "unavailable"
+            message="The source returned data that could not be parsed." if category=="malformed" else "The source request failed; this input is unavailable."
+            return {"name":name,"status":category,"message":message}
+        if not has_data: return {"name":name,"status":"missing","message":missing_reason}
+        if observed_at and max_age_hours is not None:
+            stamp=parse_iso(observed_at)
+            if not stamp: return {"name":name,"status":"malformed","message":"The source timestamp could not be read."}
+            age=(now-stamp).total_seconds()/3600
+            if age < -0.25: return {"name":name,"status":"malformed","message":"The source timestamp is in the future."}
+            if age > max_age_hours: return {"name":name,"status":"stale","message":"The latest reading is older than the freshness window."}
+        return {"name":name,"status":"available","message":"Current source data is available."}
+    source_details=[
+        source_status("NOAA forecast water level",water_assessed,any(num(item.get("modeled_total_ft")) is not None for item in high_tides),water_errors.get("forecast")),
+        source_status("NOAA tide predictions",water_assessed,bool(high_tides),water_errors.get("predictions")),
+        source_status("NWS surf forecast",True,surf_ft is not None,errors.get("nws_surf_zone"),surf.get("issued_at"),24,"The current product has no usable Coastal York surf-height value."),
+        source_status("NWS wind forecast",True,bool(hourly),errors.get("nws_hourly"),hazards.get("generated_at"),6,"No usable hourly forecast periods were returned."),
+        source_status("NDBC 44007 wave observation",buoy_assessed,wave_ft is not None,(buoy or {}).get("error"),(buoy or {}).get("wave_observed_at") or (buoy or {}).get("observed_at"),1,"No current wave-height measurement was reported in the recent buoy samples.",(buoy or {}).get("wave_height_supported",True)),
+    ]
+    observed_status=source_status("NOAA Portland gauge observation",water_assessed,num((water or {}).get("latest_observed_ft")) is not None,water_errors.get("observations"),(water or {}).get("latest_observed_at"),0.75,"No usable Portland gauge observation was returned.")
+    available=[item["name"] for item in source_details if item["status"]=="available"]
+    missing=[item["name"] for item in source_details if item["status"] in ("missing","stale","malformed","unavailable","unsupported")]
+    unassessed=[item["name"] for item in source_details if item["status"]=="not_checked"]
+    data_coverage={"available":len(available),"assessed":len(source_details)-len(unassessed),"total":len(source_details),"available_sources":available,"missing":missing,"unassessed":unassessed,"sources":source_details,"observations":[observed_status]}
     impact=(peak or {}).get("impact") or _impact_from_score(0)
     drivers=list((peak or {}).get("drivers") or [])
     if wave_ft is not None:
@@ -635,7 +670,8 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
     if wave_power is not None: drivers.append({"label":"Wave energy estimate","value":f"{wave_power:.1f} kW/m estimate","source":"Estimated from NDBC wave height and dominant period"})
     if buoy_onshore is not None: drivers.append({"label":"Latest buoy onshore-wind component","value":f"{buoy_onshore:.0f} mph","source":"Derived from NDBC 44007"})
     return {"method":"SacoCast combines available official forecasts and observations into a local coastal-impact rating. The rating is not an official NOAA/NWS forecast. Source coverage describes available inputs, not forecast confidence.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"data_coverage":data_coverage,"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
-def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_alerts=None):
+def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_alerts=None,now=None):
+    now=now or now_utc()
     surf = surf or {}
     marine_alerts = marine_alerts or []
     events = [alert.get("event") or "" for alert in alerts]
@@ -654,9 +690,10 @@ def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_a
         add("winter", "Winter Storm", "NWS snowfall/ice guidance or winter weather alert")
     if any(re.search(r"coastal flood|storm surge", event, re.I) for event in events):
         add("coastal_flood", "Coastal Flood", "Active NWS coastal flood or storm surge alert")
-    if any(re.search(r"high surf", event, re.I) for event in events) or (surf.get("max_surf_height_ft") or 0) >= 7:
+    surf_fresh=surf_product_is_fresh(surf,now)
+    if any(re.search(r"high surf", event, re.I) for event in events) or (surf_fresh and (surf.get("max_surf_height_ft") or 0) >= 7):
         add("high_surf", "High Surf / Wave Impact", "NWS High Surf product or Coastal York Surf Zone Forecast")
-    if any(re.search(r"rip current", event, re.I) for event in events) or str(surf.get("rip_current_risk") or "").lower() == "high":
+    if any(re.search(r"rip current", event, re.I) for event in events) or (surf_fresh and str(surf.get("rip_current_risk") or "").lower() == "high"):
         add("beach_hazard", "Beach Hazard / Rip Current", "NWS rip-current product or High Surf Zone Forecast risk")
     if any(re.search(r"gale warning|storm warning|hurricane force wind warning|hazardous seas warning", event, re.I) for event in marine_events):
         add("marine_hazard", "Marine Hazard", "NWS marine warning for coastal waters")
@@ -889,7 +926,7 @@ def build_snapshot(now=None):
     nhc_doc, error = safe_json(NHC_CURRENT)
     if error: errors["nhc"] = error
     tropical=tropical_snapshot(nhc_doc,alerts) if nhc_doc else {"active":False,"atlantic_active_count":0,"storms":[],"errors":[error] if error else []}
-    modes=detect_modes(alerts,winter,wind,rain,cold,tropical,surf,marine_alerts); winter["active"]=any(mode["code"]=="winter" for mode in modes)
+    modes=detect_modes(alerts,winter,wind,rain,cold,tropical,surf,marine_alerts,now); winter["active"]=any(mode["code"]=="winter" for mode in modes)
     snapshot={"schema_version":1,"generated_at":iso(now),"location":{"name":"Saco Bay coastal reference","lat":SITE_LAT,"lon":SITE_LON},"active_modes":modes,"severity":{"level":"green","label":"Routine","rank":0},"event_state":{},"alerts":alerts,"marine_alerts":marine_alerts,"surf":surf,"winter":winter,"rain":rain,"wind":wind,"cold":cold,"tropical":tropical,"hourly":timeline(rows,now),"hourly_full":rows,"errors":errors,"sources":{"nws_point":"https://api.weather.gov/points/"+POINT,"nws_hourly":hourly_url,"nws_grid":grid_url,"nws_alerts":"https://api.weather.gov/alerts/active?point="+POINT,"nws_marine_alerts":NWS_MARINE_ALERTS,"nws_surf_zone":NWS_SURF_LATEST,"nhc":NHC_CURRENT}}
     event_state=derive_event_state(snapshot,alerts=alerts,now=now); snapshot["event_state"]=event_state; snapshot["severity"]=event_state["impact"]; snapshot["active_modes"]=event_state["active_hazards"]
     return snapshot

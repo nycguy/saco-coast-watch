@@ -31,6 +31,14 @@ class CaptureTests(unittest.TestCase):
   self.assertEqual(row['wave_height_ft'],6.6)
   self.assertEqual(row['pressure_mb'],985.5)
   self.assertEqual(row['pressure_tendency_mb'],-3.2)
+ def test_latest_wave_observation_skips_newer_rows_without_wave_values(self):
+  rows=c.parse_ndbc('''#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE
+#yr mo dy hr mn degT m/s m/s m sec sec degT hPa degC degC degC nmi hPa ft
+2026 10 14 17 40 190 3.0 4.0 MM MM MM MM 1006.6 12.1 13.4 11.3 MM MM MM
+2026 10 14 17 20 220 3.0 3.0 1.4 7 6.1 96 1006.5 12.1 13.4 11.2 MM MM MM
+''','44007')
+  self.assertEqual(c.latest_wave_observation(rows)['observed_at'],'2026-10-14T17:20:00Z')
+  self.assertEqual(c.latest_wave_observation(rows)['wave_height_ft'],4.6)
  def test_build_high_tide_windows_aligns_model_guidance(self):
   now=dt.datetime(2026,9,29,12,tzinfo=dt.timezone.utc)
   highs=[(dt.datetime(2026,9,29,16,tzinfo=dt.timezone.utc),10.5)]

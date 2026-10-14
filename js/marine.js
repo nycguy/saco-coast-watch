@@ -11,6 +11,7 @@ function renderMarine(){
   const station=state.marine[id],t=Date.parse(station?.observed_at||''),age=now()-t;
   const timed=Number.isFinite(t)&&t>0&&age>=-10*60000;
   const fresh=timed&&age<=MARINE_MAX_AGE;
+  const waveAt=Date.parse(station?.wave_observed_at||station?.observed_at||''),waveAge=now()-waveAt,waveTimed=Number.isFinite(waveAt)&&waveAt>0&&waveAge>=-10*60000,waveFresh=waveTimed&&waveAge<=MARINE_MAX_AGE;
   const speed=fresh&&Number.isFinite(station?.speed_mph)?station.speed_mph:null;
   const gust=fresh&&Number.isFinite(station?.gust_mph)?station.gust_mph:null;
   const label=!station?'Unavailable':!fresh?'Stale':speed===null?'No speed':'Live';
@@ -25,13 +26,15 @@ function renderMarine(){
   $('marine'+id+'Meta').textContent=note;
   health('healthMarine'+id,label==='Live',label);
   if(id==='44007'){
-   const show=fresh?station||{}:{};
+   const show=fresh&&waveFresh?station||{}:{};
    marineText('marine44007Wave',Number.isFinite(show.wave_height_ft)?show.wave_height_ft.toFixed(1)+' ft':'--');
    marineText('marine44007Period',Number.isFinite(show.dominant_period_sec)?show.dominant_period_sec.toFixed(0)+' s':'--');
    marineText('marine44007WaveDirection',Number.isFinite(show.wave_direction_deg)?windCompass(show.wave_direction_deg)+' · '+Math.round(show.wave_direction_deg)+'°':'--');
    marineText('marine44007Pressure',Number.isFinite(show.pressure_mb)?show.pressure_mb.toFixed(1)+' mb':'--');
    marineText('marine44007PressureTrend',Number.isFinite(show.pressure_tendency_mb)?(show.pressure_tendency_mb>=0?'+':'')+show.pressure_tendency_mb.toFixed(1)+' mb / 3h':'--');
    marineText('marine44007WaterTemp',Number.isFinite(show.water_temp_f)?show.water_temp_f.toFixed(1)+' °F':'--');
+   const waveNote=Number.isFinite(station?.wave_height_ft)&&!waveFresh?'Wave reading is stale and withheld.':Number.isFinite(station?.wave_height_ft)?'Wave reading '+dayTime(waveAt)+' ET · '+relative(waveAt):'No wave-height value in the latest available buoy sample.';
+   $('marine'+id+'Meta').textContent+=' · '+waveNote;
   }
  }
  $('marineFeedNote').textContent=state.marineFetchError?

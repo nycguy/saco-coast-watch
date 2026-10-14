@@ -37,6 +37,12 @@ The estimate counts runner wall time, not a charge. These are standard GitHub-ho
 
 The tradeoff is a nominal maximum ten-minute scheduled snapshot interval instead of five minutes. GitHub scheduling can delay both. The separately running page uses its existing 60-second data refresh and direct-source requests; the 15-minute historical capture cadence and 24-hour rolling archive are unchanged.
 
+### Actions artifact storage
+
+At the October 14, 2026 review, the repository artifact API listed 194 non-expired artifacts totaling about 1,019 MiB: 136 browser-image artifacts (~936 MiB), 23 Pages artifacts (~17 MiB), and 35 older `saco-map-test-image` artifacts (~66 MiB). The 90-day default on browser screenshots is unnecessary because they are diagnostic output. The Pages artifact uses the `upload-pages-artifact` one-day default and is required for deployment. SacoCast now uploads screenshots only after a failed non-scheduled run and expires them after seven days. Existing artifacts expire on their original dates; this change does not delete them. No Actions caches are configured. The `coastal-history` branch and webcam archive remain independent of artifact retention.
+
+SacoCast (`nycguy/saco-coast-watch`) belongs to the personal account; the 0.45 GB of 0.50 GB warning belongs to the separate `nycguy-apps` organization. This cleanup reduces storage in the SacoCast repository and does not change the organization’s usage. The organization billing endpoint was not available to this inspection, and searches of `nycguy-apps` issues and pull requests found no active storage-cleanup work to coordinate with. The new policy reduces future SacoCast artifact storage while preserving failed-run diagnostics and deployment artifacts.
+
 ## Deployment failure investigation
 
 - Requested run: [38385890569](https://github.com/nycguy/saco-coast-watch/actions/runs/38385890569), commit `8f56a369`.

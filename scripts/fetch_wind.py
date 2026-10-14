@@ -24,6 +24,7 @@ def fahrenheit(c):
 
 def parse(raw, station):
     header=None
+    latest=None; latest_wave=None
     for line in raw.splitlines():
         fields=line.split()
         if not fields: continue
@@ -51,13 +52,14 @@ def parse(raw, station):
         pressure_tendency=signed_number(row.get("PTDY"),-50,50)
         water_temp_c=signed_number(row.get("WTMP"),-5,45)
         air_temp_c=signed_number(row.get("ATMP"),-80,60)
-        return {
+        parsed={
             "id":station,
             "observed_at":timestamp.isoformat().replace("+00:00","Z"),
             "speed_mph":round(speed*MPS_TO_MPH,1),
             "gust_mph":round(gust*MPS_TO_MPH,1) if gust is not None else None,
             "direction_deg":round(direction) if direction is not None else None,
             "wave_height_ft":round(wave_m*M_TO_FT,1) if wave_m is not None else None,
+            "wave_height_supported":"WVHT" in header,
             "dominant_period_sec":round(dominant_period,1) if dominant_period is not None else None,
             "average_period_sec":round(average_period,1) if average_period is not None else None,
             "wave_direction_deg":round(wave_direction) if wave_direction is not None else None,
@@ -67,7 +69,17 @@ def parse(raw, station):
             "air_temp_f":fahrenheit(air_temp_c),
             "source":f"https://www.ndbc.noaa.gov/data/realtime2/{station}.txt",
         }
-    raise ValueError("No valid wind observations")
+        if latest is None: latest=parsed
+        if parsed["wave_height_ft"] is not None and latest_wave is None: latest_wave=parsed
+        if latest is not None and latest_wave is not None: break
+    if latest is None: raise ValueError("No valid wind observations")
+    if latest_wave:
+        for field in ("wave_height_ft","wave_height_supported","dominant_period_sec","average_period_sec","wave_direction_deg"):
+            latest[field]=latest_wave[field]
+        latest["wave_observed_at"]=latest_wave["observed_at"]
+    else:
+        latest["wave_observed_at"]=None
+    return latest
 
 def main():
     result={"generated_at":dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00","Z"),"stations":{}}

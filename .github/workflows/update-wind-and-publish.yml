@@ -133,10 +133,11 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/eastcast_smoke.py
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
       - name: Save map test screenshot
-        if: always() && github.event_name != 'schedule'
+        if: failure() && github.event_name != 'schedule'
         uses: actions/upload-artifact@v7.0.2
         with:
           name: dashboard-browser-test-images
+          retention-days: 7
           path: |
             map-smoke*.png
             tide-outlook-smoke-*.png

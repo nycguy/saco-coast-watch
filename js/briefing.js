@@ -1,6 +1,16 @@
 'use strict';
 function briefShort(text,max=130){const s=String(text||'').trim();return s.length<=max?s:s.slice(0,max-1).trimEnd()+'…';}
 function eventHistoryTime(value){const t=Date.parse(value||'');return Number.isFinite(t)?new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))+' ET':'Time unavailable';}
+function briefingDataAvailability(coverage){
+ if(!coverage||!Number.isFinite(coverage.total))return 'Coastal source availability is unavailable in this briefing. Check the source status cards below; missing information is not an all-clear.';
+ const details=[...(Array.isArray(coverage.sources)?coverage.sources:[]),...(Array.isArray(coverage.observations)?coverage.observations:[])];
+ const unavailable=details.filter(item=>item.status!=='available');
+ if(!unavailable.length&&coverage.available===coverage.total){const gauge=details.some(item=>item.name==='NOAA Portland gauge observation');return `All ${coverage.total} coastal-impact inputs${gauge?' and the Portland gauge observation':''} have current source data. This describes data coverage, not forecast confidence.`;}
+ const explain={missing:'no current value',stale:'latest reading is stale',malformed:'source data could not be read',unavailable:'source request failed',unsupported:'this station does not report the measurement',not_checked:'not checked by this feed'};
+ const issues=unavailable.slice(0,3).map(item=>`${item.name||'Source'}: ${explain[item.status]||'status unavailable'}`);
+ const count=Number.isFinite(coverage.available)?`${coverage.available} of ${coverage.total} coastal-impact inputs have current data`:'Coastal source coverage is incomplete';
+ return `${count}${issues.length?'. '+issues.join('; ')+'.':''} This briefing may be incomplete; missing data does not mean conditions are safe.`;
+}
 function renderEventHistory(){
  const panel=$('eventHistoryPanel'),root=$('eventHistoryCards');if(!panel||!root)return;
  const events=state.briefing?.event_history||[];panel.hidden=!events.length;root.replaceChildren();if(!events.length)return;
@@ -40,6 +50,8 @@ function renderBriefing(){
  $('briefFullChange').textContent=b.forecast_change_24h?.text||'24-hour forecast comparison unavailable.';
  $('briefFull24').textContent=b.next_24h?.text||'Next-24-hour guidance unavailable.';
  $('briefFull72').textContent=b.next_72h?.text||'Next-72-hour guidance unavailable.';
+ const coverage=b.current_snapshot?.event_state?.coastal_impact?.data_coverage;
+ $('briefDataAvailability').textContent=briefingDataAvailability(coverage);
  $('briefFullPulse').textContent=b.local_pulse?.summary||'No public local items were returned.';
  $('briefModalUpdated').textContent=(Number.isFinite(generated)?'Updated '+dayTime(generated)+' ET · ':'')+'Fixed rolling windows · NOAA / NWS / weather-related local reporting';
  const list=$('briefPulseList');list.replaceChildren();

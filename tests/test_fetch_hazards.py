@@ -1,7 +1,9 @@
 import datetime as dt
 import importlib.util
+import json
 import pathlib
 import sys
+import urllib.error
 import unittest
 ROOT=pathlib.Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/"scripts"))
 P=ROOT/"scripts"/"fetch_hazards.py"; S=importlib.util.spec_from_file_location("fetch_hazards",P); h=importlib.util.module_from_spec(S); S.loader.exec_module(h)
@@ -18,6 +20,11 @@ class HazardTests(unittest.TestCase):
  def test_surf_parser_ignores_temperature_numbers_on_compact_line(self):
   doc={"productText":"SRFGYX\nMEZ023-292000-\nCoastal York-\n.TUESDAY...\nSurf Height.................Around 3 feet. Mostly sunny. Highs in the lower 60s.\nRip Current Risk*...........Moderate.\nMEZ024-292000-\nCoastal Cumberland-\n"}
   surf=h.surf_zone_snapshot(doc); self.assertEqual(surf["max_surf_height_ft"],3.0); self.assertEqual(surf["rip_current_risk"],"Moderate")
+ def test_stale_surf_product_is_not_used_to_activate_current_hazard_modes(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  modes=h.detect_modes([],{}, {}, {}, {}, {"active":False},{"max_surf_height_ft":12,"rip_current_risk":"High","issued_at":"2026-09-28T00:00:00Z"},[],now)
+  self.assertNotIn("high_surf",[item["code"] for item in modes])
+  self.assertNotIn("beach_hazard",[item["code"] for item in modes])
  def test_modes_separate_coastal_surf_marine_and_land_wind(self):
   alerts=[{"event":"Coastal Flood Watch"},{"event":"High Surf Advisory"}]; marine=[{"event":"Gale Warning"}]
   codes=[m["code"] for m in h.detect_modes(alerts,{"snowfall_72h_in":0,"ice_72h_in":0},{"max_gust_72h_mph":20,"max_sustained_72h_mph":15},{"qpf_72h_in":0.2},{"min_temp_24h_f":30},{"active":False},{"max_surf_height_ft":8,"rip_current_risk":"High"},marine)]
@@ -85,6 +92,36 @@ class HazardTests(unittest.TestCase):
   self.assertEqual((coverage["available"],coverage["assessed"],coverage["total"]),(0,5,5))
   self.assertEqual(len(coverage["missing"]),5)
   self.assertEqual(coverage["unassessed"],[])
+ def test_source_health_distinguishes_stale_malformed_and_failed_inputs(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  hazards={"surf":{"max_surf_height_ft":7,"issued_at":"2026-09-28T00:00:00Z"},"hourly_full":[{"start":"2026-09-29T13:00:00Z","wind_mph":10}],"errors":{"nws_hourly":"malformed response: invalid JSON"},"alerts":[],"marine_alerts":[],"active_modes":[]}
+  water={"high_tides":[{"time":"2026-09-29T16:00:00Z","astronomical_ft":10,"modeled_total_ft":11}],"latest_observed_ft":10.2,"latest_observed_at":"2026-09-29T09:00:00Z","source_errors":{"forecast":"upstream unavailable: timeout"}}
+  marine={"stations":{"44007":{"wave_height_ft":5,"observed_at":"2026-09-29T07:00:00Z"}}}
+  coverage=h.derive_event_state(hazards,water=water,marine=marine,now=now)["coastal_impact"]["data_coverage"]
+  by_name={item["name"]:item for item in coverage["sources"]}
+  self.assertEqual(by_name["NOAA forecast water level"]["status"],"unavailable")
+  self.assertEqual(by_name["NWS surf forecast"]["status"],"stale")
+  self.assertEqual(by_name["NWS wind forecast"]["status"],"malformed")
+  self.assertEqual(by_name["NDBC 44007 wave observation"]["status"],"stale")
+  self.assertEqual(coverage["observations"][0]["status"],"stale")
+  self.assertEqual(coverage["available"],1)
+ def test_source_fetch_errors_keep_parse_and_upstream_failures_distinct(self):
+  original=h.fetch_json
+  try:
+   h.fetch_json=lambda _url: (_ for _ in ()).throw(json.JSONDecodeError("bad JSON","{",0))
+   self.assertTrue(h.safe_json("https://example.test")[1].startswith("malformed response:"))
+   h.fetch_json=lambda _url: (_ for _ in ()).throw(urllib.error.HTTPError("https://example.test",503,"busy",{},None))
+   self.assertEqual(h.safe_json("https://example.test")[1],"upstream returned HTTP 503")
+   h.fetch_json=lambda _url: (_ for _ in ()).throw(TimeoutError("timed out"))
+   self.assertTrue(h.safe_json("https://example.test")[1].startswith("upstream unavailable:"))
+  finally: h.fetch_json=original
+ def test_unsupported_buoy_measurement_is_not_reported_as_an_outage(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  hazards={"surf":{},"hourly_full":[],"alerts":[],"marine_alerts":[],"active_modes":[]}
+  coverage=h.derive_event_state(hazards,water={},marine={"stations":{"44007":{"wave_height_supported":False}}},now=now)["coastal_impact"]["data_coverage"]
+  wave=next(item for item in coverage["sources"] if item["name"]=="NDBC 44007 wave observation")
+  self.assertEqual(wave["status"],"unsupported")
+  self.assertNotIn("NDBC 44007 wave observation",coverage["unassessed"])
  def test_compound_model_stays_routine_for_current_benign_case(self):
   now=dt.datetime(2026,9,29,12,tzinfo=UTC)
   hazards={"surf":{"max_surf_height_ft":5},"hourly_full":[{"start":"2026-09-29T16:00:00Z","wind_mph":7,"gust_mph":10,"wind_direction":"W"}],"active_modes":[],"alerts":[],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"tropical":{}}

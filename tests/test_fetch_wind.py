@@ -21,6 +21,17 @@ class FetchWindTests(unittest.TestCase):
   self.assertEqual(d['water_temp_f'],53.6)
   self.assertEqual(d['air_temp_f'],50.0)
   self.assertAlmostEqual(d['speed_mph'],26.8,places=1)
+ def test_latest_wave_sample_can_precede_latest_wind_sample(self):
+  raw='''#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE
+#yr mo dy hr mn degT m/s m/s m sec sec degT hPa degC degC degC nmi hPa ft
+2026 10 14 17 40 190 3.0 4.0 MM MM MM MM 1006.6 12.1 13.4 11.3 MM MM MM
+2026 10 14 17 20 220 3.0 3.0 1.4 7 6.1 96 1006.5 12.1 13.4 11.2 MM MM MM
+'''
+  d=w.parse(raw,'44007')
+  self.assertEqual(d['observed_at'],'2026-10-14T17:40:00Z')
+  self.assertEqual(d['wave_observed_at'],'2026-10-14T17:20:00Z')
+  self.assertEqual(d['wave_height_ft'],4.6)
+  self.assertEqual(d['dominant_period_sec'],7.0)
 
 if __name__=='__main__':
  unittest.main()

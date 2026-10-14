@@ -338,8 +338,10 @@ def assert_common(page):
     assert "NOAA total-water guidance is 11.80 ft MLLW" in dialog.inner_text()
     assert "Coastal Storm · Elevated impact · Approaching" in page.locator("#briefCurrentStatus").inner_text()
     assert "Active official NWS products: High Surf Advisory" in page.locator("#briefCurrentStatus").inner_text()
-    assert "Other active hazards: High Surf / Wave Impact" in page.locator("#briefFullEvent").inner_text()
-    assert "Coastal Storm: Elevated · Approaching." not in page.locator("#briefFullEvent").inner_text()
+    assert "Additional active hazards: High Surf / Wave Impact." in page.locator("#briefEvent").inner_text()
+    event_detail=page.locator("#briefFullEvent").text_content() or ""
+    assert "Other active hazards: High Surf / Wave Impact" in event_detail
+    assert "Coastal Storm: Elevated · Approaching." not in event_detail
     assert "What changed versus ~24 hours ago" in dialog.inner_text()
     assert "Next 72 hours" in dialog.inner_text()
     assert "NDBC 44007 wave observation: no current value" in page.locator("#briefDataAvailability").inner_text()

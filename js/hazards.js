@@ -83,7 +83,7 @@ function renderEventBriefingExtras(){
  const briefing=state.briefing?.event_briefing,recent=state.briefing?.recent_event;if(!briefing&&!recent)return;const active=Boolean(briefing?.active),recentActive=Boolean(!active&&recent?.active),row=$('briefEventRow'),section=$('briefEventSection');row.hidden=!recentActive;
  if(active){
   $('briefHeading').textContent=briefing.title||'Event Briefing';$('briefModalTitle').textContent='Southern Maine '+(briefing.title||'Event Briefing');$('briefEventLabel').textContent='Event status';
-  const primary=state.briefing?.event_state?.primary_display,others=[...new Set((briefing.modes||[]).map(mode=>mode.label).filter(label=>label&&label!==primary))];
+  const primary=state.briefing?.event_state?.primary_display,modes=Array.isArray(briefing.modes)&&briefing.modes.length?briefing.modes:(state.briefing?.event_state?.active_hazards||[]),others=[...new Set(modes.map(mode=>mode.label).filter(label=>label&&label!==primary))];
   row.hidden=!others.length;
   $('briefEvent').textContent=others.length?'Additional active hazards: '+others.join(', ')+'.':'See the full briefing for supporting event details.';
   const detail=others.length?'Other active hazards: '+others.join(', ')+'.':'';

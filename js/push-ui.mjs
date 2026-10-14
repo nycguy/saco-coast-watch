@@ -69,6 +69,7 @@ function showNotEnrolled() {
   settings.hidden = true;
   enable.hidden = false;
   emailOnlyEntry.hidden = false;
+  sendTest.disabled = false;
   updateAlertsEntryState();
 }
 
@@ -141,11 +142,14 @@ async function initialize() {
     return;
   }
   const standalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const permissionDenied = Notification.permission === 'denied';
   const capability = pushCapability({
     secureContext: window.isSecureContext,
     serviceWorker: 'serviceWorker' in navigator,
     pushManager: 'PushManager' in window,
-    notification: 'Notification' in window ? Notification : null,
+    // A denied permission prevents new enrollment, but we still need to verify
+    // an existing server-owned device so Manage Alerts can offer recovery.
+    notification: 'Notification' in window ? (permissionDenied ? { permission: 'default' } : Notification) : null,
     userAgent: navigator.userAgent,
     touchPoints: navigator.maxTouchPoints || 0,
     standalone,
@@ -153,11 +157,6 @@ async function initialize() {
   if (!capability.supported) {
     enable.disabled = true;
     status.textContent = capability.reason + (capability.reason?.includes('Home Screen') ? '. In Safari, use Share → Add to Home Screen, then launch the installed SacoCast icon.' : '.');
-    return;
-  }
-  if (Notification.permission === 'denied') {
-    enable.disabled = true;
-    status.textContent = 'Notifications are blocked in browser settings. Change the SacoCast site permission there if you want to enable them.';
     return;
   }
   const registration = await navigator.serviceWorker.register('./push-sw.js', { scope: './' }).catch(() => navigator.serviceWorker.getRegistration('./').catch(() => null));
@@ -170,7 +169,10 @@ async function initialize() {
       if (!saved) throw new Error('This device’s notification settings could not be verified.');
       showEnrolled();
       if (saved) { localStorage.setItem(prefsStorageKey, JSON.stringify(saved)); setPrefs(saved); }
-      status.textContent = 'App notifications are on for this device.';
+      sendTest.disabled = permissionDenied;
+      status.textContent = permissionDenied
+        ? 'This device is enrolled, but notifications are blocked in browser settings. Allow SacoCast notifications in iPhone Settings to receive them.'
+        : 'App notifications are on for this device.';
       await loadThresholdPreferences().catch(() => {});
     } catch (error) {
       if (error?.status === 404 || error?.status === 401) {
@@ -178,7 +180,10 @@ async function initialize() {
           await disableCoastalNotifications();
           appPushVerified = false;
           showNotEnrolled();
-          status.textContent = 'This device is no longer enrolled for App notifications. You can set it up again if you want.';
+          enable.disabled = permissionDenied;
+          status.textContent = permissionDenied
+            ? 'This device is no longer enrolled. Notifications are blocked in browser settings; allow SacoCast notifications there before setting it up again.'
+            : 'This device is no longer enrolled for App notifications. You can set it up again if you want.';
         } catch (_) {
           appPushVerified = null;
           showNotEnrolled();
@@ -202,7 +207,10 @@ async function initialize() {
       await disableCoastalNotifications();
       appPushVerified = false;
       showNotEnrolled();
-      status.textContent = 'The saved App subscription is no longer active in this browser. You can set it up again if you want.';
+      enable.disabled = permissionDenied;
+      status.textContent = permissionDenied
+        ? 'The saved App subscription is no longer active. Notifications are blocked in browser settings; allow SacoCast notifications there before setting it up again.'
+        : 'The saved App subscription is no longer active in this browser. You can set it up again if you want.';
     } catch (_) {
       appPushVerified = null;
       showNotEnrolled();
@@ -212,6 +220,10 @@ async function initialize() {
   } else {
     appPushVerified = false;
     updateAlertsEntryState();
+    if (permissionDenied) {
+      enable.disabled = true;
+      status.textContent = 'Notifications are blocked in browser settings. Change the SacoCast notification permission there if you want to enable them.';
+    }
   }
 }
 
@@ -275,9 +287,21 @@ sendTest.addEventListener('click', async () => {
   status.textContent = 'Sending a test notification to this device…';
   try {
     await sendCoastalTestNotification();
-    status.textContent = 'Test notification sent. Check this device’s notification center.';
+    status.textContent = 'The push service accepted the test. Check this device’s notification center; acceptance does not confirm that it was displayed.';
   } catch (error) {
-    status.textContent = error?.message || 'Could not send a test notification. Try again later.';
+    if (error?.status === 410) {
+      try {
+        await disableCoastalNotifications();
+        appPushVerified = false;
+        showNotEnrolled();
+        enable.disabled = Notification.permission === 'denied';
+        status.textContent = 'This browser subscription expired and was removed. Turn on App notifications again to create a fresh subscription.';
+      } catch (_) {
+        status.textContent = 'This browser subscription expired. Turn it off in SacoCast or browser settings, then set it up again.';
+      }
+    } else {
+      status.textContent = error?.message || 'Could not send a test notification. Try again later.';
+    }
   } finally { sendTest.disabled = false; }
 });
 

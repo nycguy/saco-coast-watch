@@ -2,6 +2,8 @@
 
 `src/worker.mjs` preserves the existing email confirmation, management, unsubscribe, threshold, data-freshness, Resend, Turnstile, and D1 flows. Web Push is separately opt-in after a direct browser tap. The Worker returns the public VAPID key only to the configured Pages origin, stores a hash of the device control token, encrypts deliveries using RFC 8291 `aes128gcm`, and keeps push delivery failures isolated from email checks.
 
+Manage Alerts includes **Send Test Notification** for an enrolled device. Its request requires that device's bearer control token, the configured Pages origin, and an enabled D1 device row; it sends directly to that row's subscription and does not create a weather event or touch email subscribers. The Worker rate limits test sends by an HMAC of the source IP for five minutes. A successful response means the push provider accepted the request; the device still needs permission and connectivity to display it. An expired provider endpoint is removed from `push_devices`, and the UI asks the owner to enroll that browser again. Transient provider errors leave the device record intact so the owner can retry after the cooldown.
+
 ## Production deployment
 
 The only source of truth is `nycguy/saco-coast-watch`. Production Worker/D1 releases use the public `Release coastal alerts Worker` workflow, which defaults to read-only preflight. The preflight verifies the current Worker/email state, expected base D1 tables and columns, additive migration state, existing VAPID secret names, and the subscriber-count baseline. Partial or unknown schema state fails closed.

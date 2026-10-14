@@ -221,7 +221,7 @@ def run_mocked(browser):
         assert not page.locator(f'[name="{name}"]').is_checked()
 
     page.locator('#pushTest').click()
-    page.get_by_text('Test notification sent. Check this device’s notification center.').wait_for(timeout=10000)
+    page.get_by_text('The push service accepted the test. Check this device’s notification center; acceptance does not confirm that it was displayed.').wait_for(timeout=10000)
 
     page.locator('#pushDisable').click()
     page.get_by_text('App notifications are off on this device.').wait_for(timeout=10000)
@@ -264,6 +264,59 @@ def run_mocked(browser):
     assert denied.locator('#emailOnlyLink').is_visible()
     assert denied.evaluate('window.__permissionCalls') == 0
     denied.close()
+
+    enrolled_denied=browser.new_page(viewport={'width':390,'height':844})
+    enrolled_denied.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script('denied'))
+    enrolled_denied.route(WORKER+'/**', worker_mock([]))
+    enrolled_denied.goto(BASE, wait_until='domcontentloaded', timeout=45000)
+    enrolled_denied.wait_for_function("document.querySelector('#alertsButton').textContent==='Manage Alerts'", timeout=5000)
+    open_alerts(enrolled_denied)
+    assert enrolled_denied.locator('#pushSettings').is_visible()
+    assert enrolled_denied.locator('#pushEnable').is_hidden()
+    assert enrolled_denied.locator('#pushTest').is_disabled()
+    assert 'enrolled' in enrolled_denied.locator('#pushStatus').inner_text().lower()
+    assert 'blocked in browser settings' in enrolled_denied.locator('#pushStatus').inner_text().lower()
+    assert enrolled_denied.evaluate('window.__permissionCalls') == 0
+    enrolled_denied.close()
+
+    expired=browser.new_page(viewport={'width':390,'height':844})
+    expired.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script())
+    expired_calls=[]
+    normal_handler=worker_mock(expired_calls)
+    def expired_worker(route):
+        if route.request.url.endswith('/push/devices/test'):
+            route.fulfill(status=410, headers={'Access-Control-Allow-Origin':route.request.headers.get('origin','http://127.0.0.1:8765'),'content-type':'application/json'}, body='{"error":"This browser subscription has expired"}')
+        else:
+            normal_handler(route)
+    expired.route(WORKER+'/**', expired_worker)
+    expired.goto(BASE, wait_until='domcontentloaded', timeout=45000)
+    expired.wait_for_function("document.querySelector('#alertsButton').textContent==='Manage Alerts'", timeout=5000)
+    open_alerts(expired)
+    expired.locator('#pushTest').click()
+    expired.get_by_text('This browser subscription expired and was removed. Turn on App notifications again to create a fresh subscription.').wait_for(timeout=10000)
+    assert expired.locator('#alertsButton').inner_text() == 'Create Alerts'
+    assert expired.locator('#pushSettings').is_hidden()
+    assert expired.locator('#pushEnable').is_visible()
+    assert any(url.endswith('/push/devices/disable') for url in expired_calls)
+    expired.close()
+
+    failed_test=browser.new_page(viewport={'width':390,'height':844})
+    failed_test.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script())
+    normal_handler=worker_mock([])
+    def failed_test_worker(route):
+        if route.request.url.endswith('/push/devices/test'):
+            route.fulfill(status=502, headers={'Access-Control-Allow-Origin':route.request.headers.get('origin','http://127.0.0.1:8765'),'content-type':'application/json'}, body='{"error":"The push provider did not accept the test notification"}')
+        else:
+            normal_handler(route)
+    failed_test.route(WORKER+'/**', failed_test_worker)
+    failed_test.goto(BASE, wait_until='domcontentloaded', timeout=45000)
+    failed_test.wait_for_function("document.querySelector('#alertsButton').textContent==='Manage Alerts'", timeout=5000)
+    open_alerts(failed_test)
+    failed_test.locator('#pushTest').click()
+    failed_test.get_by_text('The push provider did not accept the test notification').wait_for(timeout=10000)
+    assert failed_test.locator('#pushTest').is_enabled()
+    assert failed_test.locator('#alertsButton').inner_text() == 'Manage Alerts'
+    failed_test.close()
 
     network_failure=browser.new_page(viewport={'width':390,'height':844})
     network_failure.add_init_script(init_script())

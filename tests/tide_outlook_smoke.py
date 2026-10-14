@@ -267,7 +267,7 @@ def assert_common(page):
     assert history_metric_size>=9.5,history_metric_size
     assert history_value_size>=12,history_value_size
     decision_text=page.locator(".coastal-intelligence").inner_text()
-    assert "Water above predicted tide" in decision_text
+    assert "Difference from predicted tide" in decision_text
     assert "NOAA forecast water level" in decision_text
     assert "How the forecast is changing" in decision_text
     assert "Storm surge residual" not in decision_text

@@ -202,7 +202,7 @@ def run_mocked(browser):
     page.locator('#pushSettings').wait_for(state='visible', timeout=5000)
     page.locator('#notificationHistory').wait_for(state='visible',timeout=5000)
     page.get_by_text('Coastal Flood Advisory').wait_for(timeout=5000)
-    assert page.get_by_text('Sent',exact=True).is_visible()
+    assert page.locator('#notificationHistory .history-delivered').count() >= 1
     assert 'latest successful custom-threshold delivery' in page.locator('#notificationHistory').inner_text()
     assert page.get_by_text('Observed water level threshold reached').is_visible()
     assert page.get_by_text('Wind speed threshold reached').is_visible()

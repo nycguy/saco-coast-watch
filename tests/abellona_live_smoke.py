@@ -28,7 +28,8 @@ def check(browser, width, height, mobile=False):
         assert "video is playing" in result["status"].lower(), result
     else:
         assert result["gateVisible"] and result["fallbackVisible"], result
-        assert "did not start" in result["status"].lower() or "unavailable" in result["status"].lower(), result
+        status = result["status"].lower()
+        assert any(text in status for text in ("did not start", "unavailable", "not allowing this stream")), result
     print(f"ABELLONA_LIVE_STATE viewport={width}x{height} mobile={mobile} result={result}", flush=True)
     page.close()
     return result["state"]

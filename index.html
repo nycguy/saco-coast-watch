@@ -178,15 +178,16 @@
   </div>
   <div class="ferry-layout">
     <div class="ferry-player">
-      <iframe id="abellonaFrame" src="https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0" title="Abellona Inn Old Orchard Beach live camera" loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen></iframe>
+      <div id="abellonaPlayer" class="abellona-youtube-player" role="region" aria-label="Abellona Inn Old Orchard Beach live video"></div>
+      <div class="abellona-player-gate" id="abellonaPlayerGate">
+        <span id="abellonaGateMessage">Live video starts when this camera is near the screen.</span>
+        <button class="abellona-watch-live" id="abellonaWatchLive" type="button" hidden>Watch Live</button>
+      </div>
     </div>
     <div class="ferry-side">
       <strong>See live conditions farther north on Saco Bay</strong>
       <p>Use the Abellona view with the Ferry Beach camera to compare surf, visibility and shoreline conditions across the bay. Camera imagery is visual context only, not a flood-depth or wave-height measurement.</p>
-      <p class="ferry-status" id="abellonaStatus" role="status" aria-live="polite">Live muted video preview from the Abellona Inn. If playback is paused, press Play for current conditions.</p>
+      <p class="ferry-status" id="abellonaStatus" role="status" aria-live="polite">Connecting to the Abellona live stream when the camera is near the screen.</p>
       <a href="https://www.youtube.com/watch?v=HSQpqIWLViI" target="_blank" rel="noopener noreferrer">Open Abellona camera on YouTube ↗</a>
     </div>
   </div>
@@ -309,6 +310,7 @@
 
 
 <script src="js/webcams.js"></script>
+<script type="module" src="js/abellona-player.mjs"></script>
 
 
 <script type="module" src="js/push-ui.mjs?v=20261014-3"></script>

@@ -55,7 +55,7 @@ flowchart LR
 
 | Area | Implementation | Responsibility |
 | --- | --- | --- |
-| Dashboard shell | `index.html`, `css/`, `js/` | Accessible, framework-free interface; NOAA/NWS browser requests; charts, maps, weather, hazards, briefing, cameras, and PWA controls |
+| Dashboard shell | `index.html`, `css/`, `js/` | Accessible, framework-free interface; NOAA/NWS browser requests; charts, maps, weather, hazards, briefing, cameras, and PWA controls. `js/abellona-player.mjs` initializes the muted inline YouTube player near viewport, confirms actual `PLAYING` state, and covers unconfirmed poster imagery with a Watch Live fallback. |
 | Weather and hazard logic | `js/weather.js`, `js/header-weather.js`, `js/hazards.js`, `js/intelligence.js` | Separates observations, forecasts, official alerts, and SacoCast-derived event ratings |
 | Public snapshot collectors | `scripts/fetch_*.py` | Wind, NWS/NHC hazard guidance, fixed-window briefing, EastCast, and webcam metadata |
 | Durable history | `scripts/capture_history.py`, `scripts/history_core.py`, `coastal-history` branch | Captured observations and forecast snapshots, event transitions, fixed 24/72-hour comparisons, and rolling camera frames |

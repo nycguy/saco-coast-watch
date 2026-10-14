@@ -41,7 +41,7 @@ def verify(root):
                 missing.append(f'manifest.webmanifest -> {icon["src"]}')
     else:
         missing.append('manifest.webmanifest')
-    for asset in ('favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js', 'js/push-ui.mjs', 'js/push-subscriptions.mjs'):
+    for asset in ('favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js', 'js/push-ui.mjs', 'js/push-subscriptions.mjs', 'js/abellona-player.mjs'):
         if not (root / asset).is_file():
             missing.append(asset)
     if (root / 'manifest.webmanifest').is_file():

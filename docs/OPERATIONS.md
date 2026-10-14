@@ -10,7 +10,7 @@ The dashboard combines independent sources. A failure in one source should not b
 | Local news and public community feeds | `source_health.feeds` in captured history, copied to `local_pulse.sources`; a reachable feed with zero matching items is still available | Show an empty scan separately from a failed or unreadable feed; community posts remain anecdotal |
 | Ferry Beach camera preview | `data/webcams/webcams.json` reports `ok` or `unavailable` and a fetch time | Hide a broken still, show preview unavailability, retain the official live-camera link |
 | Ferry Beach event archive | `data/webcams/ferry-history/index.json` and referenced image files | Explain an empty retention window separately from a manifest/network failure; never fabricate a frame |
-| Abellona live camera | The page embeds the operator's YouTube live player; cross-origin playback cannot be reliably verified by SacoCast | Keep the direct YouTube link and describe the player as operator-hosted |
+| Abellona live camera | `js/abellona-player.mjs` uses YouTube's IFrame Player API and reports the explicit `PLAYING` state; iframe load alone does not count as playback | The frame remains covered until playback is confirmed. Autoplay timeout/API errors expose a Watch Live retry and the direct YouTube link. Browser policy and operator availability can still prevent playback. |
 
 For a scheduled refresh failure, inspect the public workflow run and its generated-data/artifact validation steps. A later run can refresh transient upstream failures; do not manually replace a missing upstream value with a prior measurement. Compare source issuance/observation timestamps before deciding whether a feed is stale or the provider is delayed.
 

@@ -17,10 +17,10 @@ class ArtifactTests(unittest.TestCase):
         (self.root / 'data/webcams').mkdir(parents=True)
         (self.root / 'css').mkdir()
         (self.root / 'js').mkdir()
-        (self.root / 'index.html').write_text('<link href="css/app.css"><script src="js/app.js"></script><script type="module" src="js/push-ui.mjs"></script>')
+        (self.root / 'index.html').write_text('<link href="css/app.css"><script src="js/app.js"></script><script type="module" src="js/push-ui.mjs"></script><script type="module" src="js/abellona-player.mjs"></script>')
         (self.root / 'eastcast/index.html').write_text('<link href="style.css">')
         (self.root / 'manifest.webmanifest').write_text(json.dumps({'display':'standalone','icons':[{'src':'icon.png'}]}))
-        for p in ('css/app.css', 'js/app.js', 'js/push-ui.mjs', 'js/push-subscriptions.mjs', 'eastcast/style.css', 'icon.png', 'favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js', 'data/wind.json', 'data/coastal-alerts.json', 'data/hazards.json', 'data/coastal-history.json', 'data/webcams/webcams.json', 'eastcast/data/snapshot.json'):
+        for p in ('css/app.css', 'js/app.js', 'js/push-ui.mjs', 'js/push-subscriptions.mjs', 'js/abellona-player.mjs', 'eastcast/style.css', 'icon.png', 'favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js', 'data/wind.json', 'data/coastal-alerts.json', 'data/hazards.json', 'data/coastal-history.json', 'data/webcams/webcams.json', 'eastcast/data/snapshot.json'):
             (self.root / p).write_text('ok')
         (self.root / 'data/coastal-briefing.json').write_text(json.dumps({'current_snapshot': {}}))
     def tearDown(self):
@@ -41,6 +41,10 @@ class ArtifactTests(unittest.TestCase):
             MODULE.verify(self.root)
     def test_missing_push_subscription_module_fails(self):
         (self.root / 'js/push-subscriptions.mjs').unlink()
+        with self.assertRaises(SystemExit):
+            MODULE.verify(self.root)
+    def test_missing_abellona_player_module_fails(self):
+        (self.root / 'js/abellona-player.mjs').unlink()
         with self.assertRaises(SystemExit):
             MODULE.verify(self.root)
     def test_missing_data_fails(self):

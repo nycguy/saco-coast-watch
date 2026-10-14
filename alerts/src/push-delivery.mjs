@@ -57,7 +57,7 @@ export async function sendControlledTestPush(env, device, now = Math.floor(Date.
     await env.DB.prepare('DELETE FROM push_devices WHERE id=?').bind(device.id).run();
     return { sent: false, expired: true };
   }
-  if (!response.ok) throw new Error(`Push provider returned ${response.status}`);
+  if (!response.ok) throw Object.assign(new Error(`Push provider returned ${response.status}`), { status: response.status });
   return { sent: true, expired: false };
 }
 
@@ -107,6 +107,6 @@ export async function sendThresholdPush(env, device, message, now = Math.floor(D
     await env.DB.prepare('DELETE FROM push_devices WHERE id=?').bind(device.id).run();
     return { sent: false, expired: true };
   }
-  if (!response.ok) throw new Error(`Push provider returned ${response.status}`);
+  if (!response.ok) throw Object.assign(new Error(`Push provider returned ${response.status}`), { status: response.status });
   return { sent: true, expired: false };
 }

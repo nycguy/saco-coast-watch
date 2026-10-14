@@ -1,6 +1,7 @@
 import { handlePushApi, pushConfiguration } from './push-http.mjs';
 import { processCoastalPushEvents } from './coastal-push-events.mjs';
-import { sendThresholdPush } from './push-delivery.mjs';
+import { evaluatePushThresholds } from './push-threshold-checks.mjs';
+import { decideAlert } from './threshold-state.mjs';
 import { THRESHOLD_SPECS, normalizeThresholdPreferences } from './threshold-preferences.mjs';
 import { linkDeviceThresholdSubscriber } from './push-device-store.mjs';
 import { syncLinkedThresholdDevices } from './email-device-sync.mjs';
@@ -219,19 +220,6 @@ async function pilotThresholds() {
  * The caller must retain per-subscriber/channel/metric state and persist it
  * after successful delivery when real notifications are enabled.
  */
-function decideAlert(previous, value, threshold, metric, checkedAtSeconds) {
-  if (!Number.isFinite(value) || !Number.isFinite(threshold))
-    return {send:false,active:previous?.active===1?1:0,lastSent:previous?.lastSent||0,reason:"invalid-input"};
-  const lastSent=previous?.lastSent||0;
-  const triggered=metric==="tempLow"?value<=threshold:value>=threshold;
-  if (!triggered)
-    return {send:false,active:0,lastSent,reason:"below-trigger"};
-  if (previous?.active===1)
-    return {send:false,active:1,lastSent,reason:"already-active"};
-  if (lastSent && checkedAtSeconds-lastSent<3600)
-    return {send:false,active:1,lastSent,reason:"one-hour-cooldown"};
-  return {send:true,active:1,lastSent:checkedAtSeconds,reason:"new-crossing"};
-}
 /**
  * Deterministic demonstration of future deduplication behavior; no real
  * measurements, subscriber data, D1 changes, or notification providers.
@@ -527,15 +515,13 @@ async function managementEdit(req,e){
  await e.DB.prepare("DELETE FROM alert_state WHERE subscriber_id=? AND channel='email'").bind(sub.id).run();
  return publicPage(e,"Thresholds saved","<p>Your new preferences are active. This management link can no longer be used.</p>");
 }
-async function liveEmailChecks(e){
- if(!liveAlerts(e))return;
- const t=stamp(),leaseKey=await hmac(e.TOKEN_SECRET,"scheduled-email-lease");
- const lease=await e.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts WHERE request_limits.until_ts<?").bind(leaseKey,t+240,t).run();
- if(lease.meta?.changes!==1)return;
- let sent=0,errors=0;
- try{
+function createThresholdMeasurementLoader(){
+ let promise;
+ return ()=>promise||(promise=(async()=>{
   const [water,forecast,buoy,temp]=await Promise.allSettled([sourceObservedWater(),sourceForecastWater(),sourceBuoy(),sourceAirTemp()]);
-  const measurements={
+  for(const [metric,result] of Object.entries({water,forecast,buoy,temp}))
+   if(result.status==="rejected")console.warn("Source unavailable for alerts",metric,String(result.reason));
+  return {
    waterObserved:water.status==="fulfilled"?water.value:null,
    waterForecast:forecast.status==="fulfilled"?forecast.value:null,
    wind:buoy.status==="fulfilled"?buoy.value.find(x=>x.metric==="wind"):null,
@@ -543,8 +529,17 @@ async function liveEmailChecks(e){
    tempHigh:temp.status==="fulfilled"?temp.value:null,
    tempLow:temp.status==="fulfilled"?temp.value:null
   };
-  for(const [metric,result] of Object.entries({water,forecast,buoy,temp}))
-   if(result.status==="rejected")console.warn("Source unavailable for alerts",metric,String(result.reason));
+ })());
+}
+async function liveEmailChecks(e){return runLiveEmailChecks(e,createThresholdMeasurementLoader());}
+async function runLiveEmailChecks(e,loadMeasurements){
+ if(!liveAlerts(e))return;
+ const t=stamp(),leaseKey=await hmac(e.TOKEN_SECRET,"scheduled-email-lease");
+ const lease=await e.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts WHERE request_limits.until_ts<?").bind(leaseKey,t+240,t).run();
+ if(lease.meta?.changes!==1)return;
+ let sent=0,errors=0;
+ try{
+  const measurements=await loadMeasurements();
   const startUtc=Math.floor(t/86400)*86400;
   const quota=await e.DB.prepare("SELECT COUNT(*) AS total FROM tokens WHERE purpose='alerts-delivery-quota' AND used_at>=?").bind(startUtc).first();
   let daily=Number(quota?.total||0);
@@ -612,6 +607,21 @@ async function liveEmailChecks(e){
   await e.DB.prepare("UPDATE request_limits SET until_ts=? WHERE ip_hash=? AND until_ts=?").bind(stamp()-1,leaseKey,t+240).run();
  }
 }
+async function livePushThresholdChecks(e,loadMeasurements){
+ if(e.PUSH_API_ENABLED!=="true"||e.PUSH_EVENTS_ENABLED!=="true"||!e.VAPID_PUBLIC_KEY||!e.VAPID_PRIVATE_KEY||!e.DB||!e.TOKEN_SECRET)return;
+ const t=stamp(),leaseKey=await hmac(e.TOKEN_SECRET,"scheduled-push-threshold-lease");
+ const lease=await e.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts WHERE request_limits.until_ts<?").bind(leaseKey,t+240,t).run();
+ if(lease.meta?.changes!==1)return;
+ try{
+  const optedIn=await e.DB.prepare("SELECT 1 AS opted_in FROM push_devices d JOIN push_threshold_preferences p ON p.device_id=d.id WHERE d.enabled=1 AND json_valid(p.prefs_json)=1 AND json_extract(p.prefs_json,'$.channels.push')=1 AND (json_extract(p.prefs_json,'$.metrics.waterObserved.enabled')=1 OR json_extract(p.prefs_json,'$.metrics.waterForecast.enabled')=1 OR json_extract(p.prefs_json,'$.metrics.wind.enabled')=1 OR json_extract(p.prefs_json,'$.metrics.gust.enabled')=1 OR json_extract(p.prefs_json,'$.metrics.tempHigh.enabled')=1 OR json_extract(p.prefs_json,'$.metrics.tempLow.enabled')=1) LIMIT 1").first();
+  if(!optedIn)return {devicesScanned:0,attempted:0,sent:0,expired:0,failed:0};
+  const result=await evaluatePushThresholds(e,await loadMeasurements(),t);
+  if(result.sent||result.expired||result.failed)console.log("App threshold push check",JSON.stringify(result));
+  return result;
+ }finally{
+  await e.DB.prepare("UPDATE request_limits SET until_ts=? WHERE ip_hash=? AND until_ts=?").bind(stamp()-1,leaseKey,t+240).run();
+ }
+}
 export default{
   async fetch(req,env){
     const path=new URL(req.url).pathname;
@@ -657,8 +667,10 @@ export default{
   },
   async scheduled(_event,env,ctx){
     // Push processing fails independently; it must never prevent the existing email checker.
+    const loadMeasurements=createThresholdMeasurementLoader();
     ctx.waitUntil(Promise.allSettled([
-      liveEmailChecks(env),
+      runLiveEmailChecks(env,loadMeasurements),
+      livePushThresholdChecks(env,loadMeasurements).catch(error=>{console.error("App threshold push check failed",String(error?.message||error).slice(0,160));}),
       env.PUSH_EVENTS_ENABLED==='true'?processCoastalPushEvents(env).catch(error=>{console.error('Web Push event check failed',String(error));}):Promise.resolve(),
     ]));
   }

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-14T18:13:31Z",
+  "generated_at": "2026-10-14T18:47:51Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -213249,7 +213249,7 @@
       }
     },
     {
-      "snapshot_at": "2026-10-14T18:13:31Z",
+      "snapshot_at": "2026-10-14T18:47:51Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -213267,33 +213267,26 @@
           "forecast": null,
           "predictions": null
         },
-        "latest_observed_ft": 10.37,
-        "latest_observed_at": "2026-10-14T18:06:00Z",
-        "observed_24h_max_ft": 10.67,
-        "observed_24h_max_time": "2026-10-13T18:18:00Z",
-        "residual_current_ft": 0.7,
-        "residual_current_at": "2026-10-14T18:06:00Z",
+        "latest_observed_ft": 10.22,
+        "latest_observed_at": "2026-10-14T18:42:00Z",
+        "observed_24h_max_ft": 10.37,
+        "observed_24h_max_time": "2026-10-14T18:06:00Z",
+        "residual_current_ft": 0.76,
+        "residual_current_at": "2026-10-14T18:42:00Z",
         "residual_24h_max_ft": 1.33,
         "residual_24h_max_time": "2026-10-13T19:30:00Z",
-        "forecast_peak_24h_ft": 10.7,
-        "forecast_peak_24h_time": "2026-10-14T18:06:00Z",
-        "forecast_peak_72h_ft": 10.7,
-        "forecast_peak_72h_time": "2026-10-14T18:06:00Z",
-        "astronomical_tide_at_peak_ft": 9.67,
+        "forecast_peak_24h_ft": 10.49,
+        "forecast_peak_24h_time": "2026-10-14T18:42:00Z",
+        "forecast_peak_72h_ft": 10.49,
+        "forecast_peak_72h_time": "2026-10-14T18:42:00Z",
+        "astronomical_tide_at_peak_ft": 9.46,
         "model_uplift_ft": 1.03,
         "threshold_margins_ft": {
-          "minor": 1.3,
-          "moderate": 2.3,
-          "major": 3.3
+          "minor": 1.51,
+          "moderate": 2.51,
+          "major": 3.51
         },
         "high_tides": [
-          {
-            "time": "2026-10-14T18:03:00Z",
-            "astronomical_ft": 9.67,
-            "modeled_total_ft": 10.7,
-            "modeled_time": "2026-10-14T18:06:00Z",
-            "modeled_uplift_ft": 1.03
-          },
           {
             "time": "2026-10-15T06:44:00Z",
             "astronomical_ft": 8.5,
@@ -213346,7 +213339,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-10-14T18:13:31.106641Z",
+        "generated_at": "2026-10-14T18:47:51.823914Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -213374,7 +213367,37 @@
           },
           "event_identity": null,
           "active_hazards": [],
-          "official_alerts": [],
+          "official_alerts": [
+            {
+              "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+              "event": "Small Craft Advisory",
+              "severity": "Minor",
+              "certainty": "Likely",
+              "urgency": "Expected",
+              "sent": "2026-10-14T14:29:00-04:00",
+              "effective": "2026-10-14T14:29:00-04:00",
+              "onset": "2026-10-15T03:00:00-04:00",
+              "expires": "2026-10-15T04:30:00-04:00",
+              "ends": "2026-10-15T10:00:00-04:00",
+              "headline": "Small Craft Advisory issued October 14 at 2:29PM EDT until October 15 at 10:00AM EDT by NWS Gray ME",
+              "area": "Penobscot Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+              "message_type": "Alert",
+              "references": []
+            },
+            {
+              "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+              "event": "Small Craft Advisory",
+              "severity": "Minor",
+              "urgency": "Expected",
+              "certainty": "Likely",
+              "headline": "Small Craft Advisory issued October 14 at 2:29PM EDT until October 15 at 10:00AM EDT by NWS Gray ME",
+              "onset": "2026-10-15T03:00:00-04:00",
+              "ends": "2026-10-15T10:00:00-04:00",
+              "expires": "2026-10-15T04:30:00-04:00",
+              "area": "Penobscot Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+              "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1"
+            }
+          ],
           "recent_impacts": [
             {
               "code": "residual",
@@ -213396,7 +213419,7 @@
           "reasons": [],
           "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
           "event_timing": {
-            "peak_at": "2026-10-14T18:06:00Z",
+            "peak_at": "2026-10-14T18:42:00Z",
             "window_start": null,
             "window_end": null,
             "hours_until_peak": -0.1,
@@ -213411,42 +213434,6 @@
               "label": "Routine"
             },
             "windows": [
-              {
-                "high_tide_at": "2026-10-14T18:03:00Z",
-                "window_start": "2026-10-14T16:33:00Z",
-                "window_end": "2026-10-14T19:33:00Z",
-                "astronomical_ft": 9.67,
-                "modeled_total_ft": 10.7,
-                "modeled_time": "2026-10-14T18:06:00Z",
-                "modeled_uplift_ft": 1.03,
-                "forecast_wind_mph": 10.0,
-                "forecast_wind_direction": "W",
-                "onshore_component_mph": 0.0,
-                "surf_context_ft": null,
-                "impact": {
-                  "score": 0,
-                  "rank": 0,
-                  "level": "green",
-                  "label": "Routine"
-                },
-                "drivers": [
-                  {
-                    "label": "NOAA forecast water level",
-                    "value": "10.70 ft MLLW",
-                    "source": "NOAA OFS"
-                  },
-                  {
-                    "label": "Predicted high tide",
-                    "value": "9.67 ft MLLW",
-                    "source": "NOAA CO-OPS tide prediction"
-                  },
-                  {
-                    "label": "Wind pushing toward shore",
-                    "value": "0 mph",
-                    "source": "Calculated from NWS hourly wind direction and speed"
-                  }
-                ]
-              },
               {
                 "high_tide_at": "2026-10-15T06:44:00Z",
                 "window_start": "2026-10-15T05:14:00Z",
@@ -213629,15 +213616,15 @@
               }
             ],
             "peak_window": {
-              "high_tide_at": "2026-10-14T18:03:00Z",
-              "window_start": "2026-10-14T16:33:00Z",
-              "window_end": "2026-10-14T19:33:00Z",
-              "astronomical_ft": 9.67,
-              "modeled_total_ft": 10.7,
-              "modeled_time": "2026-10-14T18:06:00Z",
-              "modeled_uplift_ft": 1.03,
+              "high_tide_at": "2026-10-15T06:44:00Z",
+              "window_start": "2026-10-15T05:14:00Z",
+              "window_end": "2026-10-15T08:14:00Z",
+              "astronomical_ft": 8.5,
+              "modeled_total_ft": 8.56,
+              "modeled_time": "2026-10-15T06:36:00Z",
+              "modeled_uplift_ft": 0.07,
               "forecast_wind_mph": 10.0,
-              "forecast_wind_direction": "W",
+              "forecast_wind_direction": "NW",
               "onshore_component_mph": 0.0,
               "surf_context_ft": null,
               "impact": {
@@ -213649,12 +213636,12 @@
               "drivers": [
                 {
                   "label": "NOAA forecast water level",
-                  "value": "10.70 ft MLLW",
+                  "value": "8.56 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
                   "label": "Predicted high tide",
-                  "value": "9.67 ft MLLW",
+                  "value": "8.50 ft MLLW",
                   "source": "NOAA CO-OPS tide prediction"
                 },
                 {
@@ -213664,7 +213651,7 @@
                 }
               ]
             },
-            "hours_until_peak": -0.2,
+            "hours_until_peak": 11.9,
             "data_coverage": {
               "available": 4,
               "assessed": 5,
@@ -213717,12 +213704,12 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "10.70 ft MLLW",
+                "value": "8.56 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
                 "label": "Predicted high tide",
-                "value": "9.67 ft MLLW",
+                "value": "8.50 ft MLLW",
                 "source": "NOAA CO-OPS tide prediction"
               },
               {
@@ -213732,12 +213719,12 @@
               },
               {
                 "label": "Latest offshore wave observation",
-                "value": "4.6 ft at 7.0 sec dominant period",
+                "value": "3.6 ft at 7.0 sec dominant period",
                 "source": "NDBC 44007"
               },
               {
                 "label": "Wave energy estimate",
-                "value": "6.7 kW/m estimate",
+                "value": "4.1 kW/m estimate",
                 "source": "Estimated from NDBC wave height and dominant period"
               },
               {
@@ -213747,10 +213734,10 @@
               }
             ],
             "wave_context": {
-              "height_ft": 4.6,
+              "height_ft": 3.6,
               "dominant_period_sec": 7.0,
-              "direction_deg": 96.0,
-              "power_proxy_kw_m": 6.7
+              "direction_deg": 104.0,
+              "power_proxy_kw_m": 4.1
             },
             "onshore_reference": {
               "shore_normal_from_deg": 120.0,
@@ -213759,7 +213746,21 @@
           }
         },
         "alerts": [],
-        "marine_alerts": [],
+        "marine_alerts": [
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+            "event": "Small Craft Advisory",
+            "severity": "Minor",
+            "urgency": "Expected",
+            "certainty": "Likely",
+            "headline": "Small Craft Advisory issued October 14 at 2:29PM EDT until October 15 at 10:00AM EDT by NWS Gray ME",
+            "onset": "2026-10-15T03:00:00-04:00",
+            "ends": "2026-10-15T10:00:00-04:00",
+            "expires": "2026-10-15T04:30:00-04:00",
+            "area": "Penobscot Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+            "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1"
+          }
+        ],
         "surf": {
           "available": true,
           "zone": "Coastal York",
@@ -214721,20 +214722,20 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-10-14T17:40:00Z",
-            "speed_mph": 6.7,
-            "gust_mph": 8.9,
-            "direction_deg": 190,
-            "wave_height_ft": 4.6,
+            "observed_at": "2026-10-14T18:20:00Z",
+            "speed_mph": 4.5,
+            "gust_mph": 6.7,
+            "direction_deg": 180,
+            "wave_height_ft": 3.6,
             "wave_height_supported": true,
             "dominant_period_sec": 7.0,
-            "average_period_sec": 6.1,
-            "wave_direction_deg": 96,
-            "pressure_mb": 1006.6,
+            "average_period_sec": 5.9,
+            "wave_direction_deg": 104,
+            "pressure_mb": 1006.4,
             "pressure_tendency_mb": null,
             "water_temp_f": 56.1,
             "air_temp_f": 53.8,
-            "wave_observed_at": "2026-10-14T17:20:00Z",
+            "wave_observed_at": "2026-10-14T18:20:00Z",
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 22.4,
             "max_24h_speed_at": "2026-10-13T19:00:00Z",
@@ -214744,10 +214745,10 @@
             "max_24h_wave_at": "2026-10-14T03:50:00Z"
           },
           "WEXM1": {
-            "observed_at": "2026-10-14T17:00:00Z",
-            "speed_mph": 3.4,
+            "observed_at": "2026-10-14T18:00:00Z",
+            "speed_mph": 0.0,
             "gust_mph": null,
-            "direction_deg": 100,
+            "direction_deg": null,
             "wave_height_ft": null,
             "wave_height_supported": true,
             "dominant_period_sec": null,
@@ -214756,7 +214757,7 @@
             "pressure_mb": null,
             "pressure_tendency_mb": null,
             "water_temp_f": null,
-            "air_temp_f": 59.2,
+            "air_temp_f": 61.2,
             "wave_observed_at": null,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
             "max_24h_speed_mph": 8.1,
@@ -214768,7 +214769,24 @@
           }
         }
       },
-      "alerts": [],
+      "alerts": [
+        {
+          "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+          "event": "Small Craft Advisory",
+          "severity": "Minor",
+          "certainty": "Likely",
+          "urgency": "Expected",
+          "sent": "2026-10-14T14:29:00-04:00",
+          "effective": "2026-10-14T14:29:00-04:00",
+          "onset": "2026-10-15T03:00:00-04:00",
+          "expires": "2026-10-15T04:30:00-04:00",
+          "ends": "2026-10-15T10:00:00-04:00",
+          "headline": "Small Craft Advisory issued October 14 at 2:29PM EDT until October 15 at 10:00AM EDT by NWS Gray ME",
+          "area": "Penobscot Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+          "message_type": "Alert",
+          "references": []
+        }
+      ],
       "event_state": {
         "phase": "Recent",
         "show_focus": false,
@@ -214785,7 +214803,37 @@
         },
         "event_identity": null,
         "active_hazards": [],
-        "official_alerts": [],
+        "official_alerts": [
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+            "event": "Small Craft Advisory",
+            "severity": "Minor",
+            "certainty": "Likely",
+            "urgency": "Expected",
+            "sent": "2026-10-14T14:29:00-04:00",
+            "effective": "2026-10-14T14:29:00-04:00",
+            "onset": "2026-10-15T03:00:00-04:00",
+            "expires": "2026-10-15T04:30:00-04:00",
+            "ends": "2026-10-15T10:00:00-04:00",
+            "headline": "Small Craft Advisory issued October 14 at 2:29PM EDT until October 15 at 10:00AM EDT by NWS Gray ME",
+            "area": "Penobscot Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+            "message_type": "Alert",
+            "references": []
+          },
+          {
+            "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+            "event": "Small Craft Advisory",
+            "severity": "Minor",
+            "urgency": "Expected",
+            "certainty": "Likely",
+            "headline": "Small Craft Advisory issued October 14 at 2:29PM EDT until October 15 at 10:00AM EDT by NWS Gray ME",
+            "onset": "2026-10-15T03:00:00-04:00",
+            "ends": "2026-10-15T10:00:00-04:00",
+            "expires": "2026-10-15T04:30:00-04:00",
+            "area": "Penobscot Bay; Coastal Waters from Cape Elizabeth, ME to Merrimack River, MA out 25 NM",
+            "url": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1"
+          }
+        ],
         "recent_impacts": [
           {
             "code": "residual",
@@ -214807,7 +214855,7 @@
         "reasons": [],
         "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
         "event_timing": {
-          "peak_at": "2026-10-14T18:06:00Z",
+          "peak_at": "2026-10-14T18:42:00Z",
           "window_start": null,
           "window_end": null,
           "hours_until_peak": -0.1,
@@ -214822,42 +214870,6 @@
             "label": "Routine"
           },
           "windows": [
-            {
-              "high_tide_at": "2026-10-14T18:03:00Z",
-              "window_start": "2026-10-14T16:33:00Z",
-              "window_end": "2026-10-14T19:33:00Z",
-              "astronomical_ft": 9.67,
-              "modeled_total_ft": 10.7,
-              "modeled_time": "2026-10-14T18:06:00Z",
-              "modeled_uplift_ft": 1.03,
-              "forecast_wind_mph": 10.0,
-              "forecast_wind_direction": "W",
-              "onshore_component_mph": 0.0,
-              "surf_context_ft": null,
-              "impact": {
-                "score": 0,
-                "rank": 0,
-                "level": "green",
-                "label": "Routine"
-              },
-              "drivers": [
-                {
-                  "label": "NOAA forecast water level",
-                  "value": "10.70 ft MLLW",
-                  "source": "NOAA OFS"
-                },
-                {
-                  "label": "Predicted high tide",
-                  "value": "9.67 ft MLLW",
-                  "source": "NOAA CO-OPS tide prediction"
-                },
-                {
-                  "label": "Wind pushing toward shore",
-                  "value": "0 mph",
-                  "source": "Calculated from NWS hourly wind direction and speed"
-                }
-              ]
-            },
             {
               "high_tide_at": "2026-10-15T06:44:00Z",
               "window_start": "2026-10-15T05:14:00Z",
@@ -215040,15 +215052,15 @@
             }
           ],
           "peak_window": {
-            "high_tide_at": "2026-10-14T18:03:00Z",
-            "window_start": "2026-10-14T16:33:00Z",
-            "window_end": "2026-10-14T19:33:00Z",
-            "astronomical_ft": 9.67,
-            "modeled_total_ft": 10.7,
-            "modeled_time": "2026-10-14T18:06:00Z",
-            "modeled_uplift_ft": 1.03,
+            "high_tide_at": "2026-10-15T06:44:00Z",
+            "window_start": "2026-10-15T05:14:00Z",
+            "window_end": "2026-10-15T08:14:00Z",
+            "astronomical_ft": 8.5,
+            "modeled_total_ft": 8.56,
+            "modeled_time": "2026-10-15T06:36:00Z",
+            "modeled_uplift_ft": 0.07,
             "forecast_wind_mph": 10.0,
-            "forecast_wind_direction": "W",
+            "forecast_wind_direction": "NW",
             "onshore_component_mph": 0.0,
             "surf_context_ft": null,
             "impact": {
@@ -215060,12 +215072,12 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "10.70 ft MLLW",
+                "value": "8.56 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
                 "label": "Predicted high tide",
-                "value": "9.67 ft MLLW",
+                "value": "8.50 ft MLLW",
                 "source": "NOAA CO-OPS tide prediction"
               },
               {
@@ -215075,7 +215087,7 @@
               }
             ]
           },
-          "hours_until_peak": -0.2,
+          "hours_until_peak": 11.9,
           "data_coverage": {
             "available": 4,
             "assessed": 5,
@@ -215128,12 +215140,12 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "10.70 ft MLLW",
+              "value": "8.56 ft MLLW",
               "source": "NOAA OFS"
             },
             {
               "label": "Predicted high tide",
-              "value": "9.67 ft MLLW",
+              "value": "8.50 ft MLLW",
               "source": "NOAA CO-OPS tide prediction"
             },
             {
@@ -215143,12 +215155,12 @@
             },
             {
               "label": "Latest offshore wave observation",
-              "value": "4.6 ft at 7.0 sec dominant period",
+              "value": "3.6 ft at 7.0 sec dominant period",
               "source": "NDBC 44007"
             },
             {
               "label": "Wave energy estimate",
-              "value": "6.7 kW/m estimate",
+              "value": "4.1 kW/m estimate",
               "source": "Estimated from NDBC wave height and dominant period"
             },
             {
@@ -215158,10 +215170,10 @@
             }
           ],
           "wave_context": {
-            "height_ft": 4.6,
+            "height_ft": 3.6,
             "dominant_period_sec": 7.0,
-            "direction_deg": 96.0,
-            "power_proxy_kw_m": 6.7
+            "direction_deg": 104.0,
+            "power_proxy_kw_m": 4.1
           },
           "onshore_reference": {
             "shore_normal_from_deg": 120.0,
@@ -215541,6 +215553,14 @@
       "event": "Small Craft Advisory",
       "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.e9d92fc2c69a468b56b4c5192f851627852cdade.002.1",
       "at": "2026-10-14T14:00:00Z",
+      "source": "NWS snapshot comparison",
+      "source_type": "official_alert"
+    },
+    {
+      "change_type": "issued",
+      "event": "Small Craft Advisory",
+      "alert_id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.d8be14ad73dedac6c7a0e473f503f4bf24b765a8.003.1",
+      "at": "2026-10-14T14:29:00-04:00",
       "source": "NWS snapshot comparison",
       "source_type": "official_alert"
     }
@@ -216511,6 +216531,29 @@
       "anecdotal": false
     }
   ],
+  "source_health": {
+    "checked_at": "2026-10-14T18:47:51Z",
+    "feeds": [
+      {
+        "name": "Local news search",
+        "status": "available",
+        "item_count": 40,
+        "message": "Feed responded with matching items."
+      },
+      {
+        "name": "Public community search",
+        "status": "available",
+        "item_count": 0,
+        "message": "Feed responded; no matching items were found."
+      },
+      {
+        "name": "Public Facebook posts",
+        "status": "not_checked",
+        "item_count": 0,
+        "message": "Reliable public indexing is not available; this source is not treated as comprehensive."
+      }
+    ]
+  },
   "backfill": {
     "period_start": "2026-09-20T13:05:43Z",
     "period_end": "2026-09-27T13:05:43Z",

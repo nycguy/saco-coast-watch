@@ -46,6 +46,15 @@ test('push config is denied to unrelated origins', async () => {
   assert.equal(response.status, 403);
 });
 
+test('device-owned notification history is returned through the Worker CORS route',async()=>{
+  const deviceId='11111111-1111-4111-8111-111111111111';
+  const DB={prepare(sql){return{bind(){return this;},async first(){return{id:deviceId};},async all(){return{results:[{payload_json:JSON.stringify({application:'SacoCast',kind:'start',title:'Coastal Event',body:'Update'}),status:'sent',created_at:100,sent_at:101}]};}};}};
+  const request=new Request(`https://alerts.example.test/push/devices/history?deviceId=${deviceId}`,{headers:{Origin:origin,Authorization:'Bearer '+'a'.repeat(64)}});
+  const response=await worker.fetch(request,{...env,DB,PUSH_API_ENABLED:'true',ALLOWED_ORIGIN:origin,TOKEN_SECRET:'t'.repeat(40)});
+  assert.equal(response.status,200);assert.equal(response.headers.get('Access-Control-Allow-Origin'),origin);
+  const result=await response.json();assert.equal(result.items[0].title,'Coastal Event');assert.equal(result.items[0].status,'delivered');
+});
+
 test('10-minute scheduled Worker evaluates an opted-in App threshold with one shared source pass', async () => {
   const now = Date.now(), iso = new Date(now).toISOString(), date = iso.slice(2, 10).replaceAll('-', ' '), clock = iso.slice(11, 16).replace(':', ' ');
   const pair = await webcrypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);

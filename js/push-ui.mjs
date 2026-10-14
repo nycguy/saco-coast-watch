@@ -1,8 +1,8 @@
 import {
-  pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, sendCoastalTestNotification,
+  pushCapability, readPushCredential, getCoastalPushConfiguration, enrollCoastalNotifications, getCoastalNotificationPreferences, getCoastalNotificationHistory, sendCoastalTestNotification,
   updateCoastalNotificationPreferences, disableCoastalNotifications, getCoastalThresholdPreferences,
   saveCoastalThresholdPreferences, requestCoastalThresholdEmail,
-} from './push-subscriptions.mjs?v=20261013-7';
+} from './push-subscriptions.mjs?v=20261014-8';
 
 const byId = id => document.getElementById(id);
 const alertsButton = byId('alertsButton');
@@ -16,6 +16,10 @@ const settings = byId('pushSettings');
 const emailOnlyEntry = byId('emailOnlyEntry');
 const emailOnlyLink = byId('emailOnlyLink');
 const sendTest = byId('pushTest');
+const notificationHistory = byId('notificationHistory');
+const notificationHistoryStatus = byId('notificationHistoryStatus');
+const notificationHistoryList = byId('notificationHistoryList');
+const notificationHistoryRefresh = byId('notificationHistoryRefresh');
 const disable = byId('pushDisable');
 const preferences = byId('pushPreferences');
 const thresholdPreferences = byId('thresholdPreferences');
@@ -61,16 +65,37 @@ function showEnrolled() {
   enable.hidden = true;
   settings.hidden = false;
   emailOnlyEntry.hidden = false;
+  notificationHistory.hidden = false;
   setPrefs(getPrefs());
   updateAlertsEntryState();
+  void loadNotificationHistory();
 }
 function showNotEnrolled() {
   panel.classList.remove('enrolled');
   settings.hidden = true;
   enable.hidden = false;
   emailOnlyEntry.hidden = false;
+  notificationHistory.hidden = true;
   sendTest.disabled = false;
   updateAlertsEntryState();
+}
+
+function historyTime(seconds) {
+  const value=Number(seconds);if(!Number.isFinite(value)||value<=0)return 'Time unavailable';
+  return new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value*1000))+' ET';
+}
+async function loadNotificationHistory() {
+  if(!readPushCredential())return;
+  notificationHistoryRefresh.disabled=true;notificationHistoryStatus.textContent='Loading recent notifications…';notificationHistoryList.replaceChildren();
+  try {
+    const result=await getCoastalNotificationHistory();const items=Array.isArray(result.items)?result.items:[];
+    for(const item of items){
+      const row=document.createElement('li'),head=document.createElement('div'),title=document.createElement('strong'),state=document.createElement('span'),body=document.createElement('p'),time=document.createElement('time');
+      title.textContent=item.title||'Coastal event update';state.textContent=item.status==='delivered'?'Sent':'Not delivered';state.className=item.status==='delivered'?'history-delivered':'history-failed';head.append(title,state);body.textContent=item.body||'';time.textContent=historyTime(item.sentAt||item.createdAt);row.append(head,body,time);notificationHistoryList.append(row);
+    }
+    notificationHistoryStatus.textContent=items.length?`${items.length} recent coastal-event notification${items.length===1?'':'s'} shown.`:'No coastal-event app notifications were sent to this device in the past 30 days.';
+  } catch (_) { notificationHistoryStatus.textContent='Recent app notifications could not be loaded. Try again later.'; }
+  finally {notificationHistoryRefresh.disabled=false;}
 }
 
 
@@ -266,6 +291,7 @@ alertsDialog.addEventListener('click', event => {
     else alertsDialog.removeAttribute('open');
   }
 });
+notificationHistoryRefresh.addEventListener('click',loadNotificationHistory);
 
 disable.addEventListener('click', async () => {
   disable.disabled = true;

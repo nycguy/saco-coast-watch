@@ -55,6 +55,11 @@
     <div class="email-only-entry" id="emailOnlyEntry"><span>Email notifications are managed separately.</span><a class="btn" id="emailOnlyLink" href="https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts" target="_blank" rel="noopener noreferrer">Email Alerts (Create or Manage) ↗</a></div>
    </div>
   </section>
+  <section class="notification-history" id="notificationHistory" hidden aria-labelledby="notificationHistoryHeading">
+   <div class="notification-history-head"><div><h3 id="notificationHistoryHeading">Recent Coastal Event App Notifications</h3><p>Up to 30 days of event notifications sent to this device. Custom-threshold and email delivery history is not available here.</p></div><button class="btn" id="notificationHistoryRefresh" type="button">Refresh</button></div>
+   <p class="push-status" id="notificationHistoryStatus" role="status" aria-live="polite">Loading recent notifications…</p>
+   <ol id="notificationHistoryList" class="notification-history-list"></ol>
+  </section>
  </div>
 </dialog>
 <main class="shell">
@@ -300,5 +305,5 @@
 <script src="js/webcams.js"></script>
 
 
-<script type="module" src="js/push-ui.mjs?v=20261014-2"></script>
+<script type="module" src="js/push-ui.mjs?v=20261014-3"></script>
 </body></html>

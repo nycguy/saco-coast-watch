@@ -35,6 +35,7 @@ def worker_mock(calls, state=None):
     if state is None:
         state = {}
     state.setdefault('eventPreferences', {'starts': True, 'ends': True, 'changes': True})
+    state.setdefault('history', [{'kind':'start','title':'Coastal Flood Advisory','body':'Official event update','status':'delivered','createdAt':100,'sentAt':110}])
     state.setdefault('threshold', {
         "preferences":{"metrics":{
             "waterObserved":{"enabled":False,"threshold":12},
@@ -81,6 +82,9 @@ def worker_mock(calls, state=None):
         if '/push/devices/preferences?' in request.url and request.method == 'GET':
             route.fulfill(status=200, headers={**cors,'content-type':'application/json'},
                           body=json.dumps({"preferences":state['eventPreferences']}))
+            return
+        if '/push/devices/history?' in request.url and request.method == 'GET':
+            route.fulfill(status=200, headers={**cors,'content-type':'application/json'},body=json.dumps({'items':state['history'],'retentionDays':30}))
             return
         if request.url.endswith('/push/devices/preferences') and request.method == 'PUT':
             state['eventPreferences']=json.loads(request.post_data or '{}').get('preferences',{})
@@ -192,6 +196,10 @@ def run_mocked(browser):
     assert page.locator('#alertsButton').inner_text() == 'Manage Alerts'
     assert page.locator('#pushEnable').is_hidden()
     page.locator('#pushSettings').wait_for(state='visible', timeout=5000)
+    page.locator('#notificationHistory').wait_for(state='visible',timeout=5000)
+    page.get_by_text('Coastal Flood Advisory').wait_for(timeout=5000)
+    assert page.get_by_text('Sent',exact=True).is_visible()
+    assert 'Custom-threshold and email delivery history is not available here.' in page.locator('#notificationHistory').inner_text()
     assert page.locator('#emailOnlyEntry').is_visible()
     assert page.locator('#emailOnlyLink').inner_text() == 'Email Alerts (Create or Manage) ↗'
     assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
@@ -237,6 +245,7 @@ def run_mocked(browser):
     page.locator('#pushDisable').click()
     page.get_by_text('App notifications are off on this device.').wait_for(timeout=10000)
     assert page.locator('#pushSettings').is_hidden()
+    assert page.locator('#notificationHistory').is_hidden()
     assert page.locator('#pushEnable').is_visible()
     assert page.locator('#emailOnlyEntry').is_visible()
     assert page.locator('#alertsButton').inner_text() == 'Create Alerts'
@@ -377,6 +386,12 @@ def run_mocked(browser):
     assert active.locator('#pushEnable').is_hidden()
     assert active.locator('#pushSettings').is_visible()
     assert active.locator('#emailOnlyEntry').is_visible()
+    active.locator('#notificationHistory').wait_for(state='visible',timeout=5000)
+    active.get_by_text('Coastal Flood Advisory').wait_for(timeout=5000)
+    history_box=active.locator('#notificationHistory').bounding_box()
+    active_dialog=active.locator('#alertsDialog').bounding_box()
+    assert history_box and active_dialog and history_box['x']>=active_dialog['x'] and history_box['x']+history_box['width']<=active_dialog['x']+active_dialog['width']
+    assert active.evaluate('document.documentElement.scrollWidth-window.innerWidth')<=3
     active.close()
 
     stale=browser.new_page(viewport={'width':390,'height':844})

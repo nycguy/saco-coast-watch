@@ -70,6 +70,23 @@ export async function handlePushApi(req, env) {
     const result = await getDeviceThresholdPreferences(env.DB, deviceId, await hashDeviceToken(token));
     return result ? reply(result) : reply({ error: 'Not found' }, 404);
   }
+  if (path === '/push/devices/history' && req.method === 'GET') {
+    const deviceId = new URL(req.url).searchParams.get('deviceId');
+    const token = parseDeviceAuthorization(req.headers.get('Authorization'));
+    if (!validDeviceId(deviceId) || !token) return reply({ error: 'Unauthorized' }, 401);
+    const owner = await env.DB.prepare('SELECT id FROM push_devices WHERE id=? AND token_hash=? AND enabled=1').bind(deviceId, await hashDeviceToken(token)).first();
+    if (!owner) return reply({ error: 'Not found' }, 404);
+    const result = await env.DB.prepare("SELECT payload_json,status,created_at,sent_at FROM push_delivery_queue WHERE device_id=? AND status IN ('sent','failed') ORDER BY COALESCE(sent_at,created_at) DESC LIMIT 20").bind(deviceId).all();
+    const items=[];
+    for (const row of result.results || []) {
+      try {
+        const payload=JSON.parse(row.payload_json || '{}');
+        if (payload.application !== 'SacoCast' || !['start','end','change'].includes(payload.kind)) continue;
+        items.push({kind:payload.kind,title:String(payload.title || 'Coastal event update').slice(0,120),body:String(payload.body || '').slice(0,360),status:row.status === 'sent' ? 'delivered' : 'not_delivered',createdAt:Number(row.created_at) || null,sentAt:Number(row.sent_at) || null});
+      } catch (_) { /* Ignore an invalid retained payload; do not break history for other rows. */ }
+    }
+    return reply({ items, retentionDays: 30 });
+  }
   if (path === '/push/devices/preferences' && req.method === 'GET') {
     const deviceId = new URL(req.url).searchParams.get('deviceId');
     const token = parseDeviceAuthorization(req.headers.get('Authorization'));

@@ -89,6 +89,10 @@ export async function getCoastalNotificationPreferences({ storage = localStorage
   const result = await api(`/push/devices/preferences?deviceId=${encodeURIComponent(credential.deviceId)}`, { token: credential.token });
   return result.preferences;
 }
+export async function getCoastalNotificationHistory({ storage = localStorage } = {}) {
+  const credential = pushCredentialOrThrow(storage);
+  return api(`/push/devices/history?deviceId=${encodeURIComponent(credential.deviceId)}`, { token: credential.token });
+}
 export async function sendCoastalTestNotification({ storage = localStorage } = {}) {
   const credential = readPushCredential(storage);
   if (!credential) throw new Error('This browser does not have the saved notification control token.');

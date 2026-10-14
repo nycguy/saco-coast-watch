@@ -7,7 +7,7 @@ const now=Date.UTC(2026,9,13,16,0,0);
 class FixedDate extends Date { static now(){return now;} }
 const context={Date:FixedDate,Intl,URL,URLSearchParams,console};
 const source=['js/config.js','js/data.js','js/water-levels.js'].map(path=>readFileSync(new URL('../'+path,import.meta.url),'utf8')).join('\n');
-vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,riskBand,state};',context);
+vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,riskBand,hasNumericValue,state};',context);
 const api=context.api;
 const state=api.state;
 const timestamp=ms=>new Date(ms).toISOString().replace('T',' ').slice(0,19);
@@ -20,6 +20,14 @@ test('NOAA dates reject rollover and malformed timestamps',()=>{
  assert.ok(Number.isNaN(api.toDate('2026-10-13 25:00')));
  assert.ok(Number.isNaN(api.toDate('2026-10-13 16:00Z')));
  assert.equal(api.toDate('2026-10-13 16:00'),now);
+});
+
+test('missing JSON measurements do not become fabricated zero values',()=>{
+ assert.equal(api.hasNumericValue(null),false);
+ assert.equal(api.hasNumericValue(''),false);
+ assert.equal(api.hasNumericValue(undefined),false);
+ assert.equal(api.hasNumericValue(0),true);
+ assert.equal(api.hasNumericValue('0'),true);
 });
 
 test('high-water threshold distance follows Portland Minor Moderate and Major boundaries',()=>{

@@ -122,7 +122,7 @@ function renderThresholdPreferences(result) {
   for (const [id, fallback] of thresholdSpecs) {
     const item = prefs.metrics?.[id] || { enabled: false, threshold: fallback };
     byId(`threshold-${id}-enabled`).checked = item.enabled === true;
-    byId(`threshold-${id}-value`).value = Number.isFinite(Number(item.threshold)) ? item.threshold : fallback;
+    byId(`threshold-${id}-value`).value = item.threshold !== null && item.threshold !== '' && Number.isFinite(Number(item.threshold)) ? item.threshold : fallback;
   }
   thresholdChannelPush.checked = prefs.channels?.push === true;
   thresholdChannelEmail.checked = prefs.channels?.email === true;

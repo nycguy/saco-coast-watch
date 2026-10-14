@@ -71,11 +71,11 @@
     if(!ferryArchiveContext)return;
     const c=frame?.context||{},rows=[
       ['Event',c.event],['Phase',c.phase],['Impact',c.impact],
-      ['Water level',Number.isFinite(Number(c.water_level_ft))?Number(c.water_level_ft).toFixed(2)+' ft MLLW':null],
-      ['Water above predicted tide',Number.isFinite(Number(c.residual_ft))?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
-      ['Waves',Number.isFinite(Number(c.wave_height_ft))?Number(c.wave_height_ft).toFixed(1)+' ft':null],
-      ['Dominant period',Number.isFinite(Number(c.dominant_period_sec))?Number(c.dominant_period_sec).toFixed(1)+' sec':null],
-      ['Gust',Number.isFinite(Number(c.gust_mph))?Math.round(c.gust_mph)+' mph':null]
+      ['Water level',hasNumericValue(c.water_level_ft)?Number(c.water_level_ft).toFixed(2)+' ft MLLW':null],
+      ['Water above predicted tide',hasNumericValue(c.residual_ft)?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
+      ['Waves',hasNumericValue(c.wave_height_ft)?Number(c.wave_height_ft).toFixed(1)+' ft':null],
+      ['Dominant period',hasNumericValue(c.dominant_period_sec)?Number(c.dominant_period_sec).toFixed(1)+' sec':null],
+      ['Gust',hasNumericValue(c.gust_mph)?Math.round(c.gust_mph)+' mph':null]
     ].filter(([,value])=>value);
     ferryArchiveContext.replaceChildren();ferryArchiveContext.hidden=!rows.length;
     for(const [label,value] of rows){const d=document.createElement('div'),span=document.createElement('span'),strong=document.createElement('strong');span.textContent=label;strong.textContent=value;d.append(span,strong);ferryArchiveContext.append(d);}

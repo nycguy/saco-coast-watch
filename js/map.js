@@ -109,10 +109,10 @@
     const cone=Array.isArray(storm.cone)?storm.cone:[],track=Array.isArray(storm.track)?storm.track:[];
     if(cone.length>=3){L.polygon(cone,{color:'#dc3545',weight:1.5,fillColor:'#f28c28',fillOpacity:.12,interactive:false}).addTo(tropical);pts.push(...cone);}
     if(track.length>=2){L.polyline(track,{color:'#dc3545',weight:3,opacity:.9}).addTo(tropical);pts.push(...track);}
-    if(Number.isFinite(Number(storm.latitude))&&Number.isFinite(Number(storm.longitude))){
+    if(hasNumericValue(storm.latitude)&&hasNumericValue(storm.longitude)){
      const icon=L.divIcon({html:'<div class="tropical-center-pin" aria-hidden="true">◎</div>',className:'',iconSize:[28,28],iconAnchor:[14,14]});
      const pop=document.createElement('div');pop.className='map-pop';const strong=document.createElement('strong');strong.textContent=storm.label||storm.name||'Tropical cyclone';pop.append(strong);
-     const p=document.createElement('p');p.textContent=Number.isFinite(Number(storm.min_forecast_track_distance_mi))?'Nearest NHC forecast-track point is about '+Math.round(storm.min_forecast_track_distance_mi)+' miles from Saco Bay.':'NHC track-distance estimate unavailable.';pop.append(p);
+     const p=document.createElement('p');p.textContent=hasNumericValue(storm.min_forecast_track_distance_mi)?'Nearest NHC forecast-track point is about '+Math.round(storm.min_forecast_track_distance_mi)+' miles from Saco Bay.':'NHC track-distance estimate unavailable.';pop.append(p);
      if(/^https:\/\//i.test(storm.forecast_graphics_url||'')){const a=document.createElement('a');a.href=storm.forecast_graphics_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open NHC graphics ↗';pop.append(a);}
      L.marker([Number(storm.latitude),Number(storm.longitude)],{icon,title:storm.label||storm.name||'Tropical cyclone'}).bindPopup(pop).addTo(tropical);pts.push([Number(storm.latitude),Number(storm.longitude)]);
     }

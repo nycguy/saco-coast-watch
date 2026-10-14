@@ -160,13 +160,13 @@ function renderHighWaterWindows(){
       title.textContent=Number.isFinite(startAt)&&Number.isFinite(endAt)?dayTime(startAt)+'–'+dayTime(endAt)+' ET · high tide '+dayTime(tideAt):Number.isFinite(tideAt)?dayTime(tideAt)+' ET':'High-water window';
       const grid=document.createElement('div');grid.className='high-window-grid';
       const impact=w.impact||{},pairs=[
-        ['Coastal impact',impact.label?impact.label+(Number.isFinite(Number(impact.score))?' · '+impact.score+'/100':''):'Routine'],
-        ['Predicted high tide',Number.isFinite(Number(w.astronomical_ft))?Number(w.astronomical_ft).toFixed(2)+' ft MLLW':'Unavailable'],
-        ['NOAA forecast water level',Number.isFinite(Number(w.modeled_total_ft))?Number(w.modeled_total_ft).toFixed(2)+' ft MLLW':'Unavailable'],
+        ['Coastal impact',impact.label?impact.label+(hasNumericValue(impact.score)?' · '+impact.score+'/100':''):'Routine'],
+        ['Predicted high tide',hasNumericValue(w.astronomical_ft)?Number(w.astronomical_ft).toFixed(2)+' ft MLLW':'Unavailable'],
+        ['NOAA forecast water level',hasNumericValue(w.modeled_total_ft)?Number(w.modeled_total_ft).toFixed(2)+' ft MLLW':'Unavailable'],
         ['Distance to next flood threshold',floodThresholdDistance(w.modeled_total_ft)],
-        ['Forecast above predicted tide',Number.isFinite(Number(w.modeled_uplift_ft))?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':'Unavailable'],
-        ['Wind pushing toward shore',Number.isFinite(Number(w.onshore_component_mph))?Math.round(w.onshore_component_mph)+' mph':'Unavailable'],
-        ['NWS surf forecast',Number.isFinite(Number(w.surf_context_ft))?Math.round(w.surf_context_ft)+' ft max':'Unavailable']
+        ['Forecast above predicted tide',hasNumericValue(w.modeled_uplift_ft)?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':'Unavailable'],
+        ['Wind pushing toward shore',hasNumericValue(w.onshore_component_mph)?Math.round(w.onshore_component_mph)+' mph':'Unavailable'],
+        ['NWS surf forecast',hasNumericValue(w.surf_context_ft)?Math.round(w.surf_context_ft)+' ft max':'Unavailable']
       ];
       for(const [label,value] of pairs){const d=document.createElement('div');d.innerHTML='<span></span><strong></strong>';d.querySelector('span').textContent=label;d.querySelector('strong').textContent=value;grid.append(d);}
       const note=document.createElement('p');note.className='intel-note';note.textContent='The coastal-impact rating combines these signals. NWS surf guidance may cover a broader part of the day unless a specific time is given.';
@@ -198,7 +198,7 @@ function renderForecastEvolution(){
     const margin=Number(item.minor_margin_ft);
     row.innerHTML='<span class="evolution-when"></span><strong></strong><span class="evolution-margin"></span>';
     row.querySelector('.evolution-when').textContent=item.label;
-    row.querySelector('strong').textContent=Number.isFinite(Number(item.peak_ft))?Number(item.peak_ft).toFixed(2)+' ft':'--';
+    row.querySelector('strong').textContent=hasNumericValue(item.peak_ft)?Number(item.peak_ft).toFixed(2)+' ft':'--';
     row.querySelector('.evolution-margin').textContent=Number.isFinite(margin)?Math.abs(margin).toFixed(2)+' ft '+(margin>=0?'below Minor':'above Minor'):'';
     root.append(row);
   }

@@ -3,6 +3,18 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/'sc
 P=ROOT/'scripts'/'fetch_briefing.py'; S=importlib.util.spec_from_file_location('fetch_briefing',P); f=importlib.util.module_from_spec(S); S.loader.exec_module(f)
 UTC=dt.timezone.utc
 class BriefingTests(unittest.TestCase):
+ def test_browser_briefing_does_not_duplicate_durable_history_payload(self):
+  now=dt.datetime(2026,9,27,12,tzinfo=UTC)
+  current={'snapshot_at':'2026-09-27T12:00:00Z','water':{'forecast_peak_72h_ft':11.8},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}
+  snapshot={'snapshot_at':'2026-09-27T11:00:00Z','water':{'forecast_peak_72h_ft':11.5},'alerts':[]}
+  hist={'schema_version':2,'generated_at':'2026-09-27T11:00:00Z','snapshots':[snapshot],'alert_events':[],'local_events':[],'backfill':{},'daily_rollups':[]}
+  briefing=f.build_payload(current,hist,now)
+  durable=f.compact_history_payload(current,hist,now)
+  self.assertNotIn('history',briefing)
+  self.assertNotIn('history_compact',briefing)
+  self.assertIn('current_snapshot',briefing)
+  self.assertGreaterEqual(len(durable['snapshots']),1)
+
  def test_fixed_24h_comparison_and_margin(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   old={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'backfill_model_cycle','provenance':{'forecast':'NOAA CO-OPS archived GoMOFS station forecast NetCDF'},'water':{'forecast_peak_72h_ft':11.35,'forecast_peak_72h_time':'2026-09-28T04:00:00Z'},'alerts':[]}

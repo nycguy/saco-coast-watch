@@ -34,9 +34,9 @@ function renderEventFocus(){
    peakNode.textContent=relative+' · '+dayTime(peakAt)+' ET';
   }else peakNode.textContent='Peak timing is unavailable from the current authoritative guidance.';
  }
- const coastal=eventState.coastal_impact||{},confidence=coastal.confidence||{};
- const confidenceNode=$('eventConfidence');
- if(confidenceNode){const missing=(confidence.missing||[]);confidenceNode.textContent=(confidence.label?'Confidence: '+confidence.label:'Confidence unavailable')+(missing.length?' · Missing '+missing.slice(0,2).join(', '):'');}
+ const coastal=eventState.coastal_impact||{},coverage=coastal.data_coverage||{};
+ const coverageNode=$('eventDataCoverage');
+ if(coverageNode){const missing=coverage.missing||[];coverageNode.textContent=Number.isFinite(coverage.available)&&Number.isFinite(coverage.total)?`Data coverage: ${coverage.available} of ${coverage.total} source types available`:'Data coverage unavailable';if(missing.length)coverageNode.textContent+=` · Missing ${missing.slice(0,2).join(', ')}`;}
  const chips=$('hazardModeChips');chips.replaceChildren();
  for(const mode of hazardModeList()){const span=document.createElement('span');span.className='hazard-chip hazard-'+mode.code;span.textContent=mode.label;chips.append(span);}
  const reasonRoot=$('stormModeReasons');reasonRoot.replaceChildren();const reasons=[...(eventState.reasons||[])];

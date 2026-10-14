@@ -619,9 +619,8 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
     peak=max(windows,key=lambda item:(item["impact"]["score"],-(parse_iso(item["high_tide_at"])-now).total_seconds())) if windows else None
     peak_at=parse_iso((peak or {}).get("high_tide_at")); hours_until=round((peak_at-now).total_seconds()/3600,1) if peak_at else None
     checks={"NOAA forecast water level":any(num(item.get("modeled_total_ft")) is not None for item in high_tides),"NOAA tide predictions":bool(high_tides),"NWS surf forecast":surf_ft is not None,"NWS wind forecast":bool(hourly),"NDBC 44007 wave observation":wave_ft is not None}
-    weights={"NOAA forecast water level":0.25,"NOAA tide predictions":0.20,"NWS surf forecast":0.20,"NWS wind forecast":0.20,"NDBC 44007 wave observation":0.15}
-    confidence_score=round(sum(weights[name] for name,ok in checks.items() if ok),2)
-    confidence_label="High" if confidence_score>=0.90 else "Moderate" if confidence_score>=0.60 else "Low"
+    available=[name for name,ok in checks.items() if ok]
+    data_coverage={"available":len(available),"total":len(checks),"available_sources":available,"missing":[name for name,ok in checks.items() if not ok]}
     impact=(peak or {}).get("impact") or _impact_from_score(0)
     drivers=list((peak or {}).get("drivers") or [])
     if wave_ft is not None:
@@ -629,7 +628,7 @@ def coastal_impact_state(hazards,water,buoy,alerts,now):
         drivers.append({"label":"Latest offshore wave observation","value":detail,"source":"NDBC 44007"})
     if wave_power is not None: drivers.append({"label":"Wave energy estimate","value":f"{wave_power:.1f} kW/m estimate","source":"Estimated from NDBC wave height and dominant period"})
     if buoy_onshore is not None: drivers.append({"label":"Latest buoy onshore-wind component","value":f"{buoy_onshore:.0f} mph","source":"Derived from NDBC 44007"})
-    return {"method":"Saco Coast Watch combines official forecasts and observations into this local coastal-impact rating. The rating itself is not an official NOAA/NWS forecast.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"confidence":{"label":confidence_label,"score":confidence_score,"missing":[name for name,ok in checks.items() if not ok]},"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
+    return {"method":"SacoCast combines available official forecasts and observations into a local coastal-impact rating. The rating is not an official NOAA/NWS forecast. Source coverage describes available inputs, not forecast confidence.","impact":impact,"windows":windows,"peak_window":peak,"hours_until_peak":hours_until,"data_coverage":data_coverage,"drivers":drivers[:8],"wave_context":{"height_ft":wave_ft,"dominant_period_sec":wave_period,"direction_deg":num((buoy or {}).get("wave_direction_deg")),"power_proxy_kw_m":wave_power},"onshore_reference":{"shore_normal_from_deg":SACO_ONSHORE_FROM_DEG,"note":"Approximate Saco Bay coastal-exposure proxy using meteorological wind-from direction."}}
 def detect_modes(alerts, winter, wind, rain, cold, tropical, surf=None, marine_alerts=None):
     surf = surf or {}
     marine_alerts = marine_alerts or []

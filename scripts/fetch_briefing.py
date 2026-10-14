@@ -50,12 +50,11 @@ def _recent(events,key,now,hours=24):
         t=hc.parse_iso(e.get(key))
         if t and t>=cutoff: out.append(e)
     return out
-def _legacy_history(snaps):
-    out=[]
-    for s in snaps:
-        w=s.get("water") or {}; p=s.get("provenance") or {}
-        out.append({"generated_at":s.get("snapshot_at"),"model_peak_ft":w.get("forecast_peak_72h_ft"),"model_peak_time":w.get("forecast_peak_72h_time"),"next24_peak_ft":w.get("forecast_peak_24h_ft"),"next24_peak_time":w.get("forecast_peak_24h_time"),"alerts":sorted({a.get("event") for a in s.get("alerts") or [] if a.get("event")}),"source":p.get("forecast") or s.get("snapshot_kind")})
-    return out
+def compact_history_payload(current,hist,now):
+    """Build the durable history asset separately from the browser briefing."""
+    snaps=hc.merge_snapshots(hist.get("snapshots") or [],[current],now,30)
+    merged={**hist,"generated_at":hc.iso(now),"snapshots":snaps}
+    return ch.compact_history(merged,7)
 
 
 def _event_state(snapshot):
@@ -397,8 +396,6 @@ def build_payload(current,hist,now=None):
     local_summary+=" Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent."
 
     backfill=hist.get("backfill") or {}; daily=backfill.get("water_observed_daily_peaks") or []
-    merged_hist={**hist,"generated_at":hc.iso(now),"snapshots":snaps}
-    compact=ch.compact_history(merged_hist,7)
     return {
         "schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
         "past_24h":{"text":past,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"alert_changes":alert_changes,"local_impacts":local24},
@@ -419,15 +416,13 @@ def build_payload(current,hist,now=None):
         "local_pulse":{"summary":local_summary,"updated_at":hist.get("generated_at"),"items":local_items,"errors":[],"facebook_note":"Public Facebook posts are included only when verifiable; coverage is not assumed comprehensive."},
         "alerts":current.get("alerts") or [],
         "current_snapshot":current,
-        "history":_legacy_history(snaps),
-        "history_compact":compact,
         "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts, hourly forecast, forecast grid, marine alerts and Coastal York Surf Zone Forecast","nhc":"National Hurricane Center CurrentStorms and GIS products","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}
     }
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--output",default="data/coastal-briefing.json"); ap.add_argument("--history-output",default="data/coastal-history.json"); ap.add_argument("--history-input"); args=ap.parse_args()
-    now=ch.now_utc(); hist=load_history(args.history_input,now); current=ch.current_snapshot(now); data=build_payload(current,hist,now)
+    now=ch.now_utc(); hist=load_history(args.history_input,now); current=ch.current_snapshot(now); data=build_payload(current,hist,now); compact=compact_history_payload(current,hist,now)
     out=Path(args.output); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps(data,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    hout=Path(args.history_output); hout.parent.mkdir(parents=True,exist_ok=True); hout.write_text(json.dumps(data["history_compact"],indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print(f"Wrote {out} and {hout}: {data['generated_at']} / {len(data['history_compact'].get('snapshots',[]))} recent snapshots")
+    hout=Path(args.history_output); hout.parent.mkdir(parents=True,exist_ok=True); hout.write_text(json.dumps(compact,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print(f"Wrote {out} and {hout}: {data['generated_at']} / {len(compact.get('snapshots',[]))} recent snapshots")
 if __name__=="__main__": main()

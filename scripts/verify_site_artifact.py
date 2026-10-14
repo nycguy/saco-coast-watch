@@ -53,6 +53,16 @@ def verify(root):
     for asset in ('data/wind.json', 'data/coastal-alerts.json', 'data/hazards.json', 'data/coastal-briefing.json', 'data/coastal-history.json', 'data/webcams/webcams.json', 'eastcast/data/snapshot.json'):
         if not (root / asset).is_file():
             missing.append(asset)
+    briefing_path = root / 'data/coastal-briefing.json'
+    if briefing_path.is_file():
+        briefing = json.loads(briefing_path.read_text(encoding='utf-8'))
+        # Durable history is published separately; duplicating it in this browser
+        # payload needlessly penalizes mobile users on every briefing refresh.
+        for key in ('history', 'history_compact'):
+            if key in briefing:
+                missing.append(f'data/coastal-briefing.json -> unexpected duplicated {key}')
+        if briefing_path.stat().st_size > 1_000_000:
+            missing.append('data/coastal-briefing.json -> exceeds 1 MB mobile payload budget')
     if missing:
         raise SystemExit('Missing assembled assets:\n' + '\n'.join(missing))
     print('SacoCast assembled artifact: required files and references present')

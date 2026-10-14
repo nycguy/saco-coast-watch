@@ -77,10 +77,12 @@ flowchart LR
 | Official alerts | NWS active alerts and marine products | Official products and areas; not an inundation map or local application severity rating |
 | Tropical guidance | NHC current storms, advisories, and GIS tracks/cones | Official storm identity and track guidance when supplied by NHC; no inferred classification |
 | Derived event rating | SacoCast hazard and impact logic | An application classification from available official inputs, not an official warning |
-| Historical briefing | Captured snapshots nearest fixed rolling windows | Never based on the visitor's previous visit; unavailable history is not reconstructed |
+| Historical briefing | Captured snapshots nearest fixed rolling windows | Uses consistent 24/72-hour periods, never the visitor's previous visit; unavailable history is not reconstructed |
 | Weather header graphics | Current NWS hourly forecast, fresh measured wind, and official NWS alert labels | Forecast condition, observed wind, and event alert have separate accessible source labels |
 
 Collectors retain source timestamps and provenance, reject malformed or stale inputs where required, and record unavailable source status rather than inventing a value. UI loading and outage states do not convert missing data to zero or an all-clear. Weather header observations older than two hours are not presented as current; wind below 8 mph does not produce a wind graphic. Reduced-motion preferences disable header animation.
+
+The browser briefing payload contains current and derived summary fields only. Durable historical snapshots are served from `data/coastal-history.json`; raw history arrays are not duplicated into `data/coastal-briefing.json`. The Pages artifact validator enforces this separation and a 1 MB briefing payload ceiling for mobile users. The coastal impact panel reports the number and names of available source types. That value measures data coverage only; it is not a forecast probability or skill score.
 
 ## History and freshness
 

@@ -59,7 +59,16 @@ class HazardTests(unittest.TestCase):
   self.assertGreaterEqual(state["coastal_impact"]["impact"]["rank"],1)
   self.assertIn("coastal_impact",[m["code"] for m in state["active_hazards"]])
   self.assertEqual(state["phase"],"Approaching")
-  self.assertEqual(state["coastal_impact"]["confidence"]["label"],"High")
+  coverage=state["coastal_impact"]["data_coverage"]
+  self.assertEqual(coverage["available"],5)
+  self.assertEqual(coverage["total"],5)
+  self.assertNotIn("confidence",state["coastal_impact"])
+ def test_source_coverage_reports_missing_inputs_without_inventing_confidence(self):
+  now=dt.datetime(2026,9,29,12,tzinfo=UTC)
+  state=h.derive_event_state({"surf":{},"hourly_full":[],"alerts":[],"marine_alerts":[],"active_modes":[]},water={"high_tides":[]},marine={"stations":{}},now=now)
+  coverage=state["coastal_impact"]["data_coverage"]
+  self.assertEqual((coverage["available"],coverage["total"]),(0,5))
+  self.assertEqual(len(coverage["missing"]),5)
  def test_compound_model_stays_routine_for_current_benign_case(self):
   now=dt.datetime(2026,9,29,12,tzinfo=UTC)
   hazards={"surf":{"max_surf_height_ft":5},"hourly_full":[{"start":"2026-09-29T16:00:00Z","wind_mph":7,"gust_mph":10,"wind_direction":"W"}],"active_modes":[],"alerts":[],"marine_alerts":[],"winter":{},"rain":{},"wind":{},"cold":{},"tropical":{}}

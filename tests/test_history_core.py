@@ -24,6 +24,15 @@ class HistoryCoreTests(unittest.TestCase):
         rows=[snap("2026-09-26T08:00:00Z",10.0),snap("2026-09-26T12:40:00Z",11.0),snap("2026-09-26T15:00:00Z",12.0)]
         self.assertEqual(h.choose_baseline(rows,target)["water"]["forecast_peak_72h_ft"],11.0)
         self.assertIsNone(h.choose_baseline([snap("2026-09-26T08:00:00Z",10.0)],target,tolerance_hours=3.1))
+    def test_forecast_baseline_skips_a_closer_different_model_product(self):
+        target=dt.datetime(2026,9,26,12,tzinfo=UTC)
+        current={"provenance":{"forecast":"live_noaa_ofs_capture"}}
+        archived=snap("2026-09-26T12:05:00Z",11.0,kind="backfill_model_cycle")
+        archived["provenance"]={"forecast":"NOAA CO-OPS archived GoMOFS station forecast NetCDF"}
+        compatible=snap("2026-09-26T14:30:00Z",11.4)
+        compatible["provenance"]={"forecast":"live_noaa_ofs_capture"}
+        self.assertIs(h.choose_baseline([archived,compatible],target,compatible_with=current),compatible)
+        self.assertIsNone(h.choose_baseline([archived],target,compatible_with=current))
     def test_peak_and_threshold_margin_changes(self):
         old=snap("2026-09-26T12:00:00Z",11.35,"2026-09-28T04:00:00Z")
         cur=snap("2026-09-27T12:00:00Z",11.82,"2026-09-28T04:30:00Z")

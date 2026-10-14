@@ -258,7 +258,7 @@ def _forecast_evolution(snaps,current,now):
     points=[]
     seen=set()
     for hours,label,tolerance in ((24,"24h ago",3.1),(12,"12h ago",2.1),(6,"6h ago",1.6)):
-        row=hc.choose_baseline(rows,now-dt.timedelta(hours=hours),tolerance)
+        row=hc.choose_baseline(rows,now-dt.timedelta(hours=hours),tolerance,compatible_with=current)
         if not row: continue
         at=row.get("snapshot_at") or row.get("generated_at")
         if not at or at in seen: continue
@@ -299,8 +299,8 @@ def build_payload(current,hist,now=None):
     now=now or hc.parse_iso(current.get("snapshot_at")) or ch.now_utc()
     stored=hist.get("snapshots") or []
     snaps=hc.merge_snapshots(stored,[current],now,30)
-    baseline=hc.choose_baseline(snaps,now-dt.timedelta(hours=24),3.1)
-    baseline48=hc.choose_baseline(snaps,now-dt.timedelta(hours=48),3.1)
+    baseline=hc.choose_baseline(snaps,now-dt.timedelta(hours=24),3.1,compatible_with=current)
+    baseline48=hc.choose_baseline(snaps,now-dt.timedelta(hours=48),3.1,compatible_with=current)
     change=hc.compare_forecast(current,baseline); change48=hc.compare_forecast(current,baseline48)
     wind_change=hc.compare_wind(current,baseline)
     w=current.get("water") or {}; peak24=w.get("forecast_peak_24h_ft"); peak72=w.get("forecast_peak_72h_ft")

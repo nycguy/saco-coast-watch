@@ -3,6 +3,20 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/'sc
 P=ROOT/'scripts'/'fetch_briefing.py'; S=importlib.util.spec_from_file_location('fetch_briefing',P); f=importlib.util.module_from_spec(S); S.loader.exec_module(f)
 UTC=dt.timezone.utc
 class BriefingTests(unittest.TestCase):
+ def test_forecast_evolution_uses_only_matching_model_provenance(self):
+  now=dt.datetime(2026,9,27,12,tzinfo=UTC)
+  current={'snapshot_at':'2026-09-27T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.6}}
+  archived={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'backfill_model_cycle','provenance':{'forecast':'NOAA CO-OPS archived GoMOFS station forecast NetCDF'},'water':{'forecast_peak_72h_ft':10.9}}
+  incompatible=f._forecast_evolution([archived],current,now)
+  self.assertEqual([x['label'] for x in incompatible['items']],['Now'])
+  briefing=f.build_payload(current,{'snapshots':[archived],'alert_events':[],'local_events':[],'backfill':{}},now)
+  self.assertIsNone(briefing['forecast_change_24h']['comparison'])
+  self.assertIn('no forecast-change value is being inferred',briefing['forecast_change_24h']['text'])
+  live={'snapshot_at':'2026-09-26T14:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.3}}
+  compatible=f._forecast_evolution([archived,live],current,now)
+  self.assertEqual([x['label'] for x in compatible['items']],['24h ago','Now'])
+  self.assertEqual(compatible['items'][0]['peak_ft'],11.3)
+
  def test_browser_briefing_does_not_duplicate_durable_history_payload(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   current={'snapshot_at':'2026-09-27T12:00:00Z','water':{'forecast_peak_72h_ft':11.8},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}
@@ -17,7 +31,7 @@ class BriefingTests(unittest.TestCase):
 
  def test_fixed_24h_comparison_and_margin(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
-  old={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'backfill_model_cycle','provenance':{'forecast':'NOAA CO-OPS archived GoMOFS station forecast NetCDF'},'water':{'forecast_peak_72h_ft':11.35,'forecast_peak_72h_time':'2026-09-28T04:00:00Z'},'alerts':[]}
+  old={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.35,'forecast_peak_72h_time':'2026-09-28T04:00:00Z'},'alerts':[]}
   cur={'snapshot_at':'2026-09-27T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'observed_24h_max_ft':10.9,'observed_24h_max_time':'2026-09-27T04:00:00Z','forecast_peak_24h_ft':11.5,'forecast_peak_24h_time':'2026-09-28T04:00:00Z','forecast_peak_72h_ft':11.82,'forecast_peak_72h_time':'2026-09-28T16:00:00Z','astronomical_tide_at_peak_ft':10.7,'model_uplift_ft':1.12},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}
   hist={'schema_version':2,'generated_at':'2026-09-27T11:00:00Z','window_basis':'fixed','station':'8418150','thresholds_ft_mllw':{},'snapshots':[old],'daily_rollups':[],'alert_events':[],'local_events':[],'backfill':{'water_observed_daily_peaks':[]},'provenance_notes':{}}
   d=f.build_payload(cur,hist,now); c=d['forecast_change_24h']['comparison']

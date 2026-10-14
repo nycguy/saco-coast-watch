@@ -59,9 +59,16 @@ def merge_snapshots(existing, additions, now=None, detailed_days=30):
     return sorted(rows,key=lambda r:parse_iso(r["snapshot_at"]))
 
 
-def choose_baseline(snapshots, target, tolerance_hours=3.1, require_forecast=True):
+def forecast_product(row):
+    """Return the source identity needed before comparing forecast evolution."""
+    return ((row.get("provenance") or {}).get("forecast") or row.get("source"))
+
+
+def choose_baseline(snapshots, target, tolerance_hours=3.1, require_forecast=True, compatible_with=None):
     candidates=[]
+    product=forecast_product(compatible_with) if compatible_with is not None else None
     for row in snapshots or []:
+        if compatible_with is not None and forecast_product(row)!=product: continue
         t=parse_iso(row.get("snapshot_at") or row.get("generated_at"))
         if not t: continue
         peak=((row.get("water") or {}).get("forecast_peak_72h_ft"))

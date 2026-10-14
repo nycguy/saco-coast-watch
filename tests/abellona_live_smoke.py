@@ -36,9 +36,13 @@ def check(browser, width, height, mobile=False):
         assert result["gateVisible"] and result["fallbackVisible"], result
         status = result["status"].lower()
         assert any(text in status for text in ("blocked", "unavailable", "not allowing this stream", "could not load", "could not start")), result
+    elif result["state"] == "starting":
+        # The in-frame Watch Live control is available during pending startup,
+        # so a user can provide a gesture even if no block event arrives.
+        assert result["gateVisible"] and result["fallbackVisible"], result
+        assert "did not start" not in result["status"].lower(), result
     else:
         assert result["gateVisible"] and not result["fallbackVisible"], result
-        assert "did not start" not in result["status"].lower(), result
     print(f"ABELLONA_LIVE_STATE viewport={width}x{height} mobile={mobile} result={result}", flush=True)
     page.close()
     return result["state"]

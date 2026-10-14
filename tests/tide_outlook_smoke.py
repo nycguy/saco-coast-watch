@@ -148,6 +148,7 @@ def assert_common(page):
     assert page.locator("#tideOutlookMinorGap").inner_text().strip()=="1.29 ft below"
     assert page.locator("#tideTrend .tide-point").count()==14
     assert page.locator("#tideTrend .tide-value").count()==14
+    assert page.locator("#tideTrend .tide-value").first.get_attribute("text-anchor")=="start"
     ofs_points=page.locator("#tideTrend .ofs-trend-point").count()
     assert ofs_points>=3,f"expected NOAA OFS daily peaks for the available ~72h model window, got {ofs_points}"
     assert page.locator("#tideTrend .ofs-trend-value").count()==ofs_points
@@ -376,6 +377,7 @@ def main():
         desktop.on("pageerror",lambda exc: errors.append("desktop pageerror: "+str(exc)))
         install_noaa_fixture(desktop)
         section=assert_common(desktop)
+        assert not desktop.locator(".tide-mobile-hint").is_visible()
         desktop_overflow=desktop.evaluate("document.documentElement.scrollWidth-window.innerWidth")
         assert desktop_overflow<=3,f"desktop horizontal overflow: {desktop_overflow}px"
         section.screenshot(path="tide-outlook-smoke-desktop.png")
@@ -386,6 +388,7 @@ def main():
         mobile.on("pageerror",lambda exc: errors.append("mobile pageerror: "+str(exc)))
         install_noaa_fixture(mobile)
         section=assert_common(mobile)
+        assert mobile.locator(".tide-mobile-hint").is_visible()
         scroll=mobile.locator("#tideTrendScroll").evaluate("el => ({client:el.clientWidth,scroll:el.scrollWidth})")
         assert scroll["scroll"]>scroll["client"],f"mobile trend should use local horizontal scrolling: {scroll}"
         page_overflow=mobile.evaluate("document.documentElement.scrollWidth-window.innerWidth")

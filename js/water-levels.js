@@ -63,8 +63,9 @@ function renderTideTrend(daily){
  for(let i=0;i<daily.length;i++){
    const day=daily[i],xx=x(i),dateLabel=fmt(day.date.getTime()+12*3600000,{month:'short',day:'numeric',timeZone:'UTC'}),mp=modelByKey.get(day.key);
    el('text',{x:xx,y:H-24,'text-anchor':'middle',class:'date-label'},dateLabel);
-   if(day.peak){const yy=y(day.peak.v);el('circle',{cx:xx,cy:yy,r:5,class:'tide-point','data-index':i,'clip-path':'url(#tideTrendClip)'});el('text',{x:xx,y:yy-12,'text-anchor':'middle',class:'tide-value'},fmtN(day.peak.v));}
-   if(mp){const my=y(mp.v),ty=day.peak?y(day.peak.v):null,labelY=ty!==null&&Math.abs(my-ty)<28?my+21:my-12;el('circle',{cx:xx,cy:my,r:5.5,class:'ofs-trend-point','data-index':i,'clip-path':'url(#tideTrendClip)'});el('text',{x:xx,y:labelY,'text-anchor':'middle',class:'ofs-trend-value'},fmtN(mp.v));}
+   const labelX=i===0?xx+17:xx,labelAnchor=i===0?'start':'middle';
+   if(day.peak){const yy=y(day.peak.v);el('circle',{cx:xx,cy:yy,r:5,class:'tide-point','data-index':i,'clip-path':'url(#tideTrendClip)'});el('text',{x:labelX,y:yy-12,'text-anchor':labelAnchor,class:'tide-value'},fmtN(day.peak.v));}
+   if(mp){const my=y(mp.v),ty=day.peak?y(day.peak.v):null,labelY=ty!==null&&Math.abs(my-ty)<28?my+21:my-12;el('circle',{cx:xx,cy:my,r:5.5,class:'ofs-trend-point','data-index':i,'clip-path':'url(#tideTrendClip)'});el('text',{x:labelX,y:labelY,'text-anchor':labelAnchor,class:'ofs-trend-value'},fmtN(mp.v));}
    if(!day.peak&&!mp)continue;
    const hitY=day.peak?y(day.peak.v):y(mp.v),hit=el('circle',{cx:xx,cy:hitY,r:20,class:'tide-hit','data-index':i,tabindex:'0',role:'button','aria-label':describe(day)});
    const activate=e=>{e.preventDefault();selectPoint(i);};hit.addEventListener('click',activate);hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){activate(e);}});

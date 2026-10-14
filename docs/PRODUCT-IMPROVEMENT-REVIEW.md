@@ -12,7 +12,7 @@ Reviewed against `main` at `3b529df8dc84897b08dc5912d5a6dd15b0f2ded4` and the de
 | Enhance | Derived source-availability score shown as “Confidence” | Report available source count and missing source names, without implying predictive confidence | `scripts/fetch_hazards.py`, `js/hazards.js` | Low | Unit and Playwright smoke tests | Implemented |
 | Enhance | Difference from tide used “residual” and “surge signal” in primary UI | Explain observed-minus-predicted tide and its limits | `index.html`, `js/intelligence.js`, `README.md` | Low | Browser text regression and existing water-level tests | Implemented |
 | Add | No artifact-level ceiling for the browser briefing or check for duplicate history arrays | Reject payloads over 1 MB or carrying durable history arrays | `scripts/verify_site_artifact.py`, `tests/test_verify_site_artifact.py` | Low | Deterministic artifact tests | Implemented |
-| Repair | Browser briefing was about 3.9 MB in the reviewed deployed payload, with unused historical arrays | Publish compact summary and retain history in its existing separate asset | `scripts/fetch_briefing.py`, Pages workflow artifact | Low | Build output size check and live asset verification | Pending release |
+| Repair | Browser briefing was about 3.9 MB in the reviewed deployed payload, with unused historical arrays | Publish compact summary and retain history in its existing separate asset | `scripts/fetch_briefing.py`, Pages workflow artifact | Low | Build output size check and live asset verification | Released and live at `e4fb07b` |
 
 ## Risks and limits
 
@@ -20,3 +20,7 @@ Reviewed against `main` at `3b529df8dc84897b08dc5912d5a6dd15b0f2ded4` and the de
 - A 1 MB briefing size limit intentionally fails artifact assembly if future fields cause the summary payload to grow without review.
 - Actual weather coverage and historical comparisons depend on NOAA/NWS/NDBC availability and captured snapshots. SacoCast does not fabricate missing history.
 - The request received for this work ended during the hazard-intelligence requirements, after the heading “Separate four concepts”. This implementation follows all complete requirements delivered before that cutoff and does not guess the missing continuation.
+
+## Release verification
+
+Pages deployment and post-deployment smoke tests passed in [run 38596351430](https://github.com/nycguy/saco-coast-watch/actions/runs/38596351430). The live briefing was 103,843 bytes, down from approximately 3.86 MB in the baseline (about 97% smaller), and retained current summary fields while historical snapshots remained in the separate history asset. Public Ubuntu Playwright checks passed for desktop/mobile coastal map, tide outlook and briefing, EastCast, and alert management.

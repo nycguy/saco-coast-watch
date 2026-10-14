@@ -11,6 +11,17 @@ function briefingDataAvailability(coverage){
  const count=Number.isFinite(coverage.available)?`${coverage.available} of ${coverage.total} coastal-impact inputs have current data`:'Coastal source coverage is incomplete';
  return `${count}${issues.length?'. '+issues.join('; ')+'.':''} This briefing may be incomplete; missing data does not mean conditions are safe.`;
 }
+function briefingCurrentStatus(briefing){
+ const snapshot=briefing?.current_snapshot||{},event=snapshot.event_state||{},coverage=event.coastal_impact?.data_coverage||{};
+ if(!Object.keys(event).length)return 'Current coastal status is unavailable. Check the live observations and official alert links below.';
+ const sourceDetails=[...(coverage.sources||[]),...(coverage.observations||[])],incomplete=sourceDetails.some(item=>item.status!=='available');
+ const hazards=snapshot.hazards||{},alerts=event.official_alerts||[],alertText=hazards.errors?.nws_alerts||hazards.errors?.nws_marine_alerts?'Official NWS alert status is unavailable.':alerts.length?'Active official NWS products: '+[...new Set(alerts.map(item=>item.event).filter(Boolean))].slice(0,3).join(', ')+'.':'No active official NWS alert was returned for this coastal reference point.';
+ let current;
+ if(event.show_focus){const impact=event.impact?.label;current=[event.primary_display||'Coastal hazard',impact?impact+' impact':null,event.phase].filter(Boolean).join(' · ')+'.';}
+ else if(event.phase==='Recent')current=event.summary||'Recent coastal impacts were recorded; current conditions are being checked independently.';
+ else current='Available data has not identified an active or near-term coastal hazard.';
+ return current+' '+alertText+(incomplete?' Some sources are missing or stale, so this is not an all-clear.':'');
+}
 function renderEventHistory(){
  const panel=$('eventHistoryPanel'),root=$('eventHistoryCards');if(!panel||!root)return;
  const events=state.briefing?.event_history||[];panel.hidden=!events.length;root.replaceChildren();if(!events.length)return;
@@ -50,6 +61,7 @@ function renderBriefing(){
  $('briefFullChange').textContent=b.forecast_change_24h?.text||'24-hour forecast comparison unavailable.';
  $('briefFull24').textContent=b.next_24h?.text||'Next-24-hour guidance unavailable.';
  $('briefFull72').textContent=b.next_72h?.text||'Next-72-hour guidance unavailable.';
+ $('briefCurrentStatus').textContent=briefingCurrentStatus(b);
  const coverage=b.current_snapshot?.event_state?.coastal_impact?.data_coverage;
  $('briefDataAvailability').textContent=briefingDataAvailability(coverage);
  $('briefFullPulse').textContent=b.local_pulse?.summary||'No public local items were returned.';

@@ -36,6 +36,10 @@ def worker_mock(calls, state=None):
         state = {}
     state.setdefault('eventPreferences', {'starts': True, 'ends': True, 'changes': True})
     state.setdefault('history', [{'kind':'start','title':'Coastal Flood Advisory','body':'Official event update','status':'delivered','createdAt':100,'sentAt':110}])
+    state.setdefault('thresholdHistory', [
+        {'kind':'threshold','channel':'app','metric':'waterObserved','title':'Observed water level threshold reached','status':'delivered','sentAt':120},
+        {'kind':'threshold','channel':'email','metric':'wind','title':'Wind speed threshold reached','status':'delivered','sentAt':115}
+    ])
     state.setdefault('threshold', {
         "preferences":{"metrics":{
             "waterObserved":{"enabled":False,"threshold":12},
@@ -84,7 +88,7 @@ def worker_mock(calls, state=None):
                           body=json.dumps({"preferences":state['eventPreferences']}))
             return
         if '/push/devices/history?' in request.url and request.method == 'GET':
-            route.fulfill(status=200, headers={**cors,'content-type':'application/json'},body=json.dumps({'items':state['history'],'retentionDays':30}))
+            route.fulfill(status=200, headers={**cors,'content-type':'application/json'},body=json.dumps({'items':state['history'],'thresholdItems':state['thresholdHistory'],'retentionDays':30}))
             return
         if request.url.endswith('/push/devices/preferences') and request.method == 'PUT':
             state['eventPreferences']=json.loads(request.post_data or '{}').get('preferences',{})
@@ -199,7 +203,9 @@ def run_mocked(browser):
     page.locator('#notificationHistory').wait_for(state='visible',timeout=5000)
     page.get_by_text('Coastal Flood Advisory').wait_for(timeout=5000)
     assert page.get_by_text('Sent',exact=True).is_visible()
-    assert 'Custom-threshold and email delivery history is not available here.' in page.locator('#notificationHistory').inner_text()
+    assert 'latest successful custom-threshold delivery' in page.locator('#notificationHistory').inner_text()
+    assert page.get_by_text('Observed water level threshold reached').is_visible()
+    assert page.get_by_text('Wind speed threshold reached').is_visible()
     assert page.locator('#emailOnlyEntry').is_visible()
     assert page.locator('#emailOnlyLink').inner_text() == 'Email Alerts (Create or Manage) ↗'
     assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))

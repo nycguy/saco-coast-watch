@@ -85,7 +85,25 @@ export async function handlePushApi(req, env) {
         items.push({kind:payload.kind,title:String(payload.title || 'Coastal event update').slice(0,120),body:String(payload.body || '').slice(0,360),status:row.status === 'sent' ? 'delivered' : 'not_delivered',createdAt:Number(row.created_at) || null,sentAt:Number(row.sent_at) || null});
       } catch (_) { /* Ignore an invalid retained payload; do not break history for other rows. */ }
     }
-    return reply({ items, retentionDays: 30 });
+    // alert_state.last_sent is updated only after a successful threshold delivery.
+    // It is a latest-success record per metric, not a complete attempt log.
+    const cutoff=Math.floor(Date.now()/1000)-30*86400;
+    const thresholdItems=[];
+    const metricLabels={waterObserved:'Observed water level',waterForecast:'Forecast water level',wind:'Wind speed',gust:'Wind gust',tempHigh:'High temperature',tempLow:'Low temperature'};
+    const addThresholdRows=async(channel,subscriberId)=>{
+      if(!subscriberId)return;
+      const states=await env.DB.prepare("SELECT metric,last_sent FROM alert_state WHERE subscriber_id=? AND channel=? AND last_sent>=? ORDER BY last_sent DESC").bind(subscriberId,channel,cutoff).all();
+      for(const row of states.results||[]){
+        const sentAt=Number(row.last_sent);
+        if(!metricLabels[row.metric]||!Number.isFinite(sentAt)||sentAt<=0)continue;
+        thresholdItems.push({kind:'threshold',channel:channel==='push'?'app':'email',metric:row.metric,title:metricLabels[row.metric]+' threshold reached',status:'delivered',sentAt});
+      }
+    };
+    await addThresholdRows('push',deviceId);
+    const link=await env.DB.prepare('SELECT linked_subscriber_id FROM push_threshold_preferences WHERE device_id=?').bind(deviceId).first();
+    if(link?.linked_subscriber_id)await addThresholdRows('email',link.linked_subscriber_id);
+    thresholdItems.sort((a,b)=>b.sentAt-a.sentAt);
+    return reply({ items, thresholdItems, retentionDays: 30, thresholdHistoryBasis:'Latest successful delivery per metric and channel; failed threshold attempts are not retained.' });
   }
   if (path === '/push/devices/preferences' && req.method === 'GET') {
     const deviceId = new URL(req.url).searchParams.get('deviceId');

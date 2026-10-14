@@ -3,6 +3,37 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/'sc
 P=ROOT/'scripts'/'fetch_briefing.py'; S=importlib.util.spec_from_file_location('fetch_briefing',P); f=importlib.util.module_from_spec(S); S.loader.exec_module(f)
 UTC=dt.timezone.utc
 class BriefingTests(unittest.TestCase):
+ def test_briefing_priorities_lead_with_high_water_and_forecast_change(self):
+  now=dt.datetime(2026,10,14,12,tzinfo=UTC)
+  state={'coastal_impact':{'windows':[
+   {'high_tide_at':'2026-10-14T18:00:00Z','modeled_total_ft':11.8,'astronomical_ft':10.7,'impact':{'score':45,'label':'Elevated'}},
+   {'high_tide_at':'2026-10-15T06:00:00Z','modeled_total_ft':11.5,'impact':{'score':20,'label':'Routine'}}
+  ]}}
+  change={'peak_delta_ft':0.4,'threshold_margin_delta_ft':{'minor':-0.4}}
+  items=f._briefing_priorities({'forecast_peak_72h_ft':11.8},change,state,now)
+  self.assertEqual([item['kind'] for item in items],['high_water','forecast_change'])
+  self.assertIn('highest-impact upcoming',items[0]['title'].lower())
+  self.assertIn('0.20 ft below',items[0]['text'])
+  self.assertIn('decreased by 0.40 ft',items[1]['text'])
+
+ def test_tide_only_priority_does_not_claim_surge_or_include_past_window(self):
+  now=dt.datetime(2026,10,14,12,tzinfo=UTC)
+  state={'coastal_impact':{'windows':[{'high_tide_at':'2026-10-14T11:00:00Z','astronomical_ft':11.7,'impact':{'score':2}}]}}
+  items=f._briefing_priorities({},None,state,now)
+  self.assertEqual(items,[])
+  state['coastal_impact']['windows'][0]['high_tide_at']='2026-10-14T18:00:00Z'
+  items=f._briefing_priorities({},None,state,now)
+  self.assertIn('does not include storm surge',items[0]['text'])
+
+ def test_historical_event_episodes_split_when_official_storm_identity_changes(self):
+  now=dt.datetime(2026,10,14,12,tzinfo=UTC)
+  def event(at,storm_id,label):
+   return {'snapshot_at':at,'event_state':{'phase':'Ongoing','show_focus':True,'primary_display':label,'event_identity':{'storm_id':storm_id,'label':label},'impact':{'rank':1,'label':'Elevated'},'recent_impact':{'rank':0},'active_hazards':[],'official_alerts':[]},'water':{},'marine':{}}
+  first=event('2026-10-14T10:00:00Z','AL012026','Tropical Storm A')
+  second=event('2026-10-14T11:00:00Z','AL022026','Tropical Storm B')
+  events=f._event_history([first],second,now)
+  self.assertEqual(len(events),2)
+  self.assertEqual({item['title'] for item in events},{'Tropical Storm A','Tropical Storm B'})
  def test_forecast_evolution_uses_only_matching_model_provenance(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   current={'snapshot_at':'2026-09-27T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.6}}
@@ -48,6 +79,18 @@ class BriefingTests(unittest.TestCase):
   self.assertEqual(len(d['local_pulse']['items']),1)
   self.assertIn('high surf',d['local_pulse']['items'][0]['title'])
   self.assertIn('1 weather/coastal public report',d['local_pulse']['summary'])
+ def test_local_pulse_reports_failed_sources_without_claiming_empty_means_safe(self):
+  now=dt.datetime(2026,9,27,12,tzinfo=UTC)
+  cur={'snapshot_at':'2026-09-27T12:00:00Z','water':{},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}
+  hist={'schema_version':2,'generated_at':'2026-09-27T11:00:00Z','snapshots':[],'alert_events':[],'local_events':[],'source_health':{'checked_at':'2026-09-27T11:00:00Z','feeds':[
+   {'name':'Local news search','status':'unavailable','message':'The source request failed.'},
+   {'name':'Public community search','status':'available','item_count':0,'message':'Feed responded; no matching items were found.'},
+   {'name':'Public Facebook posts','status':'not_checked','message':'Not comprehensive.'}
+  ]},'backfill':{},'daily_rollups':[]}
+  pulse=f.build_payload(cur,hist,now)['local_pulse']
+  self.assertEqual(pulse['errors'],[{'name':'Local news search','status':'unavailable'}])
+  self.assertIn('An empty scan is not proof',pulse['summary'])
+  self.assertEqual([source['status'] for source in pulse['sources']],['unavailable','available','not_checked'])
  def test_unavailable_baseline_does_not_infer(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   cur={'snapshot_at':'2026-09-27T12:00:00Z','water':{'forecast_peak_72h_ft':11.8,'forecast_peak_72h_time':'2026-09-28T16:00:00Z'},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}

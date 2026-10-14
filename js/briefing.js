@@ -22,6 +22,14 @@ function briefingCurrentStatus(briefing){
  else current='Available data has not identified an active or near-term coastal hazard.';
  return current+' '+alertText+(incomplete?' Some sources are missing or stale, so this is not an all-clear.':'');
 }
+function renderBriefingPriorities(items){
+ const row=$('briefPriorityRow'),compact=$('briefPriorities'),section=$('briefPrioritySection'),root=$('briefPriorityItems');
+ const priorities=Array.isArray(items)?items.filter(item=>item&&item.title&&item.text).slice(0,2):[];
+ if(row)row.hidden=!priorities.length;
+ if(compact)compact.textContent=priorities.map(item=>item.title+': '+item.text).join(' ');
+ if(section)section.hidden=!priorities.length;
+ if(root){root.replaceChildren();for(const item of priorities){const article=document.createElement('article'),title=document.createElement('h5'),text=document.createElement('p');article.className='brief-priority-item';title.textContent=item.title;text.textContent=item.text;article.append(title,text);root.append(article);}}
+}
 function renderEventHistory(){
  const panel=$('eventHistoryPanel'),root=$('eventHistoryCards');if(!panel||!root)return;
  const events=state.briefing?.event_history||[];panel.hidden=!events.length;root.replaceChildren();if(!events.length)return;
@@ -61,6 +69,7 @@ function renderBriefing(){
  $('briefFullChange').textContent=b.forecast_change_24h?.text||'24-hour forecast comparison unavailable.';
  $('briefFull24').textContent=b.next_24h?.text||'Next-24-hour guidance unavailable.';
  $('briefFull72').textContent=b.next_72h?.text||'Next-72-hour guidance unavailable.';
+ renderBriefingPriorities(b.priorities);
  $('briefCurrentStatus').textContent=briefingCurrentStatus(b);
  const coverage=b.current_snapshot?.event_state?.coastal_impact?.data_coverage;
  $('briefDataAvailability').textContent=briefingDataAvailability(coverage);
@@ -73,7 +82,8 @@ function renderBriefing(){
   const span=document.createElement('span');span.textContent=item.title||'Open source';
   a.append(small,span);list.append(a);
  }
- $('briefSourceNote').textContent=(b.local_pulse?.facebook_note||'Public Facebook posts are not included because reliable public indexing and access are inconsistent.')+' Only weather/coastal-condition items are retained. Community items are anecdotal and are not official NOAA/NWS observations.';if(typeof renderEventBriefingExtras==='function')renderEventBriefingExtras();renderEventHistory();
+ const feedHealth=(b.local_pulse?.sources||[]).filter(item=>item&&item.name&&item.status).map(item=>item.name+': '+(item.message||({available:'available',unavailable:'temporarily unavailable',malformed:'could not be read',not_checked:'not checked'}[item.status]||'status unavailable')));
+ $('briefSourceNote').textContent=(b.local_pulse?.facebook_note||'Public Facebook posts are not included because reliable public indexing and access are inconsistent.')+' Only weather/coastal-condition items are retained. Community items are anecdotal and are not official NOAA/NWS observations.'+(feedHealth.length?' Source checks: '+feedHealth.join('; ')+'.':' Feed availability was not recorded for this capture.');if(typeof renderEventBriefingExtras==='function')renderEventBriefingExtras();renderEventHistory();
  const timeline=$('briefTimeline');if(timeline){timeline.replaceChildren();const events=b.impact_timeline||[];if(!events.length){const p=document.createElement('p');p.className='impact-empty';p.textContent='No timestamped coastal impacts were retained in the past 24 hours.';timeline.append(p);}else for(const item of events){const row=document.createElement('div');row.className='impact-item';const when=document.createElement('div');when.className='impact-time';const t=Date.parse(item.at||'');when.textContent=Number.isFinite(t)?dayTime(t)+' ET':'Time unavailable';const dot=document.createElement('span');dot.className='impact-dot';const body=document.createElement('div');body.className='impact-body';const title=document.createElement('strong');title.textContent=item.title||'Coastal event';const source=document.createElement('small');source.textContent=(item.anecdotal?'Anecdotal · ':'')+(item.source||'Public source');if(item.anecdotal)source.className='anecdotal';body.append(title,source);if(item.url){const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open source ↗';a.className='mini-link';body.append(a);}row.append(when,dot,body);timeline.append(row);}}
 }
 async function loadBriefing(){

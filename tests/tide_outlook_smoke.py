@@ -89,8 +89,12 @@ def install_noaa_fixture(page):
             {"label":"Now","target_hours_ago":0,"snapshot_at":now.isoformat().replace("+00:00","Z"),"peak_ft":11.5,"peak_time":(now+timedelta(hours=21)).isoformat().replace("+00:00","Z"),"minor_margin_ft":0.5}
         ]},
         "event_state":event_state,
+        "priorities":[
+            {"kind":"high_water","title":"Highest-impact upcoming high-water window · Elevated","text":"The current SacoCast assessment highlights the Portland high tide soon. NOAA total-water guidance is 11.80 ft MLLW, 0.20 ft below the Minor Flood threshold."},
+            {"kind":"forecast_change","title":"Forecast change","text":"NOAA's compatible 72-hour peak forecast rose by 0.50 ft versus the captured forecast nearest 24 hours ago."}
+        ],
         "current_snapshot":{"event_state":event_state},
-        "event_briefing":{"active":True,"title":"Coastal Storm Briefing","phase":"Approaching","severity":{"rank":1,"level":"yellow","label":"Elevated"},"summary":"Coastal Storm: Elevated · Approaching.","change_text":""},
+        "event_briefing":{"active":True,"title":"Coastal Storm Briefing","phase":"Approaching","severity":{"rank":1,"level":"yellow","label":"Elevated"},"summary":"Coastal Storm: Elevated · Approaching.","modes":event_state["active_hazards"],"change_text":""},
         "recent_event":{"active":False,"summary":"","items":[],"impact":{"rank":0,"level":"green","label":"Routine"}},
         "event_history":event_history,
         "impact_timeline":[{"at":(now-timedelta(hours=2)).isoformat().replace("+00:00","Z"),"type":"water","title":"Portland observed water level test event","source":"NOAA CO-OPS station 8418150","source_type":"official_observation","url":None,"anecdotal":False}],
@@ -119,6 +123,9 @@ def install_noaa_fixture(page):
     page.route("**/data/webcams/ferry-history/index.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(archive)))
     tiny_png=base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=")
     page.route("**/data/webcams/ferry-history/*.jpg*",lambda route: route.fulfill(status=200,content_type="image/png",body=tiny_png))
+    preview={"schema_version":1,"generated_at":now.isoformat().replace("+00:00","Z"),"cameras":{"ferry_beach":{"name":"Ferry Beach","status":"ok","image":"data/webcams/ferry-beach.jpg","fetched_at":now.isoformat().replace("+00:00","Z")},"abellona":{"status":"live_embed","image":None}}}
+    page.route("**/data/webcams/webcams.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(preview)))
+    page.route("**/data/webcams/ferry-beach.jpg*",lambda route: route.fulfill(status=200,content_type="image/png",body=tiny_png))
 
 def assert_common(page):
     page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
@@ -237,6 +244,15 @@ def assert_common(page):
     assert "last visit" in brief_text.lower()
     assert "0.50 ft" in brief_text
     assert "2 public local items" in brief_text
+    assert "Highest-impact upcoming high-water window" in page.locator("#briefPriorityRow").inner_text()
+    assert page.locator("#briefPriorityRow").is_visible()
+    priority_colors=page.locator(".brief-priority-item").first.evaluate("""el => {
+      const parse = value => value.match(/[0-9]+/g).slice(0,3).map(Number);
+      const luminance = rgb => rgb.map(value => {const c=value/255;return c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;}).reduce((sum,value,index)=>sum+value*[0.2126,0.7152,0.0722][index],0);
+      const bg=parse(getComputedStyle(el).backgroundColor);
+      return [el.querySelector('h5'),el.querySelector('p')].map(node=>{const fg=parse(getComputedStyle(node).color),a=luminance(fg),b=luminance(bg);return (Math.max(a,b)+0.05)/(Math.min(a,b)+0.05);});
+    }""")
+    assert all(ratio>=4.5 for ratio in priority_colors),priority_colors
     # Regression: CSS must honor the hidden attribute so event-loading placeholders never appear as status.
     event_row=page.locator("#briefEventRow")
     event_section=page.locator("#briefEventSection")
@@ -300,6 +316,16 @@ def assert_common(page):
     badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
     assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1
+    residual_chart=page.locator("#residualSpark")
+    assert residual_chart.get_attribute("tabindex")=="0"
+    residual_chart.focus()
+    page.keyboard.press("ArrowRight")
+    residual_tip=page.locator('.mini-chart-tooltip[data-for="residualSpark"]')
+    assert residual_tip.is_visible()
+    assert "Observed water level" in residual_tip.inner_text()
+    assert "Astronomical tide" in residual_tip.inner_text()
+    page.keyboard.press("Escape")
+    assert residual_tip.is_hidden()
     card_height=briefing.bounding_box()["height"]
     assert card_height<330,f"briefing card should remain compact: {card_height}px"
 
@@ -308,21 +334,38 @@ def assert_common(page):
     assert dialog.evaluate("el => el.open")
     assert "Past 24 hours" in dialog.inner_text()
     assert "What is happening now?" in dialog.inner_text()
+    assert "What to watch next" in dialog.inner_text()
+    assert "NOAA total-water guidance is 11.80 ft MLLW" in dialog.inner_text()
     assert "Coastal Storm · Elevated impact · Approaching" in page.locator("#briefCurrentStatus").inner_text()
     assert "Active official NWS products: High Surf Advisory" in page.locator("#briefCurrentStatus").inner_text()
+    assert "Other active hazards: High Surf / Wave Impact" in page.locator("#briefFullEvent").inner_text()
+    assert "Coastal Storm: Elevated · Approaching." not in page.locator("#briefFullEvent").inner_text()
     assert "What changed versus ~24 hours ago" in dialog.inner_text()
     assert "Next 72 hours" in dialog.inner_text()
-    assert "NDBC 44007 wave observation: no current value" in page.locator("#briefDataAvailability").inner_text()
-    assert "does not mean conditions are safe" in page.locator("#briefDataAvailability").inner_text()
     assert "NDBC 44007 wave observation: no current value" in page.locator("#briefDataAvailability").inner_text()
     assert "does not mean conditions are safe" in page.locator("#briefDataAvailability").inner_text()
     assert dialog.locator(".brief-pulse-item").count()==2
     assert dialog.locator("#briefTimeline .impact-item").count()==1
     assert "Portland observed water level test event" in dialog.inner_text()
     assert "Public Facebook posts are not included" in dialog.inner_text()
-    page.locator("#briefClose").click()
+    page.keyboard.press("Escape")
     assert not dialog.evaluate("el => el.open")
+    assert page.locator("#briefOpen").evaluate("el => document.activeElement===el")
 
+    # Archive request failure is visible and does not remove the live camera.
+    page.route("**/data/webcams/ferry-history/index.json*",lambda route: route.fulfill(status=503,content_type="application/json",body="{}"))
+    page.reload(wait_until="domcontentloaded")
+    page.wait_for_function("document.querySelector('#ferryArchiveStatus').textContent.includes('temporarily unavailable')",timeout=10000)
+    assert page.locator("#ferryArchiveStatus").is_visible()
+    assert page.get_by_role("link",name="Open official Ferry Beach camera").is_visible()
+
+    # A prior preview must not be presented as current after repeated refresh failures.
+    stale_preview_at=(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat().replace("+00:00","Z")
+    stale_preview={"schema_version":1,"cameras":{"ferry_beach":{"status":"ok","image":"data/webcams/ferry-beach.jpg","fetched_at":stale_preview_at}}}
+    page.route("**/data/webcams/webcams.json*",lambda route: route.fulfill(status=200,content_type="application/json",body=json.dumps(stale_preview)))
+    page.reload(wait_until="domcontentloaded")
+    page.wait_for_function("document.querySelector('#ferryPreviewTime').textContent.includes('older than 30 minutes')",timeout=10000)
+    assert page.locator("#ferryPreviewImage").is_hidden()
     reference=page.locator(".threshold-reference")
     assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"
     assert reference.locator(".threshold").count()==3

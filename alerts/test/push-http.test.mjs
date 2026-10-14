@@ -53,20 +53,23 @@ test('device preferences can be restored with the device ownership credential',a
 
 test('device notification history requires its owner token and returns only bounded event details',async()=>{
   const calls=[],deviceId='11111111-1111-4111-8111-111111111111';
-  const database={prepare(sql){const call={sql,args:[]};calls.push(call);return{bind(...args){call.args=args;return this;},async first(){return sql.includes('push_devices WHERE id=? AND token_hash=? AND enabled=1')?{id:deviceId}:null;},async all(){return{results:[
+  const database={prepare(sql){const call={sql,args:[]};calls.push(call);return{bind(...args){call.args=args;return this;},async first(){if(sql.includes('push_devices WHERE id=? AND token_hash=? AND enabled=1'))return{id:deviceId};if(sql.includes('linked_subscriber_id FROM push_threshold_preferences'))return{linked_subscriber_id:'subscriber-private-id'};return null;},async all(){if(sql.includes('push_delivery_queue'))return{results:[
     {payload_json:JSON.stringify({application:'SacoCast',kind:'start',title:'Coastal Flood Warning',body:'Official event update',url:'https://nycguy.github.io/saco-coast-watch/#alerts',endpoint:'https://push.example/private'}),status:'sent',created_at:100,sent_at:110},
     {payload_json:JSON.stringify({application:'SacoCast',kind:'change',title:'Not delivered',body:'Provider rejected',url:'https://nycguy.github.io/saco-coast-watch/'}),status:'failed',created_at:90,sent_at:null},
     {payload_json:'not-json',status:'sent',created_at:80,sent_at:81},
     {payload_json:JSON.stringify({application:'Other',kind:'start'}),status:'sent',created_at:70,sent_at:71},
-  ]};}};}};
+  ]};if(sql.includes('FROM alert_state'))return{results:[{metric:'waterObserved',last_sent:200}]};return{results:[]};}};}};
   const req=new Request(`https://worker.example.test/push/devices/history?deviceId=${deviceId}`,{headers:{Origin:'https://nycguy.github.io',Authorization:'Bearer '+'a'.repeat(64)}});
   const response=await handlePushApi(req,env(database));
   assert.equal(response.status,200);
   const data=await response.json();assert.equal(data.retentionDays,30);assert.equal(data.items.length,2);
   assert.deepEqual(data.items[0],{kind:'start',title:'Coastal Flood Warning',body:'Official event update',status:'delivered',createdAt:100,sentAt:110});
   assert.equal(data.items[1].status,'not_delivered');
+  assert.deepEqual(data.thresholdItems.map(item=>item.channel),['app','email']);
+  assert.equal(data.thresholdItems[0].title,'Observed water level threshold reached');
+  assert.equal(JSON.stringify(data).includes('subscriber-private-id'),false);
   assert.equal(JSON.stringify(data).includes('push.example'),false);
-  assert.match(calls[1].sql,/device_id=\? AND status IN \('sent','failed'\).*LIMIT 20/);
+  assert.match(calls.find(call=>call.sql.includes('push_delivery_queue')).sql,/device_id=\? AND status IN \('sent','failed'\).*LIMIT 20/);
 });
 
 test('notification history rejects missing credentials before querying D1',async()=>{

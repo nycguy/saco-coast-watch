@@ -88,13 +88,20 @@ async function loadNotificationHistory() {
   if(!readPushCredential())return;
   notificationHistoryRefresh.disabled=true;notificationHistoryStatus.textContent='Loading recent notifications…';notificationHistoryList.replaceChildren();
   try {
-    const result=await getCoastalNotificationHistory();const items=Array.isArray(result.items)?result.items:[];
+    const result=await getCoastalNotificationHistory();
+    const eventItems=Array.isArray(result.items)?result.items:[];
+    const thresholdItems=(Array.isArray(result.thresholdItems)?result.thresholdItems:[]).map(item=>({
+      title:item.title||'Custom threshold reached',
+      body:'Latest successful '+(item.channel==='email'?'email':'app')+' delivery for this threshold.',
+      status:'delivered',sentAt:item.sentAt
+    }));
+    const items=[...eventItems,...thresholdItems].sort((a,b)=>Number(b.sentAt||b.createdAt||0)-Number(a.sentAt||a.createdAt||0)).slice(0,32);
     for(const item of items){
       const row=document.createElement('li'),head=document.createElement('div'),title=document.createElement('strong'),state=document.createElement('span'),body=document.createElement('p'),time=document.createElement('time');
       title.textContent=item.title||'Coastal event update';state.textContent=item.status==='delivered'?'Sent':'Not delivered';state.className=item.status==='delivered'?'history-delivered':'history-failed';head.append(title,state);body.textContent=item.body||'';time.textContent=historyTime(item.sentAt||item.createdAt);row.append(head,body,time);notificationHistoryList.append(row);
     }
-    notificationHistoryStatus.textContent=items.length?`${items.length} recent coastal-event notification${items.length===1?'':'s'} shown.`:'No coastal-event app notifications were sent to this device in the past 30 days.';
-  } catch (_) { notificationHistoryStatus.textContent='Recent app notifications could not be loaded. Try again later.'; }
+    notificationHistoryStatus.textContent=items.length?items.length+' recent notification record'+(items.length===1?'':'s')+' shown. Threshold entries show the latest successful delivery per metric and channel.':'No retained app-event or successful custom-threshold deliveries were found for this device in the past 30 days.';
+  } catch (_) { notificationHistoryStatus.textContent='Recent app and custom-threshold notification history could not be loaded. Try again later.'; }
   finally {notificationHistoryRefresh.disabled=false;}
 }
 

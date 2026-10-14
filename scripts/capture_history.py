@@ -210,6 +210,17 @@ def reddit_events():
         out.append({"published_at":hc.iso(pub),"source":"Reddit","source_type":"community","location":event_location(title),"headline":title,"summary":title,"url":link,"event_category":event_category(title),"anecdotal":True,"verification_note":"Public community report; not an official observation."})
     return out[:30]
 
+def collect_public_source(name,fetcher):
+    """Record feed reachability separately from whether it returned matching posts."""
+    try:
+        items=fetcher()
+        return items,{"name":name,"status":"available","item_count":len(items),"message":"Feed responded; no matching items were found." if not items else "Feed responded with matching items."}
+    except (ET.ParseError,json.JSONDecodeError) as exc:
+        return [],{"name":name,"status":"malformed","item_count":0,"message":"The feed response could not be read."}
+    except Exception as exc:
+        # Store only the exception class. URLs, response bodies and request details are not needed by users.
+        return [],{"name":name,"status":"unavailable","item_count":0,"message":"The source request failed.","error_type":type(exc).__name__}
+
 def _max_recent(rows,field):
     valid=[r for r in rows if r.get(field) is not None]
     if not valid: return (None,None)
@@ -342,11 +353,10 @@ def update_history(path,model_backfill=None,now=None):
     alert_changes=hc.diff_alerts((prev or {}).get("alerts") or [],current.get("alerts") or [],now) if prev else []
     for e in alert_changes: e["source"]="NWS snapshot comparison"; e["source_type"]="official_alert"
     transition=event_transition(prev,current,now); event_events=merge_event_transitions(existing.get("event_events") or [],[transition] if transition else [])
-    local=[]
-    try: local.extend(google_news(7))
-    except Exception: pass
-    try: local.extend(reddit_events())
-    except Exception: pass
+    local=[]; source_health=[]
+    news,news_status=collect_public_source("Local news search",lambda:google_news(7)); local.extend(news); source_health.append(news_status)
+    community,community_status=collect_public_source("Public community search",reddit_events); local.extend(community); source_health.append(community_status)
+    source_health.append({"name":"Public Facebook posts","status":"not_checked","item_count":0,"message":"Reliable public indexing is not available; this source is not treated as comprehensive."})
     backfill=existing.get("backfill") or initial_backfill(now,7)
     historical_alert_changes=hc.alert_events_from_products(backfill.get("nws_alert_products") or [])
     alert_changes=hc.merge_events(historical_alert_changes,alert_changes)
@@ -354,7 +364,7 @@ def update_history(path,model_backfill=None,now=None):
         backfill["model_archive"]={"attempted_at":model_doc.get("attempted_at"),"period_start":model_doc.get("period_start"),"period_end":model_doc.get("period_end"),"source":model_doc.get("source"),"summary":model_doc.get("summary"),"errors":model_doc.get("errors") or []}
     local=hc.merge_events(existing.get("local_events") or [],local)
     local=[e for e in local if coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]
-    hist={"schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snapshots,"daily_rollups":hc.daily_rollups(snapshots,existing.get("daily_rollups") or []),"alert_events":hc.merge_events(existing.get("alert_events") or [],alert_changes),"event_events":event_events,"local_events":local,"backfill":backfill,"provenance_notes":{"realtime":"Snapshots are captures of official source data at the listed snapshot time.","model_archive":"Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.","reconstructed_dashboard_snapshot":"Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.","observations":"Historical observations describe what happened, not what a model forecast beforehand.","community":"Reddit and other community reports are anecdotal unless independently verified.","facebook":"Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."}}
+    hist={"schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.","station":STATION,"thresholds_ft_mllw":hc.THRESHOLDS_FT_MLLW,"retention":{"detailed_snapshots_days":30,"older_history":"daily_rollups"},"snapshots":snapshots,"daily_rollups":hc.daily_rollups(snapshots,existing.get("daily_rollups") or []),"alert_events":hc.merge_events(existing.get("alert_events") or [],alert_changes),"event_events":event_events,"local_events":local,"source_health":{"checked_at":hc.iso(now),"feeds":source_health},"backfill":backfill,"provenance_notes":{"realtime":"Snapshots are captures of official source data at the listed snapshot time.","model_archive":"Only run-specific archived GoMOFS forecasts are eligible for historical forecast comparisons.","reconstructed_dashboard_snapshot":"Dashboard-capture reconstructions are marked explicitly and are not treated as an official NOAA forecast archive.","observations":"Historical observations describe what happened, not what a model forecast beforehand.","community":"Reddit and other community reports are anecdotal unless independently verified.","facebook":"Public Facebook coverage is not assumed comprehensive; inaccessible or unindexed posts are not fabricated."}}
     Path(path).parent.mkdir(parents=True,exist_ok=True); Path(path).write_text(json.dumps(hist,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     return hist
 def compact_history(hist,days=7):
@@ -362,7 +372,7 @@ def compact_history(hist,days=7):
     snaps=[s for s in hist.get("snapshots") or [] if (hc.parse_iso(s.get("snapshot_at")) or now)>=cutoff]
     events=[e for e in hist.get("local_events") or [] if not (hc.parse_iso(e.get("published_at")) and hc.parse_iso(e.get("published_at"))<cutoff)]
     alerts=[e for e in hist.get("alert_events") or [] if not (hc.parse_iso(e.get("at")) and hc.parse_iso(e.get("at"))<cutoff)]
-    return {"schema_version":2,"generated_at":hist.get("generated_at"),"window_basis":hist.get("window_basis"),"station":hist.get("station"),"thresholds_ft_mllw":hist.get("thresholds_ft_mllw"),"snapshots":snaps,"daily_rollups":[r for r in hist.get("daily_rollups") or [] if r.get("date","")>=cutoff.date().isoformat()],"alert_events":alerts,"event_events":[e for e in hist.get("event_events") or [] if not (hc.parse_iso(e.get("at")) and hc.parse_iso(e.get("at"))<cutoff)],"local_events":events,"backfill":hist.get("backfill"),"provenance_notes":hist.get("provenance_notes")}
+    return {"schema_version":2,"generated_at":hist.get("generated_at"),"window_basis":hist.get("window_basis"),"station":hist.get("station"),"thresholds_ft_mllw":hist.get("thresholds_ft_mllw"),"snapshots":snaps,"daily_rollups":[r for r in hist.get("daily_rollups") or [] if r.get("date","")>=cutoff.date().isoformat()],"alert_events":alerts,"event_events":[e for e in hist.get("event_events") or [] if not (hc.parse_iso(e.get("at")) and hc.parse_iso(e.get("at"))<cutoff)],"local_events":events,"source_health":hist.get("source_health"),"backfill":hist.get("backfill"),"provenance_notes":hist.get("provenance_notes")}
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--history",required=True); ap.add_argument("--model-backfill"); ap.add_argument("--recent-output"); args=ap.parse_args()
     hist=update_history(args.history,args.model_backfill)

@@ -56,7 +56,7 @@
    </div>
   </section>
   <section class="notification-history" id="notificationHistory" hidden aria-labelledby="notificationHistoryHeading">
-   <div class="notification-history-head"><div><h3 id="notificationHistoryHeading">Recent Coastal Event App Notifications</h3><p>Up to 30 days of event notifications sent to this device. Custom-threshold and email delivery history is not available here.</p></div><button class="btn" id="notificationHistoryRefresh" type="button">Refresh</button></div>
+   <div class="notification-history-head"><div><h3 id="notificationHistoryHeading">Recent notification history</h3><p>Recent coastal-event app notices and the latest successful custom-threshold delivery by channel and metric. Failed threshold attempts are not retained.</p></div><button class="btn" id="notificationHistoryRefresh" type="button">Refresh</button></div>
    <p class="push-status" id="notificationHistoryStatus" role="status" aria-live="polite">Loading recent notifications…</p>
    <ol id="notificationHistoryList" class="notification-history-list"></ol>
   </section>
@@ -125,6 +125,7 @@
 <section class="panel coastal-briefing" aria-labelledby="briefHeading">
  <div class="brief-head"><div><h3 id="briefHeading">Coastal briefing</h3><div class="sub">Uses consistent 24-hour and 72-hour periods, not your last visit</div></div><span class="brief-window">24h / 72h</span></div>
  <div class="brief-grid" aria-live="polite">
+  <div class="brief-row brief-priority-row" id="briefPriorityRow" hidden><b>Watch next</b><span id="briefPriorities"></span></div>
   <div class="brief-row" id="briefEventRow" hidden><b id="briefEventLabel">Event status</b><span id="briefEvent"></span></div>
   <div class="brief-row"><b>Past 24h</b><span id="briefPast">Building the latest coastal briefing…</span></div>
   <div class="brief-row"><b>Forecast change</b><span id="briefChange">Comparing with the forecast captured about 24 hours ago…</span></div>
@@ -167,6 +168,7 @@
    <div class="ferry-archive-meta"><span id="ferryArchiveTime">Choose a saved image above.</span><span id="ferryArchiveReason"></span></div>
    <div class="ferry-archive-context" id="ferryArchiveContext" hidden></div>
   </div>
+  <p class="ferry-archive-status" id="ferryArchiveStatus" role="status" aria-live="polite" hidden></p>
 </section>
 
 <section class="panel ferry-camera abellona-camera" aria-labelledby="abellonaLiveCamera">
@@ -277,6 +279,7 @@
  <div class="brief-modal">
   <div class="brief-modal-head"><div><h2 id="briefModalTitle">Southern Maine coastal briefing</h2><p id="briefModalUpdated">Fixed rolling windows · NOAA / NWS / weather-related local reporting</p></div><button class="brief-close" id="briefClose" type="button" aria-label="Close coastal briefing">×</button></div>
   <section class="brief-section" id="briefEventSection" hidden><h4>Event focus</h4><p id="briefFullEvent"></p></section>
+  <section class="brief-section brief-priority-section" id="briefPrioritySection" hidden><h4>What to watch next</h4><div id="briefPriorityItems"></div></section>
   <section class="brief-section"><h4>What is happening now?</h4><p id="briefCurrentStatus">Current coastal status is loading.</p></section>
   <section class="brief-section"><h4>Data availability</h4><p id="briefDataAvailability">Coastal source availability is loading.</p></section>
   <section class="brief-section"><h4>Past 24 hours</h4><p id="briefFullPast">Briefing is loading.</p></section>

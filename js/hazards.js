@@ -80,10 +80,17 @@ function renderTropicalPanel(){
  const wind=h.wind||{};$('tropicalLocalContext').textContent='Local NWS hourly guidance peaks at '+fmtHaz(wind.max_gust_24h_mph,0,' mph')+' gust in the next 24 hours. NHC track graphics describe cyclone-center uncertainty; local impacts can occur well away from the center.';
 }
 function renderEventBriefingExtras(){
- const briefing=state.briefing?.event_briefing,recent=state.briefing?.recent_event;if(!briefing&&!recent)return;const active=Boolean(briefing?.active),recentActive=Boolean(!active&&recent?.active),row=$('briefEventRow'),section=$('briefEventSection');row.hidden=!(active||recentActive);section.hidden=!(active||recentActive);
- if(active){$('briefHeading').textContent=briefing.title||'Event Briefing';$('briefModalTitle').textContent='Southern Maine '+(briefing.title||'Event Briefing');$('briefEventLabel').textContent='Event status';$('briefEvent').textContent=briefing.summary||'Active weather hazards are being prioritized.';$('briefFullEvent').textContent=[briefing.summary,briefing.change_text].filter(Boolean).join(' ');}
- else if(recentActive){$('briefHeading').textContent='Coastal Briefing';$('briefModalTitle').textContent='Southern Maine coastal briefing';$('briefEventLabel').textContent='Recent event';$('briefEvent').textContent=recent.summary;$('briefFullEvent').textContent=recent.summary;}
- else{$('briefHeading').textContent='Coastal Briefing';$('briefModalTitle').textContent='Southern Maine coastal briefing';}
+ const briefing=state.briefing?.event_briefing,recent=state.briefing?.recent_event;if(!briefing&&!recent)return;const active=Boolean(briefing?.active),recentActive=Boolean(!active&&recent?.active),row=$('briefEventRow'),section=$('briefEventSection');row.hidden=!recentActive;
+ if(active){
+  $('briefHeading').textContent=briefing.title||'Event Briefing';$('briefModalTitle').textContent='Southern Maine '+(briefing.title||'Event Briefing');$('briefEventLabel').textContent='Event status';
+  const primary=state.briefing?.event_state?.primary_display,others=[...new Set((briefing.modes||[]).map(mode=>mode.label).filter(label=>label&&label!==primary))];
+  row.hidden=!others.length;
+  $('briefEvent').textContent=others.length?'Additional active hazards: '+others.join(', ')+'.':'See the full briefing for supporting event details.';
+  const detail=others.length?'Other active hazards: '+others.join(', ')+'.':'';
+  $('briefFullEvent').textContent=detail;section.hidden=!detail;
+ }
+ else if(recentActive){$('briefHeading').textContent='Coastal Briefing';$('briefModalTitle').textContent='Southern Maine coastal briefing';$('briefEventLabel').textContent='Recent event';$('briefEvent').textContent=recent.summary;$('briefFullEvent').textContent=recent.summary;section.hidden=false;}
+ else{$('briefHeading').textContent='Coastal Briefing';$('briefModalTitle').textContent='Southern Maine coastal briefing';section.hidden=true;}
 }
 function renderHazards(){renderEventFocus();renderImpactForecast();renderWinterPanel();renderTropicalPanel();renderEventBriefingExtras();}
 async function loadHazards(){if(state.hazardsFetchedAt&&now()-state.hazardsFetchedAt<4*60000){renderHazards();return;}try{const data=await getJSON('data/hazards.json?t='+Date.now(),12000);if(data?.schema_version!==1)throw new Error('Unexpected hazard snapshot schema');const generated=Date.parse(data.generated_at||'');if(Number.isFinite(generated)&&now()-generated>45*60000)throw new Error('Hazard snapshot is stale');state.hazards=data;state.hazardsError=null;state.hazardsFetchedAt=now();health('healthHazards',true,'Connected');}catch(err){state.hazardsError=String(err?.message||err);console.warn('Adaptive hazard feed:',err);health('healthHazards',false,'Unavailable');}renderHazards();}

@@ -179,7 +179,10 @@ def _event_history(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     rows=[row for row in rows if (row.get("event_state") or ((row.get("hazards") or {}).get("event_state")))]
     canonical_surf=_surf_canonical_by_product(rows)
-    episodes=[]; active=[]; previous_at=None
+    episodes=[]; active=[]; previous_at=None; active_identity=None
+    def identity_key(row):
+        identity=_event_state(row).get("event_identity") or {}
+        return ("storm",str(identity["storm_id"])) if identity.get("storm_id") else None
     def finish(group):
         if not group: return
         states=[_event_state(row) for row in group]
@@ -229,10 +232,14 @@ def _event_history(snaps,current,now):
         episodes.append(summary)
     for row in rows:
         at=hc.parse_iso(row.get("snapshot_at")); state=_event_state(row); phase=state.get("phase") or "Routine"
-        nonroutine=phase!="Routine"
-        if active and previous_at and at and at-previous_at>dt.timedelta(hours=12): finish(active); active=[]
-        if nonroutine: active.append(row)
-        elif active: finish(active); active=[]
+        nonroutine=phase!="Routine"; row_identity=identity_key(row)
+        identity_changed=bool(active and active_identity and row_identity and active_identity!=row_identity)
+        if active and ((previous_at and at and at-previous_at>dt.timedelta(hours=12)) or identity_changed):
+            finish(active); active=[]; active_identity=None
+        if nonroutine:
+            active.append(row)
+            if row_identity: active_identity=row_identity
+        elif active: finish(active); active=[]; active_identity=None
         previous_at=at or previous_at
     finish(active)
     episodes.sort(key=lambda item:hc.parse_iso(item.get("started_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
@@ -253,6 +260,45 @@ def _coastal_impact_change(current,baseline):
         if abs(delta)<0.1: continue
         out["drivers"].append({"label":label,"delta":round(delta,2),"unit":unit,"current":cv,"previous":ov})
     return out
+
+def _briefing_priorities(water,change,event_state,now):
+    """Short source-backed watch list; never upgrades tide-only data to a flood forecast."""
+    items=[]
+    if change:
+        delta=float(change.get("peak_delta_ft") or 0)
+        margin_delta=(change.get("threshold_margin_delta_ft") or {}).get("minor")
+        if abs(delta)>=0.15 or (margin_delta is not None and abs(float(margin_delta))>=0.15):
+            direction="rose" if delta>0 else "fell" if delta<0 else "was nearly unchanged"
+            text=f"NOAA's compatible 72-hour peak forecast {direction} by {abs(delta):.2f} ft versus the captured forecast nearest 24 hours ago."
+            if margin_delta is not None and abs(float(margin_delta))>=0.15:
+                text+=f" The distance to the 12.0 ft Minor Flood threshold {'increased' if margin_delta>0 else 'decreased'} by {abs(float(margin_delta)):.2f} ft."
+            items.append({"kind":"forecast_change","title":"Forecast change","text":text,"priority":2})
+    impact=(event_state or {}).get("coastal_impact") or {}
+    windows=[]
+    for window in impact.get("windows") or []:
+        at=hc.parse_iso(window.get("high_tide_at"))
+        if not at or at<now or at>now+dt.timedelta(hours=72): continue
+        score=((window.get("impact") or {}).get("score"))
+        windows.append((float(score or 0),at,window))
+    if windows:
+        _score,at,window=max(windows,key=lambda item:(item[0],-item[1].timestamp()))
+        impact_label=((window.get("impact") or {}).get("label") or "")
+        level=window.get("modeled_total_ft")
+        if level is not None:
+            margin=12.0-float(level)
+            level_text=f" NOAA total-water guidance is {float(level):.2f} ft MLLW, {abs(margin):.2f} ft {'below' if margin>=0 else 'above'} the Minor Flood threshold."
+        else:
+            tide=window.get("astronomical_ft")
+            level_text=(f" The astronomical tide prediction is {float(tide):.2f} ft MLLW; it does not include storm surge." if tide is not None else " A compatible water-level estimate is unavailable.")
+        label="Highest-impact upcoming high-water window"+(f" · {impact_label}" if impact_label else "")
+        items.insert(0,{"kind":"high_water","title":label,"text":f"The current SacoCast assessment highlights the Portland high tide {fmt_time(hc.iso(at))}.{level_text}","at":hc.iso(at),"priority":3})
+    elif water.get("forecast_peak_72h_ft") is not None:
+        at=hc.parse_iso(water.get("forecast_peak_72h_time"))
+        if at and now<=at<=now+dt.timedelta(hours=72):
+            peak=float(water["forecast_peak_72h_ft"]); margin=12.0-peak
+            items.insert(0,{"kind":"high_water","title":"Upcoming NOAA water-level peak","text":f"NOAA total-water guidance peaks near {fmt_time(hc.iso(at))} at {peak:.2f} ft MLLW, {abs(margin):.2f} ft {'below' if margin>=0 else 'above'} the 12.0 ft Minor Flood threshold.","at":hc.iso(at),"priority":3})
+    return items[:2]
+
 def _forecast_evolution(snaps,current,now):
     rows=hc.merge_snapshots(snaps or [],[current],now,30)
     points=[]
@@ -327,6 +373,7 @@ def build_payload(current,hist,now=None):
     evolution=_forecast_evolution(snaps,current,now)
     timeline=_impact_timeline(current,alert_changes,local24,now)
     event_state=_event_state(current); event_briefing=_event_briefing(current,baseline,now); recent_event=_recent_event(current); event_transitions=_recent(hist.get("event_events"),"at",now,72)
+    priorities=_briefing_priorities(w,change,event_state,now)
     event_history=_event_history(stored,current,now); coastal_impact_change=_coastal_impact_change(current,baseline)
     if recent_event.get("active") and event_history: recent_event["retrospective"]=event_history[0]
 
@@ -393,6 +440,13 @@ def build_payload(current,hist,now=None):
         local_summary=f"{len(local_items)} weather/coastal public report{'s' if len(local_items)!=1 else ''} retained in the recent scan ({officialish} news/other public, {community} community)."
     else:
         local_summary="No weather-related local reports were retained in the recent coastal scan."
+    local_health=(hist.get("source_health") or {}).get("feeds") or []
+    failed=[item for item in local_health if item.get("status") in ("unavailable","malformed")]
+    labels={"unavailable":"temporarily unavailable","malformed":"could not be read"}
+    if failed:
+        local_summary+=" Source check: "+"; ".join(f"{item.get('name','Feed')} {labels.get(item.get('status'),'status unknown')}" for item in failed[:2])+". An empty scan is not proof that no local impacts occurred."
+    elif not local_health:
+        local_summary+=" Feed availability was not recorded for this historical capture; an empty scan is not proof that no local impacts occurred."
     local_summary+=" Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent."
 
     backfill=hist.get("backfill") or {}; daily=backfill.get("water_observed_daily_peaks") or []
@@ -403,6 +457,7 @@ def build_payload(current,hist,now=None):
         "forecast_change_48h":{"comparison":change48},
         "forecast_evolution":evolution,
         "event_state":event_state,
+        "priorities":priorities,
         "event_briefing":event_briefing,
         "recent_event":recent_event,
         "event_transitions":event_transitions,
@@ -413,7 +468,7 @@ def build_payload(current,hist,now=None):
         "observed_daily_peaks":daily,
         "next_24h":{"text":next24,"peak_ft":peak24,"peak_time":w.get("forecast_peak_24h_time")},
         "next_72h":{"text":next72,"peak_ft":peak72,"peak_time":w.get("forecast_peak_72h_time")},
-        "local_pulse":{"summary":local_summary,"updated_at":hist.get("generated_at"),"items":local_items,"errors":[],"facebook_note":"Public Facebook posts are included only when verifiable; coverage is not assumed comprehensive."},
+        "local_pulse":{"summary":local_summary,"updated_at":hist.get("generated_at"),"items":local_items,"sources":local_health,"errors":[{"name":item.get("name"),"status":item.get("status")} for item in failed],"facebook_note":"Public Facebook posts are included only when verifiable; coverage is not assumed comprehensive."},
         "alerts":current.get("alerts") or [],
         "current_snapshot":current,
         "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts, hourly forecast, forecast grid, marine alerts and Coastal York Surf Zone Forecast","nhc":"National Hurricane Center CurrentStorms and GIS products","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}

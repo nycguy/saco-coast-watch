@@ -15,6 +15,7 @@
   const ferryArchiveTime=document.getElementById('ferryArchiveTime');
   const ferryArchiveReason=document.getElementById('ferryArchiveReason');
   const ferryArchiveContext=document.getElementById('ferryArchiveContext');
+  const ferryArchiveStatus=document.getElementById('ferryArchiveStatus');
   const ferryReturnLive=document.getElementById('ferryReturnLive');
   let hls=null,archiveFrames=[];
 
@@ -34,6 +35,12 @@
     if(!cam||cam.status!=='ok'||!cam.image){
       time.textContent='Latest preview unavailable · live camera remains available';
       if(!liveNode||liveNode.hidden)setStatus(status,'Latest still image is unavailable. You can still open the live camera.',true);
+      return Promise.resolve();
+    }
+    const capturedAt=Date.parse(cam.fetched_at||'');
+    if(!Number.isFinite(capturedAt)||capturedAt>Date.now()+5*60*1000||Date.now()-capturedAt>30*60*1000){
+      time.textContent=Number.isFinite(capturedAt)?'Latest preview is older than 30 minutes · live camera remains available':'Latest preview time unavailable · live camera remains available';
+      if(!liveNode||liveNode.hidden)setStatus(status,'The saved camera preview is stale or has no valid capture time. The live camera remains available.',true);
       return Promise.resolve();
     }
     return new Promise(resolve=>{
@@ -149,10 +156,11 @@
     if(!ferryArchive)return;
     try{
       const r=await fetch('data/webcams/ferry-history/index.json?t='+Date.now(),{cache:'no-store'});
-      if(!r.ok){if(r.status===404){ferryArchive.hidden=true;return;}throw Error('archive manifest HTTP '+r.status);}
+      if(!r.ok){if(r.status===404){ferryArchive.hidden=true;if(ferryArchiveStatus){ferryArchiveStatus.hidden=false;ferryArchiveStatus.textContent='Saved event-image archive is not available. The live camera remains available.';}return;}throw Error('archive manifest HTTP '+r.status);}
       const doc=await r.json();
       archiveFrames=(doc.frames||[]).filter(x=>x&&x.file&&x.captured_at);
-      if(!archiveFrames.length){ferryArchive.hidden=true;return;}
+      if(!archiveFrames.length){ferryArchive.hidden=true;if(ferryArchiveStatus){ferryArchiveStatus.hidden=false;ferryArchiveStatus.textContent='No event images were captured during the current '+(doc.retention_hours||24)+'-hour archive window.';}return;}
+      if(ferryArchiveStatus)ferryArchiveStatus.hidden=true;
       ferryArchive.hidden=false;
       renderArchiveThumbnails();
       ferryArchiveRange.min='0';ferryArchiveRange.max=String(archiveFrames.length-1);ferryArchiveRange.value=String(archiveFrames.length-1);
@@ -165,6 +173,7 @@
     }catch(err){
       console.warn('Saco Coast Watch Ferry Beach archive:',err);
       ferryArchive.hidden=true;
+      if(ferryArchiveStatus){ferryArchiveStatus.hidden=false;ferryArchiveStatus.textContent='Saved event-image history is temporarily unavailable. The live camera remains available.';}
     }
   }
   if(ferryArchiveRange)ferryArchiveRange.addEventListener('input',()=>showArchivedFrame(Number(ferryArchiveRange.value)));

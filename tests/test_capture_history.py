@@ -3,6 +3,13 @@ import importlib.util, pathlib, sys, unittest
 ROOT=pathlib.Path(__file__).resolve().parents[1]; sys.path.insert(0,str(ROOT/'scripts'))
 P=ROOT/'scripts'/'capture_history.py'; S=importlib.util.spec_from_file_location('capture_history',P); c=importlib.util.module_from_spec(S); S.loader.exec_module(c)
 class CaptureTests(unittest.TestCase):
+ def test_secondary_source_health_distinguishes_empty_malformed_and_unavailable(self):
+  rows,status=c.collect_public_source('News',lambda:[])
+  self.assertEqual(rows,[]); self.assertEqual(status['status'],'available'); self.assertEqual(status['item_count'],0)
+  rows,status=c.collect_public_source('News',lambda:(_ for _ in ()).throw(c.ET.ParseError('private response detail')))
+  self.assertEqual(status['status'],'malformed'); self.assertNotIn('private response detail',str(status))
+  rows,status=c.collect_public_source('Community',lambda:(_ for _ in ()).throw(TimeoutError('private url detail')))
+  self.assertEqual(status['status'],'unavailable'); self.assertEqual(status['error_type'],'TimeoutError'); self.assertNotIn('private url detail',str(status))
  def test_ndbc_parser(self):
   raw='''#YY MM DD hh mm WDIR WSPD GST WVHT DPD
 #yr mo dy hr mn degT m/s m/s m sec

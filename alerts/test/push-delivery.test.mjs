@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
-import { enqueuePushTransition, deliverQueuedPush, sendThresholdPush } from '../src/push-delivery.mjs';
+import { enqueuePushTransition, deliverQueuedPush, sendThresholdPush, createControlledTestPushMessage } from '../src/push-delivery.mjs';
+import { COASTAL_ALERT_NOTIFICATION_URL, TEST_NOTIFICATION_URL, thresholdNotificationUrl } from '../src/push-destinations.mjs';
 import { validSubscription } from './fixtures.mjs';
 
 const device = { id: '11111111-1111-4111-8111-111111111111', event_prefs_json: JSON.stringify({ starts: true, ends: true, changes: true }) };
@@ -15,6 +16,16 @@ async function vapidPair(){
   return {public:Buffer.from(await webcrypto.subtle.exportKey('raw',pair.publicKey)).toString('base64url'),private:jwk.d};
 }
 const event={eventKey:'urn:nws:alert:1',fingerprint:'b'.repeat(64),kind:'start',title:'Coastal alert issued',body:'Check SacoCast.',url:'https://nycguy.github.io/saco-coast-watch/'};
+
+test('notification payloads route test, official alert, and thresholds to the relevant dashboard UI', () => {
+  const testMessage = createControlledTestPushMessage();
+  assert.equal(testMessage.kind, 'test');
+  assert.equal(testMessage.url, TEST_NOTIFICATION_URL);
+  assert.match(testMessage.url, /index\.html\?openAlerts=1$/);
+  assert.equal(COASTAL_ALERT_NOTIFICATION_URL, 'https://nycguy.github.io/saco-coast-watch/index.html#alerts');
+  assert.equal(thresholdNotificationUrl('waterObserved'), 'https://nycguy.github.io/saco-coast-watch/index.html#chart');
+  assert.equal(thresholdNotificationUrl('wind'), 'https://nycguy.github.io/saco-coast-watch/index.html#weatherHeading');
+});
 
 test('event queue is deterministic and respects the current event preferences', async()=>{
   const database=db();

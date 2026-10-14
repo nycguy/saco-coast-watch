@@ -361,4 +361,18 @@ thresholdSave.addEventListener('click', async () => {
   }
 });
 
-initialize().catch(() => { status.textContent = 'Notification settings could not be checked. The rest of SacoCast remains available.'; });
+function openAlertsFromNotificationLink() {
+  const current = new URL(window.location.href);
+  if (current.searchParams.get('openAlerts') !== '1') return;
+  current.searchParams.delete('openAlerts');
+  const query = current.searchParams.toString();
+  window.history.replaceState(null, '', `${current.pathname}${query ? `?${query}` : ''}${current.hash}`);
+  alertsButton.click();
+}
+
+// Open the requested view before remote subscription checks finish so a slow
+// Worker cannot make a notification tap appear to do nothing.
+openAlertsFromNotificationLink();
+
+initialize()
+  .catch(() => { status.textContent = 'Notification settings could not be checked. The rest of SacoCast remains available.'; });

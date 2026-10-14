@@ -1,5 +1,6 @@
 import { createVapidAuthorization } from './vapid.mjs';
 import { encryptWebPushPayload } from './webpush-encryption.mjs';
+import { TEST_NOTIFICATION_URL } from './push-destinations.mjs';
 
 const RETRY_SECONDS = [60, 300, 1800, 7200, 43200];
 const hex = bytes => Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
@@ -51,7 +52,7 @@ async function sendOne(env, row, now) {
 
 /** Explicit, owner-authenticated delivery check for a single enrolled device. */
 export async function sendControlledTestPush(env, device, now = Math.floor(Date.now() / 1000)) {
-  const message = { application: 'SacoCast', kind: 'change', eventId: '0'.repeat(64), title: 'SacoCast Test Notification', body: 'This confirms that Web Push reached this browser.', url: 'https://nycguy.github.io/saco-coast-watch/' };
+  const message = createControlledTestPushMessage();
   const response = await sendPush(device.endpoint, { p256dh: device.p256dh, auth: device.auth }, message, env, now);
   if (response.status === 404 || response.status === 410) {
     await env.DB.prepare('DELETE FROM push_devices WHERE id=?').bind(device.id).run();
@@ -59,6 +60,10 @@ export async function sendControlledTestPush(env, device, now = Math.floor(Date.
   }
   if (!response.ok) throw Object.assign(new Error(`Push provider returned ${response.status}`), { status: response.status });
   return { sent: true, expired: false };
+}
+
+export function createControlledTestPushMessage() {
+  return { application: 'SacoCast', kind: 'test', eventId: '0'.repeat(64), title: 'SacoCast Test Notification', body: 'This confirms that Web Push reached this browser.', url: TEST_NOTIFICATION_URL };
 }
 
 /** Delivery is best-effort, bounded, deduplicated, and isolated from email processing. */

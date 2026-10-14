@@ -154,6 +154,17 @@ def run_live(browser):
     print('PASS: live single Alerts entry point opens the modal manager; no alert workflow is visible in the dashboard body')
 
 def run_mocked(browser):
+    deep_link=browser.new_page(viewport={'width':390,'height':844})
+    deep_link.add_init_script("localStorage.setItem('sacocast.test-existing','true');localStorage.setItem('sacocast.push.device.v1',JSON.stringify({deviceId:'"+DEVICE_ID+"',token:'"+TOKEN+"'}));\n"+init_script())
+    deep_link.route(WORKER+'/**', worker_mock([],{}))
+    separator='&' if '?' in BASE else '?'
+    deep_link.goto(BASE+separator+'openAlerts=1',wait_until='domcontentloaded',timeout=45000)
+    deep_link.locator('#alertsDialog').wait_for(state='visible',timeout=10000)
+    deep_link.locator('.push-panel').wait_for(state='visible',timeout=5000)
+    assert 'openAlerts=1' not in deep_link.url
+    assert deep_link.locator('#alertsButton').inner_text() == 'Manage Alerts'
+    deep_link.close()
+
     calls=[]
     state={}
     page=browser.new_page(viewport={'width':1440,'height':1000})

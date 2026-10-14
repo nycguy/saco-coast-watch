@@ -1,10 +1,9 @@
 import { sendThresholdPush } from './push-delivery.mjs';
 import { THRESHOLD_SPECS, normalizeThresholdPreferences } from './threshold-preferences.mjs';
 import { decideAlert } from './threshold-state.mjs';
+import { thresholdNotificationUrl } from './push-destinations.mjs';
 
 const SPEC_BY_ID = new Map(THRESHOLD_SPECS.map(spec => [spec.id, spec]));
-const SITE_URL = 'https://nycguy.github.io/saco-coast-watch/';
-
 function normalizedMeasurement(measurements, metric) {
   const reading = measurements?.[metric];
   return reading && Number.isFinite(reading.value) && typeof reading.time === 'string' && typeof reading.source === 'string'
@@ -51,7 +50,7 @@ export async function evaluatePushThresholds(env, measurements, now = Math.floor
           metric,
           title: `SacoCast threshold reached: ${spec.label}`,
           body,
-          url: SITE_URL,
+          url: thresholdNotificationUrl(metric),
         }, now);
         if (delivery.expired) { result.expired++; continue; }
         if (delivery.sent) {

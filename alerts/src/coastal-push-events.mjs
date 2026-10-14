@@ -1,5 +1,6 @@
 import { classifyFreshEventTransition } from './event-transitions.mjs';
 import { enqueuePushTransition, deliverQueuedPush } from './push-delivery.mjs';
+import { COASTAL_ALERT_NOTIFICATION_URL } from './push-destinations.mjs';
 
 const SOURCE = 'https://api.weather.gov/alerts/active?point=43.464,-70.380';
 const MAX_FEED_AGE = 20 * 60;
@@ -60,7 +61,7 @@ export async function processCoastalPushEvents(env, { fetcher = fetch, now = Dat
     const kind = baseline ? classifyFreshEventTransition(before, next, nowSeconds, MAX_FEED_AGE + 60) : null;
     if (kind) {
       const detail = current || { label: 'The coastal alert is no longer active.', source: 'Official NWS alert' };
-      const event = { eventKey: key, fingerprint: current?.fingerprint || previous.fingerprint, kind, title: `${kind === 'start' ? 'Coastal alert issued' : kind === 'end' ? 'Coastal alert ended' : 'Coastal alert updated'}: ${detail.label}`, body: `${detail.source}. Check SacoCast and the official NWS alert for current details.`, url: 'https://nycguy.github.io/saco-coast-watch/' };
+      const event = { eventKey: key, fingerprint: current?.fingerprint || previous.fingerprint, kind, title: `${kind === 'start' ? 'Coastal alert issued' : kind === 'end' ? 'Coastal alert ended' : 'Coastal alert updated'}: ${detail.label}`, body: `${detail.source}. Check SacoCast and the official NWS alert for current details.`, url: COASTAL_ALERT_NOTIFICATION_URL };
       await enqueuePushTransition(env.DB, event, nowSeconds);
       transitions++;
     }

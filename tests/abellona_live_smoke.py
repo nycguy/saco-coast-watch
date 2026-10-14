@@ -21,7 +21,7 @@ def check(browser, width, height, mobile=False):
       fallbackVisible:!document.querySelector('#abellonaWatchLive')?.hidden,
       gateVisible:!document.querySelector('#abellonaPlayerGate')?.hidden,
       playerErrorCode:document.querySelector('.abellona-camera')?.dataset.playerErrorCode || null,
-      iframeSrc:document.querySelector('#abellonaPlayer iframe')?.src || null
+      iframeSrc:document.querySelector('#abellonaPlayer')?.src || null
     })""")
     if result["state"] == "playing":
         assert result["gateVisible"] is False, result

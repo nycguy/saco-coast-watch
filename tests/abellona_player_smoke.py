@@ -43,9 +43,10 @@ def check_viewport(browser, width, height, fallback=False):
     # wait for the API player to exist before simulating its error state.
     page.wait_for_function("Boolean(window.__abellonaConfig)", timeout=15000)
     page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'", timeout=15000) if not fallback else None
-    config = page.evaluate("window.__abellonaConfig && ({videoId:window.__abellonaConfig.videoId,vars:window.__abellonaConfig.playerVars})")
-    assert config and config["videoId"] == "HSQpqIWLViI", config
-    assert config["vars"]["autoplay"] == 1 and config["vars"]["mute"] == 1 and config["vars"]["playsinline"] == 1, config
+    config = page.evaluate("window.__abellonaConfig && ({id:window.__abellonaMount.id,src:window.__abellonaMount.src})")
+    assert config and config["id"] == "abellonaPlayer", config
+    assert "/embed/HSQpqIWLViI?" in config["src"], config
+    assert all(param in config["src"] for param in ("autoplay=1","mute=1","playsinline=1","enablejsapi=1")), config
     if fallback:
         page.evaluate("window.__abellonaMode='error'; window.__abellonaConfig.events.onError({data:150})")
         page.locator("#abellonaWatchLive").wait_for(state="visible", timeout=3000)

@@ -44,13 +44,13 @@ export function createAbellonaPlayer({
   fallbackMs = DEFAULT_FALLBACK_MS,
   apiLoader = loadYouTubeApi,
 } = {}) {
-  const mount = doc?.getElementById('abellonaPlayer');
+  const iframe = doc?.getElementById('abellonaPlayer');
   const gate = doc?.getElementById('abellonaPlayerGate');
   const gateMessage = doc?.getElementById('abellonaGateMessage');
   const watchButton = doc?.getElementById('abellonaWatchLive');
   const status = doc?.getElementById('abellonaStatus');
   const camera = doc?.querySelector('.abellona-camera');
-  if (!mount || !gate || !gateMessage || !watchButton || !status) return null;
+  if (!iframe || !gate || !gateMessage || !watchButton || !status) return null;
 
   let player = null;
   let playback = 'waiting';
@@ -157,17 +157,10 @@ export function createAbellonaPlayer({
     setStatus('Loading the Abellona live video…');
     try {
       const yt = await apiLoader(win, doc);
-      player = new yt.Player(mount, {
-        videoId: ABELLONA_VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          playsinline: 1,
-          controls: 1,
-          rel: 0,
-          enablejsapi: 1,
-          origin: win.location?.origin || 'https://nycguy.github.io',
-        },
+      // Keep the iframe URL authored in the page, matching Abellona's former
+      // working embed. Attach the API to that existing frame only for playback
+      // state and muted retry controls; do not ask YT.Player to create it.
+      player = new yt.Player(iframe, {
         events: {
           onReady: (event) => {
             event?.target?.getIframe?.()?.setAttribute('title', 'Abellona Inn Old Orchard Beach live camera');
@@ -202,7 +195,7 @@ export function createAbellonaPlayer({
         initialize();
       }
     }, { rootMargin: '240px 0px' });
-    observer.observe(mount);
+    observer.observe(iframe);
   } else {
     initialize();
   }

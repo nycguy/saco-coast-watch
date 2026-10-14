@@ -7,6 +7,7 @@ function fixture(apiLoaderOverride) {
   for (const id of ['abellonaPlayer','abellonaPlayerGate','abellonaGateMessage','abellonaWatchLive','abellonaStatus']) {
     elements.set(id, {
       id, hidden: id === 'abellonaWatchLive', disabled: false, textContent: '', dataset: {},
+      src: id === 'abellonaPlayer' ? 'https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&mute=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fnycguy.github.io' : '',
       listeners: {}, addEventListener(name, fn) { this.listeners[name] = fn; },
       click() { this.listeners.click?.({ type: 'click' }); },
     });
@@ -31,11 +32,12 @@ function fixture(apiLoaderOverride) {
     querySelector() { return camera; },
   };
   let playerConfig;
+  let playerElement;
   const calls = [];
   let playPublishesState = false;
   const apiLoader = async () => ({
     Player: class {
-      constructor(_mount, config) { playerConfig = config; }
+      constructor(element, config) { playerElement = element; playerConfig = config; }
       mute() { calls.push('mute'); }
       setVolume(value) { calls.push(`volume:${value}`); }
       playVideo() {
@@ -48,6 +50,7 @@ function fixture(apiLoaderOverride) {
   return {
     controller, elements, camera, timers, calls, win,
     get playerConfig() { return playerConfig; },
+    get playerElement() { return playerElement; },
     get observed() { return observed; },
     set playPublishesState(value) { playPublishesState = value; },
     async enterViewport() {
@@ -57,17 +60,17 @@ function fixture(apiLoaderOverride) {
   };
 }
 
-test('visible Abellona player initializes the official live ID muted and inline, then confirms real PLAYING state', async () => {
+test('visible Abellona iframe uses the official live ID muted and inline, then confirms the PLAYING event', async () => {
   const f = fixture();
   assert.equal(f.controller.getPlaybackState(), 'waiting');
   assert.equal(f.observed.options.rootMargin, '240px 0px');
   await f.enterViewport();
   assert.equal(f.observed.disconnected, true);
-  assert.equal(f.playerConfig.videoId, ABELLONA_VIDEO_ID);
-  assert.deepEqual(f.playerConfig.playerVars, {
-    autoplay: 1, mute: 1, playsinline: 1, controls: 1, rel: 0, enablejsapi: 1,
-    origin: 'https://nycguy.github.io',
-  });
+  assert.equal(f.playerElement, f.elements.get('abellonaPlayer'));
+  assert.equal(f.elements.get('abellonaPlayer').src.includes(`/embed/${ABELLONA_VIDEO_ID}?`), true);
+  for (const param of ['autoplay=1','mute=1','playsinline=1','enablejsapi=1','origin=https%3A%2F%2Fnycguy.github.io']) {
+    assert.equal(f.elements.get('abellonaPlayer').src.includes(param), true, param);
+  }
   f.playerConfig.events.onReady({});
   assert.deepEqual(f.calls, ['mute','volume:0','play']);
   assert.equal(f.elements.get('abellonaPlayerGate').hidden, false);

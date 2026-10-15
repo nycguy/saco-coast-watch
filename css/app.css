@@ -880,6 +880,7 @@ td{color:#e6f1f6}
 @media(max-width:620px){.chartbox svg{height:430px}}
 /* Keep the chart and briefing controls usable as touch targets on narrow iPhones. */
 @media(max-width:620px){.headright .btn,.controls .segment,.brief-open{min-height:44px}.brief-open{padding-inline:12px}}
+@media(max-width:340px){.mastin{flex-direction:column;align-items:stretch;gap:8px}.headright{width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}.headright .pill{grid-column:1/-1;justify-self:start}}
 /* Compact fixed-window coastal briefing. Full narrative opens in a modal so the dashboard stays scannable. */
 .coastal-briefing{padding:15px 17px;border-color:#3f6576;background:linear-gradient(120deg,#123143,#102637 72%);box-shadow:inset 0 3px #49c9ca}
 .brief-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}.brief-head h3{margin:0;font-size:17px}.brief-head .sub{margin-top:2px}.brief-window{font-size:9px;font-weight:800;border:1px solid #3d6473;border-radius:99px;padding:4px 8px;color:#c8dce4;white-space:nowrap}

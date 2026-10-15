@@ -37,8 +37,17 @@ def assert_accessible_control_names(page):
 
 
 def assert_contained(page, width):
-    overflow = page.evaluate("document.documentElement.scrollWidth - window.innerWidth")
-    assert overflow <= 2, f"{width}px page has horizontal overflow: {overflow}px"
+    metrics = page.evaluate("""() => ({
+      overflow:document.documentElement.scrollWidth-window.innerWidth,
+      bodyWidth:document.body.scrollWidth,
+      offenders:[...document.body.querySelectorAll('*')].map(el=>({
+        tag:el.tagName,id:el.id,className:typeof el.className==='string'?el.className:'',
+        left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right),
+        scroll:el.scrollWidth,client:el.clientWidth,overflow:getComputedStyle(el).overflowX
+      })).filter(x=>x.left < -1 || x.right > innerWidth+1).slice(0,12)
+    })""")
+    assert metrics["overflow"] <= 2 and metrics["bodyWidth"] <= width + 2, \
+        f"{width}px page has horizontal overflow: {metrics}"
     for selector in MAJOR_SECTIONS:
         element = page.locator(selector).first
         if not element.count() or not element.is_visible():

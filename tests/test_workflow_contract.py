@@ -42,5 +42,11 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('uses: actions/upload-pages-artifact@v5.0.0',pages)
         self.assertIn('uses: actions/deploy-pages@v5.0.1',pages)
 
+    def test_responsive_acceptance_runs_before_and_after_pages_publish(self):
+        pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
+        self.assertEqual(pages.count('tests/responsive_accessibility_smoke.py'),2)
+        self.assertLess(pages.index('tests/responsive_accessibility_smoke.py'),pages.index('Publish GitHub Pages'))
+        self.assertGreater(pages.rindex('tests/responsive_accessibility_smoke.py'),pages.index('Publish GitHub Pages'))
+
 if __name__=='__main__':
     unittest.main()

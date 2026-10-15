@@ -136,6 +136,7 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/eastcast_smoke.py
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
           /tmp/saco-map-venv/bin/python tests/abellona_player_smoke.py
+          /tmp/saco-map-venv/bin/python tests/responsive_accessibility_smoke.py
       - name: Save map test screenshot
         if: failure() && github.event_name != 'schedule'
         uses: actions/upload-artifact@v7.0.2
@@ -178,4 +179,5 @@ jobs:
           fi
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
           /tmp/saco-map-venv/bin/python tests/abellona_live_smoke.py
+          /tmp/saco-map-venv/bin/python tests/responsive_accessibility_smoke.py
           echo "Live Pages production verification passed."

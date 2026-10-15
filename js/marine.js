@@ -20,8 +20,8 @@ function renderMarine(){
   marineNumber('marine'+id+'Gust',gust,station&&!fresh?'--':station&&fresh?'Not reported':'--');
   const when=timed?dayTime(t)+' ET · '+relative(t):'No valid observation timestamp';
   const direction=fresh&&Number.isFinite(station?.direction_deg)?windCompass(station.direction_deg)+' wind · ':'';
-  const note=!station?'Marine measurement unavailable. Check the local updater or GitHub workflow, and the NOAA station link.':
-    !fresh?'Stale observation ('+when+'). Values withheld until fresh data arrive.':
+  const note=!station?'No recent measurements are available from this NOAA station.':
+    !fresh?'The latest station observation is stale ('+when+'). Older values are hidden until a new measurement arrives.':
     direction+when+(gust===null?' · gust not reported':'');
   $('marine'+id+'Meta').textContent=note;
   health('healthMarine'+id,label==='Live',label);
@@ -38,8 +38,8 @@ function renderMarine(){
   }
  }
  $('marineFeedNote').textContent=state.marineFetchError?
-  'Marine snapshot warning: '+state.marineFetchError+'. Station timestamps determine whether values are fresh; old readings are withheld. The webpage retries every 60 seconds.':
-  'NDBC measured winds, not at your property. Station readings older than 60 minutes are withheld; missing gusts show Not reported. Webpage checks each minute; the local updater normally refreshes snapshots every five minutes, and GitHub Actions every ten minutes (scheduled runs may be delayed).';
+  'NOAA marine measurements are temporarily unavailable. Wind and wave readings are hidden until current data return. Use the NOAA station links for direct observations.':
+  'These are NOAA station measurements away from the shoreline, not conditions at your property. Readings older than 60 minutes are hidden; missing gusts are labeled Not reported. This page checks for updates every minute, while station data refresh on their own schedule.';
 }
 async function loadMarine(){
  try{
@@ -52,8 +52,7 @@ async function loadMarine(){
   state.marineFetchError=now()-state.marineSnapshotAt>90*60000?'Station snapshot is older than 90 minutes; check the local updater or GitHub Actions runs':null;
  }catch(err){
   state.marine={};
-  const message=String(err?.message||err);
-  state.marineFetchError=message==='Failed to fetch'?'Marine data file cannot be reached. Locally, use run-local.bat, not index.html opened directly; on GitHub, check the deployment workflow':message;
+  state.marineFetchError=String(err?.message||err);
  }
  renderMarine();
 }

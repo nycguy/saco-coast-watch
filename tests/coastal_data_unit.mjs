@@ -86,6 +86,23 @@ test('missing, stale, and future gauge states never claim current observations',
  assert.equal(api.currentStatus().gaugeFresh,true);
 });
 
+test('marine source failures show plain-language status without workflow or parser details',()=>{
+ const nodes=new Map();
+ const node=()=>({textContent:'',className:'',children:[],replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
+ const marineContext={
+  Date:FixedDate,Number,Math,Intl,state:{marine:{},marineFetchError:'Invalid JSON: private implementation detail'},
+  now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},
+  document:{createTextNode:text=>({textContent:text}),createElement:node},
+  dayTime:()=> 'Tue, Oct 13 at 11:00 AM',relative:()=> '70 minutes ago',windCompass:()=> 'N',health:()=>{}
+ };
+ vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
+ const sourceMessage=nodes.get('marineFeedNote').textContent;
+ assert.match(sourceMessage,/NOAA marine measurements are temporarily unavailable/);
+ assert.match(sourceMessage,/Use the NOAA station links/);
+ assert.doesNotMatch(sourceMessage,/Invalid JSON|workflow|updater|parser/i);
+ assert.match(nodes.get('marine44007Meta').textContent,/No recent measurements are available/);
+});
+
 test('Portland flood classifications retain exact threshold boundaries',()=>{
  for(const [value,expected] of [
   [11.999,'below'],[12,'minor'],[12.999,'minor'],[13,'moderate'],

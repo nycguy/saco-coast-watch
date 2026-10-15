@@ -67,10 +67,67 @@ def _event_transition_text(current,baseline):
     now_state=_event_state(current); old_state=_event_state(baseline) if baseline else {}
     if not old_state: return ""
     pieces=[]
-    if old_state.get("phase")!=now_state.get("phase"): pieces.append(f"event phase changed from {old_state.get('phase','Unknown')} to {now_state.get('phase','Unknown')}")
+    phase_words={"Approaching":"approaching","Ongoing":"ongoing","Improving":"improving","Recent":"recently ended","Routine":"routine conditions"}
+    if old_state.get("phase")!=now_state.get("phase"):
+        old_phase=phase_words.get(old_state.get("phase"),str(old_state.get("phase") or "unknown"))
+        new_phase=phase_words.get(now_state.get("phase"),str(now_state.get("phase") or "unknown"))
+        pieces.append(f"coastal status shifted from {old_phase} to {new_phase}")
     old_impact=(old_state.get("impact") or {}).get("label"); new_impact=(now_state.get("impact") or {}).get("label")
-    if old_impact and new_impact and old_impact!=new_impact: pieces.append(f"local impact level changed from {old_impact} to {new_impact}")
-    return ("Compared with the stored state nearest 24 hours ago, "+"; ".join(pieces)+".") if pieces else ""
+    if old_impact and new_impact and old_impact!=new_impact: pieces.append(f"SacoCast's local impact rating moved from {old_impact} to {new_impact}")
+    return ("Compared with coastal conditions around 24 hours ago, "+"; ".join(pieces)+".") if pieces else ""
+
+def _forecast_change_text(change):
+    """Describe meaningful forecast changes without turning model noise into a risk trend."""
+    if not change: return "An authentic forecast snapshot close enough to 24 hours ago is not available yet; no forecast-change value is being inferred from later observations."
+    previous=float(change["previous_peak_ft"]); current=float(change["current_peak_ft"]); delta=current-previous
+    shift=change.get("time_shift_minutes")
+    thresholds=hc.THRESHOLDS_FT_MLLW
+    levels=[(name,float(value)) for name,value in thresholds.items()]
+    crossed=[(name,value) for name,value in levels if min(previous,current)<value<=max(previous,current)]
+    if crossed:
+        threshold_name=(max(crossed,key=lambda item:item[1])[0] if current>previous else min(crossed,key=lambda item:item[1])[0])
+        movement="crossed above" if current>previous else "fell below"
+        text=f"The comparable NOAA 72-hour peak forecast {movement} Portland's {threshold_name.title()} Flood threshold, moving from {previous:.2f} to {current:.2f} ft MLLW."
+    elif abs(delta)<0.15:
+        if shift is not None and abs(shift)>=60:
+            text=f"The comparable NOAA 72-hour peak level changed little, from {previous:.2f} to {current:.2f} ft MLLW, but its timing shifted about {abs(shift)/60:.1f} hours {'later' if shift>0 else 'earlier'}."
+        else:
+            text=f"The comparable NOAA 72-hour peak forecast is essentially unchanged from {previous:.2f} to {current:.2f} ft MLLW; the difference is under 0.15 ft."
+            if shift is not None: text+=" Peak timing shifted less than one hour."
+    else:
+        direction="increased" if delta>0 else "decreased"
+        text=f"Compared with the captured NOAA forecast nearest 24 hours ago, the 72-hour peak {direction} by {abs(delta):.2f} ft, from {previous:.2f} to {current:.2f} ft MLLW."
+        if shift is not None and abs(shift)>=60: text+=f" Peak timing shifted about {abs(shift)/60:.1f} hours {'later' if shift>0 else 'earlier'}."
+        margin_delta=(change.get("threshold_margin_delta_ft") or {}).get("minor")
+        if margin_delta is not None and margin_delta!=0:
+            text+=f" The margin to the 12.0 ft Minor Flood threshold {'grew' if margin_delta>0 else 'shrank'} by {abs(margin_delta):.2f} ft."
+    return text
+
+def _observed_marine_changes(current,baseline):
+    """Compare same-station measured values only when both were fresh at capture time."""
+    if not baseline: return []
+    limits={"speed_mph":8.0,"gust_mph":10.0,"wave_height_ft":1.0,"dominant_period_sec":2.0,"pressure_mb":4.0}
+    labels={"speed_mph":("sustained wind","mph"),"gust_mph":("wind gust","mph"),"wave_height_ft":("offshore significant wave height","ft"),"dominant_period_sec":("dominant wave period","seconds"),"pressure_mb":("barometric pressure","mb")}
+    out=[]
+    for station in ("44007","WEXM1"):
+        cur=(((current.get("marine") or {}).get("stations") or {}).get(station) or {})
+        old=(((baseline.get("marine") or {}).get("stations") or {}).get(station) or {})
+        cur_snapshot=hc.parse_iso(current.get("snapshot_at")); old_snapshot=hc.parse_iso(baseline.get("snapshot_at") or baseline.get("generated_at"))
+        if not cur_snapshot or not old_snapshot: continue
+        station_label="NOAA/NDBC offshore buoy 44007" if station=="44007" else "NOAA/NDBC Wells station WEXM1"
+        for field,limit in limits.items():
+            current_at=hc.parse_iso(cur.get("wave_observed_at") or cur.get("observed_at")) if field in ("wave_height_ft","dominant_period_sec") else hc.parse_iso(cur.get("observed_at"))
+            previous_at=hc.parse_iso(old.get("wave_observed_at") or old.get("observed_at")) if field in ("wave_height_ft","dominant_period_sec") else hc.parse_iso(old.get("observed_at"))
+            if not current_at or not previous_at: continue
+            if not (dt.timedelta(0)<=cur_snapshot-current_at<=dt.timedelta(hours=1) and dt.timedelta(0)<=old_snapshot-previous_at<=dt.timedelta(hours=1)): continue
+            try: current_value=float(cur[field]); previous_value=float(old[field])
+            except (KeyError,TypeError,ValueError): continue
+            if abs(current_value-previous_value)<limit: continue
+            label,unit=labels[field]; direction="rose" if current_value>previous_value else "fell"
+            sentence=f"The latest {label} at {station_label} was {current_value:.1f} {unit}, {direction} from {previous_value:.1f} {unit} in the compatible snapshot nearest 24 hours earlier."
+            if field=="wave_height_ft": sentence+=" This offshore buoy reading is not a local surf measurement."
+            out.append({"station":station,"metric":field,"current":current_value,"previous":previous_value,"current_at":hc.iso(current_at),"previous_at":hc.iso(previous_at),"text":sentence})
+    return out
 
 def _recent_event(current):
     state=_event_state(current)
@@ -117,7 +174,7 @@ def _event_briefing(current,baseline,now):
         if abs(delta)<minimum: return
         changes.append(f"{label} {'increased' if delta>0 else 'decreased'} by {abs(delta):.1f} {unit}, from {float(previous_value):.1f} to {float(current_value):.1f} {unit}")
     add_delta("NWS 72-hour snowfall guidance",winter.get("snowfall_72h_in"),(previous.get("winter") or {}).get("snowfall_72h_in"),"in"); add_delta("NWS 72-hour precipitation guidance",rain.get("qpf_72h_in"),(previous.get("rain") or {}).get("qpf_72h_in"),"in"); add_delta("Peak NWS 72-hour gust guidance",wind.get("max_gust_72h_mph"),(previous.get("wind") or {}).get("max_gust_72h_mph"),"mph",1)
-    transition=_event_transition_text(current,baseline); change_text=("Compared with the stored guidance nearest 24 hours ago, "+"; ".join(changes)+".") if changes else transition
+    transition=_event_transition_text(current,baseline); change_text=("Compared with forecast guidance captured around 24 hours earlier, "+"; ".join(changes)+".") if changes else transition
     if changes and transition: change_text+=" "+transition
     return {"active":True,"title":title,"modes":modes,"severity":state.get("impact") or {},"phase":state.get("phase"),"summary":summary,"change_text":change_text,"next24_text":(". ".join(next24)+".") if next24 else "No additional event-specific 24-hour metric is available.","next72_text":(". ".join(next72)+".") if next72 else "No additional event-specific 72-hour metric is available."}
 
@@ -272,7 +329,12 @@ def _briefing_priorities(water,change,event_state,now):
             text=f"NOAA's compatible 72-hour peak forecast {direction} by {abs(delta):.2f} ft versus the captured forecast nearest 24 hours ago."
             if margin_delta is not None and abs(float(margin_delta))>=0.15:
                 text+=f" The distance to the 12.0 ft Minor Flood threshold {'increased' if margin_delta>0 else 'decreased'} by {abs(float(margin_delta)):.2f} ft."
-            items.append({"kind":"forecast_change","title":"Forecast change","text":text,"priority":2})
+            previous=change.get("previous_peak_ft"); current=change.get("current_peak_ft")
+            crossed=False
+            if previous is not None and current is not None:
+                crossed=any(min(float(previous),float(current))<level<=max(float(previous),float(current)) for level in hc.THRESHOLDS_FT_MLLW.values())
+            priority=4 if crossed or abs(delta)>=0.5 or (margin_delta is not None and abs(float(margin_delta))>=0.5) else 2
+            items.append({"kind":"forecast_change","title":"Forecast change","text":text,"priority":priority})
     impact=(event_state or {}).get("coastal_impact") or {}
     windows=[]
     for window in impact.get("windows") or []:
@@ -290,13 +352,17 @@ def _briefing_priorities(water,change,event_state,now):
         else:
             tide=window.get("astronomical_ft")
             level_text=(f" The astronomical tide prediction is {float(tide):.2f} ft MLLW; it does not include storm surge." if tide is not None else " A compatible water-level estimate is unavailable.")
-        label="Highest-impact upcoming high-water window"+(f" · {impact_label}" if impact_label else "")
-        items.insert(0,{"kind":"high_water","title":label,"text":f"The current SacoCast assessment highlights the Portland high tide {fmt_time(hc.iso(at))}.{level_text}","at":hc.iso(at),"priority":3})
+        impact=(window.get("impact") or {}); rank=int(impact.get("rank") or 0)
+        consequential=rank>0 or (impact_label and impact_label.lower()!="routine")
+        label=("Higher-impact high-water window"+(f" · {impact_label}" if impact_label else "") if consequential else "Next high tide")
+        items.append({"kind":"high_water","title":label,"text":f"SacoCast highlights the Portland high tide {fmt_time(hc.iso(at))}.{level_text}","at":hc.iso(at),"priority":3 if consequential else 1})
     elif water.get("forecast_peak_72h_ft") is not None:
         at=hc.parse_iso(water.get("forecast_peak_72h_time"))
         if at and now<=at<=now+dt.timedelta(hours=72):
             peak=float(water["forecast_peak_72h_ft"]); margin=12.0-peak
-            items.insert(0,{"kind":"high_water","title":"Upcoming NOAA water-level peak","text":f"NOAA total-water guidance peaks near {fmt_time(hc.iso(at))} at {peak:.2f} ft MLLW, {abs(margin):.2f} ft {'below' if margin>=0 else 'above'} the 12.0 ft Minor Flood threshold.","at":hc.iso(at),"priority":3})
+            items.append({"kind":"high_water","title":"Upcoming NOAA water-level peak","text":f"NOAA total-water guidance peaks near {fmt_time(hc.iso(at))} at {peak:.2f} ft MLLW, {abs(margin):.2f} ft {'below' if margin>=0 else 'above'} the 12.0 ft Minor Flood threshold.","at":hc.iso(at),"priority":3 if peak>=hc.THRESHOLDS_FT_MLLW["minor"]-0.5 else 1})
+    # Rank actual threshold crossings and notable forecast changes ahead of a routine tide.
+    items.sort(key=lambda item:(item.get("priority",0),item.get("kind")=="high_water"),reverse=True)
     return items[:2]
 
 def _forecast_evolution(snaps,current,now):
@@ -365,6 +431,8 @@ def build_payload(current,hist,now=None):
     if station_bits: past+=" Marine observations: "+"; ".join(station_bits)+"."
     if w.get("residual_24h_max_ft") is not None:
         past+=f" Portland water reached {w['residual_24h_max_ft']:+.2f} ft above the predicted astronomical tide around {fmt_time(w.get('residual_24h_max_time'))}."
+    marine_changes=_observed_marine_changes(current,baseline)
+    if marine_changes: past+=" "+" ".join(item["text"] for item in marine_changes)
 
     latest_stored=max((s for s in stored if hc.parse_iso(s.get("snapshot_at"))),key=lambda s:hc.parse_iso(s["snapshot_at"]),default=None)
     live_alert_changes=hc.diff_alerts((latest_stored or {}).get("alerts") or [],current.get("alerts") or [],now) if latest_stored else []
@@ -385,19 +453,7 @@ def build_payload(current,hist,now=None):
         past+=f" {qualifier} noted: {first.get('headline') or first.get('summary')}."
     if recent_event.get("active"): past+=" "+recent_event.get("summary","")
 
-    if change:
-        d=change["peak_delta_ft"]; direction="increased" if d>0 else "decreased" if d<0 else "held steady"
-        forecast_change=f"Compared with the {_baseline_name(baseline)} nearest 24 hours ago, the 72-hour peak has {direction}"
-        if d: forecast_change+=f" by {abs(d):.2f} ft"
-        forecast_change+=f", from {change['previous_peak_ft']:.2f} to {change['current_peak_ft']:.2f} ft MLLW."
-        mins=change.get("time_shift_minutes")
-        if mins: forecast_change+=f" Peak timing shifted about {abs(mins)/60:.1f} hours {'later' if mins>0 else 'earlier'}."
-        margin_delta=(change.get("threshold_margin_delta_ft") or {}).get("minor")
-        if margin_delta is not None and margin_delta!=0:
-            forecast_change+=f" The margin to Minor Flood {'grew' if margin_delta>0 else 'shrank'} by {abs(margin_delta):.2f} ft."
-        forecast_change+=f" Risk is {'increasing' if d>0 else 'decreasing' if d<0 else 'little changed'} on this water-level measure."
-    else:
-        forecast_change="An authentic forecast snapshot close enough to 24 hours ago is not available yet; no forecast-change value is being inferred from later observations."
+    forecast_change=_forecast_change_text(change)
     transition_text=_event_transition_text(current,baseline)
     if event_briefing.get("change_text"): forecast_change+=" "+event_briefing["change_text"]
     elif transition_text: forecast_change+=" "+transition_text
@@ -452,7 +508,7 @@ def build_payload(current,hist,now=None):
     backfill=hist.get("backfill") or {}; daily=backfill.get("water_observed_daily_peaks") or []
     return {
         "schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
-        "past_24h":{"text":past,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"alert_changes":alert_changes,"local_impacts":local24},
+        "past_24h":{"text":past,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"marine_changes":marine_changes,"alert_changes":alert_changes,"local_impacts":local24},
         "forecast_change_24h":{"text":forecast_change,"comparison":change,"wind_comparison":wind_change},
         "forecast_change_48h":{"comparison":change48},
         "forecast_evolution":evolution,

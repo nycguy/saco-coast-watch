@@ -90,7 +90,7 @@ def install_noaa_fixture(page):
         ]},
         "event_state":event_state,
         "priorities":[
-            {"kind":"high_water","title":"Highest-impact upcoming high-water window · Elevated","text":"The current SacoCast assessment highlights the Portland high tide soon. NOAA total-water guidance is 11.80 ft MLLW, 0.20 ft below the Minor Flood threshold."},
+            {"kind":"high_water","title":"Higher-impact high-water window · Elevated","text":"SacoCast highlights the Portland high tide soon. NOAA total-water guidance is 11.80 ft MLLW, 0.20 ft below the Minor Flood threshold."},
             {"kind":"forecast_change","title":"Forecast change","text":"NOAA's compatible 72-hour peak forecast rose by 0.50 ft versus the captured forecast nearest 24 hours ago."}
         ],
         "current_snapshot":{"event_state":event_state},
@@ -244,7 +244,7 @@ def assert_common(page):
     assert "last visit" in brief_text.lower()
     assert "0.50 ft" in brief_text
     assert "2 public local items" in brief_text
-    assert "Highest-impact upcoming high-water window" in page.locator("#briefPriorityRow").inner_text()
+    assert "Higher-impact high-water window" in page.locator("#briefPriorityRow").inner_text()
     assert page.locator("#briefPriorityRow").is_visible()
     priority_colors=page.locator(".brief-priority-item").first.evaluate("""el => {
       const parse = value => value.match(/[0-9]+/g).slice(0,3).map(Number);

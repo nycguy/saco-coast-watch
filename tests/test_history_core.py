@@ -40,6 +40,12 @@ class HistoryCoreTests(unittest.TestCase):
         self.assertEqual(c["peak_delta_ft"],0.47)
         self.assertEqual(c["threshold_margin_delta_ft"]["minor"],-0.47)
         self.assertEqual(c["current_threshold_margins_ft"]["minor"],0.18)
+    def test_malformed_or_non_finite_forecast_snapshots_do_not_abort_comparison(self):
+        old=snap("2026-09-26T12:00:00Z","bad")
+        cur=snap("2026-09-27T12:00:00Z",11.8)
+        self.assertIsNone(h.compare_forecast(cur,old))
+        old["water"]["forecast_peak_72h_ft"]=float("nan")
+        self.assertIsNone(h.compare_forecast(cur,old))
     def test_peak_time_change_crosses_midnight(self):
         old=snap("2026-09-26T12:00:00Z",11.5,"2026-09-28T23:30:00Z")
         cur=snap("2026-09-27T12:00:00Z",11.5,"2026-09-29T00:30:00Z")

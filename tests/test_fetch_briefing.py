@@ -12,7 +12,7 @@ class BriefingTests(unittest.TestCase):
   change={'peak_delta_ft':0.4,'threshold_margin_delta_ft':{'minor':-0.4}}
   items=f._briefing_priorities({'forecast_peak_72h_ft':11.8},change,state,now)
   self.assertEqual([item['kind'] for item in items],['high_water','forecast_change'])
-  self.assertIn('highest-impact upcoming',items[0]['title'].lower())
+  self.assertIn('higher-impact high-water',items[0]['title'].lower())
   self.assertIn('0.20 ft below',items[0]['text'])
   self.assertIn('decreased by 0.40 ft',items[1]['text'])
 
@@ -23,7 +23,24 @@ class BriefingTests(unittest.TestCase):
   self.assertEqual(items,[])
   state['coastal_impact']['windows'][0]['high_tide_at']='2026-10-14T18:00:00Z'
   items=f._briefing_priorities({},None,state,now)
+  self.assertEqual(items[0]['title'],'Next high tide')
+  self.assertNotIn('highest-impact',items[0]['title'].lower())
   self.assertIn('does not include storm surge',items[0]['text'])
+
+ def test_consequential_forecast_change_precedes_routine_high_tide(self):
+  now=dt.datetime(2026,10,14,12,tzinfo=UTC)
+  state={'coastal_impact':{'windows':[{'high_tide_at':'2026-10-14T18:00:00Z','astronomical_ft':10.7,'impact':{'score':0,'label':'Routine','rank':0}}]}}
+  change={'previous_peak_ft':11.7,'current_peak_ft':12.2,'peak_delta_ft':0.5,'threshold_margin_delta_ft':{'minor':-0.5}}
+  items=f._briefing_priorities({'forecast_peak_72h_ft':12.2},change,state,now)
+  self.assertEqual([item['kind'] for item in items],['forecast_change','high_water'])
+  self.assertEqual(items[1]['title'],'Next high tide')
+
+ def test_consequential_high_water_stays_ahead_of_smaller_forecast_change(self):
+  now=dt.datetime(2026,10,14,12,tzinfo=UTC)
+  state={'coastal_impact':{'windows':[{'high_tide_at':'2026-10-14T18:00:00Z','modeled_total_ft':11.8,'impact':{'score':45,'label':'Elevated','rank':1}}]}}
+  change={'previous_peak_ft':10.0,'current_peak_ft':10.2,'peak_delta_ft':0.2,'threshold_margin_delta_ft':{'minor':-0.2}}
+  items=f._briefing_priorities({},change,state,now)
+  self.assertEqual([item['kind'] for item in items],['high_water','forecast_change'])
 
  def test_historical_event_episodes_split_when_official_storm_identity_changes(self):
   now=dt.datetime(2026,10,14,12,tzinfo=UTC)
@@ -68,6 +85,39 @@ class BriefingTests(unittest.TestCase):
   d=f.build_payload(cur,hist,now); c=d['forecast_change_24h']['comparison']
   self.assertEqual(c['peak_delta_ft'],0.47); self.assertEqual(c['current_threshold_margins_ft']['minor'],0.18)
   self.assertIn('shrank by 0.47 ft',d['forecast_change_24h']['text']); self.assertIn('never based on a visitor',d['window_basis'])
+ def test_small_forecast_variation_does_not_claim_risk_is_increasing(self):
+  text=f._forecast_change_text({'previous_peak_ft':10.14,'current_peak_ft':10.17,'peak_delta_ft':0.03,'time_shift_minutes':-6})
+  self.assertIn('essentially unchanged',text)
+  self.assertIn('under 0.15 ft',text)
+  self.assertIn('less than one hour',text)
+  self.assertNotIn('risk is increasing',text.lower())
+ def test_small_forecast_change_that_crosses_a_portland_threshold_is_called_out(self):
+  text=f._forecast_change_text({'previous_peak_ft':11.98,'current_peak_ft':12.02,'peak_delta_ft':0.04,'time_shift_minutes':0})
+  self.assertIn('crossed',text.lower())
+  self.assertIn('Minor Flood',text)
+  self.assertIn('11.98 to 12.02 ft MLLW',text)
+ def test_meaningful_marine_comparison_requires_fresh_same_station_samples(self):
+  now=dt.datetime(2026,10,15,12,tzinfo=UTC)
+  old={'snapshot_at':'2026-10-14T12:00:00Z','marine':{'stations':{'44007':{'observed_at':'2026-10-14T11:30:00Z','wave_observed_at':'2026-10-14T11:30:00Z','speed_mph':12.0,'gust_mph':20.0,'wave_height_ft':4.0,'dominant_period_sec':9.0,'pressure_mb':1008.0}}}}
+  current={'snapshot_at':'2026-10-15T12:00:00Z','marine':{'stations':{'44007':{'observed_at':'2026-10-15T11:30:00Z','wave_observed_at':'2026-10-15T11:30:00Z','speed_mph':13.0,'gust_mph':31.0,'wave_height_ft':2.5,'dominant_period_sec':12.0,'pressure_mb':1002.0}}}}
+  changes=f._observed_marine_changes(current,old)
+  self.assertEqual([item['metric'] for item in changes],['gust_mph','wave_height_ft','dominant_period_sec','pressure_mb'])
+  self.assertIn('not a local surf measurement',next(item['text'] for item in changes if item['metric']=='wave_height_ft'))
+  old.update({'snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':10.2},'alerts':[]})
+  current.update({'snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':10.2},'forecast_conditions':{},'alerts':[]})
+  payload=f.build_payload(current,{'snapshots':[old],'alert_events':[],'local_events':[],'backfill':{}},now)
+  self.assertEqual(len(payload['past_24h']['marine_changes']),4)
+  self.assertIn('NOAA/NDBC offshore buoy 44007',payload['past_24h']['text'])
+  stale={'snapshot_at':'2026-10-14T12:00:00Z','marine':{'stations':{'44007':{'observed_at':'2026-10-14T09:00:00Z','wave_observed_at':'2026-10-14T09:00:00Z','gust_mph':20.0,'wave_height_ft':4.0}}}}
+  self.assertEqual(f._observed_marine_changes(current,stale),[])
+ def test_event_transitions_use_plain_fixed_window_language(self):
+  old={'event_state':{'phase':'Recent','impact':{'label':'Elevated'}}}
+  current={'event_state':{'phase':'Routine','impact':{'label':'Routine'}}}
+  text=f._event_transition_text(current,old)
+  self.assertIn('conditions around 24 hours ago',text)
+  self.assertIn('recently ended to routine conditions',text)
+  self.assertIn("SacoCast's local impact rating",text)
+  self.assertNotIn('stored state nearest',text)
  def test_local_pulse_excludes_non_weather_events(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   cur={'snapshot_at':'2026-09-27T12:00:00Z','water':{'forecast_peak_72h_ft':11.8,'forecast_peak_72h_time':'2026-09-28T16:00:00Z'},'forecast_conditions':{},'marine':{'stations':{}},'alerts':[]}

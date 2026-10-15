@@ -2,6 +2,7 @@
 """Pure history and comparison logic for Saco Coast Watch."""
 from __future__ import annotations
 import datetime as dt
+import math
 import re
 from collections import defaultdict
 
@@ -94,15 +95,18 @@ def compare_forecast(current, baseline):
     cur_ft=_forecast_value(current,"forecast_peak_72h_ft")
     old_ft=_forecast_value(baseline,"forecast_peak_72h_ft")
     if cur_ft is None or old_ft is None: return None
+    try: cur_ft=float(cur_ft); old_ft=float(old_ft)
+    except (TypeError,ValueError): return None
+    if not math.isfinite(cur_ft) or not math.isfinite(old_ft): return None
     cur_t=parse_iso(_forecast_value(current,"forecast_peak_72h_time"))
     old_t=parse_iso(_forecast_value(baseline,"forecast_peak_72h_time"))
     cur_m=threshold_margins(cur_ft); old_m=threshold_margins(old_ft)
     return {
         "baseline_at": baseline.get("snapshot_at") or baseline.get("generated_at"),
         "baseline_source": (baseline.get("provenance") or {}).get("forecast") or baseline.get("source"),
-        "peak_delta_ft": round(float(cur_ft)-float(old_ft),2),
-        "previous_peak_ft": round(float(old_ft),2),
-        "current_peak_ft": round(float(cur_ft),2),
+        "peak_delta_ft": round(cur_ft-old_ft,2),
+        "previous_peak_ft": round(old_ft,2),
+        "current_peak_ft": round(cur_ft,2),
         "previous_peak_time": iso(old_t),
         "current_peak_time": iso(cur_t),
         "time_shift_minutes": round((cur_t-old_t).total_seconds()/60) if cur_t and old_t else None,

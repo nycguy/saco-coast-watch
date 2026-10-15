@@ -84,8 +84,7 @@ def main():
 
             # Dialogs must fit the viewport, retain native keyboard dismissal,
             # and return focus to their opening control.
-            page.locator("#alertsButton").focus()
-            page.keyboard.press("Enter")
+            page.locator("#alertsButton").click()
             dialog = page.locator("#alertsDialog")
             assert dialog.evaluate("el => el.open")
             dialog_name = page.locator("#alertsDialogTitle").inner_text()
@@ -94,6 +93,8 @@ def main():
             assert dialog.evaluate("el => { const r=el.getBoundingClientRect(); return r.left>=0 && r.right<=innerWidth+1 && r.top>=0 && r.bottom<=innerHeight+1; }")
             assert dialog.evaluate("el => el.contains(document.activeElement)"), "alert dialog did not receive keyboard focus"
             assert_accessible_control_names(page)
+            page.keyboard.press("Tab")
+            assert dialog.evaluate("el => el.contains(document.activeElement)"), "alert dialog did not contain keyboard tab navigation"
             page.keyboard.press("Escape")
             assert not dialog.evaluate("el => el.open")
             assert page.evaluate("document.activeElement === document.querySelector('#alertsButton')"), "alert dialog did not restore focus"
@@ -106,6 +107,8 @@ def main():
                 f"briefing dialog has no accessible name at {width}px"
             assert briefing.evaluate("el => { const r=el.getBoundingClientRect(); return r.left>=0 && r.right<=innerWidth+1 && r.top>=0 && r.bottom<=innerHeight+1; }")
             assert briefing.evaluate("el => el.contains(document.activeElement)"), "briefing dialog did not receive keyboard focus"
+            page.keyboard.press("Tab")
+            assert briefing.evaluate("el => el.contains(document.activeElement)"), "briefing dialog did not contain keyboard tab navigation"
             page.keyboard.press("Escape")
             assert not briefing.evaluate("el => el.open")
             assert page.evaluate("document.activeElement === document.querySelector('#briefOpen')"), "briefing dialog did not restore focus"

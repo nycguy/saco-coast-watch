@@ -7,6 +7,8 @@ test('unknown, stale, fresh, failed and disabled channels are distinct',()=>{
  assert.equal(status.email.status,'stale');assert.equal(status.threshold_push.status,'failed');assert.equal(status.event_push.status,'disabled');
  assert.equal(cronStatus([{channel:'email',state:'healthy',completed_at:now-1800}],now).email.status,'healthy');
  assert.equal(cronStatus([],now).email.status,'unknown');
+ assert.equal(cronStatus([{channel:'email',state:'running',started_at:now-1801,completed_at:now-100}],now).email.status,'stale');
+ assert.equal(cronStatus([{channel:'email',state:'running',started_at:now-20,completed_at:now-5000}],now).email.status,'running');
 });
 test('missing migration degrades without claiming health',async()=>{
  const status=await readCronStatus({prepare(){throw Error('missing table');}});

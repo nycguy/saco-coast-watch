@@ -19,11 +19,12 @@ def main():
     for folder in ('css', 'js', 'eastcast'):
         shutil.copytree(ROOT / folder, OUT / folder, dirs_exist_ok=True)
     (OUT / 'data').mkdir(parents=True, exist_ok=True)
-    for name in ('wind.json', 'coastal-alerts.json'):
-        shutil.copy2(ROOT / 'data' / name, OUT / 'data' / name)
-    write_json(OUT / 'data/hazards.json', {'schema_version': 1, 'generated_at': None, 'active_modes': [], 'severity': 'none', 'event_state': {}, 'marine_alerts': [], 'surf': {}, 'winter': {}, 'rain': {}, 'wind': {}, 'cold': {}, 'tropical': {}, 'hourly': [], 'hourly_full': []})
-    write_json(OUT / 'data/coastal-briefing.json', {'schema_version': 2, 'status': 'unavailable'})
-    write_json(OUT / 'data/coastal-history.json', {'schema_version': 2, 'window_basis': 'Fixed rolling windows', 'thresholds_ft_mllw': {'minor': 12.0, 'moderate': 13.0, 'major': 14.0}, 'snapshots': []})
+    test_time = '2000-01-01T00:00:00Z'
+    write_json(OUT / 'data/wind.json', {'generated_at': test_time, 'stations': {'44007': None, 'WEXM1': None}})
+    write_json(OUT / 'data/coastal-alerts.json', {'generatedAt': test_time, 'source': 'test-only unavailable feed', 'features': [], 'error': 'Not collected in a validation artifact'})
+    write_json(OUT / 'data/hazards.json', {'schema_version': 1, 'generated_at': test_time, 'active_modes': [], 'severity': {'level': 'unknown', 'label': 'Unavailable', 'rank': 0}, 'event_state': {}, 'alerts': [], 'marine_alerts': [], 'surf': {}, 'winter': {}, 'rain': {}, 'wind': {}, 'cold': {}, 'tropical': {}, 'hourly': [], 'hourly_full': [], 'errors': {'test': 'Not collected in a validation artifact'}})
+    write_json(OUT / 'data/coastal-briefing.json', {'schema_version': 2, 'generated_at': test_time, 'status': 'unavailable', 'current_snapshot': {'water': {'latest_observed_ft': None, 'latest_observed_at': None}, 'hazards': {'errors': {'test': 'Not collected in a validation artifact'}}}})
+    write_json(OUT / 'data/coastal-history.json', {'schema_version': 2, 'generated_at': test_time, 'window_basis': 'Fixed rolling windows', 'station': '8418150', 'thresholds_ft_mllw': {'minor': 12.0, 'moderate': 13.0, 'major': 14.0}, 'snapshots': [{'snapshot_at': test_time, 'snapshot_kind': 'validation_placeholder'}]})
     write_json(OUT / 'data/webcams/webcams.json', {'schema_version': 1, 'cameras': {'ferry_beach': {'status': 'unavailable'}, 'abellona': {'status': 'live_embed'}}})
     write_json(OUT / 'eastcast/data/snapshot.json', {'schema_version': 2, 'summary': {}, 'alerts': [], 'outlooks': [], 'coastal_pulse': [], 'sources': {'coastal_pulse': {'ok': True}}})
     print(f'Assembled SacoCast validation artifact at {OUT}; generated-feed placeholders are test-only.')

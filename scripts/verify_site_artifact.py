@@ -50,9 +50,47 @@ def verify(root):
             missing.append('manifest.webmanifest -> display must be standalone for iPhone Web Push')
     if (root / 'index.html').is_file() and 'js/push-ui.mjs' not in (root / 'index.html').read_text(encoding='utf-8'):
         missing.append('index.html -> notification controls script js/push-ui.mjs')
-    for asset in ('data/wind.json', 'data/coastal-alerts.json', 'data/hazards.json', 'data/coastal-briefing.json', 'data/coastal-history.json', 'data/webcams/webcams.json', 'eastcast/data/snapshot.json'):
+    data_assets = ('data/wind.json', 'data/coastal-alerts.json', 'data/hazards.json', 'data/coastal-briefing.json', 'data/coastal-history.json', 'data/webcams/webcams.json', 'eastcast/data/snapshot.json')
+    for asset in data_assets:
         if not (root / asset).is_file():
             missing.append(asset)
+    documents = {}
+    for asset in data_assets:
+        path = root / asset
+        if not path.is_file():
+            continue
+        try:
+            documents[asset] = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, json.JSONDecodeError):
+            missing.append(f'{asset} -> invalid JSON')
+
+    def require(condition, description):
+        if not condition:
+            missing.append(description)
+
+    wind = documents.get('data/wind.json', {})
+    require(isinstance(wind.get('stations'), dict), 'data/wind.json -> stations must be an object')
+    alerts = documents.get('data/coastal-alerts.json', {})
+    require(isinstance(alerts.get('features'), list), 'data/coastal-alerts.json -> features must be a list')
+    hazards = documents.get('data/hazards.json', {})
+    require(hazards.get('schema_version') == 1, 'data/hazards.json -> unsupported schema version')
+    require(all(isinstance(hazards.get(key), list) for key in ('active_modes', 'alerts', 'marine_alerts', 'hourly', 'hourly_full')), 'data/hazards.json -> required hazard collections have invalid shapes')
+    require(isinstance(hazards.get('errors'), dict), 'data/hazards.json -> errors must preserve source-health details')
+    briefing = documents.get('data/coastal-briefing.json', {})
+    require(briefing.get('schema_version') == 2, 'data/coastal-briefing.json -> unsupported schema version')
+    require(isinstance(briefing.get('current_snapshot'), dict), 'data/coastal-briefing.json -> current_snapshot must be an object')
+    history = documents.get('data/coastal-history.json', {})
+    require(history.get('schema_version') == 2, 'data/coastal-history.json -> unsupported schema version')
+    require(history.get('thresholds_ft_mllw') == {'minor': 12.0, 'moderate': 13.0, 'major': 14.0}, 'data/coastal-history.json -> Portland thresholds must remain 12/13/14 ft MLLW')
+    snapshots = history.get('snapshots')
+    require(isinstance(snapshots, list) and bool(snapshots), 'data/coastal-history.json -> timestamped snapshots are required')
+    if isinstance(snapshots, list):
+        require(all(isinstance(row, dict) and (row.get('snapshot_at') or row.get('generated_at')) for row in snapshots), 'data/coastal-history.json -> every snapshot requires its captured timestamp')
+    webcams = documents.get('data/webcams/webcams.json', {})
+    require(webcams.get('schema_version') == 1, 'data/webcams/webcams.json -> unsupported schema version')
+    require(isinstance(webcams.get('cameras'), dict) and set(webcams.get('cameras', {})) == {'ferry_beach', 'abellona'}, 'data/webcams/webcams.json -> expected camera entries are required')
+    eastcast = documents.get('eastcast/data/snapshot.json', {})
+    require(eastcast.get('schema_version') == 2, 'eastcast/data/snapshot.json -> unsupported schema version')
     briefing_path = root / 'data/coastal-briefing.json'
     if briefing_path.is_file():
         briefing = json.loads(briefing_path.read_text(encoding='utf-8'))
@@ -64,8 +102,8 @@ def verify(root):
         if briefing_path.stat().st_size > 1_000_000:
             missing.append('data/coastal-briefing.json -> exceeds 1 MB mobile payload budget')
     if missing:
-        raise SystemExit('Missing assembled assets:\n' + '\n'.join(missing))
-    print('SacoCast assembled artifact: required files and references present')
+        raise SystemExit('Invalid assembled artifact:\n' + '\n'.join(missing))
+    print('SacoCast assembled artifact: required files, references, JSON schemas, and critical data contracts are valid')
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()

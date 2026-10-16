@@ -76,6 +76,12 @@ jobs:
           cp -R eastcast dist/eastcast
           mkdir -p dist/eastcast/data
           python3 scripts/fetch_eastcast.py --output dist/eastcast/data/snapshot.json
+      - name: Summarize source freshness and validate durable history health
+        run: >-
+          python3 scripts/monitor_data_health.py
+          --data-dir dist/data
+          --durable-history .history-store/data/history/coastal-history.json
+          --summary "$GITHUB_STEP_SUMMARY"
       - name: Verify EastCast and coastal history are included in the Pages artifact
         run: |
           python3 scripts/verify_site_artifact.py dist
@@ -142,7 +148,7 @@ jobs:
         uses: actions/upload-artifact@v7.0.2
         with:
           name: dashboard-browser-test-images
-          retention-days: 7
+          retention-days: 1
           path: |
             map-smoke*.png
             tide-outlook-smoke-*.png

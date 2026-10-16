@@ -32,6 +32,14 @@ class FetchWindTests(unittest.TestCase):
   self.assertEqual(d['wave_observed_at'],'2026-10-14T17:20:00Z')
   self.assertEqual(d['wave_height_ft'],4.6)
   self.assertEqual(d['dominant_period_sec'],7.0)
+ def test_parse_distinguishes_malformed_response_from_missing_observation(self):
+  with self.assertRaises(w.MalformedFeedError):
+   w.parse('<html>service unavailable</html>','44007')
+  raw='''#YY MM DD hh mm WDIR WSPD GST WVHT
+2026 10 14 17 40 190 MM MM MM
+'''
+  with self.assertRaises(w.NoWindObservation):
+   w.parse(raw,'44007')
 
 if __name__=='__main__':
  unittest.main()

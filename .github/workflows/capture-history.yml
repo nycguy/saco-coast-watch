@@ -96,6 +96,12 @@ jobs:
           print('durable snapshots',len(d['snapshots']))
           print('model archive',((d.get('backfill') or {}).get('model_archive') or {}).get('summary'))
           PY
+      - name: Summarize durable history freshness and capture gaps
+        run: >-
+          python3 scripts/monitor_data_health.py
+          --history-only
+          --durable-history .history-store/data/history/coastal-history.json
+          --summary "$GITHUB_STEP_SUMMARY"
       - name: Commit history to dedicated branch
         shell: bash
         run: |

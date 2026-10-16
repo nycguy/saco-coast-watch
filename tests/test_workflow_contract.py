@@ -34,13 +34,22 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('runs-on: ubuntu-latest',history)
         self.assertIn("cron: '*/15 * * * *'",history)
 
-    def test_debug_screenshot_artifacts_expire_after_seven_days(self):
+    def test_debug_screenshot_artifacts_expire_after_one_day(self):
         pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
         block=pages.split('name: Save map test screenshot',1)[1].split('- uses: actions/configure-pages',1)[0]
-        self.assertIn('retention-days: 7',block)
+        self.assertIn('retention-days: 1',block)
         self.assertIn('if: failure() && github.event_name != \'schedule\'',pages.split('name: Save map test screenshot',1)[1].split('uses: actions/upload-artifact',1)[0])
         self.assertIn('uses: actions/upload-pages-artifact@v5.0.0',pages)
         self.assertIn('uses: actions/deploy-pages@v5.0.1',pages)
+
+    def test_existing_workflows_publish_data_health_without_adding_schedules(self):
+        pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
+        history=(ROOT/'.github/workflows/capture-history.yml').read_text(encoding='utf-8')
+        self.assertIn('scripts/monitor_data_health.py',pages)
+        self.assertIn('--durable-history .history-store/data/history/coastal-history.json',pages)
+        self.assertIn('--history-only',history)
+        self.assertEqual(pages.count("cron: '*/10 * * * *'"),1)
+        self.assertEqual(history.count("cron: '*/15 * * * *'"),1)
 
     def test_responsive_acceptance_runs_before_and_after_pages_publish(self):
         pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')

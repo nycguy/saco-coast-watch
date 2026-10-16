@@ -105,3 +105,22 @@ test('10-minute scheduled Worker evaluates an opted-in App threshold with one sh
     assert.equal(state.get(`${device.id}:waterObserved`).active, 1);
   } finally { globalThis.fetch = before; }
 });
+
+test('health degrades safely when cron migration is not installed',async()=>{
+ const DB={prepare(sql){return{async all(){if(sql.includes('sqlite_master'))return{results:[]};throw Error('no such table: worker_cron_health');}};}};
+ const response=await worker.fetch(new Request('https://alerts.example.test/health'),{...env,DB});
+ assert.equal(response.status,200);
+ const body=await response.json();
+ assert.equal(body.cron.available,false);
+ assert.equal(body.cron.channels.email.status,'unknown');
+});
+test('cron channel failures do not prevent independent email completion',async()=>{
+ const calls=[];
+ const DB={prepare(sql){return{bind(...args){calls.push({sql,args});return this;},async run(){return{meta:{changes:1}};},async first(){return null;},async all(){return{results:[]};}};}};
+ let promise;
+ worker.scheduled({}, {DB,PUSH_EVENTS_ENABLED:'false',PUSH_API_ENABLED:'false'}, {waitUntil(p){promise=p;}});
+ const settled=await promise;
+ assert.equal(settled.length,3);
+ assert.equal(settled[2].status,'fulfilled');
+ assert.ok(calls.some(x=>x.sql.includes('worker_cron_health')&&x.args[0]==='email'));
+});

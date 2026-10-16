@@ -72,6 +72,11 @@ class ArtifactTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             MODULE.verify(self.root)
 
+    def test_malformed_briefing_json_fails_with_artifact_diagnostic(self):
+        (self.root / 'data/coastal-briefing.json').write_text('{malformed')
+        with self.assertRaisesRegex(SystemExit, 'data/coastal-briefing.json -> invalid JSON'):
+            MODULE.verify(self.root)
+
     def test_history_without_timestamped_snapshots_fails_artifact_validation(self):
         history = {'schema_version': 2, 'thresholds_ft_mllw': {'minor': 12.0, 'moderate': 13.0, 'major': 14.0}, 'snapshots': [{}]}
         (self.root / 'data/coastal-history.json').write_text(json.dumps(history))

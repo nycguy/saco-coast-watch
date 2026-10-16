@@ -60,9 +60,14 @@ def verify(root):
         if not path.is_file():
             continue
         try:
-            documents[asset] = json.loads(path.read_text(encoding='utf-8'))
+            document = json.loads(path.read_text(encoding='utf-8'))
         except (OSError, json.JSONDecodeError):
             missing.append(f'{asset} -> invalid JSON')
+            continue
+        if not isinstance(document, dict):
+            missing.append(f'{asset} -> top-level JSON value must be an object')
+            continue
+        documents[asset] = document
 
     def require(condition, description):
         if not condition:
@@ -92,8 +97,8 @@ def verify(root):
     eastcast = documents.get('eastcast/data/snapshot.json', {})
     require(eastcast.get('schema_version') == 2, 'eastcast/data/snapshot.json -> unsupported schema version')
     briefing_path = root / 'data/coastal-briefing.json'
-    if briefing_path.is_file():
-        briefing = json.loads(briefing_path.read_text(encoding='utf-8'))
+    briefing = documents.get('data/coastal-briefing.json')
+    if briefing_path.is_file() and isinstance(briefing, dict):
         # Durable history is published separately; duplicating it in this browser
         # payload needlessly penalizes mobile users on every briefing refresh.
         for key in ('history', 'history_compact'):

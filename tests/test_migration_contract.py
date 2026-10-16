@@ -32,7 +32,8 @@ class MigrationContractTests(unittest.TestCase):
         self.assertIn('async scheduled(_event,env,ctx)', worker)
         self.assertIn("purpose='alerts-delivery-quota'", worker)
         self.assertIn('const liveAlerts=', worker)
-        self.assertIn("env.PUSH_EVENTS_ENABLED==='true'?processCoastalPushEvents(env)", worker)
+        self.assertIn("env.PUSH_EVENTS_ENABLED==='true'", worker)
+        self.assertIn("observe('event_push',()=>processCoastalPushEvents(env))", worker)
         self.assertIn('handlePushApi', worker)
         self.assertIn('push_device_deliveries', worker)
 
@@ -40,7 +41,7 @@ class MigrationContractTests(unittest.TestCase):
         db = sqlite3.connect(':memory:')
         db.executescript((ROOT / 'alerts/migrations/0001_init.sql').read_text(encoding='utf-8'))
         db.execute("INSERT INTO subscribers(id,email,email_confirmed,prefs_json,unsubscribed,created_at,updated_at) VALUES('existing','preserve@example.org',1,'{}',0,1,1)")
-        for name in ('0002_event_notifications.sql', '0003_push_devices.sql', '0004_push_delivery_queue.sql'):
+        for name in ('0002_event_notifications.sql', '0003_push_devices.sql', '0004_push_delivery_queue.sql', '0005_push_threshold_preferences.sql', '0006_worker_cron_health.sql'):
             sql=(ROOT / 'alerts/migrations' / name).read_text(encoding='utf-8')
             self.assertNotRegex(sql, r'(?im)^\s*(DROP|DELETE|UPDATE|ALTER)\s')
             db.executescript(sql)
@@ -52,7 +53,7 @@ class MigrationContractTests(unittest.TestCase):
 
     def test_production_schema_snapshot_query_covers_tables_columns_and_indexes(self):
         db = sqlite3.connect(':memory:')
-        for name in ('0001_init.sql', '0002_event_notifications.sql', '0003_push_devices.sql', '0004_push_delivery_queue.sql', '0005_push_threshold_preferences.sql'):
+        for name in ('0001_init.sql', '0002_event_notifications.sql', '0003_push_devices.sql', '0004_push_delivery_queue.sql', '0005_push_threshold_preferences.sql', '0006_worker_cron_health.sql'):
             db.executescript((ROOT / 'alerts/migrations' / name).read_text(encoding='utf-8'))
         sql=(ROOT / 'scripts/d1_schema_snapshot.sql').read_text(encoding='utf-8')
         rows=set()
@@ -65,6 +66,7 @@ class MigrationContractTests(unittest.TestCase):
         self.assertIn('push_delivery_queue.next_attempt_at', rows)
         self.assertIn('object:table:push_threshold_preferences', rows)
         self.assertIn('push_threshold_preferences.prefs_json', rows)
+        self.assertIn('object:table:worker_cron_health', rows)
         db.close()
 
     def test_release_workflow_is_manual_and_requires_explicit_apply_input(self):

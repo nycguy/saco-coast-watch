@@ -1,4 +1,5 @@
 import { handlePushApi, pushConfiguration } from './push-http.mjs';
+import { readCronStatus, recordCron } from './cron-health.mjs';
 import { processCoastalPushEvents } from './coastal-push-events.mjs';
 import { evaluatePushThresholds } from './push-threshold-checks.mjs';
 import { decideAlert } from './threshold-state.mjs';
@@ -31,7 +32,8 @@ async function health(env){
   try{if(env.DB){const q=await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all();const found=(q.results||[]).map(x=>x.name);thresholdTablesMissing=THRESHOLD_TABLES.filter(x=>!found.includes(x));}}catch(_){/* Keep custom threshold push disabled. */}
   const webPushEnabled=env.PUSH_API_ENABLED==="true"&&env.PUSH_EVENTS_ENABLED==="true"&&!!env.VAPID_PUBLIC_KEY&&!!env.VAPID_PRIVATE_KEY&&databaseConnected&&!pushTablesMissing.length;
   const thresholdPushEnabled=webPushEnabled&&!thresholdTablesMissing.length;
-  return json({service:"saco-coastal-alerts",phase:webPushEnabled?"email-and-web-push":"email-release",pilotBuild:thresholdPushEnabled?"web-push-thresholds-v1":webPushEnabled?"web-push-v1":"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled,thresholdPushEnabled,pushApiEnabled:env.PUSH_API_ENABLED==="true",pushEventsEnabled:env.PUSH_EVENTS_ENABLED==="true",pushTablesMissing,thresholdTablesMissing,cronRequiresSetup:false});
+  const cron=databaseConnected?await readCronStatus(env.DB):{available:false,channels:{}};
+  return json({cron,service:"saco-coastal-alerts",phase:webPushEnabled?"email-and-web-push":"email-release",pilotBuild:thresholdPushEnabled?"web-push-thresholds-v1":webPushEnabled?"web-push-v1":"email-release-v2",configurationReady:configured(env)&&databaseConnected&&!missingTables.length,databaseConnected,missingSettings,missingTables,databaseError,publicSignupEnabled:liveAlerts(env),ownerEmailPilotEnabled:configured(env),emailAlertsEnabled:liveAlerts(env),webPushEnabled,thresholdPushEnabled,pushApiEnabled:env.PUSH_API_ENABLED==="true",pushEventsEnabled:env.PUSH_EVENTS_ENABLED==="true",pushTablesMissing,thresholdTablesMissing,cronRequiresSetup:false});
 }
 function emailIsOwner(email,env){return typeof email==="string"&&email.trim().toLowerCase()===env.SUPPORT_EMAIL.trim().toLowerCase();}
 async function validateTurnstile(req,env,responseToken){
@@ -668,10 +670,26 @@ export default{
   async scheduled(_event,env,ctx){
     // Push processing fails independently; it must never prevent the existing email checker.
     const loadMeasurements=createThresholdMeasurementLoader();
+    // Telemetry is best-effort: an absent migration must never stop delivery.
+    const observe=async(channel,job)=>{
+      try {await recordCron(env.DB,channel,'running');}
+      catch(error){console.warn('Cron telemetry unavailable',channel,String(error?.message||error).slice(0,100));return job();}
+      try {const result=await job();await recordCron(env.DB,channel,'healthy');return result;}
+      catch(error){
+        try{await recordCron(env.DB,channel,'failed');}catch(_){}
+        throw error;
+      }
+    };
     ctx.waitUntil(Promise.allSettled([
-      runLiveEmailChecks(env,loadMeasurements),
-      livePushThresholdChecks(env,loadMeasurements).catch(error=>{console.error("App threshold push check failed",String(error?.message||error).slice(0,160));}),
-      env.PUSH_EVENTS_ENABLED==='true'?processCoastalPushEvents(env).catch(error=>{console.error('Web Push event check failed',String(error));}):Promise.resolve(),
-    ]));
+      observe('email',()=>runLiveEmailChecks(env,loadMeasurements)),
+      observe('threshold_push',()=>livePushThresholdChecks(env,loadMeasurements)),
+      env.PUSH_EVENTS_ENABLED==='true'
+        ?observe('event_push',()=>processCoastalPushEvents(env))
+        :Promise.resolve().then(async()=>{try{await recordCron(env.DB,'event_push','disabled');}catch(_){};}),
+    ]).then(results=>{
+      for(let i=0;i<results.length;i++)if(results[i].status==='rejected')
+        console.error('Cron channel failed',['email','threshold_push','event_push'][i],String(results[i].reason?.message||results[i].reason).slice(0,160));
+      return results;
+    }));
   }
 };

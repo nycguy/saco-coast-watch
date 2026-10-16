@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-16T01:18:21Z",
+  "generated_at": "2026-10-16T01:19:10Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -232334,7 +232334,7 @@
       }
     },
     {
-      "snapshot_at": "2026-10-16T01:18:21Z",
+      "snapshot_at": "2026-10-16T01:19:10Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -232431,7 +232431,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-10-16T01:18:21.590833Z",
+        "generated_at": "2026-10-16T01:19:10.467099Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -235692,7 +235692,7 @@
     }
   ],
   "source_health": {
-    "checked_at": "2026-10-16T01:18:21Z",
+    "checked_at": "2026-10-16T01:19:10Z",
     "feeds": [
       {
         "name": "Local news search",

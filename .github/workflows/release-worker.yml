@@ -20,6 +20,29 @@ jobs:
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 22
+      - name: Test Worker logic and syntax before any production writes
+        working-directory: alerts
+        run: |
+          set -euo pipefail
+          for file in src/*.mjs; do node --check "$file"; done
+          node --test test/*.test.mjs
+      - name: Validate additive heartbeat migration with SQLite
+        run: |
+          python3 - <<'PY'
+          import sqlite3
+          db=sqlite3.connect(':memory:')
+          db.executescript(open('alerts/migrations/0006_worker_cron_health.sql').read())
+          db.execute("INSERT INTO worker_cron_health(channel,state,started_at) VALUES ('email','running',1)")
+          db.execute("UPDATE worker_cron_health SET state='healthy',completed_at=2 WHERE channel='email'")
+          assert db.execute("SELECT state,completed_at FROM worker_cron_health").fetchone()==('healthy',2)
+          try:
+              db.execute("INSERT INTO worker_cron_health(channel,state,started_at) VALUES ('invalid','healthy',1)")
+          except sqlite3.IntegrityError:
+              pass
+          else:
+              raise AssertionError('Channel validation missing')
+          print('Additive heartbeat migration validated.')
+          PY
       - name: Install Wrangler
         working-directory: alerts
         run: npm install --no-save --no-package-lock --no-audit --no-fund wrangler@4
@@ -162,6 +185,17 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Apply additive cron heartbeat migration
+        if: inputs.apply_migrations_and_deploy
+        working-directory: alerts
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          # Idempotent additive migration; never deletes subscriber or notification records.
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --file=migrations/0006_worker_cron_health.sql
+          npx wrangler d1 execute saco-coastal-alerts --remote --yes --command="SELECT channel,state,started_at,completed_at FROM worker_cron_health LIMIT 1" --json > /tmp/cron-health-schema.json
       - name: Confirm complete schema and unchanged subscriber count
         if: inputs.apply_migrations_and_deploy
         env:
@@ -286,6 +320,19 @@ jobs:
           done
           test "$configured" = true || { echo 'Public push configuration did not initialize; no subscriber test was sent.' >&2; exit 1; }
           echo 'Push and custom-threshold configuration are enabled for the public origin. No test push or hazard notification was sent.'
+      - name: Verify live cron heartbeat schema and endpoint
+        if: inputs.apply_migrations_and_deploy
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error https://saco-coastal-alerts.mikewiley-nyc.workers.dev/health -o /tmp/worker-cron-health.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/worker-cron-health.json'))
+          cron=d.get('cron',{})
+          assert cron.get('available') is True, 'Cron heartbeat table unavailable'
+          assert all(c in cron.get('channels',{}) for c in ('email','threshold_push','event_push')), 'Missing channel status'
+          print('Cron telemetry endpoint and D1 migration verified; fresh scheduled execution remains pending.')
+          PY
       - name: Record read-only preflight result
         if: ${{ !inputs.apply_migrations_and_deploy }}
         run: echo 'Preflight only. No migration, Worker deployment, secret change, or notification was performed.'

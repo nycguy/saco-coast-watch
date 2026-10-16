@@ -674,11 +674,15 @@ export default{
     const observe=async(channel,job)=>{
       try {await recordCron(env.DB,channel,'running');}
       catch(error){console.warn('Cron telemetry unavailable',channel,String(error?.message||error).slice(0,100));return job();}
-      try {const result=await job();await recordCron(env.DB,channel,'healthy');return result;}
+      let result;
+      try {result=await job();}
       catch(error){
         try{await recordCron(env.DB,channel,'failed');}catch(_){}
         throw error;
       }
+      try{await recordCron(env.DB,channel,'healthy');}
+      catch(error){console.warn('Cron completion telemetry unavailable',channel,String(error?.message||error).slice(0,100));}
+      return result;
     };
     ctx.waitUntil(Promise.allSettled([
       observe('email',()=>runLiveEmailChecks(env,loadMeasurements)),

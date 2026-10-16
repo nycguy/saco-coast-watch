@@ -8,15 +8,15 @@ export function cronStatus(rows, now=Math.floor(Date.now()/1000)) {
     const row=byName.get(name);
     if(!row){channels[name]={status:'unknown',lastCompletedAt:null};continue;}
     if(row.state==='disabled'){channels[name]={status:'disabled',lastCompletedAt:row.completed_at||null};continue;}
-    const completed=Number(row.completed_at);
+    const completed=Number(row.state==='running'?row.started_at:row.completed_at);
     const age=Number.isFinite(completed)&&completed>0?Math.max(0,now-completed):null;
-    channels[name]={status:row.state==='running'?(age===null||age>HEARTBEAT_STALE_SECONDS?'stale':'running'):row.state==='failed'?'failed':age===null?'unknown':age>HEARTBEAT_STALE_SECONDS?'stale':'healthy',lastCompletedAt:age===null?null:new Date(completed*1000).toISOString()};
+    channels[name]={status:row.state==='running'?(age===null||age>HEARTBEAT_STALE_SECONDS?'stale':'running'):row.state==='failed'?'failed':age===null?'unknown':age>HEARTBEAT_STALE_SECONDS?'stale':'healthy',lastCompletedAt:Number.isFinite(Number(row.completed_at))&&Number(row.completed_at)>0?new Date(Number(row.completed_at)*1000).toISOString():null};
   }
   return channels;
 }
 export async function readCronStatus(db,now=Math.floor(Date.now()/1000)){
   try {
-    const result=await db.prepare('SELECT channel,state,completed_at FROM worker_cron_health').all();
+    const result=await db.prepare('SELECT channel,state,started_at,completed_at FROM worker_cron_health').all();
     return {available:true,channels:cronStatus(result.results,now)};
   }catch(_){return {available:false,channels:cronStatus([],now)};}
 }

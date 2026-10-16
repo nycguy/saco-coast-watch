@@ -65,3 +65,10 @@ No D1 migration was required for the current history enhancement. Any future per
 ## Browser and accessibility verification
 
 The public Pages push workflow runs deterministic Playwright/Chromium desktop and 390×844 mobile checks, including briefing priority, flood-threshold chart labels/contrast, modal keyboard close/focus restoration, archive failure messaging, map, and notification settings. This Intel Mac has a confirmed macOS HIServices startup crash for Node-launched local browsers; run browser coverage in the existing public Ubuntu runner rather than retrying the failing local launch. Device-specific VoiceOver and iPhone notification interaction still require a physical device.
+
+
+## Worker cron execution telemetry (pending controlled Worker release)
+
+Source includes additive migration `alerts/migrations/0006_worker_cron_health.sql` and independent execution records for email, threshold push, and event push. Each records channel, execution state, and timestamps, but no subscriber data or payloads. The public `/health` response includes `cron.available` and per-channel status. Unknown or stale does **not** mean that no alerts were warranted; a healthy execution record does **not** prove delivery to a recipient.
+
+This feature is **not active in production** until the D1 migration is applied and the Worker is deployed using the gated release process. Before release, run `npm test` in `alerts/`, validate the migration against a test database, review the Worker release workflow, then explicitly authorize and execute the D1 migration and Worker deployment. Afterward verify live `/health` initially reports unknown and, after an actual scheduled run, reports fresh channel status. Do not send synthetic production notifications for verification. If the migration is missing, telemetry reports unavailable while the existing alert evaluation continues. Keep the existing ten-minute cron and do not create a GitHub monitoring schedule.

@@ -245,7 +245,8 @@ def assert_common(page):
     assert "consistent 24-hour and 72-hour periods" in brief_text
     assert "last visit" in brief_text.lower()
     assert "0.50 ft" in brief_text
-    assert "2 public local items" in brief_text
+    assert "2 public weather/coastal reports found" in brief_text
+    assert "community posts are anecdotal" in brief_text
     assert "Higher-impact high-water window" in page.locator("#briefPriorityRow").inner_text()
     assert page.locator("#briefPriorityRow").is_visible()
     priority_colors=page.locator(".brief-priority-item").first.evaluate("""el => {

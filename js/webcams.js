@@ -247,9 +247,9 @@
   loadFerryArchive();
   const hub=document.querySelector('.camera-hub');
   if(hub&&'IntersectionObserver'in window){
-    const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){hubVisible=true;activateFerry();document.dispatchEvent(new CustomEvent('sacocast:camera-selected',{detail:{camera:selectedCamera}}));observer.disconnect();}},{rootMargin:'250px 0px'});
+    const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){hubVisible=true;activateFerry();observer.disconnect();}},{rootMargin:'250px 0px'});
     observer.observe(hub);
-  }else{hubVisible=true;activateFerry();document.dispatchEvent(new CustomEvent('sacocast:camera-selected',{detail:{camera:selectedCamera}}));}
+  }else{hubVisible=true;activateFerry();}
   setInterval(()=>{if(!document.hidden){loadWebcamPreviews();loadFerryArchive();}},5*60*1000);
   window.addEventListener('pagehide',()=>{if(hls)hls.destroy();});
 })();

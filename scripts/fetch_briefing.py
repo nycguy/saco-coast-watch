@@ -453,7 +453,19 @@ def build_payload(current,hist,now=None):
         past+=f" {qualifier} noted: {first.get('headline') or first.get('summary')}."
     if recent_event.get("active"): past+=" "+recent_event.get("summary","")
 
-    forecast_change=_forecast_change_text(change)
+    past_dashboard=[]
+    if obs is not None:
+        gap=hc.THRESHOLDS_FT_MLLW["minor"]-float(obs)
+        past_dashboard.append(f"Portland gauge peak: {fmt_ft(obs)} ft MLLW ({abs(gap):.2f} ft {'below' if gap>=0 else 'above'} Minor Flood).")
+    if w.get("residual_24h_max_ft") is not None:
+        past_dashboard.append(f"Water ran as much as {float(w['residual_24h_max_ft']):+.2f} ft above predicted tide.")
+    if station_bits:
+        past_dashboard.append("Marine: "+station_bits[0]+".")
+    if not past_dashboard: past_dashboard.append("Portland gauge observations are temporarily unavailable.")
+    past_dashboard_text=" ".join(past_dashboard)
+
+    forecast_dashboard_text=_forecast_change_text(change)
+    forecast_change=forecast_dashboard_text
     transition_text=_event_transition_text(current,baseline)
     if event_briefing.get("change_text"): forecast_change+=" "+event_briefing["change_text"]
     elif transition_text: forecast_change+=" "+transition_text
@@ -469,8 +481,10 @@ def build_payload(current,hist,now=None):
     if peak24 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak24)
         next24=f"The highest NOAA forecast water level in the next 24 hours is {fmt_ft(peak24)} ft MLLW around {fmt_time(w.get('forecast_peak_24h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
+        next24_dashboard=f"NOAA water-level guidance peaks near {fmt_ft(peak24)} ft MLLW around {fmt_time(w.get('forecast_peak_24h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
     else:
         next24="NOAA total-water guidance for the next 24 hours is temporarily unavailable."
+        next24_dashboard=next24
     if peak72 is not None:
         m=hc.THRESHOLDS_FT_MLLW["minor"]-float(peak72)
         next72=f"The highest NOAA forecast water level in the next 72 hours is {fmt_ft(peak72)} ft MLLW around {fmt_time(w.get('forecast_peak_72h_time'))}, {abs(m):.2f} ft {'below' if m>=0 else 'above'} Minor Flood."
@@ -479,7 +493,9 @@ def build_payload(current,hist,now=None):
     else:
         next72="NOAA total-water guidance for the next 72 hours is temporarily unavailable."
     fc=current.get("forecast_conditions") or {}
-    if fc.get("next24_max_sustained_wind_mph") is not None: next24+=f" NWS hourly guidance reaches about {fc['next24_max_sustained_wind_mph']:.0f} mph sustained wind in this period."
+    if fc.get("next24_max_sustained_wind_mph") is not None:
+        next24+=f" NWS hourly guidance reaches about {fc['next24_max_sustained_wind_mph']:.0f} mph sustained wind in this period."
+        next24_dashboard+=f" NWS wind peaks near {fc['next24_max_sustained_wind_mph']:.0f} mph."
     if fc.get("next72_max_precip_probability_pct") is not None: next72+=f" Maximum hourly precipitation probability in the 72-hour guidance is {fc['next72_max_precip_probability_pct']:.0f}%."
     if event_briefing.get("active"):
         next24+=" "+event_briefing.get("next24_text","")
@@ -508,8 +524,8 @@ def build_payload(current,hist,now=None):
     backfill=hist.get("backfill") or {}; daily=backfill.get("water_observed_daily_peaks") or []
     return {
         "schema_version":2,"generated_at":hc.iso(now),"window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
-        "past_24h":{"text":past,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"marine_changes":marine_changes,"alert_changes":alert_changes,"local_impacts":local24},
-        "forecast_change_24h":{"text":forecast_change,"comparison":change,"wind_comparison":wind_change},
+        "past_24h":{"text":past,"dashboard_text":past_dashboard_text,"observed_peak_ft":obs,"observed_peak_time":obs_t,"strongest_marine":station_bits,"marine_changes":marine_changes,"alert_changes":alert_changes,"local_impacts":local24},
+        "forecast_change_24h":{"text":forecast_change,"dashboard_text":forecast_dashboard_text,"comparison":change,"wind_comparison":wind_change},
         "forecast_change_48h":{"comparison":change48},
         "forecast_evolution":evolution,
         "event_state":event_state,
@@ -522,9 +538,9 @@ def build_payload(current,hist,now=None):
         "impact_timeline":timeline,
         "impact_timeline_next24":((current.get("hazards") or {}).get("hourly") or []),
         "observed_daily_peaks":daily,
-        "next_24h":{"text":next24,"peak_ft":peak24,"peak_time":w.get("forecast_peak_24h_time")},
+        "next_24h":{"text":next24,"dashboard_text":next24_dashboard,"peak_ft":peak24,"peak_time":w.get("forecast_peak_24h_time")},
         "next_72h":{"text":next72,"peak_ft":peak72,"peak_time":w.get("forecast_peak_72h_time")},
-        "local_pulse":{"summary":local_summary,"updated_at":hist.get("generated_at"),"items":local_items,"sources":local_health,"errors":[{"name":item.get("name"),"status":item.get("status")} for item in failed],"facebook_note":"Public Facebook posts are included only when verifiable; coverage is not assumed comprehensive."},
+        "local_pulse":{"summary":local_summary,"dashboard_summary":(f"{len(local_items)} weather/coastal public reports found; community posts are anecdotal." if local_items else "No weather-related local reports were retained in the recent scan.")+((" A source feed is temporarily unavailable." if failed else "")),"updated_at":hist.get("generated_at"),"items":local_items,"sources":local_health,"errors":[{"name":item.get("name"),"status":item.get("status")} for item in failed],"facebook_note":"Public Facebook posts are included only when verifiable; coverage is not assumed comprehensive."},
         "alerts":current.get("alerts") or [],
         "current_snapshot":current,
         "sources":{"noaa":"NOAA CO-OPS Portland 8418150 observations, predictions and OFS guidance","nws":"National Weather Service alerts, hourly forecast, forecast grid, marine alerts and Coastal York Surf Zone Forecast","nhc":"National Hurricane Center CurrentStorms and GIS products","ndbc":"NDBC 44007 and WEXM1 observations","news":"Weather/coastal public news RSS/search retained with source metadata","reddit":"Public Reddit search; treated as anecdotal community reporting","facebook":"Not treated as comprehensive when public indexing/access is unavailable."}

@@ -62,10 +62,10 @@ function renderEventHistory(){
 function renderBriefing(){
  const b=state.briefing;
  if(!b){if(state.briefingError){$('briefPast').textContent='Briefing temporarily unavailable.';$('briefChange').textContent='NOAA chart remains available above.';$('briefNext').textContent='Use the live water-level outlook above.';$('briefPulse').textContent='Weather-related local scan unavailable.';$('briefUpdated').textContent='Briefing feed unavailable';}return;}
- $('briefPast').textContent=b.past_24h?.text||'Past-24-hour summary unavailable.';
- $('briefChange').textContent=b.forecast_change_24h?.text||'A fixed-window forecast comparison is unavailable.';
- $('briefNext').textContent=b.next_24h?.text||'Next-24-hour guidance unavailable.';
- $('briefPulse').textContent=b.local_pulse?.summary||'No weather-related local reports are available.';
+ $('briefPast').textContent=b.past_24h?.dashboard_text||b.past_24h?.text||'Past-24-hour summary unavailable.';
+ $('briefChange').textContent=b.forecast_change_24h?.dashboard_text||b.forecast_change_24h?.text||'A fixed-window forecast comparison is unavailable.';
+ $('briefNext').textContent=b.next_24h?.dashboard_text||b.next_24h?.text||'Next-24-hour guidance unavailable.';
+ $('briefPulse').textContent=b.local_pulse?.dashboard_summary||b.local_pulse?.summary||'No weather-related local reports are available.';
  const generated=Date.parse(b.generated_at||'');
  $('briefUpdated').textContent=Number.isFinite(generated)?'Updated '+dayTime(generated)+' ET':'Updated recently';
  $('briefFullPast').textContent=b.past_24h?.text||'Past-24-hour summary unavailable.';

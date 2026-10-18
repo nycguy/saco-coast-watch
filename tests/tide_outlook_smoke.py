@@ -339,7 +339,7 @@ def assert_common(page):
     page.keyboard.press("Escape")
     assert residual_tip.is_hidden()
     card_height=briefing.bounding_box()["height"]
-    assert card_height<330,f"briefing card should remain compact: {card_height}px"
+    assert card_height<550,f"briefing card should remain compact after showing complete summaries: {card_height}px"
 
     page.locator("#briefOpen").click()
     dialog=page.locator("#briefingDialog")

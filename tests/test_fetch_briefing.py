@@ -85,6 +85,10 @@ class BriefingTests(unittest.TestCase):
   d=f.build_payload(cur,hist,now); c=d['forecast_change_24h']['comparison']
   self.assertEqual(c['peak_delta_ft'],0.47); self.assertEqual(c['current_threshold_margins_ft']['minor'],0.18)
   self.assertIn('shrank by 0.47 ft',d['forecast_change_24h']['text']); self.assertIn('never based on a visitor',d['window_basis'])
+  self.assertIn('increased by 0.47 ft',d['forecast_change_24h']['dashboard_text'])
+  self.assertIn('about 24 hours ago',d['forecast_change_24h']['dashboard_text'])
+  self.assertIn('Portland gauge peak',d['past_24h']['dashboard_text'])
+  self.assertLess(len(d['past_24h']['dashboard_text']),300)
  def test_small_forecast_variation_does_not_claim_risk_is_increasing(self):
   text=f._forecast_change_text({'previous_peak_ft':10.14,'current_peak_ft':10.17,'peak_delta_ft':0.03,'time_shift_minutes':-6})
   self.assertIn('essentially unchanged',text)
@@ -148,6 +152,7 @@ class BriefingTests(unittest.TestCase):
   d=f.build_payload(cur,hist,now)
   self.assertIsNone(d['forecast_change_24h']['comparison']); self.assertIn('not available',d['forecast_change_24h']['text'])
   self.assertIn('no forecast-change value is being inferred',d['forecast_change_24h']['text'])
+  self.assertIn('no forecast-change value is being inferred',d['forecast_change_24h']['dashboard_text'])
  def test_forecast_evolution_recent_event_and_timeline(self):
   now=dt.datetime(2026,9,27,12,tzinfo=UTC)
   old24={'snapshot_at':'2026-09-26T12:00:00Z','snapshot_kind':'realtime','provenance':{'forecast':'live_noaa_ofs_capture'},'water':{'forecast_peak_72h_ft':11.2,'forecast_peak_72h_time':'2026-09-28T04:00:00Z'},'alerts':[]}

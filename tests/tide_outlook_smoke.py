@@ -242,8 +242,8 @@ def assert_common(page):
     briefing=page.locator(".coastal-briefing")
     assert briefing.count()==1
     brief_text=briefing.inner_text()
-    assert "consistent 24-hour and 72-hour periods" in brief_text
-    assert "last visit" in brief_text.lower()
+    assert "24h / 72h" in brief_text
+    assert "Fixed rolling windows" in page.locator("#briefModalUpdated").inner_text()
     assert "0.50 ft" in brief_text
     assert "2 public weather/coastal reports found" in brief_text
     assert "community posts are anecdotal" in brief_text

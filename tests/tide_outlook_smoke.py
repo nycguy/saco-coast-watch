@@ -90,7 +90,7 @@ def install_noaa_fixture(page):
         ]},
         "event_state":event_state,
         "priorities":[
-            {"kind":"high_water","title":"Higher-impact high-water window · Elevated","text":"SacoCast highlights the Portland high tide soon. NOAA total-water guidance is 11.80 ft MLLW, 0.20 ft below the Minor Flood threshold."},
+            {"kind":"high_water","title":"Higher-impact high-water window · Elevated","text":"Around 4:00 PM, NOAA total-water guidance is 11.80 ft MLLW, 0.20 ft below Portland's Minor Flood threshold."},
             {"kind":"forecast_change","title":"Forecast change","text":"NOAA's compatible 72-hour peak forecast rose by 0.50 ft versus the captured forecast nearest 24 hours ago."}
         ],
         "current_snapshot":{"event_state":event_state},

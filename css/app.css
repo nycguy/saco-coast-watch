@@ -931,7 +931,7 @@ body.storm-mode .coastal-intelligence{border-color:#547989}
 @media(max-width:1000px){.intelligence-grid{grid-template-columns:1fr 1fr}.evolution-card{grid-column:1/-1}.storm-mode-metrics{grid-template-columns:1fr 1fr}.event-history-card:only-child .event-history-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:620px){
  .storm-mode-panel{padding:13px 14px}.storm-mode-head{display:block}.storm-mode-badge{display:inline-block;margin-top:8px}.storm-mode-metrics{grid-template-columns:1fr 1fr}.storm-mode-metrics strong{font-size:12px}
- .coastal-intelligence{padding:13px}.intelligence-grid{grid-template-columns:1fr}.evolution-card{grid-column:auto}.high-window-grid{grid-template-columns:1fr}.mini-chart{height:80px}
+ .coastal-briefing .brief-grid{grid-template-columns:1fr}.coastal-intelligence{padding:13px}.intelligence-grid{grid-template-columns:1fr}.evolution-card{grid-column:auto}.high-window-grid{grid-template-columns:1fr}.mini-chart{height:80px}
  .sea-state-grid{grid-template-columns:1fr 1fr}.ferry-archive-thumbs{grid-auto-columns:minmax(145px,72vw)}.ferry-archive-meta{display:grid;gap:3px}.ferry-archive-meta span:last-child{text-align:left}
 }
 

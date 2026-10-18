@@ -102,9 +102,11 @@ def main():
         keyboard_summary = page.locator("#introQualifications > summary")
         if keyboard_summary.count():
             keyboard_summary.focus();page.keyboard.press("Space")
+            page.wait_for_function("document.querySelector('#introQualifications')?.open && document.querySelector('#introQualifications > summary')?.getAttribute('aria-expanded')==='true'")
             assert page.locator("#introQualifications").get_attribute("open") is not None
             assert keyboard_summary.get_attribute("aria-expanded") == "true"
             page.keyboard.press("Space")
+            page.wait_for_function("!document.querySelector('#introQualifications')?.open && document.querySelector('#introQualifications > summary')?.getAttribute('aria-expanded')==='false'")
             assert page.locator("#introQualifications").get_attribute("open") is None
 
         for width, height in VIEWPORTS:

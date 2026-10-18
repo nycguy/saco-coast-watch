@@ -78,9 +78,9 @@ def install_noaa_fixture(page):
         "schema_version":1,
         "generated_at":datetime.now(timezone.utc).isoformat().replace("+00:00","Z"),
         "window_basis":"Fixed rolling windows; never based on a visitor's last app visit.",
-        "past_24h":{"text":"Over the past 24 hours, the Portland gauge remained below the Minor Flood threshold."},
-        "forecast_change_24h":{"text":"Compared with about 24 hours ago, the modeled 72-hour peak increased by 0.50 ft."},
-        "next_24h":{"text":"The next 24 hours remain focused on the midday high-water period."},
+        "past_24h":{"text":"Past 24 hours: the Portland gauge remained below the Minor Flood threshold. Full source-backed details remain available in the full briefing.","dashboard_text":"In the past 24 hours, Portland's gauge stayed below the Minor Flood threshold."},
+        "forecast_change_24h":{"text":"Compared with about 24 hours ago, the modeled 72-hour peak increased by 0.50 ft. Full comparison details remain available in the full briefing.","dashboard_text":"The highest NOAA-predicted water level over the next 72 hours increased by 0.50 ft compared with the forecast captured about 24 hours ago."},
+        "next_24h":{"text":"The next 24 hours remain focused on the midday high-water period. Full forecast detail remains available in the full briefing.","dashboard_text":"The next 24 hours focus on the midday high-water period."},
         "next_72h":{"text":"The next 72 hours trend toward improving water levels after Monday."},
         "forecast_evolution":{"basis":"Captured forecast snapshots nearest 24, 12 and 6 hours ago plus current.","items":[
             {"label":"24h ago","target_hours_ago":24,"snapshot_at":(now-timedelta(hours=24)).isoformat().replace("+00:00","Z"),"peak_ft":10.9,"peak_time":(now+timedelta(hours=18)).isoformat().replace("+00:00","Z"),"minor_margin_ft":1.1},
@@ -99,7 +99,8 @@ def install_noaa_fixture(page):
         "event_history":event_history,
         "impact_timeline":[{"at":(now-timedelta(hours=2)).isoformat().replace("+00:00","Z"),"type":"water","title":"Portland observed water level test event","source":"NOAA CO-OPS station 8418150","source_type":"official_observation","url":None,"anecdotal":False}],
         "local_pulse":{
-            "summary":"2 public local items found in the rolling public scan (1 news, 1 Reddit).",
+            "summary":"2 public local items found in the rolling public scan (1 news, 1 Reddit). Community reports are anecdotal. The feed scan is not comprehensive.",
+            "dashboard_summary":"2 public weather/coastal reports found; community posts are anecdotal.",
             "facebook_note":"Public Facebook posts are not included because reliable public indexing and access are inconsistent.",
             "items":[
                 {"type":"news","source":"Local News","title":"Coastal conditions update for Saco and Biddeford","url":"https://example.com/news"},

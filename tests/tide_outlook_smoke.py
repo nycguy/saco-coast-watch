@@ -267,6 +267,7 @@ def assert_common(page):
     assert not event_section.is_visible()
     event_row.evaluate("el => el.hidden=false")
     event_section.evaluate("el => el.hidden=false")
+    event_row.evaluate("el => el.hidden=true")
     assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
     timeline=page.locator(".upcoming-timeline-detail > summary")
     timeline.click()

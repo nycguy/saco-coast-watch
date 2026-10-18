@@ -346,16 +346,18 @@ def _briefing_priorities(water,change,event_state,now):
         _score,at,window=max(windows,key=lambda item:(item[0],-item[1].timestamp()))
         impact_label=((window.get("impact") or {}).get("label") or "")
         level=window.get("modeled_total_ft")
-        if level is not None:
-            margin=12.0-float(level)
-            level_text=f" NOAA total-water guidance is {float(level):.2f} ft MLLW, {abs(margin):.2f} ft {'below' if margin>=0 else 'above'} the Minor Flood threshold."
-        else:
+        if level is None:
             tide=window.get("astronomical_ft")
             level_text=(f" The astronomical tide prediction is {float(tide):.2f} ft MLLW; it does not include storm surge." if tide is not None else " A compatible water-level estimate is unavailable.")
         impact=(window.get("impact") or {}); rank=int(impact.get("rank") or 0)
         consequential=rank>0 or (impact_label and impact_label.lower()!="routine")
         label=("Higher-impact high-water window"+(f" · {impact_label}" if impact_label else "") if consequential else "Next high tide")
-        items.append({"kind":"high_water","title":label,"text":f"SacoCast highlights the Portland high tide {fmt_time(hc.iso(at))}.{level_text}","at":hc.iso(at),"priority":3 if consequential else 1})
+        if level is not None:
+            margin=12.0-float(level)
+            level_text=f"NOAA total-water guidance is {float(level):.2f} ft MLLW, {abs(margin):.2f} ft {'below' if margin>=0 else 'above'} Portland's Minor Flood threshold."
+        else:
+            level_text=level_text.strip()
+        items.append({"kind":"high_water","title":label,"text":f"Around {fmt_time(hc.iso(at))}, {level_text}","at":hc.iso(at),"priority":3 if consequential else 1})
     elif water.get("forecast_peak_72h_ft") is not None:
         at=hc.parse_iso(water.get("forecast_peak_72h_time"))
         if at and now<=at<=now+dt.timedelta(hours=72):

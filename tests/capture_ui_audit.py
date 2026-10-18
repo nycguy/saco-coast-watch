@@ -53,7 +53,9 @@ def main():
         phone.locator(".chart-panel").scroll_into_view_if_needed()
         save(phone, args.output_dir / f"{args.prefix}-iphone-chart-24h.jpg")
 
-        phone.locator("#coastalToolsDetails > summary").click()
+        tools = phone.locator("#coastalToolsDetails > summary")
+        if tools.count():
+            tools.click()
         phone.locator(".coastal-map-panel").scroll_into_view_if_needed()
         save(phone, args.output_dir / f"{args.prefix}-iphone-map.jpg")
 

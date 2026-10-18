@@ -31,30 +31,34 @@ function renderBriefingPriorities(items){
  if(root){root.replaceChildren();for(const item of priorities){const article=document.createElement('article'),title=document.createElement('h5'),text=document.createElement('p');article.className='brief-priority-item';title.textContent=item.title;text.textContent=item.text;article.append(title,text);root.append(article);}}
 }
 function renderEventHistory(){
- const panel=$('eventHistoryPanel'),root=$('eventHistoryCards');if(!panel||!root)return;
- const events=state.briefing?.event_history||[];panel.hidden=!events.length;root.replaceChildren();if(!events.length)return;
- for(const [index,item] of events.entries()){
-  const card=document.createElement('article');card.className='event-history-card'+(index===0&&item.phase==='Recent'?' recent':'');
-  const head=document.createElement('div');head.className='event-history-head';
-  const title=document.createElement('div'),strong=document.createElement('strong'),time=document.createElement('span');
-  strong.textContent=item.title||'Coastal Event';time.textContent=eventHistoryTime(item.started_at)+(item.ended_at?' → '+eventHistoryTime(item.ended_at):'');title.append(strong,time);
-  const badge=document.createElement('span');badge.className='event-history-badge impact-'+(['green','yellow','orange','red'][Number(item.highest_impact?.rank)||0]||'green');badge.textContent=item.highest_impact?.label||'Routine';head.append(title,badge);card.append(head);
-  const metrics=document.createElement('div');metrics.className='event-history-metrics';
-  const pairs=[
-   ['Highest observed water',item.max_observed_water_ft,' ft',2],
-   ['Water above predicted tide',item.max_residual_ft,' ft',2],
-   ['Highest NOAA forecast',item.max_modeled_water_ft,' ft',2],
-   ['Highest waves',item.max_wave_ft,' ft',1],
-   ['Highest gust',item.max_gust_mph,' mph',1],
-   ['Highest NWS surf',item.max_surf_ft,' ft',1]
-  ];
-  for(const [label,value,suffix,digits] of pairs){if(!hasNumericValue(value))continue;const d=document.createElement('div'),span=document.createElement('span'),b=document.createElement('b');span.textContent=label;b.textContent=Number(value).toFixed(digits)+suffix;d.append(span,b);metrics.append(d);}card.append(metrics);
-  const definitions=document.createElement('p');definitions.className='event-history-definitions';definitions.textContent='Water above predicted tide compares the Portland gauge with the tide prediction. NOAA forecast is the highest forecast water level captured for this event.';card.append(definitions);
-  const foot=document.createElement('p'),coverageValue=item.captured_coverage_hours??item.duration_hours,coverage=hasNumericValue(coverageValue)?Number(coverageValue):null,bits=[];if(coverage!==null)bits.push('Recorded for '+coverage.toFixed(1)+'h');if(hasNumericValue(item.snapshot_count))bits.push(item.snapshot_count+' saved records');if((item.official_products||[]).length)bits.push('NWS: '+item.official_products.slice(0,3).join(', '));foot.textContent=bits.join(' · ')||'Captured event summary';card.append(foot);
-  if(item.coverage_basis){const note=document.createElement('p');note.className='event-history-note';note.textContent=item.coverage_basis;card.append(note);}
-  for(const quality of item.data_quality||[]){const note=document.createElement('p');note.className='event-history-quality';note.textContent=quality.type==='superseded_surf_parse'?'An earlier surf reading was replaced after the same forecast was checked again.':'A correction was applied to an earlier saved reading.';card.append(note);}
-  root.append(card);
+ const panel=$('eventHistoryPanel'),root=$('eventHistoryCards'),archive=$('eventHistoryArchive'),archiveRoot=$('eventHistoryArchiveCards');if(!panel||!root||!archiveRoot)return;
+ const events=Array.isArray(state.briefing?.event_history)?state.briefing.event_history:[];
+ const groups=window.SacoEventUtils?.groupRecentEvents(events)||events.map(item=>({records:[item],...(item||{}),rank:Number(item?.highest_impact?.rank)||0}));
+ panel.hidden=!events.length;root.replaceChildren();archiveRoot.replaceChildren();if(!events.length)return;
+ function renderCards(target,items,primary=false){
+  for(const [index,raw] of items.entries()){
+   const item=raw&&typeof raw==='object'?raw:{};
+   const card=document.createElement('article');card.className='event-history-card'+(primary&&index===0?' recent':'');
+   const head=document.createElement('div');head.className='event-history-head';
+   const title=document.createElement('div'),strong=document.createElement('strong'),time=document.createElement('span');
+   strong.textContent=item.title||'Coastal Event';time.textContent=eventHistoryTime(item.started_at)+(item.ended_at?' → '+eventHistoryTime(item.ended_at):'');title.append(strong,time);
+   const badge=document.createElement('span');badge.className='event-history-badge impact-'+(['green','yellow','orange','red'][Number(item.highest_impact?.rank)||0]||'green');badge.textContent=item.highest_impact?.label||'Routine';head.append(title,badge);card.append(head);
+   const metrics=document.createElement('div');metrics.className='event-history-metrics';
+   const pairs=[['Highest observed water',item.max_observed_water_ft,' ft',2],['Water above predicted tide',item.max_residual_ft,' ft',2],['Highest NOAA forecast',item.max_modeled_water_ft,' ft',2],['Highest waves',item.max_wave_ft,' ft',1],['Highest gust',item.max_gust_mph,' mph',1],['Highest NWS surf',item.max_surf_ft,' ft',1]];
+   for(const [label,value,suffix,digits] of pairs){if(!hasNumericValue(value))continue;const d=document.createElement('div'),span=document.createElement('span'),b=document.createElement('b');span.textContent=label;b.textContent=Number(value).toFixed(digits)+suffix;d.append(span,b);metrics.append(d);}if(metrics.children.length)card.append(metrics);
+   const definitions=document.createElement('p');definitions.className='event-history-definitions';definitions.textContent='Water above predicted tide compares the Portland gauge with the tide prediction. NOAA forecast is the highest captured forecast water level.';card.append(definitions);
+   const coverageValue=item.captured_coverage_hours??item.duration_hours,coverage=hasNumericValue(coverageValue)?Number(coverageValue):null,bits=[];if(coverage!==null)bits.push('Recorded for '+coverage.toFixed(1)+'h');if(hasNumericValue(item.snapshot_count))bits.push(item.snapshot_count+' saved records');if((item.official_products||[]).length)bits.push('NWS: '+item.official_products.slice(0,3).join(', '));
+   const foot=document.createElement('p');foot.textContent=bits.join(' · ')||'Captured event summary';card.append(foot);
+   if(item.coverage_basis){const note=document.createElement('p');note.className='event-history-note';note.textContent=item.coverage_basis;card.append(note);}
+   for(const quality of item.data_quality||[]){const note=document.createElement('p');note.className='event-history-quality';note.textContent=quality.message||(quality.type==='superseded_surf_parse'?'An earlier surf reading was replaced after the same forecast was checked again.':'A correction was applied to an earlier saved reading.');card.append(note);}
+   if(Array.isArray(item.records)&&item.records.length>1){const grouped=document.createElement('p');grouped.className='event-history-note';grouped.textContent='One episode summarized from '+item.records.length+' overlapping records; original records are preserved in the full history.';card.append(grouped);}
+   target.append(card);
+  }
  }
+ renderCards(root,groups,true);renderCards(archiveRoot,events);
+ const summary=archive?.querySelector(':scope > summary');
+ if(summary){const action=summary.querySelector('.disclosure-action');summary.textContent='Complete event history · '+events.length+' captured record'+(events.length===1?'':'s');if(action)summary.append(action);}
+ window.SacoDisclosures?.init(panel);
 }
 function renderBriefing(){
  const b=state.briefing;

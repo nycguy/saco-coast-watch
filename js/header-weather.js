@@ -24,7 +24,7 @@
   sleet:'<path class="wx-cloud" d="M14 35h35a9 9 0 0 0 0-18 17 17 0 0 0-32-1A10 10 0 0 0 14 35Z"/><g class="wx-drops"><path d="M19 42l-4 9M34 42l-4 9"/></g><g class="wx-flakes"><path d="M49 42v13m-5-6h10"/></g>',
   freezing:'<path class="wx-cloud" d="M14 35h35a9 9 0 0 0 0-18 17 17 0 0 0-32-1A10 10 0 0 0 14 35Z"/><g class="wx-drops"><path d="M20 42l-4 9M43 42l-4 9"/></g><path class="wx-flakes" d="M28 55h13m-6-6v12"/>',
   thunder:'<path class="wx-cloud" d="M14 35h35a9 9 0 0 0 0-18 17 17 0 0 0-32-1A10 10 0 0 0 14 35Z"/><path class="wx-bolt" d="M34 36 24 50h10l-4 12 16-20H35Z"/>',
-  fog:'<g class="wx-wind"><path d="M7 21h49M13 32h39M7 43h49"/></g>',
+  fog:'<g class="wx-fog wx-fog-back"><path d="M8 23h45M15 34h39M7 45h45"/></g><g class="wx-fog wx-fog-front"><path d="M10 25h43M7 36h43M14 47h40"/></g>',
   wind:'<g class="wx-wind"><path d="M5 22h37q12 0 9-9t-12-2M6 34h49q8 0 6 8t-12 4M11 46h24q11 0 9 8"/></g>',
   storm:'<path class="wx-storm" d="M32 7a25 25 0 1 0 25 25M32 16a16 16 0 1 1-16 16M32 24a8 8 0 1 0 8 8"/><circle cx="32" cy="32" r="3" class="wx-eye"/>',
   blizzard:'<path class="wx-cloud" d="M11 35h39a9 9 0 0 0 0-18 17 17 0 0 0-32-1A10 10 0 0 0 11 35Z"/><g class="wx-flakes"><path d="M17 42v13m-5-6h10M33 42v13m-5-6h10M49 42v13m-5-6h10"/></g>',
@@ -34,6 +34,12 @@
   surge:'<g class="wx-surge"><path d="M6 30q7-8 14 0t14 0 14 0 12 0M6 42q7-8 14 0t14 0 14 0 12 0M6 54q7-8 14 0t14 0 14 0 12 0"/><path d="M47 9v12m-5-7 5 7 5-7"/></g>'
  };
  function icon(type){return '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">'+(shapes[type]||shapes.cloud)+'</svg>';}
+ function observationDisplay(obs,at=Date.now()){
+  const age=at-Number(obs?.t),fresh=Number.isFinite(age)&&age>=-10*60000&&age<=2*3600000;
+  const temp=typeof obs?.temp==='number'&&Number.isFinite(obs.temp)&&obs.temp>=-100&&obs.temp<=140?obs.temp:null;
+  const humidity=typeof obs?.humidity==='number'&&Number.isFinite(obs.humidity)&&obs.humidity>=0&&obs.humidity<=100?obs.humidity:null;
+  return {fresh,temp:fresh?temp:null,humidity:fresh&&humidity!==null&&humidity>=80?humidity:null,station:fresh?String(obs?.station||'NWS station'):null,t:fresh?Number(obs.t):null};
+ }
  function render(){
   const host=document.getElementById('headerWeather');if(!host||typeof state==='undefined')return;
   const t=Date.now(),obs=state.weatherObservation;
@@ -53,13 +59,27 @@
   if(storm)items.push({type:stormIcon(storm.label),label:storm.label,source:storm.source});
   if(!items.length)items.push({type:'cloud',label:'Weather Unavailable',source:'No current NWS forecast or wind observation'});
   host.replaceChildren();
+  const iconRow=document.createElement('div');iconRow.className='header-weather-icons';
   for(const item of items.slice(0,3)){
    const el=document.createElement('div');el.className='header-weather-item';el.setAttribute('role','img');el.setAttribute('aria-label',item.label+' — '+item.source);
    el.innerHTML=icon(item.type);
-   const caption=document.createElement('span');caption.textContent=item.label;el.append(caption);host.append(el);
+   const caption=document.createElement('span');caption.textContent=item.label;el.append(caption);iconRow.append(el);
+  }
+  host.append(iconRow);
+  const current=observationDisplay(obs,t),forecastLabel=forecast?.summary?.trim();
+  const parts=[];
+  if(current.temp!==null)parts.push(Math.round(current.temp)+'°F');
+  if(forecastLabel)parts.push(forecastLabel);
+  if(current.humidity!==null)parts.push('Humidity '+Math.round(current.humidity)+'%');
+  if(parts.length){
+   const readout=document.createElement('div');readout.className='header-weather-readout';
+   const text=document.createElement('strong');text.textContent=parts.join(' · ');readout.append(text);
+   const source=document.createElement('small');
+   source.textContent=[current.station,current.t?new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'}).format(current.t)+' ET measured':null,forecastLabel?'Condition from NWS hourly forecast':null].filter(Boolean).join(' · ')||'NWS hourly forecast condition';
+   readout.append(source);host.append(readout);
   }
   host.hidden=items.length===0;
  }
- window.SacoHeaderWeather={classify,stormLabel,stormIcon,render};
+ window.SacoHeaderWeather={classify,stormLabel,stormIcon,observationDisplay,render};
  document.addEventListener('DOMContentLoaded',()=>{render();setInterval(render,60000);});
 })();

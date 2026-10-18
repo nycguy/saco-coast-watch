@@ -21,6 +21,7 @@ done
 curl -fsS http://127.0.0.1:8765/index.html >/dev/null
 "$PYTHON_BIN" tests/map_smoke.py
 "$PYTHON_BIN" tests/tide_outlook_smoke.py
+"$PYTHON_BIN" tests/responsive_accessibility_smoke.py
 "$PYTHON_BIN" tests/eastcast_smoke.py
 "$PYTHON_BIN" tests/push_ui_smoke.py
 printf '%s\n' 'Local deterministic validation and Chromium desktop/mobile smoke tests passed.' 'This command does not deploy the Worker, apply D1 migrations, modify Cloudflare, or publish GitHub Pages.'

@@ -57,6 +57,7 @@ export function createAbellonaPlayer({
   let watchOnYouTube = false;
   let userRequestedPlayback = false;
   let initialPlaybackRequested = false;
+  let selected = false;
 
   function setStatus(message) {
     status.textContent = message;
@@ -122,17 +123,28 @@ export function createAbellonaPlayer({
     // Keep YouTube's numeric diagnostic out of user-facing copy, but retain it
     // for production smoke tests and browser debugging.
     if (camera) camera.dataset.playerErrorCode = String(event?.data ?? 'unknown');
-    const embedDenied = event?.data === 101 || event?.data === 150;
-    showFallback(
-      embedDenied
-        ? 'YouTube is not allowing this stream to play inside SacoCast right now.'
-        : 'The embedded live video is unavailable in this browser.',
-      { external: embedDenied },
-    );
+    const code=Number(event?.data),embedDenied=code===101||code===150;
+    const messages={
+      2:'YouTube rejected the live-stream address.',
+      5:'YouTube’s player could not decode the live stream.',
+      100:'The live stream is unavailable or has ended.',
+      101:'YouTube is not allowing this stream to play inside SacoCast.',
+      150:'YouTube is not allowing this stream to play inside SacoCast.',
+      153:'YouTube rejected embedded playback or its referrer check.',
+    };
+    if(camera)camera.dataset.playerFailure=embedDenied?'embedding_restricted':code===100?'stream_unavailable':'player_error';
+    showFallback(messages[code]||'YouTube reported a live-player error.',{external:true});
   }
 
   function requestPlayback(fromGesture = false) {
-    if (!player || hasPlayed) return;
+    if (!player) return;
+    if (hasPlayed) {
+      if (playback === 'paused' && selected) {
+        try { player.mute(); player.playVideo(); }
+        catch (_) { showFallback('The embedded live video could not resume.'); }
+      }
+      return;
+    }
     if (!fromGesture && initialPlaybackRequested) return;
     if (!fromGesture) initialPlaybackRequested = true;
     if (fromGesture) userRequestedPlayback = true;
@@ -149,6 +161,8 @@ export function createAbellonaPlayer({
   async function initialize() {
     if (started) return;
     started = true;
+    const source = iframe.dataset?.src;
+    if (source && (!iframe.src || iframe.src === 'about:blank')) iframe.src = source;
     playback = 'loading';
     if (camera) camera.dataset.playbackState = playback;
     gate.hidden = false;
@@ -164,7 +178,7 @@ export function createAbellonaPlayer({
           onReady: (event) => {
             event?.target?.getIframe?.()?.setAttribute('title', 'Abellona Inn Old Orchard Beach live camera');
             if (event?.target?.getPlayerState?.() === PLAYING) onPlayerState({ data: PLAYING });
-            else requestPlayback(false);
+            else if (selected) requestPlayback(false);
           },
           onStateChange: onPlayerState,
           onAutoplayBlocked,
@@ -172,15 +186,51 @@ export function createAbellonaPlayer({
         },
       });
     } catch (_) {
-      showFallback('The embedded live video could not load.');
+      if(camera)camera.dataset.playerFailure='network_or_api';
+      showFallback('The YouTube player API could not load. Check the network or open the official stream.',{external:true});
     }
   }
+
+  function selectCamera(isSelected) {
+    selected = Boolean(isSelected);
+    if (!selected) {
+      if (player && (playback === 'playing' || playback === 'starting')) {
+        try { player.pauseVideo(); } catch (_) { /* The selected camera can change while YouTube is loading. */ }
+      }
+      if (started) {
+        iframe.src = 'about:blank';
+        player = null;
+        started = false;
+        hasPlayed = false;
+        initialPlaybackRequested = false;
+        userRequestedPlayback = false;
+        watchOnYouTube = false;
+        playback = 'waiting';
+        if (camera) {
+          camera.dataset.playbackState = playback;
+          delete camera.dataset.playerErrorCode;
+          delete camera.dataset.playerFailure;
+        }
+        gate.hidden = true;
+        watchButton.hidden = true;
+        setStatus('Abellona live video paused while this camera is not selected.');
+      }
+      return;
+    }
+    if (!started) initialize();
+    else if (player) requestPlayback(false);
+  }
+
+  doc.addEventListener?.('sacocast:camera-selected', event => {
+    selectCamera(event?.detail?.camera === 'abellona-camera');
+  });
 
   watchButton.addEventListener('click', () => {
     if (watchOnYouTube) {
       win.open?.(YOUTUBE_WATCH_URL, '_blank', 'noopener,noreferrer');
       return;
     }
+    selected = true;
     if (!player) {
       started = false;
       initialize();
@@ -189,20 +239,9 @@ export function createAbellonaPlayer({
     requestPlayback(true);
   });
 
-  if (typeof win.IntersectionObserver === 'function') {
-    const observer = new win.IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        observer.disconnect();
-        initialize();
-      }
-    }, { rootMargin: '240px 0px' });
-    observer.observe(iframe);
-  } else {
-    initialize();
-  }
-
   return {
     initialize,
+    selectCamera,
     getPlaybackState: () => playback,
     getVideoId: () => ABELLONA_VIDEO_ID,
     handlePlayerState: onPlayerState,

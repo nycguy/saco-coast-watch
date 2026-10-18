@@ -42,8 +42,9 @@ function observationFromNWS(data,station){
  const p=data?.properties||{},rawTime=Date.parse(p.timestamp||'');
  if(!Number.isFinite(rawTime)||now()-rawTime>2*3600000||rawTime>now()+10*60000)throw new Error('Station observation is missing, future-dated, or older than 2 hours');
  const wind=validMeasurement(p.windSpeed),gust=validMeasurement(p.windGust),temp=validMeasurement(p.temperature);
- if(wind===null&&temp===null)throw new Error('Station did not provide wind or air temperature');
- return {station,t:rawTime,wind:wind===null?null:wind*2.236936,gust:gust===null?null:gust*2.236936,temp:temp===null?null:temp*9/5+32,direction:validMeasurement(p.windDirection)};
+ const humidityRaw=validMeasurement(p.relativeHumidity),humidity=humidityRaw!==null&&humidityRaw>=0&&humidityRaw<=100?humidityRaw:null;
+ if(wind===null&&temp===null&&humidity===null)throw new Error('Station did not provide valid wind, air temperature, or relative humidity');
+ return {station,t:rawTime,wind:wind===null?null:wind*2.236936,gust:gust===null?null:gust*2.236936,temp:temp===null?null:temp*9/5+32,humidity,direction:validMeasurement(p.windDirection)};
 }
 function parseWindSpeed(text){
  if(typeof text==='object'&&text!==null){const v=validMeasurement(text);return v===null?null:(String(text.unitCode||'').includes('km_h')?v*.621371:String(text.unitCode||'').includes('m_s-1')?v*2.236936:v);}

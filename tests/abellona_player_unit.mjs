@@ -13,13 +13,14 @@ function fixture(apiLoaderOverride) {
   for (const id of ['abellonaPlayer','abellonaPlayerGate','abellonaGateMessage','abellonaWatchLive','abellonaStatus']) {
     elements.set(id, {
       id, hidden: id === 'abellonaWatchLive', disabled: false, textContent: '', dataset: {},
-      src: id === 'abellonaPlayer' ? 'https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&mute=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fnycguy.github.io' : '',
+      src: '',
+      dataset: id === 'abellonaPlayer' ? { src: 'https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&mute=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fnycguy.github.io' } : {},
       listeners: {}, addEventListener(name, fn) { this.listeners[name] = fn; },
       click() { this.listeners.click?.({ type: 'click' }); },
     });
   }
   const camera = { dataset: {} };
-  let observed;
+  const documentListeners = {};
   let constructors = 0;
   let playerConfig;
   let playerElement;
@@ -31,15 +32,11 @@ function fixture(apiLoaderOverride) {
     // A playback watchdog would incorrectly turn delayed startup into failure.
     setTimeout() { throw new Error('unexpected autoplay watchdog'); },
     clearTimeout() {},
-    IntersectionObserver: class {
-      constructor(callback, options) { observed = { callback, options, disconnected: false }; }
-      observe(target) { observed.target = target; }
-      disconnect() { observed.disconnected = true; }
-    },
   };
   const doc = {
     getElementById(id) { return elements.get(id); },
     querySelector() { return camera; },
+    addEventListener(name, callback) { documentListeners[name] = callback; },
   };
   const apiLoader = async () => ({
     Player: class {
@@ -47,6 +44,7 @@ function fixture(apiLoaderOverride) {
       mute() { calls.push('mute'); }
       setVolume(value) { calls.push(`volume:${value}`); }
       playVideo() { calls.push('play'); }
+      pauseVideo() { calls.push('pause'); }
       getPlayerState() { return -1; }
     },
   });
@@ -57,20 +55,18 @@ function fixture(apiLoaderOverride) {
     set playerConfig(value) { playerConfig = value; },
     get playerElement() { return playerElement; },
     get constructors() { return constructors; },
-    get observed() { return observed; },
     async enterViewport() {
-      observed.callback([{ isIntersecting: true }]);
+      documentListeners['sacocast:camera-selected']({ detail: { camera: 'abellona-camera' } });
       await new Promise((resolve) => setImmediate(resolve));
     },
   };
 }
 
-test('visible Abellona iframe attempts muted inline autoplay and confirms actual PLAYING state', async () => {
+test('selecting Abellona initializes muted inline autoplay and confirms actual PLAYING state', async () => {
   const f = fixture();
   assert.equal(f.controller.getPlaybackState(), 'waiting');
-  assert.equal(f.observed.options.rootMargin, '240px 0px');
+  assert.equal(f.elements.get('abellonaPlayer').src, '');
   await f.enterViewport();
-  assert.equal(f.observed.disconnected, true);
   assert.equal(f.playerElement, f.elements.get('abellonaPlayer'));
   assert.equal(f.elements.get('abellonaPlayer').src.includes(`/embed/${ABELLONA_VIDEO_ID}?`), true);
   for (const param of ['autoplay=1','mute=1','playsinline=1','enablejsapi=1','origin=https%3A%2F%2Fnycguy.github.io']) {
@@ -161,17 +157,22 @@ test('late blocked/error events cannot cover video after playback has begun', as
   assert.equal(f.elements.get('abellonaPlayerGate').hidden, true);
 });
 
-test('player initialization waits until visible and duplicate visibility/manual requests create one player', async () => {
+test('Abellona stays unloaded until selected and switching away pauses rather than playing the hidden stream', async () => {
   const f = fixture();
-  f.observed.callback([{ isIntersecting: false }]);
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(f.controller.getPlaybackState(), 'waiting');
   assert.equal(f.constructors, 0);
   await f.enterViewport();
-  await f.controller.initialize();
-  f.observed.callback([{ isIntersecting: true }]);
+  f.playerConfig.events.onReady({});
+  f.playerConfig.events.onStateChange({ data: 1 });
+  f.controller.selectCamera(false);
   assert.equal(f.constructors, 1);
-  assert.equal(f.observed.disconnected, true);
+  assert.equal(f.calls.includes('pause'), true);
+  assert.equal(f.elements.get('abellonaPlayer').src,'about:blank');
+  f.controller.selectCamera(true);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(f.constructors,2);
+  assert.equal(f.elements.get('abellonaPlayer').src.includes('/embed/'),true);
 });
 
 test('YouTube API load failures show a safe Watch Live fallback without exposing error details', async () => {

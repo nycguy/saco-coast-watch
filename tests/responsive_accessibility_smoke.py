@@ -15,7 +15,7 @@ BASE = os.environ.get("SACOCAST_SMOKE_URL", "http://127.0.0.1:8765/index.html")
 VIEWPORTS = [(320, 780), (375, 667), (390, 844), (430, 932), (1440, 900)]
 MAJOR_SECTIONS = [
     "#stormModePanel", "#impactTimelinePanel", "#winterWeatherPanel", "#tropicalPanel",
-    ".metrics", ".status", ".coastal-intelligence", ".coastal-briefing",
+    ".metrics", ".status", ".coastal-intelligence", ".coastal-briefing", ".camera-hub",
     "#eventHistoryPanel", ".ferry-camera", ".comparison-panel", ".chart-panel",
     ".threshold-reference", ".weather-panel", ".alertpanel", ".hourly-panel",
     ".calendar-panel", ".coastal-map-panel",
@@ -69,17 +69,43 @@ def main():
         page.locator(".coastal-map-panel").wait_for(state="visible", timeout=10000)
 
         order = page.evaluate("""() => [
-          '.alertpanel','.status','.metrics','.main-grid','.coastal-briefing',
-          '.coastal-intelligence','.weather-panel','.camera-hub'
+          '.alertpanel','.status','.metrics','.main-grid','.camera-hub','.coastal-briefing',
+          '.coastal-intelligence','.event-history-panel','.weather-panel'
         ].map(selector => [...document.querySelector('main').children].indexOf(document.querySelector(selector)))""")
         assert all(a < b for a, b in zip(order, order[1:])), f"dashboard hierarchy is out of order: {order}"
         camera_buttons = page.locator(".camera-choice")
         assert camera_buttons.count() == 2
         assert page.locator(".camera-panels > .ferry-camera:visible").count() == 1
+        assert page.locator("#abellonaPlayer").get_attribute("src") is None, "unselected Abellona video loaded early"
         page.locator(".camera-selector").get_by_role("button", name="Abellona Inn").click()
         assert page.locator(".camera-panels > .abellona-camera:visible").count() == 1
+        assert page.locator("#abellonaPlayer").get_attribute("src").startswith("https://www.youtube.com/embed/"), "selected Abellona iframe was not activated"
+        try:
+            page.wait_for_function("(() => {const video=document.querySelector('.camera-panels #ferryVideo');return video.paused&&!video.hasAttribute('src')})()",timeout=5000)
+        except Exception:
+            raise AssertionError("Ferry stream remained active after switching to Abellona: "+str(page.locator("#ferryVideo").evaluate("video=>({paused:video.paused,src:video.getAttribute('src'),currentSrc:video.currentSrc,networkState:video.networkState,readyState:video.readyState,sourceObject:!!video.srcObject})")))
         page.locator(".camera-selector").get_by_role("button", name="Ferry Beach").click()
         assert page.locator(".camera-panels > .ferry-camera:visible").count() == 1
+        assert page.locator("#abellonaPlayer").get_attribute("src") == "about:blank", "unselected Abellona stream was not unloaded"
+        page.wait_for_function("(() => {const video=document.querySelector('.camera-panels #ferryVideo');return video.hasAttribute('src')||Boolean(video.currentSrc)})()",timeout=5000)
+
+        disclosures = page.locator("main details:visible")
+        for index in range(disclosures.count()):
+            detail = disclosures.nth(index)
+            summary = detail.locator(":scope > summary")
+            if not summary.is_visible():
+                continue
+            expanded = "true" if detail.evaluate("el => el.open") else "false"
+            assert summary.get_attribute("aria-expanded") == expanded, f"disclosure state is not announced: {summary.inner_text()}"
+            action = summary.locator(".disclosure-action").inner_text()
+            assert action == ("Hide details" if expanded == "true" else "Show details"), f"missing disclosure action text: {summary.inner_text()}"
+        keyboard_summary = page.locator("#introQualifications > summary")
+        if keyboard_summary.count():
+            keyboard_summary.focus();page.keyboard.press("Space")
+            assert page.locator("#introQualifications").get_attribute("open") is not None
+            assert keyboard_summary.get_attribute("aria-expanded") == "true"
+            page.keyboard.press("Space")
+            assert page.locator("#introQualifications").get_attribute("open") is None
 
         for width, height in VIEWPORTS:
             page.set_viewport_size({"width": width, "height": height})

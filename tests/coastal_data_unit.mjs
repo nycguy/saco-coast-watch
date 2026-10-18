@@ -7,7 +7,7 @@ const now=Date.UTC(2026,9,13,16,0,0);
 class FixedDate extends Date { static now(){return now;} }
 const context={Date:FixedDate,Intl,URL,URLSearchParams,console};
 const source=['js/config.js','js/data.js','js/water-levels.js'].map(path=>readFileSync(new URL('../'+path,import.meta.url),'utf8')).join('\n');
-vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,observedWaterTrend,countdown,riskBand,hasNumericValue,state};',context);
+vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,observedWaterTrend,countdown,riskBand,hasNumericValue,observationFromNWS,state};',context);
 const api=context.api;
 const state=api.state;
 const timestamp=ms=>new Date(ms).toISOString().replace('T',' ').slice(0,19);
@@ -57,6 +57,24 @@ test('empty NWS temperatures and precipitation probabilities stay unavailable',(
  assert.equal(period.temp,null);
  assert.equal(period.pop,null);
  assert.equal(api.forecastPeriod({startTime:'2026-10-13T17:00:00Z',endTime:'2026-10-13T16:00:00Z'}),null);
+});
+
+test('NWS station decoder keeps measured temperature and humidity independent and rejects malformed humidity',()=>{
+ const at=new Date(now-5*60000).toISOString();
+ const base={properties:{timestamp:at,temperature:{value:10,unitCode:'wmoUnit:degC'},windSpeed:{value:null},windGust:{value:null},relativeHumidity:{value:79,unitCode:'wmoUnit:percent'}}};
+ assert.equal(api.observationFromNWS(base,'KPWM').temp,50);
+ assert.equal(api.observationFromNWS(base,'KPWM').humidity,79);
+ assert.equal(api.observationFromNWS({properties:{...base.properties,relativeHumidity:{value:101}}},'KPWM').humidity,null);
+ const noTemp={properties:{...base.properties,temperature:{value:null},relativeHumidity:{value:81}}};
+ assert.equal(api.observationFromNWS(noTemp,'KPWM').temp,null);
+ assert.equal(api.observationFromNWS(noTemp,'KPWM').humidity,81);
+ assert.throws(()=>api.observationFromNWS({properties:{...base.properties,temperature:{value:null},relativeHumidity:{value:null}}},'KPWM'),/did not provide valid/);
+});
+
+test('NWS station observations reject stale and malformed timestamps',()=>{
+ const sample={properties:{timestamp:new Date(now-2*3600000-1).toISOString(),temperature:{value:10},windSpeed:{value:null},relativeHumidity:{value:99}}};
+ assert.throws(()=>api.observationFromNWS(sample,'KPWM'),/older than 2 hours/);
+ assert.throws(()=>api.observationFromNWS({properties:{...sample.properties,timestamp:'not-a-time'}},'KPWM'),/missing, future-dated, or older/);
 });
 
 test('malformed high-tide rows do not abort valid predictions',()=>{

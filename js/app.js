@@ -6,28 +6,32 @@ function arrangeDashboard(){
  // Put official products and the live coastal outlook ahead of detail panels.
  if(status&&metrics)main.insertBefore(status,metrics);
  if(chart&&metrics)main.insertBefore(chart,metrics.nextSibling);
- if(brief&&chart)main.insertBefore(brief,chart.nextSibling);
+ if(hub&&chart)main.insertBefore(hub,chart.nextSibling);
+ if(brief&&hub)main.insertBefore(brief,hub.nextSibling);
  if(intel&&brief)main.insertBefore(intel,brief.nextSibling);
  if(history&&intel)main.insertBefore(history,intel.nextSibling);
  if(weather&&history)main.insertBefore(weather,history.nextSibling);
- if(hub&&weather)main.insertBefore(hub,weather.nextSibling);
- if(tools&&hub)main.insertBefore(tools,hub.nextSibling);
+ if(tools&&weather)main.insertBefore(tools,weather.nextSibling);
  const toolGrid=tools?.querySelector('.coastal-tools-grid');
  for(const selector of ['.threshold-reference','.comparison-panel','.tablepanel','.hourly-panel','.calendar-panel','.coastal-map-panel','.sources']){
   const section=document.querySelector(selector);if(section&&toolGrid)toolGrid.append(section);
  }
  const cameraPanels=hub?.querySelector('.camera-panels');
+ let savedCamera='ferry-camera';try{const value=sessionStorage.getItem('sacocast-selected-camera');if(value==='abellona-camera')savedCamera=value;}catch(_err){}
  for(const cls of ['ferry-camera','abellona-camera']){const camera=document.querySelector('main > .'+cls);if(camera&&cameraPanels)cameraPanels.append(camera);}
- cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{camera.hidden=!camera.classList.contains('ferry-camera')||camera.classList.contains('abellona-camera');});
+ cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{camera.hidden=savedCamera==='abellona-camera'?!camera.classList.contains('abellona-camera'):camera.classList.contains('abellona-camera');});
  const choices=hub?.querySelectorAll('[data-camera]');
+ choices?.forEach(button=>{const selected=button.dataset.camera===savedCamera;button.classList.toggle('active',selected);button.setAttribute('aria-pressed',String(selected));});
  choices?.forEach(button=>button.addEventListener('click',()=>{
+  const selectedCamera=button.dataset.camera;
+  try{sessionStorage.setItem('sacocast-selected-camera',selectedCamera);}catch(_err){}
   cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{
-   const selected=button.dataset.camera==='abellona-camera'
+   const selected=selectedCamera==='abellona-camera'
     ?camera.classList.contains('abellona-camera')
     :!camera.classList.contains('abellona-camera');
    if(selected)return;
    camera.querySelector('video')?.pause();
-   const iframe=camera.querySelector('iframe');if(iframe?.contentWindow)iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','https://www.youtube.com');
+   if(camera.classList.contains('ferry-camera')&&window.SacoFerryCamera)window.SacoFerryCamera.deactivate();
   });
   choices.forEach(choice=>{const selected=choice===button;choice.classList.toggle('active',selected);choice.setAttribute('aria-pressed',String(selected));});
   cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{
@@ -35,6 +39,7 @@ function arrangeDashboard(){
     ?!camera.classList.contains('abellona-camera')
     :camera.classList.contains('abellona-camera');
   });
+  document.dispatchEvent(new CustomEvent('sacocast:camera-selected',{detail:{camera:selectedCamera}}));
  }));
  // Reassert this after all section moves so official products stay above
  // derived summaries and supporting content in every rendered layout.

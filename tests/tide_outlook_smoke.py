@@ -146,7 +146,7 @@ def assert_common(page):
     assert page.locator("#ferryArchiveRange").is_hidden()
     assert "Elevated · Ongoing" in thumbs.first.inner_text()
     thumbs.first.click()
-    assert page.locator("#ferryPreview").is_visible()
+    assert page.locator("#ferryPreview").is_visible(), page.locator("#ferryPreview").evaluate("el => ({hidden:el.hidden,display:getComputedStyle(el).display,cameraHidden:el.closest('.ferry-camera')?.hidden,activeCamera:document.querySelector('.camera-choice.active')?.dataset.camera,archiveOpen:document.querySelector('#ferryArchive')?.hidden})")
     assert "frame-one.jpg" in page.locator("#ferryPreviewImage").get_attribute("src")
     assert page.locator("#ferryArchiveThumbs .ferry-archive-thumb.active").count()==1
     assert "Water above predicted tide" in page.locator("#ferryArchiveContext").inner_text()
@@ -264,6 +264,10 @@ def assert_common(page):
     event_row.evaluate("el => el.hidden=false")
     event_section.evaluate("el => el.hidden=false")
     assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
+    timeline=page.locator(".upcoming-timeline-detail > summary")
+    timeline.click()
+    assert timeline.get_attribute("aria-expanded")=="true"
+    assert timeline.locator(".disclosure-action").inner_text()=="Hide details"
     assert page.locator("#highWaterWindows .high-window").count()>=1
     assert "Distance to next flood threshold" in page.locator("#highWaterWindows").inner_text()
     assert page.locator("#stormModePanel").is_visible()
@@ -307,7 +311,7 @@ def assert_common(page):
     history_text=history_card.inner_text()
     assert "Recorded for 18.0h" in history_text
     assert "how much of the event Saco Coast Watch captured" in history_text
-    assert "An earlier surf reading was replaced" in history_text
+    assert "One earlier surf value was corrected after the same NWS forecast was re-read" in history_text
     assert "Water above predicted tide" in history_text
     assert "Highest NOAA forecast" in history_text
     assert "Residual" not in history_text
@@ -318,7 +322,7 @@ def assert_common(page):
     badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
     assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1
-    page.locator(".coastal-intelligence .intelligence-detail").first.locator("summary").click()
+    page.locator(".coastal-intelligence .intelligence-detail:has(#residualSpark) > summary").click()
     residual_chart=page.locator("#residualSpark")
     assert residual_chart.get_attribute("tabindex")=="0"
     residual_chart.focus()

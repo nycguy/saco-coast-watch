@@ -17,7 +17,7 @@
   const ferryArchiveContext=document.getElementById('ferryArchiveContext');
   const ferryArchiveStatus=document.getElementById('ferryArchiveStatus');
   const ferryReturnLive=document.getElementById('ferryReturnLive');
-  let hls=null,archiveFrames=[];
+  let hls=null,archiveFrames=[],ferryStarted=false,ferryListenersAttached=false,hubVisible=false,archiveSelected=false,selectedCamera=document.querySelector('.camera-choice.active')?.dataset.camera||'ferry-camera';
 
   function etTime(value){
     const t=Date.parse(value||'');
@@ -131,6 +131,7 @@
   function showArchivedFrame(index){
     const frame=archiveFrames[index];
     if(!frame||!ferryPreviewImage||!ferryPreview)return;
+    archiveSelected=true;
     try{ferryVideo.pause();}catch(_err){}
     ferryVideo.hidden=true;
     ferryPreview.hidden=false;
@@ -144,12 +145,14 @@
     renderArchiveContext(frame);
   }
   function returnFerryLive(){
+    archiveSelected=false;
     setActiveArchiveThumb(-1);
     if(ferryArchiveTime)ferryArchiveTime.textContent='Choose a saved image above.';
     if(ferryArchiveReason)ferryArchiveReason.textContent='';
     renderArchiveContext(null);
     if(ferryPreview)ferryPreview.hidden=true;
     if(ferryVideo)ferryVideo.hidden=false;
+    if(!ferryStarted)connectFerryLive();
     if(ferryVideo)ferryVideo.play().catch(()=>setStatus(ferryStatus,'Live stream loaded. Press Play on the video for current conditions.',false));
   }
   async function loadFerryArchive(){
@@ -181,22 +184,28 @@
 
   function ferryUnavailable(){
     if(hls){hls.destroy();hls=null;}
+    ferryStarted=false;
     setStatus(ferryStatus,'Live stream unavailable here. Showing the latest captured shoreline still when available.',true);
     try{ferryVideo.pause();}catch(_err){}
     ferryVideo.hidden=true;
     if(ferryPreview)ferryPreview.hidden=false;
   }
   function playWhenReady(){
+    if(archiveSelected||selectedCamera!=='ferry-camera'||!hubVisible){try{ferryVideo.pause();}catch(_err){}return;}
     if(ferryPreview)ferryPreview.hidden=true;
     ferryVideo.hidden=false;
     ferryVideo.play().catch(()=>setStatus(ferryStatus,'Live stream loaded. Press Play on the video for current conditions.',false));
   }
   function connectFerryLive(){
-    if(!ferryVideo||!ferryStatus)return;
+    if(!ferryVideo||!ferryStatus||ferryStarted||selectedCamera!=='ferry-camera')return;
+    ferryStarted=true;
     setStatus(ferryStatus,'Connecting to the Ferry Beach live stream…',false);
-    ferryVideo.addEventListener('playing',()=>setStatus(ferryStatus,'Live camera playing · stream may be delayed.',false));
-    ferryVideo.addEventListener('waiting',()=>setStatus(ferryStatus,'Loading live video…',false));
-    ferryVideo.addEventListener('error',ferryUnavailable);
+    if(!ferryListenersAttached){
+      ferryVideo.addEventListener('playing',()=>setStatus(ferryStatus,'Live camera playing · stream may be delayed.',false));
+      ferryVideo.addEventListener('waiting',()=>setStatus(ferryStatus,'Loading live video…',false));
+      ferryVideo.addEventListener('error',ferryUnavailable);
+      ferryListenersAttached=true;
+    }
     if(ferryVideo.canPlayType('application/vnd.apple.mpegurl')){
       ferryVideo.src=stream;
       ferryVideo.load();
@@ -219,9 +228,28 @@
     loader.onerror=ferryUnavailable;
     document.head.appendChild(loader);
   }
+  function activateFerry(){if(hubVisible&&selectedCamera==='ferry-camera')connectFerryLive();}
+  function deactivateFerry(){
+    if(hls){hls.destroy();hls=null;}
+    if(!ferryStarted)return;
+    try{ferryVideo.pause();}catch(_err){}
+    ferryVideo.removeAttribute('src');
+    ferryVideo.src='';
+    ferryVideo.load();
+    ferryStarted=false;
+  }
+  window.SacoFerryCamera={activate:activateFerry,deactivate:deactivateFerry};
+  document.addEventListener('sacocast:camera-selected',event=>{
+    selectedCamera=event.detail?.camera==='abellona-camera'?'abellona-camera':'ferry-camera';
+    if(selectedCamera==='ferry-camera')activateFerry();else deactivateFerry();
+  });
   loadWebcamPreviews();
   loadFerryArchive();
-  connectFerryLive();
+  const hub=document.querySelector('.camera-hub');
+  if(hub&&'IntersectionObserver'in window){
+    const observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){hubVisible=true;activateFerry();document.dispatchEvent(new CustomEvent('sacocast:camera-selected',{detail:{camera:selectedCamera}}));observer.disconnect();}},{rootMargin:'250px 0px'});
+    observer.observe(hub);
+  }else{hubVisible=true;activateFerry();document.dispatchEvent(new CustomEvent('sacocast:camera-selected',{detail:{camera:selectedCamera}}));}
   setInterval(()=>{if(!document.hidden){loadWebcamPreviews();loadFerryArchive();}},5*60*1000);
   window.addEventListener('pagehide',()=>{if(hls)hls.destroy();});
 })();

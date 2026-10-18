@@ -1031,3 +1031,24 @@ body.hazard-severity-red .event-detail{border-left-color:#dc3545}
 .brief-priority-item{padding:10px 12px;border-left:3px solid #e5b84a;background:#102c3a;border-radius:4px}
 .brief-priority-item h5{margin:0 0 5px;color:#ffe08a;font-size:14px}
 .brief-priority-item p{margin:0;color:#f3f7fa;line-height:1.55}
+
+/* Native disclosures remain keyboard-operable, with visible state and a shared chevron. */
+details>summary.disclosure-summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer}
+details>summary.disclosure-summary::-webkit-details-marker{display:none}
+details>summary.disclosure-summary::marker{content:''}
+details>summary.disclosure-summary:before{content:none!important}
+details>summary.disclosure-summary::after{content:'⌄';font-size:20px;line-height:1;color:#b7d4de;transform:rotate(0);transition:transform .15s ease;order:2}
+details[open]>summary.disclosure-summary::after{transform:rotate(180deg)}
+.disclosure-action{margin-left:auto;color:#9fc6d2;font-size:11px;font-weight:750;white-space:nowrap;order:1}
+details>summary.disclosure-summary:focus-visible{outline:3px solid #69d9e6;outline-offset:3px;border-radius:5px}
+.upcoming-event-cards{display:grid;gap:8px}
+.upcoming-event{border:1px solid #315263;border-radius:10px;padding:12px;background:#102d3b}
+.upcoming-event:first-child{border-color:#4c8292}
+.upcoming-event h5{margin:0 0 5px;font-size:15px;color:#f2fbfd}
+.upcoming-event .upcoming-event-meta{margin:0;color:#bdd0d7;font-size:12px;line-height:1.45}
+.upcoming-event .upcoming-event-source{margin:7px 0 0;color:#91afba;font-size:10px}
+.upcoming-event .upcoming-event-context{margin:7px 0 0;color:#d1e1e7;font-size:11px;line-height:1.4}
+.upcoming-timeline-detail{grid-column:1/-1}
+.event-history-archive{margin-top:12px;border-top:1px solid #294756;padding-top:8px}
+.event-history-archive>.event-history-cards{margin-top:8px}
+@media(max-width:700px){.disclosure-action{font-size:10px}.upcoming-event{padding:10px}.event-history-archive{margin-top:9px}}

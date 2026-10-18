@@ -48,8 +48,9 @@ class WebcamSnapshotTests(unittest.TestCase):
   self.assertNotIn('Autoplay did not start.',player)
   self.assertNotIn('fallbackMs',player)
   self.assertNotIn('id="abellonaPreviewImage"',html)
-  self.assertNotIn('data-src="https://www.youtube.com/embed/HSQpqIWLViI',html)
-  self.assertIn('https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1',html)
+  self.assertIn('data-src="https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1',html)
+  iframe=html.split('id="abellonaPlayer"',1)[1].split('>',1)[0]
+  self.assertNotIn(' src=',iframe)
  def test_markup_autoplays_muted_ferry_live_player(self):
   html=(ROOT/'index.html').read_text(encoding='utf-8')
   webcams=(ROOT/'js'/'webcams.js').read_text(encoding='utf-8')

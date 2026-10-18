@@ -1,7 +1,7 @@
 'use strict';
 function renderWeather(){
  if(window.SacoHeaderWeather)window.SacoHeaderWeather.render();
- const o=state.weatherObservation,age=o?now()-o.t:Infinity,fresh=o&&age<=2*3600000;
+ const o=state.weatherObservation,age=o?now()-o.t:Infinity,fresh=o&&age>=-10*60000&&age<=2*3600000;
  const w=fresh?o.wind:null,temperature=fresh?o.temp:null;
  metricNumber('windNow',w,'mph');metricNumber('tempNow',temperature,'°F');
  const origin=o?'NWS '+o.station+' · '+dayTime(o.t)+' ET · '+relative(o.t):'Nearby station observation unavailable';

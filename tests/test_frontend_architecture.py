@@ -3,8 +3,8 @@ import pathlib, re, unittest
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 INDEX=ROOT/'index.html'
 EXPECTED_JS=[
- 'js/config.js','js/marine.js','js/data.js','js/weather.js','js/water-levels.js','js/intelligence.js',
- 'js/alerts.js','js/chart.js','js/hazards.js','js/briefing.js','js/app.js','js/map.js','js/webcams.js','js/abellona-player.mjs'
+ 'js/config.js','js/marine.js','js/data.js','js/weather.js','js/water-levels.js','js/intelligence.js','js/coastal-events.js',
+ 'js/alerts.js','js/chart.js','js/hazards.js','js/briefing.js','js/app.js','js/map.js','js/webcams.js','js/abellona-player.mjs','js/disclosures.js'
 ]
 
 class FrontendArchitectureTests(unittest.TestCase):

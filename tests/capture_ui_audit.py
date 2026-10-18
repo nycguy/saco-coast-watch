@@ -26,7 +26,7 @@ def main():
     parser.add_argument("--prefix", required=True, choices=("baseline", "after"))
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-        errors = []
+    errors = []
 
     with sync_playwright() as playwright:
         browser = launch_chromium(playwright.chromium, "ui-audit-" + args.prefix)

@@ -266,6 +266,7 @@ def assert_common(page):
     assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
     timeline=page.locator(".upcoming-timeline-detail > summary")
     timeline.click()
+    page.wait_for_function("document.querySelector('.upcoming-timeline-detail')?.open && document.querySelector('.upcoming-timeline-detail > summary')?.getAttribute('aria-expanded')==='true'")
     assert timeline.get_attribute("aria-expanded")=="true"
     assert timeline.locator(".disclosure-action").inner_text()=="Hide details"
     assert page.locator("#highWaterWindows .high-window").count()>=1

@@ -341,6 +341,8 @@ def assert_common(page):
     page.keyboard.press("Escape")
     assert residual_tip.is_hidden()
     card_height=briefing.bounding_box()["height"]
+    print("BRIEFING_LAYOUT",json.dumps(briefing.evaluate("el => ({width:innerWidth,height:el.getBoundingClientRect().height,grid:getComputedStyle(el.querySelector('.brief-grid')).gridTemplateColumns,rows:[...el.querySelectorAll('.brief-row:not([hidden])')].map(row=>({height:row.getBoundingClientRect().height,text:row.innerText,scroll:row.scrollHeight,client:row.clientHeight,display:getComputedStyle(row).display,columns:getComputedStyle(row).gridTemplateColumns}))})")))
+    if card_height>=550: briefing.screenshot(path="tide-outlook-smoke-briefing-debug.png")
     assert card_height<550,f"briefing card should remain compact after showing complete summaries: {card_height}px"
 
     page.locator("#briefOpen").click()

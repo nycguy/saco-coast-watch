@@ -76,7 +76,7 @@ def main():
             diagnostic=page.evaluate("""() => {const frame=document.querySelector('#abellonaPlayer'),camera=document.querySelector('.abellona-camera'),r=frame?.getBoundingClientRect(),s=frame&&getComputedStyle(frame);return {state:camera?.dataset.playbackState,status:document.querySelector('#abellonaStatus')?.textContent,hidden:camera?.hidden,connected:frame?.isConnected,rect:r&&{width:r.width,height:r.height},display:s?.display,visibility:s?.visibility};}""")
             raise AssertionError(f"Abellona did not report playback with visible frame geometry: {diagnostic}") from error
         assert page.locator("#abellonaPlayerGate").is_hidden()
-        assert "video is playing" in page.locator("#abellonaStatus").inner_text().lower()
+        assert "youtube reports playback in the visible abellona player" in page.locator("#abellonaStatus").inner_text().lower()
         assert not errors, errors
         page.close()
 

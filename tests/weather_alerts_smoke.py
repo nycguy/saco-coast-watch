@@ -22,6 +22,7 @@ def main():
     with sync_playwright() as playwright:
         browser=launch_configured_browser(playwright,'weather-alerts-responsive-smoke')
         for width,height,name,mobile in [(1440,900,'desktop',False),(390,844,'iphone',True),(375,667,'iphone-small',True)]:
+            fixture['features']=[]
             page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=3 if mobile else 1,is_mobile=mobile,has_touch=mobile)
             page.route('**/api.weather.gov/alerts/active?point=*',fulfill)
             page.goto(BASE,wait_until='domcontentloaded',timeout=45000)

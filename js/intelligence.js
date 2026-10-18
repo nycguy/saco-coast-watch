@@ -202,7 +202,7 @@ function renderUpcomingEvents(){
   const impact=eventState.coastal_impact||hazards.event_state?.coastal_impact||{};
   const alerts=[...(Array.isArray(state.alerts)?state.alerts:[]),...(Array.isArray(hazards.alerts)?hazards.alerts:[])];
   const events=window.SacoEventUtils?.upcomingEvents({alerts,eventState,windows:impact.windows||[],now:now()})||[];
-  if(!events.length){const empty=document.createElement('p');empty.className='intel-empty';empty.textContent='No qualifying coastal event is in the current alert or forecast window. Routine high tides remain in the tide outlook.';root.append(empty);return;}
+  if(!events.length){const empty=document.createElement('p');empty.className='intel-empty';const errors=hazards.errors||{},unavailable=Object.keys(errors).some(key=>/nws|forecast|surf|marine/i.test(key))||state.errors?.water||state.errors?.forecast;empty.textContent=unavailable?'Official coastal hazard guidance is temporarily unavailable. Check NWS alerts and the source status below; routine tides remain in the tide outlook.':'No significant coastal hazards are currently identified in the available official forecast. This does not rule out changing conditions. Routine tides remain in the tide outlook.';root.append(empty);return;}
   events.forEach((event,index)=>{
     const card=document.createElement('article');card.className='upcoming-event'+(index?' upcoming-event-secondary':'');
     const title=document.createElement('h5');title.textContent=(index?'Also · ':'')+event.title;card.append(title);

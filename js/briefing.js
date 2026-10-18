@@ -1,5 +1,4 @@
 'use strict';
-function briefShort(text,max=130){const s=String(text||'').trim();return s.length<=max?s:s.slice(0,max-1).trimEnd()+'…';}
 function eventHistoryTime(value){const t=Date.parse(value||'');return Number.isFinite(t)?new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))+' ET':'Time unavailable';}
 function briefingDataAvailability(coverage){
  if(!coverage||!Number.isFinite(coverage.total))return 'Coastal source availability is unavailable in this briefing. Check the source status cards below; missing information is not an all-clear.';
@@ -63,10 +62,10 @@ function renderEventHistory(){
 function renderBriefing(){
  const b=state.briefing;
  if(!b){if(state.briefingError){$('briefPast').textContent='Briefing temporarily unavailable.';$('briefChange').textContent='NOAA chart remains available above.';$('briefNext').textContent='Use the live water-level outlook above.';$('briefPulse').textContent='Weather-related local scan unavailable.';$('briefUpdated').textContent='Briefing feed unavailable';}return;}
- $('briefPast').textContent=briefShort(b.past_24h?.text);
- $('briefChange').textContent=briefShort(b.forecast_change_24h?.text);
- $('briefNext').textContent=briefShort(b.next_24h?.text);
- $('briefPulse').textContent=briefShort(b.local_pulse?.summary);
+ $('briefPast').textContent=b.past_24h?.text||'Past-24-hour summary unavailable.';
+ $('briefChange').textContent=b.forecast_change_24h?.text||'A fixed-window forecast comparison is unavailable.';
+ $('briefNext').textContent=b.next_24h?.text||'Next-24-hour guidance unavailable.';
+ $('briefPulse').textContent=b.local_pulse?.summary||'No weather-related local reports are available.';
  const generated=Date.parse(b.generated_at||'');
  $('briefUpdated').textContent=Number.isFinite(generated)?'Updated '+dayTime(generated)+' ET':'Updated recently';
  $('briefFullPast').textContent=b.past_24h?.text||'Past-24-hour summary unavailable.';

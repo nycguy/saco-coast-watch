@@ -12,7 +12,7 @@ from browser_runtime import launch_configured_browser
 
 
 BASE = os.environ.get("SACOCAST_SMOKE_URL", "http://127.0.0.1:8765/index.html")
-VIEWPORTS = [(320, 780), (375, 667), (390, 844), (430, 932), (1440, 900)]
+VIEWPORTS = [(320, 780), (375, 667), (390, 844), (430, 932), (768, 1024), (1440, 900)]
 MAJOR_SECTIONS = [
     "#stormModePanel", "#impactTimelinePanel", "#winterWeatherPanel", "#tropicalPanel",
     ".metrics", ".status", ".coastal-intelligence", ".coastal-briefing", ".camera-hub",
@@ -65,6 +65,7 @@ def main():
         page.on("pageerror", lambda error: page_errors.append(str(error)))
         page.goto(BASE, wait_until="domcontentloaded", timeout=45000)
         page.locator(".coastal-briefing").wait_for(state="visible", timeout=20000)
+        assert page.locator(".brief-row span").evaluate_all("els => els.every(el => getComputedStyle(el).webkitLineClamp === 'none' && getComputedStyle(el).overflow !== 'hidden')"), "briefing descriptions are clamped or clipped"
         page.locator("#coastalToolsDetails > summary").click()
         page.locator(".coastal-map-panel").wait_for(state="visible", timeout=10000)
 
@@ -79,6 +80,8 @@ def main():
         assert page.locator("#abellonaPlayer").get_attribute("src") is None, "unselected Abellona video loaded early"
         page.locator(".camera-selector").get_by_role("button", name="Abellona Inn").click()
         assert page.locator(".camera-panels > .abellona-camera:visible").count() == 1
+        player_box = page.locator("#abellonaPlayer").bounding_box()
+        assert player_box and player_box["width"] > 0 and player_box["height"] > 0, f"Abellona iframe has no visible layout box: {player_box}"
         assert page.locator("#abellonaPlayer").get_attribute("src").startswith("https://www.youtube.com/embed/"), "selected Abellona iframe was not activated"
         try:
             page.wait_for_function("(() => {const video=document.querySelector('.camera-panels #ferryVideo');return video.paused&&!video.hasAttribute('src')})()",timeout=5000)

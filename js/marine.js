@@ -10,36 +10,37 @@ function renderMarine(){
  for(const id of ['44007','WEXM1']){
   const station=state.marine[id],t=Date.parse(station?.observed_at||''),age=now()-t;
   const timed=Number.isFinite(t)&&t>0&&age>=-10*60000;
-  const fresh=timed&&age<=MARINE_MAX_AGE;
-  const waveAt=Date.parse(station?.wave_observed_at||station?.observed_at||''),waveAge=now()-waveAt,waveTimed=Number.isFinite(waveAt)&&waveAt>0&&waveAge>=-10*60000,waveFresh=waveTimed&&waveAge<=MARINE_MAX_AGE;
+  const snapshotFresh=!Number.isFinite(state.marineSnapshotAt)||now()-state.marineSnapshotAt<=90*60000;
+  const fresh=timed&&age<=MARINE_MAX_AGE&&snapshotFresh;
+  const waveAt=Date.parse(station?.wave_observed_at||station?.observed_at||''),waveAge=now()-waveAt,waveTimed=Number.isFinite(waveAt)&&waveAt>0&&waveAge>=-10*60000,waveFresh=waveTimed&&waveAge<=MARINE_MAX_AGE&&snapshotFresh;
   const speed=fresh&&Number.isFinite(station?.speed_mph)?station.speed_mph:null;
   const gust=fresh&&Number.isFinite(station?.gust_mph)?station.gust_mph:null;
-  const label=!station?'Unavailable':!fresh?'Stale':speed===null?'No speed':'Live';
-  const badge=$('marine'+id+'Status');badge.textContent=label;badge.className='marine-tag '+(label==='Live'?'good':label==='Stale'?'stale':'bad');
+  const hasWind=speed!==null||gust!==null,hasWave=id==='44007'&&waveFresh&&Number.isFinite(station?.wave_height_ft);
+  const label=!station?'Unavailable':!timed?'Unavailable':!snapshotFresh?'Stale':hasWind||hasWave?'Recent':!fresh?'Stale':'Unavailable';
+  const badge=$('marine'+id+'Status');badge.textContent=label;badge.className='marine-tag '+(label==='Recent'?'good':label==='Stale'?'stale':'bad');
   marineNumber('marine'+id+'Speed',speed);
-  marineNumber('marine'+id+'Gust',gust,station&&!fresh?'--':station&&fresh?'Not reported':'--');
-  const when=timed?dayTime(t)+' ET · '+relative(t):'No valid observation timestamp';
+  marineNumber('marine'+id+'Gust',gust,station&&fresh?'Not reported':'--');
+  const when=timed?dayTime(t)+' ET · '+relative(t)+' · '+Math.max(0,Math.round(age/60000))+' min old':'No valid observation timestamp';
   const direction=fresh&&Number.isFinite(station?.direction_deg)?windCompass(station.direction_deg)+' wind · ':'';
   const note=!station?'No recent measurements are available from this NOAA station.':
-    !fresh?'The latest station observation is stale ('+when+'). Older values are hidden until a new measurement arrives.':
-    direction+when+(gust===null?' · gust not reported':'');
+    !timed?'No usable observation timestamp was provided; measurements are unavailable.':
+    !snapshotFresh?'The published station snapshot is stale ('+when+'). Measurements are withheld until the feed refreshes.':
+    !fresh?'Wind observation is stale ('+when+'); wind values are withheld.':
+    direction+when+(speed===null?' · wind speed not reported':'')+(gust===null?' · gust not reported':'');
   $('marine'+id+'Meta').textContent=note;
-  health('healthMarine'+id,label==='Live',label);
+  health('healthMarine'+id,label==='Recent',label);
   if(id==='44007'){
-   const show=fresh&&waveFresh?station||{}:{};
-   marineText('marine44007Wave',Number.isFinite(show.wave_height_ft)?show.wave_height_ft.toFixed(1)+' ft':'--');
-   marineText('marine44007Period',Number.isFinite(show.dominant_period_sec)?show.dominant_period_sec.toFixed(0)+' s':'--');
-   marineText('marine44007WaveDirection',Number.isFinite(show.wave_direction_deg)?windCompass(show.wave_direction_deg)+' · '+Math.round(show.wave_direction_deg)+'°':'--');
-   marineText('marine44007Pressure',Number.isFinite(show.pressure_mb)?show.pressure_mb.toFixed(1)+' mb':'--');
-   marineText('marine44007PressureTrend',Number.isFinite(show.pressure_tendency_mb)?(show.pressure_tendency_mb>=0?'+':'')+show.pressure_tendency_mb.toFixed(1)+' mb / 3h':'--');
-   marineText('marine44007WaterTemp',Number.isFinite(show.water_temp_f)?show.water_temp_f.toFixed(1)+' °F':'--');
-   const waveNote=Number.isFinite(station?.wave_height_ft)&&!waveFresh?'Wave reading is stale and withheld.':Number.isFinite(station?.wave_height_ft)?'Wave reading '+dayTime(waveAt)+' ET · '+relative(waveAt):'No wave-height value in the latest available buoy sample.';
+   const show=waveFresh?station||{}:{};
+   const values={marine44007Wave:Number.isFinite(show.wave_height_ft)?show.wave_height_ft.toFixed(1)+' ft':null,marine44007Period:Number.isFinite(show.dominant_period_sec)?show.dominant_period_sec.toFixed(0)+' s':null,marine44007WaveDirection:Number.isFinite(show.wave_direction_deg)?windCompass(show.wave_direction_deg)+' · '+Math.round(show.wave_direction_deg)+'°':null,marine44007Pressure:fresh&&Number.isFinite(station?.pressure_mb)?station.pressure_mb.toFixed(1)+' mb':null,marine44007PressureTrend:fresh&&Number.isFinite(station?.pressure_tendency_mb)?(station.pressure_tendency_mb>=0?'+':'')+station.pressure_tendency_mb.toFixed(1)+' mb / 3h':null,marine44007WaterTemp:fresh&&Number.isFinite(station?.water_temp_f)?station.water_temp_f.toFixed(1)+' °F':null};
+   for(const [nodeId,value] of Object.entries(values)){marineText(nodeId,value||'');const node=$(nodeId);if(node?.parentElement)node.parentElement.hidden=!value;}
+   const secondary=$('marine44007Secondary');if(secondary)secondary.hidden=!Object.values(values).some(Boolean);
+   const waveNote=Number.isFinite(station?.wave_height_ft)&&!waveFresh?'Wave reading is stale and withheld.':Number.isFinite(station?.wave_height_ft)?'Wave reading '+dayTime(waveAt)+' ET · '+relative(waveAt):station?.wave_height_supported===false?'This station does not report wave height.':'Wave height was not reported in the latest buoy sample.';
    $('marine'+id+'Meta').textContent+=' · '+waveNote;
   }
  }
  $('marineFeedNote').textContent=state.marineFetchError?
-  'NOAA marine measurements are temporarily unavailable. Wind and wave readings are hidden until current data return. Use the NOAA station links for direct observations.':
-  'These are NOAA station measurements away from the shoreline, not conditions at your property. Readings older than 60 minutes are hidden; missing gusts are labeled Not reported. This page checks for updates every minute, while station data refresh on their own schedule.';
+  'The NOAA marine snapshot is temporarily unavailable or stale. Use the station links for direct observations; a failed feed is not a new measurement.':
+  'These NOAA station measurements are away from shore. Values older than 60 minutes are hidden. “Not reported” means the station supplied no value; the page refreshes every minute, while NOAA observations follow their own schedule.';
 }
 async function loadMarine(){
  try{

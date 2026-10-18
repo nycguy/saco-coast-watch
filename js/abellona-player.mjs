@@ -63,6 +63,14 @@ export function createAbellonaPlayer({
     status.textContent = message;
   }
 
+  function frameIsVisible() {
+    if (iframe.isConnected === false || iframe.hidden || camera?.hidden) return false;
+    const rect = iframe.getBoundingClientRect?.();
+    if (!rect) return false;
+    const style = win.getComputedStyle?.(iframe);
+    return rect.width > 0 && rect.height > 0 && style?.display !== 'none' && style?.visibility !== 'hidden';
+  }
+
   function showFallback(message, { external = false } = {}) {
     playback = 'fallback';
     watchOnYouTube = external;
@@ -91,12 +99,24 @@ export function createAbellonaPlayer({
   function onPlayerState(event) {
     const state = event?.data;
     if (state === PLAYING) {
+      if (!selected || !frameIsVisible()) {
+        playback = 'ready';
+        if (camera) camera.dataset.playbackState = playback;
+        gate.hidden = false;
+        gateMessage.textContent = 'The player started, but its video frame is not visible. Select Watch Live or open the official stream.';
+        watchButton.hidden = false;
+        watchButton.disabled = false;
+        watchButton.textContent = 'Watch on YouTube';
+        watchOnYouTube = true;
+        setStatus('YouTube reported playback, but SacoCast cannot confirm a visible video frame. Open the official stream on YouTube.');
+        return;
+      }
       hasPlayed = true;
       playback = 'playing';
       if (camera) camera.dataset.playbackState = playback;
       gate.hidden = true;
       watchButton.hidden = true;
-      setStatus('The Abellona live video is playing.');
+      setStatus('YouTube reports playback in the visible Abellona player. If the picture is blank, open the official stream on YouTube.');
       return;
     }
     if (state === 0 && !hasPlayed) {
@@ -178,7 +198,7 @@ export function createAbellonaPlayer({
           onReady: (event) => {
             event?.target?.getIframe?.()?.setAttribute('title', 'Abellona Inn Old Orchard Beach live camera');
             if (event?.target?.getPlayerState?.() === PLAYING) onPlayerState({ data: PLAYING });
-            else if (selected) requestPlayback(false);
+            else if (selected) { playback = 'ready'; if (camera) camera.dataset.playbackState = playback; requestPlayback(false); }
           },
           onStateChange: onPlayerState,
           onAutoplayBlocked,

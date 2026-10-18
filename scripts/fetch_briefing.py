@@ -87,16 +87,16 @@ def _forecast_change_text(change):
     if crossed:
         threshold_name=(max(crossed,key=lambda item:item[1])[0] if current>previous else min(crossed,key=lambda item:item[1])[0])
         movement="crossed above" if current>previous else "fell below"
-        text=f"The comparable NOAA 72-hour peak forecast {movement} Portland's {threshold_name.title()} Flood threshold, moving from {previous:.2f} to {current:.2f} ft MLLW."
+        text=f"The highest NOAA-predicted water level over the next 72 hours {movement} Portland's {threshold_name.title()} Flood threshold, changing from {previous:.2f} to {current:.2f} ft MLLW."
     elif abs(delta)<0.15:
         if shift is not None and abs(shift)>=60:
-            text=f"The comparable NOAA 72-hour peak level changed little, from {previous:.2f} to {current:.2f} ft MLLW, but its timing shifted about {abs(shift)/60:.1f} hours {'later' if shift>0 else 'earlier'}."
+            text=f"The highest NOAA-predicted water level over the next 72 hours changed little, from {previous:.2f} to {current:.2f} ft MLLW, but its timing shifted about {abs(shift)/60:.1f} hours {'later' if shift>0 else 'earlier'}."
         else:
-            text=f"The comparable NOAA 72-hour peak forecast is essentially unchanged from {previous:.2f} to {current:.2f} ft MLLW; the difference is under 0.15 ft."
+            text=f"The highest NOAA-predicted water level over the next 72 hours is essentially unchanged from {previous:.2f} to {current:.2f} ft MLLW; the difference is under 0.15 ft."
             if shift is not None: text+=" Peak timing shifted less than one hour."
     else:
         direction="increased" if delta>0 else "decreased"
-        text=f"Compared with the captured NOAA forecast nearest 24 hours ago, the 72-hour peak {direction} by {abs(delta):.2f} ft, from {previous:.2f} to {current:.2f} ft MLLW."
+        text=f"The highest NOAA-predicted water level over the next 72 hours {direction} by {abs(delta):.2f} ft compared with the forecast captured about 24 hours ago, from {previous:.2f} to {current:.2f} ft MLLW."
         if shift is not None and abs(shift)>=60: text+=f" Peak timing shifted about {abs(shift)/60:.1f} hours {'later' if shift>0 else 'earlier'}."
         margin_delta=(change.get("threshold_margin_delta_ft") or {}).get("minor")
         if margin_delta is not None and margin_delta!=0:

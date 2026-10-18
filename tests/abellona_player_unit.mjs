@@ -14,6 +14,8 @@ function fixture(apiLoaderOverride) {
     elements.set(id, {
       id, hidden: id === 'abellonaWatchLive', disabled: false, textContent: '', dataset: {},
       src: '',
+      isConnected: true,
+      getBoundingClientRect() { return { width: 640, height: 360 }; },
       dataset: id === 'abellonaPlayer' ? { src: 'https://www.youtube.com/embed/HSQpqIWLViI?autoplay=1&mute=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fnycguy.github.io' } : {},
       listeners: {}, addEventListener(name, fn) { this.listeners[name] = fn; },
       click() { this.listeners.click?.({ type: 'click' }); },
@@ -81,7 +83,7 @@ test('selecting Abellona initializes muted inline autoplay and confirms actual P
   assert.equal(f.controller.getPlaybackState(), 'playing');
   assert.equal(f.camera.dataset.playbackState, 'playing');
   assert.equal(f.elements.get('abellonaPlayerGate').hidden, true);
-  assert.match(f.elements.get('abellonaStatus').textContent, /video is playing/);
+  assert.match(f.elements.get('abellonaStatus').textContent, /YouTube reports playback/);
 });
 
 test('delayed API/player initialization stays in a loading state and later playback is accepted', async () => {
@@ -116,6 +118,18 @@ test('documented autoplay-block event shows the in-frame Watch Live fallback', a
   assert.equal(f.elements.get('abellonaWatchLive').textContent, 'Watch Live');
   assert.match(f.elements.get('abellonaGateMessage').textContent, /Automatic playback is blocked/);
   assert.match(f.elements.get('abellonaStatus').textContent, /Watch Live/);
+});
+
+test('PLAYING event does not claim playback when the iframe has no visible dimensions', async () => {
+  const f = fixture();
+  await f.enterViewport();
+  f.playerConfig.events.onReady({});
+  f.elements.get('abellonaPlayer').getBoundingClientRect = () => ({ width: 0, height: 0 });
+  f.playerConfig.events.onStateChange({ data: 1 });
+  assert.equal(f.controller.getPlaybackState(), 'ready');
+  assert.equal(f.elements.get('abellonaPlayerGate').hidden, false);
+  assert.equal(f.elements.get('abellonaWatchLive').textContent, 'Watch on YouTube');
+  assert.match(f.elements.get('abellonaStatus').textContent, /cannot confirm a visible video frame/);
 });
 
 test('user-initiated playback uses the existing player and closes fallback only after PLAYING', async () => {

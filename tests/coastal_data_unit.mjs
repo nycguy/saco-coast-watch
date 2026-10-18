@@ -127,17 +127,51 @@ test('marine source failures show plain-language status without workflow or pars
  const nodes=new Map();
  const node=()=>({textContent:'',className:'',children:[],replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
  const marineContext={
-  Date:FixedDate,Number,Math,Intl,state:{marine:{},marineFetchError:'Invalid JSON: private implementation detail'},
+  Date:FixedDate,Number,Math,Intl,state:{marine:{},marineSnapshotAt:now,marineFetchError:'Invalid JSON: private implementation detail'},
   now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},
   document:{createTextNode:text=>({textContent:text}),createElement:node},
   dayTime:()=> 'Tue, Oct 13 at 11:00 AM',relative:()=> '70 minutes ago',windCompass:()=> 'N',health:()=>{}
  };
  vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
  const sourceMessage=nodes.get('marineFeedNote').textContent;
- assert.match(sourceMessage,/NOAA marine measurements are temporarily unavailable/);
- assert.match(sourceMessage,/Use the NOAA station links/);
+ assert.match(sourceMessage,/NOAA marine snapshot is temporarily unavailable or stale/);
+ assert.match(sourceMessage,/Use the station links/);
  assert.doesNotMatch(sourceMessage,/Invalid JSON|workflow|updater|parser/i);
  assert.match(nodes.get('marine44007Meta').textContent,/No recent measurements are available/);
+});
+
+test('fresh wind remains visible when buoy wave data is stale or absent',()=>{
+ const nodes=new Map();
+ const node=()=>({textContent:'',className:'',children:[],parentElement:{hidden:false},replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
+ const marineContext={Date:FixedDate,Number,Math,Intl,state:{marineSnapshotAt:now,marineFetchError:null,marine:{'44007':{observed_at:new Date(now-20*60000).toISOString(),wave_observed_at:new Date(now-80*60000).toISOString(),speed_mph:17,gust_mph:24,wave_height_ft:6.2}}},now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},document:{createTextNode:text=>({textContent:text}),createElement:node},dayTime:()=> 'Tue, Oct 13 at 11:40 AM',relative:()=> '20 minutes ago',windCompass:()=> 'N',health:()=>{}};
+ vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
+ assert.equal(nodes.get('marine44007Status').textContent,'Recent');
+ assert.deepEqual(nodes.get('marine44007Speed').children[0].textContent,'17');
+ assert.match(nodes.get('marine44007Meta').textContent,/Wave reading is stale and withheld/);
+ assert.equal(nodes.get('marine44007Wave').parentElement.hidden,true);
+});
+
+test('NOAA marine freshness keeps the exact 60-minute boundary and withholds older readings',()=>{
+ for(const [minutes,label,expectedSpeed] of [[60,'Recent','12'],[61,'Stale','--']]){
+  const nodes=new Map(),node=()=>({textContent:'',className:'',children:[],parentElement:{hidden:false},replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
+  const station={observed_at:new Date(now-minutes*60000).toISOString(),speed_mph:12,gust_mph:18};
+  const marineContext={Date:FixedDate,Number,Math,Intl,state:{marineSnapshotAt:now,marineFetchError:null,marine:{'44007':station}},now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},document:{createTextNode:text=>({textContent:text}),createElement:node},dayTime:()=> 'Tue, Oct 13 at 3:00 PM',relative:()=> `${minutes} minutes ago`,windCompass:()=> 'N',health:()=>{}};
+  vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
+  assert.equal(nodes.get('marine44007Status').textContent,label);
+  assert.equal(nodes.get('marine44007Speed').children[0].textContent,expectedSpeed);
+  assert.match(nodes.get('marine44007Meta').textContent,/min old/);
+ }
+});
+
+test('a stale wind timestamp does not withhold a separately fresh buoy wave',()=>{
+ const nodes=new Map(),node=()=>({textContent:'',className:'',children:[],parentElement:{hidden:false},replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
+ const marineContext={Date:FixedDate,Number,Math,Intl,state:{marineSnapshotAt:now,marineFetchError:null,marine:{'44007':{observed_at:new Date(now-75*60000).toISOString(),wave_observed_at:new Date(now-10*60000).toISOString(),speed_mph:12,gust_mph:18,wave_height_ft:5.4}}},now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},document:{createTextNode:text=>({textContent:text}),createElement:node},dayTime:()=> 'Tue, Oct 13 at 2:50 PM',relative:()=> '10 minutes ago',windCompass:()=> 'N',health:()=>{}};
+ vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
+ assert.equal(nodes.get('marine44007Status').textContent,'Recent');
+ assert.match(nodes.get('marine44007Speed').children[0].textContent,/--/);
+ assert.match(nodes.get('marine44007Meta').textContent,/Wind observation is stale/);
+ assert.equal(nodes.get('marine44007Wave').parentElement.hidden,false);
+ assert.equal(nodes.get('marine44007Wave').textContent,'5.4 ft');
 });
 
 test('Portland flood classifications retain exact threshold boundaries',()=>{

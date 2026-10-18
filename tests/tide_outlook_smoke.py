@@ -274,6 +274,10 @@ def assert_common(page):
     assert page.locator("#stormModePanel").is_visible()
     assert page.locator("#eventFocusTitle").inner_text().strip()=="Coastal Storm"
     assert page.locator("#eventFocusBadge").inner_text().strip()=="Elevated · Approaching"
+    marine_details=page.locator("#marine44007Secondary")
+    assert marine_details.is_visible(), "available secondary buoy measurements should be discoverable"
+    marine_details.locator(":scope > summary").click()
+    assert marine_details.evaluate("el => el.open"), "buoy detail disclosure did not open"
     assert page.locator("#marine44007Wave").inner_text().strip()=="4.6 ft"
     assert "Wave reading" in page.locator("#marine44007Meta").inner_text()
     assert "Data available: 4 of 5 source types" in page.locator("#eventDataCoverage").inner_text()

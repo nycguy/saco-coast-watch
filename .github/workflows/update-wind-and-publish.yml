@@ -187,6 +187,7 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
           /tmp/saco-map-venv/bin/python tests/abellona_live_smoke.py
           /tmp/saco-map-venv/bin/python tests/responsive_accessibility_smoke.py
+          echo "Live Pages production verification passed."
       - name: Capture deployed UI audit screenshots
         if: github.event_name != 'schedule'
         env:
@@ -200,4 +201,3 @@ jobs:
           retention-days: 1
           path: ui-audit/*.jpg
           if-no-files-found: error
-          echo "Live Pages production verification passed."

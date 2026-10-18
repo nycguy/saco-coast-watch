@@ -10,13 +10,14 @@ DEFAULT_LAUNCH_TIMEOUT_MS = 30_000
 
 
 def launch_chromium(chromium, suite, extra_args=()):
-    """Launch the Playwright-managed headless Chromium with bounded diagnostics.
+    """Launch headless Chromium with bounded diagnostics.
 
-    Do not discover or substitute a machine-installed Chrome. A consistent
-    Playwright browser avoids host-version drift and macOS app registration
-    crashes seen with the user's system Chrome installation.
+    CI and default local runs use Playwright's pinned browser. Hosts that cannot
+    launch the managed macOS app bundle may provide an explicit executable path
+    in SACOCAST_BROWSER_EXECUTABLE; the launcher never searches PATH.
     """
     timeout_ms = int(os.environ.get("SACOCAST_BROWSER_LAUNCH_TIMEOUT_MS", DEFAULT_LAUNCH_TIMEOUT_MS))
+    executable_override = os.environ.get("SACOCAST_BROWSER_EXECUTABLE")
     try:
         playwright_version = version("playwright")
     except PackageNotFoundError:
@@ -24,8 +25,8 @@ def launch_chromium(chromium, suite, extra_args=()):
 
     diagnostic = {
         "suite": suite,
-        "browser": "Playwright-managed Chromium",
-        "executable": chromium.executable_path,
+        "browser": "Explicit Chromium executable" if executable_override else "Playwright-managed Chromium",
+        "executable": executable_override or chromium.executable_path,
         "headless": True,
         "launchTimeoutMs": timeout_ms,
         "playwrightVersion": playwright_version,
@@ -33,12 +34,16 @@ def launch_chromium(chromium, suite, extra_args=()):
     }
     print("BROWSER_LAUNCH " + json.dumps(diagnostic, sort_keys=True), flush=True)
     try:
-        browser = chromium.launch(
-            headless=True,
-            channel="chromium",
-            timeout=timeout_ms,
-            args=list(extra_args),
-        )
+        launch_options = {
+            "headless": True,
+            "timeout": timeout_ms,
+            "args": list(extra_args),
+        }
+        if executable_override:
+            launch_options["executable_path"] = executable_override
+        else:
+            launch_options["channel"] = "chromium"
+        browser = chromium.launch(**launch_options)
     except Exception as error:
         print(
             "BROWSER_LAUNCH_FAILED "

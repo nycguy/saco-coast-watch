@@ -76,9 +76,9 @@ def main():
         camera_buttons = page.locator(".camera-choice")
         assert camera_buttons.count() == 2
         assert page.locator(".camera-panels > .ferry-camera:visible").count() == 1
-        page.get_by_role("button", name="Abellona Inn").click()
+        page.locator(".camera-selector").get_by_role("button", name="Abellona Inn").click()
         assert page.locator(".camera-panels > .abellona-camera:visible").count() == 1
-        page.get_by_role("button", name="Ferry Beach").click()
+        page.locator(".camera-selector").get_by_role("button", name="Ferry Beach").click()
         assert page.locator(".camera-panels > .ferry-camera:visible").count() == 1
 
         for width, height in VIEWPORTS:

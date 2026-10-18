@@ -4,7 +4,6 @@ function arrangeDashboard(){
  const main=document.querySelector('main.shell'),status=document.querySelector('.panel.status'),metrics=document.querySelector('.metrics'),chart=document.querySelector('.main-grid'),brief=document.querySelector('.coastal-briefing'),intel=document.querySelector('.coastal-intelligence'),history=$('#eventHistoryPanel'),weather=document.querySelector('.weather-panel'),alerts=document.querySelector('.alertpanel'),hub=document.querySelector('.camera-hub'),tools=$('#coastalToolsDetails');
  if(!main)return;
  // Put official products and the live coastal outlook ahead of detail panels.
- if(alerts&&status)main.insertBefore(alerts,status);
  if(status&&metrics)main.insertBefore(status,metrics);
  if(chart&&metrics)main.insertBefore(chart,metrics.nextSibling);
  if(brief&&chart)main.insertBefore(brief,chart.nextSibling);
@@ -23,13 +22,23 @@ function arrangeDashboard(){
  const choices=hub?.querySelectorAll('[data-camera]');
  choices?.forEach(button=>button.addEventListener('click',()=>{
   cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{
-   if(camera.classList.contains(button.dataset.camera))return;
+   const selected=button.dataset.camera==='abellona-camera'
+    ?camera.classList.contains('abellona-camera')
+    :!camera.classList.contains('abellona-camera');
+   if(selected)return;
    camera.querySelector('video')?.pause();
    const iframe=camera.querySelector('iframe');if(iframe?.contentWindow)iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','https://www.youtube.com');
   });
   choices.forEach(choice=>{const selected=choice===button;choice.classList.toggle('active',selected);choice.setAttribute('aria-pressed',String(selected));});
-  cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{camera.hidden=!camera.classList.contains(button.dataset.camera);});
+  cameraPanels?.querySelectorAll('.ferry-camera').forEach(camera=>{
+   camera.hidden=button.dataset.camera==='abellona-camera'
+    ?!camera.classList.contains('abellona-camera')
+    :camera.classList.contains('abellona-camera');
+  });
  }));
+ // Reassert this after all section moves so official products stay above
+ // derived summaries and supporting content in every rendered layout.
+ if(alerts&&status)main.insertBefore(alerts,status);
 }
 function updateClock(){$('currentClock').textContent=fmt(now(),{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});const o=state.obs.at(-1),age=o?now()-o.t:Infinity;const healthy=!!o&&age>=-10*60000&&age<45*60000;$('liveDot').className='dot '+(healthy?'good':state.loading?'warn':'bad');$('liveText').textContent=state.loading?'Refreshing feeds':healthy?'Gauge current':o?'Gauge delayed':'Live data unavailable';if(state.lastSuccess)$('syncTime').textContent='Last successful data refresh '+relative(state.lastSuccess);}
 function render(){renderSummary();renderHistoricalComparison();renderMarine();renderWeather();renderTable();renderCalendar();renderCoastalIntelligence();renderAlerts();renderChart();renderBriefing();renderHazards();updateNotice();updateClock();}

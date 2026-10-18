@@ -45,6 +45,18 @@ class BrowserRuntimeTests(unittest.TestCase):
         self.assertTrue(records[0]["headless"])
         self.assertEqual(records[1]["browserVersion"], "test-browser")
 
+    def test_uses_only_explicit_browser_override_without_path_search(self):
+        chromium = FakeChromium()
+        output = io.StringIO()
+        with patch.dict("os.environ", {"SACOCAST_BROWSER_EXECUTABLE": "/Applications/Chrome"}, clear=True), redirect_stdout(output):
+            launch_chromium(chromium, "unit")
+
+        self.assertEqual(chromium.calls[0]["executable_path"], "/Applications/Chrome")
+        self.assertNotIn("channel", chromium.calls[0])
+        record = json.loads(output.getvalue().splitlines()[0].split(" ", 1)[1])
+        self.assertEqual(record["browser"], "Explicit Chromium executable")
+        self.assertEqual(record["executable"], "/Applications/Chrome")
+
     def test_launch_failure_is_diagnosed_and_propagated(self):
         chromium = FakeChromium(RuntimeError("browser unavailable"))
         output = io.StringIO()

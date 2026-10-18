@@ -296,9 +296,10 @@ def assert_common(page):
     assert history_metric_size>=9.5,history_metric_size
     assert history_value_size>=12,history_value_size
     decision_text=page.locator(".coastal-intelligence").inner_text()
-    assert "Difference from predicted tide" in decision_text
+    assert "Water above predicted tide" in decision_text
+    assert "Difference from predicted tide" not in decision_text
     assert "NOAA forecast water level" in decision_text
-    assert "How the forecast is changing" in decision_text
+    assert "Forecast changes" in decision_text
     assert "Storm surge residual" not in decision_text
     assert "NOAA modeled total" not in decision_text
     assert "Modeled uplift" not in decision_text
@@ -317,6 +318,7 @@ def assert_common(page):
     badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
     assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1
+    page.locator(".coastal-intelligence .intelligence-detail").first.locator("summary").click()
     residual_chart=page.locator("#residualSpark")
     assert residual_chart.get_attribute("tabindex")=="0"
     residual_chart.focus()

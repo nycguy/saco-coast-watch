@@ -183,6 +183,7 @@
   if(ferryReturnLive)ferryReturnLive.addEventListener('click',returnFerryLive);
 
   function ferryUnavailable(){
+    if(selectedCamera!=='ferry-camera'){try{ferryVideo.pause();}catch(_err){}return;}
     if(hls){hls.destroy();hls=null;}
     ferryStarted=false;
     setStatus(ferryStatus,'Live stream unavailable here. Showing the latest captured shoreline still when available.',true);
@@ -234,7 +235,6 @@
     if(!ferryStarted)return;
     try{ferryVideo.pause();}catch(_err){}
     ferryVideo.removeAttribute('src');
-    ferryVideo.src='';
     ferryVideo.load();
     ferryStarted=false;
   }

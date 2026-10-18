@@ -249,6 +249,8 @@ def assert_common(page):
     assert "community posts are anecdotal" in brief_text
     assert "Higher-impact high-water window" in page.locator("#briefPriorityRow").inner_text()
     assert page.locator("#briefPriorityRow").is_visible()
+    assert page.locator("#briefPriorities").inner_text().count("Forecast change")==0, "secondary priority should stay in full briefing, not add another dashboard summary"
+    assert page.locator("#briefEventRow").is_hidden(), "active event detail is already represented by the event panel above"
     priority_colors=page.locator(".brief-priority-item").first.evaluate("""el => {
       const parse = value => value.match(/[0-9]+/g).slice(0,3).map(Number);
       const luminance = rgb => rgb.map(value => {const c=value/255;return c<=0.04045?c/12.92:((c+0.055)/1.055)**2.4;}).reduce((sum,value,index)=>sum+value*[0.2126,0.7152,0.0722][index],0);
@@ -351,6 +353,7 @@ def assert_common(page):
     assert "Past 24 hours" in dialog.inner_text()
     assert "What is happening now?" in dialog.inner_text()
     assert "What to watch next" in dialog.inner_text()
+    assert page.locator("#briefPriorityItems .brief-priority-item").count()==2, "full briefing should retain all ranked priorities"
     assert "NOAA total-water guidance is 11.80 ft MLLW" in dialog.inner_text()
     assert "Coastal Storm · Elevated impact · Approaching" in page.locator("#briefCurrentStatus").inner_text()
     assert "Active official NWS products: High Surf Advisory" in page.locator("#briefCurrentStatus").inner_text()

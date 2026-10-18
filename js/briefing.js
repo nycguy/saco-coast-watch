@@ -23,9 +23,10 @@ function briefingCurrentStatus(briefing){
 }
 function renderBriefingPriorities(items){
  const row=$('briefPriorityRow'),compact=$('briefPriorities'),section=$('briefPrioritySection'),root=$('briefPriorityItems');
- const priorities=Array.isArray(items)?items.filter(item=>item&&item.title&&item.text).slice(0,2):[];
- if(row)row.hidden=!priorities.length;
- if(compact)compact.textContent=priorities.map(item=>item.title+': '+item.text).join(' ');
+ const priorities=Array.isArray(items)?items.filter(item=>item&&item.title&&item.text):[];
+ const next=priorities.slice(0,1);
+ if(row)row.hidden=!next.length;
+ if(compact)compact.textContent=next.map(item=>item.title+': '+item.text).join(' ');
  if(section)section.hidden=!priorities.length;
  if(root){root.replaceChildren();for(const item of priorities){const article=document.createElement('article'),title=document.createElement('h5'),text=document.createElement('p');article.className='brief-priority-item';title.textContent=item.title;text.textContent=item.text;article.append(title,text);root.append(article);}}
 }

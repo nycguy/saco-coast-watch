@@ -80,11 +80,11 @@ function renderTropicalPanel(){
  const wind=h.wind||{};$('tropicalLocalContext').textContent='Local NWS hourly guidance peaks at '+fmtHaz(wind.max_gust_24h_mph,0,' mph')+' gust in the next 24 hours. NHC track graphics describe cyclone-center uncertainty; local impacts can occur well away from the center.';
 }
 function renderEventBriefingExtras(){
- const briefing=state.briefing?.event_briefing,recent=state.briefing?.recent_event;if(!briefing&&!recent)return;const active=Boolean(briefing?.active),recentActive=Boolean(!active&&recent?.active),row=$('briefEventRow'),section=$('briefEventSection');row.hidden=!recentActive;
+ const briefing=state.briefing?.event_briefing,recent=state.briefing?.recent_event;if(!briefing&&!recent)return;const active=Boolean(briefing?.active),recentActive=Boolean(!active&&recent?.active),row=$('briefEventRow'),section=$('briefEventSection');row.hidden=true;
  if(active){
   $('briefHeading').textContent=briefing.title||'Event Briefing';$('briefModalTitle').textContent='Southern Maine '+(briefing.title||'Event Briefing');$('briefEventLabel').textContent='Event status';
   const primary=state.briefing?.event_state?.primary_display,modes=Array.isArray(briefing.modes)&&briefing.modes.length?briefing.modes:(state.briefing?.event_state?.active_hazards||[]),others=[...new Set(modes.filter(mode=>mode.code!=='coastal_impact').map(mode=>mode.label).filter(label=>label&&label!==primary))];
-  row.hidden=!others.length;
+  row.hidden=true;
   $('briefEvent').textContent=others.length?'Additional active hazards: '+others.join(', ')+'.':'See the full briefing for supporting event details.';
   const detail=others.length?'Other active hazards: '+others.join(', ')+'.':'';
   $('briefFullEvent').textContent=detail;section.hidden=!detail;

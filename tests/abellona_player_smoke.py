@@ -54,6 +54,7 @@ def open_player(browser, width, height, mode, mobile=False):
     page.locator('[data-camera="abellona-camera"]').click()
     player = page.locator("#abellonaPlayer")
     player.scroll_into_view_if_needed()
+    page.wait_for_function("""() => {const frame=document.querySelector('#abellonaPlayer'),camera=document.querySelector('.abellona-camera'),r=frame?.getBoundingClientRect();return Boolean(frame?.isConnected&&!camera?.hidden&&r?.width>0&&r?.height>0)}""", timeout=5000)
     page.wait_for_function("Boolean(window.__abellonaConfig)", timeout=15000)
     config = page.evaluate("window.__abellonaConfig && ({id:window.__abellonaMount.id,src:window.__abellonaMount.src})")
     assert config and config["id"] == "abellonaPlayer", config
@@ -69,7 +70,11 @@ def main():
 
         # Desktop: muted autoplay reaches actual PLAYING state.
         page, errors = open_player(browser, 1440, 1000, "playing")
-        page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'")
+        try:
+            page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'",timeout=10000)
+        except Exception as error:
+            diagnostic=page.evaluate("""() => {const frame=document.querySelector('#abellonaPlayer'),camera=document.querySelector('.abellona-camera'),r=frame?.getBoundingClientRect(),s=frame&&getComputedStyle(frame);return {state:camera?.dataset.playbackState,status:document.querySelector('#abellonaStatus')?.textContent,hidden:camera?.hidden,connected:frame?.isConnected,rect:r&&{width:r.width,height:r.height},display:s?.display,visibility:s?.visibility};}""")
+            raise AssertionError(f"Abellona did not report playback with visible frame geometry: {diagnostic}") from error
         assert page.locator("#abellonaPlayerGate").is_hidden()
         assert "video is playing" in page.locator("#abellonaStatus").inner_text().lower()
         assert not errors, errors
@@ -80,7 +85,11 @@ def main():
         assert page.locator("#abellonaPlayerGate").is_visible()
         assert page.locator("#abellonaWatchLive").is_visible()
         assert "did not start" not in page.locator("#abellonaStatus").inner_text().lower()
-        page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'", timeout=5000)
+        try:
+            page.wait_for_function("document.querySelector('.abellona-camera')?.dataset.playbackState === 'playing'", timeout=5000)
+        except Exception as error:
+            diagnostic=page.evaluate("""() => {const frame=document.querySelector('#abellonaPlayer'),camera=document.querySelector('.abellona-camera'),r=frame?.getBoundingClientRect(),s=frame&&getComputedStyle(frame);return {state:camera?.dataset.playbackState,status:document.querySelector('#abellonaStatus')?.textContent,hidden:camera?.hidden,connected:frame?.isConnected,rect:r&&{width:r.width,height:r.height},display:s?.display,visibility:s?.visibility};}""")
+            raise AssertionError(f"Abellona mobile playback did not start despite visible frame geometry: {diagnostic}") from error
         assert page.locator("#abellonaPlayerGate").is_hidden()
         assert page.evaluate("window.__abellonaCalls.filter(call => call === 'play').length") == 1
         assert not errors, errors

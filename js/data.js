@@ -5,6 +5,7 @@ const fmt=(ms,options={})=>new Intl.DateTimeFormat('en-US',{timeZone:TZ,...optio
 const time=ms=>fmt(ms,{hour:'numeric',minute:'2-digit'});
 const dayTime=ms=>fmt(ms,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 const relative=ms=>{const min=Math.max(0,Math.round((now()-ms)/60000));return min<2?'just now':min<60?min+' min ago':min<1440?Math.floor(min/60)+'h '+(min%60)+'m ago':Math.floor(min/1440)+' days ago';};
+function countdown(ms){const remaining=ms-now();if(!Number.isFinite(ms)||remaining<=0)return 'High tide now';const total=Math.floor(remaining/60000),days=Math.floor(total/1440),hours=Math.floor((total%1440)/60),minutes=total%60;return ['In',days?days+'d':'',hours?hours+'h':'',minutes?minutes+'m':''].filter(Boolean).join(' ');}
 const ymd=t=>{const d=new Date(t);return d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0')+String(d.getUTCDate()).padStart(2,'0');};
 function query(product,extra={}){const u=new URL(NOAA);Object.entries({station:STATION,product,datum:'MLLW',units:'english',time_zone:'gmt',format:'json',application:'SacoCoastWatch',...extra}).forEach(([k,v])=>u.searchParams.set(k,String(v)));return u.toString();}
 async function getJSON(url,ms=18000){const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),ms);try{const response=await fetch(url,{signal:controller.signal,cache:'no-store',headers:{Accept:url.startsWith('https://api.weather.gov/')?'application/geo+json':'application/json'}});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));return data;}finally{clearTimeout(timer);}}
@@ -25,6 +26,14 @@ for(let i=1;i<p.length-1;i++){const a=p[i-1],b=p[i],c=p[i+1];if(b.t<cutoff||b.t>
 return result;
 }
 function currentStatus(){const latest=state.obs.at(-1);const age=latest?now()-latest.t:Infinity;const nextPeak=peak(state.model,now(),now()+72*3600000);const gaugeFresh=!!latest&&age>=-10*60000&&age<45*60000;const source=gaugeFresh?latest:nextPeak;return{latest,nextPeak,gaugeFresh,source};}
+// Require three observations over at least 10 minutes; endpoint change under
+// 0.05 ft is treated as gauge noise. Ignore data older than one hour.
+function observedWaterTrend(observations,at=now()){
+ const rows=(Array.isArray(observations)?observations:[]).filter(p=>Number.isFinite(p?.t)&&Number.isFinite(p?.v)&&p.t<=at&&p.t>=at-60*60000).sort((a,b)=>a.t-b.t);
+ if(rows.length<3||rows.at(-1).t-rows[0].t<10*60000)return{direction:'unavailable',change:null};
+ const change=rows.at(-1).v-rows[0].v;
+ return{direction:change>0.05?'rising':change< -0.05?'falling':'steady',change};
+}
 function health(id,ok,label){$(id).textContent=label|| (ok?'Connected':'Unavailable');$(id).className='badge '+(ok?'ok':'fail');}
 
 function metricNumber(id,n,unit,decimals=0){$(id).innerHTML=(Number.isFinite(n)?Number(n).toFixed(decimals):'--')+'<em> '+unit+'</em>';}

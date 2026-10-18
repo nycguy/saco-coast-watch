@@ -11,6 +11,7 @@ def main():
         errors=[]
         page.on("pageerror",lambda err: errors.append(str(err)))
         page.goto("http://127.0.0.1:8765/index.html",wait_until="domcontentloaded",timeout=45000)
+        page.locator("#coastalToolsDetails > summary").click()
         page.locator("#coastalMap").scroll_into_view_if_needed()
         page.wait_for_timeout(8000)
         def measure():

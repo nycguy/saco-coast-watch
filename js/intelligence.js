@@ -150,6 +150,13 @@ function floodThresholdDistance(value){
 
 function renderHighWaterWindows(){
   const root=$('highWaterWindows');if(!root)return;root.replaceChildren();
+  const h=typeof sourceHazards==='function'?sourceHazards():{},wx=[];
+  if(hasNumericValue(h.wind?.max_gust_24h_mph))wx.push('NWS forecast gusts up to '+Math.round(Number(h.wind.max_gust_24h_mph))+' mph · next 24h');
+  if(hasNumericValue(h.rain?.qpf_24h_in))wx.push('NWS forecast rain '+Number(h.rain.qpf_24h_in).toFixed(2)+' in · next 24h');
+  const official=(h.alerts||[]).filter(alert=>alert?.event).slice(0,2).map(alert=>'NWS alert: '+alert.event);
+  const context=document.createElement('p');context.className='upcoming-context';
+  context.textContent=[...wx,...official].join(' · ')||'NWS wind, precipitation and alert context is unavailable in the current snapshot.';
+  root.append(context);
   const impactWindows=typeof normalizedEventState==='function'?(normalizedEventState().coastal_impact?.windows||[]):[];
   if(impactWindows.length){
     for(const w of impactWindows.slice(0,3)){
@@ -176,7 +183,7 @@ function renderHighWaterWindows(){
   }
   const sourceHighs=state.highs.length?state.highs:highTides();
   const highs=sourceHighs.filter(x=>x.t>=now()-10*60000).slice(0,3);
-  if(!highs.length){root.innerHTML='<div class="intel-empty">Upcoming high-water windows are unavailable.</div>';return;}
+  if(!highs.length){const empty=document.createElement('div');empty.className='intel-empty';empty.textContent='Upcoming high-water windows are unavailable.';root.append(empty);return;}
   for(const high of highs){
     const w=modelWindowForHigh(high),card=document.createElement('article');
     const band=riskBand(w.model?.v);card.className='high-window risk-'+band;

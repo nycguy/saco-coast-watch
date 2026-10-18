@@ -12,7 +12,7 @@ from browser_runtime import launch_chromium
 
 
 BASE = os.environ.get("SACOCAST_SMOKE_URL", "http://127.0.0.1:8765/index.html")
-VIEWPORTS = [(320, 780), (375, 812), (390, 844), (430, 932), (1440, 1000)]
+VIEWPORTS = [(320, 780), (375, 667), (390, 844), (430, 932), (1440, 900)]
 MAJOR_SECTIONS = [
     "#stormModePanel", "#impactTimelinePanel", "#winterWeatherPanel", "#tropicalPanel",
     ".metrics", ".status", ".coastal-intelligence", ".coastal-briefing",
@@ -65,7 +65,21 @@ def main():
         page.on("pageerror", lambda error: page_errors.append(str(error)))
         page.goto(BASE, wait_until="domcontentloaded", timeout=45000)
         page.locator(".coastal-briefing").wait_for(state="visible", timeout=20000)
+        page.locator("#coastalToolsDetails > summary").click()
         page.locator(".coastal-map-panel").wait_for(state="visible", timeout=10000)
+
+        order = page.evaluate("""() => [
+          '.alertpanel','.status','.metrics','.main-grid','.coastal-briefing',
+          '.coastal-intelligence','.weather-panel','.camera-hub'
+        ].map(selector => [...document.querySelector('main').children].indexOf(document.querySelector(selector)))""")
+        assert all(a < b for a, b in zip(order, order[1:])), f"dashboard hierarchy is out of order: {order}"
+        camera_buttons = page.locator(".camera-choice")
+        assert camera_buttons.count() == 2
+        assert page.locator(".camera-panels > .ferry-camera:visible").count() == 1
+        page.get_by_role("button", name="Abellona Inn").click()
+        assert page.locator(".camera-panels > .abellona-camera:visible").count() == 1
+        page.get_by_role("button", name="Ferry Beach").click()
+        assert page.locator(".camera-panels > .ferry-camera:visible").count() == 1
 
         for width, height in VIEWPORTS:
             page.set_viewport_size({"width": width, "height": height})

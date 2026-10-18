@@ -10,6 +10,7 @@ BASE = os.environ.get("SACOCAST_SMOKE_URL", "https://nycguy.github.io/saco-coast
 def check(browser, width, height, mobile=False):
     page = browser.new_page(viewport={"width": width, "height": height}, device_scale_factor=3 if mobile else 1, is_mobile=mobile, has_touch=mobile)
     page.goto(BASE, wait_until="domcontentloaded", timeout=45000)
+    page.locator('[data-camera="abellona-camera"]').click()
     page.locator("#abellonaPlayer").scroll_into_view_if_needed(timeout=15000)
     try:
         page.wait_for_function(

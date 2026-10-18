@@ -129,6 +129,7 @@ def install_noaa_fixture(page):
 
 def assert_common(page):
     page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
+    page.locator("#coastalToolsDetails > summary").click()
     page.wait_for_function("state.lastFetched.weatherObservation && state.lastFetched.weatherForecast",timeout=20000)
     page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
     page.wait_for_function("document.querySelector('#briefPast').textContent.includes('past 24 hours')",timeout=10000)

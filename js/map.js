@@ -16,6 +16,8 @@
  }
  document.getElementById('coastalMap').replaceChildren();
  const L=window.L, map=L.map('coastalMap',{zoomControl:false,scrollWheelZoom:false,preferCanvas:true}).setView([43.47,-70.40],12);
+ const toolsDisclosure=document.getElementById('coastalToolsDetails');
+ toolsDisclosure?.addEventListener('toggle',()=>{if(toolsDisclosure.open)requestAnimationFrame(()=>map.invalidateSize({pan:false}));});
  L.control.zoom({position:'topright'}).addTo(map);
  L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
  // The former default USGS imagery/labels service returned only a subset of tiles

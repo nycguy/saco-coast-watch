@@ -7,7 +7,7 @@ const now=Date.UTC(2026,9,13,16,0,0);
 class FixedDate extends Date { static now(){return now;} }
 const context={Date:FixedDate,Intl,URL,URLSearchParams,console};
 const source=['js/config.js','js/data.js','js/water-levels.js'].map(path=>readFileSync(new URL('../'+path,import.meta.url),'utf8')).join('\n');
-vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,riskBand,hasNumericValue,state};',context);
+vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,observedWaterTrend,countdown,riskBand,hasNumericValue,state};',context);
 const api=context.api;
 const state=api.state;
 const timestamp=ms=>new Date(ms).toISOString().replace('T',' ').slice(0,19);
@@ -84,6 +84,25 @@ test('missing, stale, and future gauge states never claim current observations',
  assert.equal(api.currentStatus().gaugeFresh,false);
  state.obs=[{t:now-44*60000,v:12}];
  assert.equal(api.currentStatus().gaugeFresh,true);
+});
+
+test('observed trend needs three recent readings spanning ten minutes and a 0.05 ft signal',()=>{
+ const trend=api.observedWaterTrend;
+ assert.deepEqual(JSON.parse(JSON.stringify(trend([],now))),{direction:'unavailable',change:null});
+ assert.equal(trend([{t:now-12*60000,v:1},{t:now-6*60000,v:1.1}],now).direction,'unavailable');
+ assert.equal(trend([{t:now-12*60000,v:1},{t:now-6*60000,v:1.02},{t:now,v:1.03}],now).direction,'steady');
+ assert.equal(trend([{t:now-12*60000,v:1},{t:now-6*60000,v:1.03},{t:now,v:1.08}],now).direction,'rising');
+ assert.equal(trend([{t:now-12*60000,v:1.1},{t:now-6*60000,v:1.04},{t:now,v:1}],now).direction,'falling');
+ assert.equal(trend([{t:now-20*60000,v:1},{t:now-10*60000,v:1.2},{t:now,v:1.3}],now).direction,'rising');
+ assert.equal(trend([{t:now-90*60000,v:1},{t:now-50*60000,v:1.2},{t:now-45*60000,v:1.3}],now).direction,'unavailable');
+});
+
+test('next high tide countdown is minute based and never reports a negative duration',()=>{
+ assert.equal(api.countdown(now+5*60000),'In 5m');
+ assert.equal(api.countdown(now+90*60000),'In 1h 30m');
+ assert.equal(api.countdown(now+26*3600000),'In 1d 2h');
+ assert.equal(api.countdown(now),'High tide now');
+ assert.equal(api.countdown(Number.NaN),'High tide now');
 });
 
 test('marine source failures show plain-language status without workflow or parser details',()=>{

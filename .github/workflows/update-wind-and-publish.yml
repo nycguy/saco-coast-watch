@@ -136,6 +136,7 @@ jobs:
           python3 -m venv /tmp/saco-map-venv
           /tmp/saco-map-venv/bin/python -m pip install --disable-pip-version-check -r tests/requirements-browser.txt
           /tmp/saco-map-venv/bin/python -m playwright install chromium
+          SACOCAST_SMOKE_URL=https://nycguy.github.io/saco-coast-watch/ /tmp/saco-map-venv/bin/python tests/capture_ui_audit.py --base-url https://nycguy.github.io/saco-coast-watch/ --output-dir ui-audit --prefix baseline
           python3 -m http.server 8765 --directory dist > /tmp/saco-map-http.log 2>&1 &
           /tmp/saco-map-venv/bin/python tests/map_smoke.py
           /tmp/saco-map-venv/bin/python tests/tide_outlook_smoke.py
@@ -186,4 +187,17 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
           /tmp/saco-map-venv/bin/python tests/abellona_live_smoke.py
           /tmp/saco-map-venv/bin/python tests/responsive_accessibility_smoke.py
+      - name: Capture deployed UI audit screenshots
+        if: github.event_name != 'schedule'
+        env:
+          SACOCAST_SMOKE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: /tmp/saco-map-venv/bin/python tests/capture_ui_audit.py --base-url "$SACOCAST_SMOKE_URL" --output-dir ui-audit --prefix after
+      - name: Retain before and after UI audit screenshots
+        if: github.event_name != 'schedule'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: sacocast-ui-audit-before-after
+          retention-days: 1
+          path: ui-audit/*.jpg
+          if-no-files-found: error
           echo "Live Pages production verification passed."

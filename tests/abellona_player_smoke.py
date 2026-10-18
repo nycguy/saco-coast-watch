@@ -51,6 +51,7 @@ def open_player(browser, width, height, mode, mobile=False):
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.add_init_script(PLAYER_STUB)
     page.goto(f"{BASE}?playerMode={mode}", wait_until="domcontentloaded", timeout=45000)
+    page.locator('[data-camera="abellona-camera"]').click()
     player = page.locator("#abellonaPlayer")
     player.scroll_into_view_if_needed()
     page.wait_for_function("Boolean(window.__abellonaConfig)", timeout=15000)

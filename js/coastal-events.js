@@ -1,7 +1,8 @@
 /* Deterministic coastal-event grouping shared by recent and forecast displays. */
 (function(root){
  'use strict';
- const HOURS=60*60*1000;
+ // Same-family shared-product episodes may bridge 18h; an exact named tropical identity may bridge classification changes for 96h.
+ const HOURS=60*60*1000,RECENT_EPISODE_GAP_HOURS=18,NAMED_TROPICAL_EPISODE_GAP_HOURS=96;
  const familyOf=value=>{
   const s=String(value||'').toLowerCase();
   if(/hurricane|tropical storm|tropical cyclone|tropical depression|nhc|named storm/.test(s))return 'tropical';
@@ -33,6 +34,7 @@
   const locationA=String(a?.location||a?.area||'').trim().toLowerCase(),locationB=String(b?.location||b?.area||'').trim().toLowerCase();
   if(locationA&&locationB&&locationA!==locationB)return false;
   const ai=identityOf(a),bi=identityOf(b);
+  if(ai&&bi&&ai!==bi)return false;
   if(ai&&bi&&ai===bi)return true;
   if(af!==bf)return false;
   const products=new Set((a?.official_products||[]).map(x=>String(x).toLowerCase().trim()).filter(Boolean));
@@ -40,7 +42,13 @@
   if(otherProducts.some(x=>products.has(x)))return true;
   return false;
  }
- function sameEpisode(a,b,maxGapHours=12){return rangesNear(a,b,maxGapHours)&&matchingEvidence(a,b);}
+ function sameEpisode(a,b,maxGapHours=RECENT_EPISODE_GAP_HOURS){
+  const af=familyOf([a?.title,a?.label,a?.event,...(a?.official_products||[])].join(' '));
+  const bf=familyOf([b?.title,b?.label,b?.event,...(b?.official_products||[])].join(' '));
+  const ai=identityOf(a),bi=identityOf(b),sameNamedTropicalStorm=af==='tropical'&&bf==='tropical'&&ai&&ai===bi;
+  const gap=sameNamedTropicalStorm?Math.max(maxGapHours,NAMED_TROPICAL_EPISODE_GAP_HOURS):maxGapHours;
+  return rangesNear(a,b,gap)&&matchingEvidence(a,b);
+ }
  function groupRecentEvents(events){
   const groups=[];
   for(const event of Array.isArray(events)?events:[]){

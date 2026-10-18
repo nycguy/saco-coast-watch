@@ -29,20 +29,63 @@ test('different hazard families remain separate even when their times overlap',(
  assert.equal(groups.length,2);
 });
 
-test('same hazard and product separated by more than twelve hours remain distinct episodes',()=>{
+test('different named tropical cyclones sharing a marine product remain separate',()=>{
  const groups=api.groupRecentEvents([
-  event({title:'Coastal Event',official_products:['Small Craft Advisory']}),
-  event({title:'Coastal Event',started_at:'2026-10-19T03:00:00Z',ended_at:'2026-10-19T05:00:00Z',official_products:['Small Craft Advisory']}),
+  event({title:'Hurricane Isaias'}),
+  event({title:'Tropical Storm Beta'}),
  ]);
  assert.equal(groups.length,2);
 });
 
-test('storm stage labels sharing the same named cyclone group when reports overlap',()=>{
+test('same-family records sharing one official product group across an 18-hour episode gap',()=>{
  const groups=api.groupRecentEvents([
-  event({title:'Hurricane Isaias',official_products:[]}),
-  event({title:'Tropical Storm Isaias',started_at:'2026-10-18T12:00:00Z',ended_at:'2026-10-18T16:00:00Z',official_products:[]}),
+  event({title:'Coastal Event',official_products:['Small Craft Advisory']}),
+  event({title:'Coastal Event',started_at:'2026-10-19T03:00:00Z',ended_at:'2026-10-19T05:00:00Z',official_products:['Small Craft Advisory']}),
  ]);
  assert.equal(groups.length,1);
+ assert.equal(groups[0].records.length,2);
+});
+
+test('same hazard and product more than 18 hours apart remain distinct episodes',()=>{
+ const groups=api.groupRecentEvents([
+  event({title:'Coastal Event',official_products:['Small Craft Advisory']}),
+  event({title:'Coastal Event',started_at:'2026-10-19T09:00:00Z',ended_at:'2026-10-19T11:00:00Z',official_products:['Small Craft Advisory']}),
+ ]);
+ assert.equal(groups.length,2);
+});
+
+test('storm stages with the same named cyclone group across a four-day episode',()=>{
+ const groups=api.groupRecentEvents([
+  event({title:'Tropical Storm Isaias',started_at:'2026-10-18T10:00:00Z',ended_at:'2026-10-18T14:00:00Z',official_products:[]}),
+  event({title:'Hurricane Isaias',started_at:'2026-10-19T18:00:00Z',ended_at:'2026-10-20T13:00:00Z',official_products:[]}),
+  event({title:'Potential Tropical Cyclone Isaias',started_at:'2026-10-21T18:00:00Z',ended_at:'2026-10-21T21:00:00Z',official_products:[]}),
+ ]);
+ assert.equal(groups.length,1);
+ assert.equal(groups[0].records.length,3);
+});
+
+test('same storm label after the four-day window remains a separate episode',()=>{
+ const groups=api.groupRecentEvents([
+  event({title:'Hurricane Isaias',started_at:'2026-10-18T10:00:00Z',ended_at:'2026-10-18T14:00:00Z',official_products:[]}),
+  event({title:'Tropical Storm Isaias',started_at:'2026-10-23T15:00:00Z',ended_at:'2026-10-23T18:00:00Z',official_products:[]}),
+ ]);
+ assert.equal(groups.length,2);
+});
+
+test('archive fixture groups one named-storm lifecycle but retains separate storm identities and marine periods',()=>{
+ const records=[
+  event({title:'Coastal Event',started_at:'2026-10-16T15:25:48Z',ended_at:'2026-10-18T00:19:22Z',official_products:['Small Craft Advisory']}),
+  event({title:'Coastal Event',started_at:'2026-10-13T11:06:04Z',ended_at:'2026-10-15T01:50:40Z',official_products:['Small Craft Advisory']}),
+  event({title:'Potential Tropical Cyclone Isaias',started_at:'2026-10-11T18:05:24Z',ended_at:'2026-10-11T21:55:14Z',official_products:[]}),
+  event({title:'Hurricane Isaias',started_at:'2026-10-08T17:56:01Z',ended_at:'2026-10-10T13:38:11Z',official_products:['Small Craft Advisory']}),
+  event({title:'Tropical Storm Isaias',started_at:'2026-10-07T23:49:28Z',ended_at:'2026-10-07T23:49:28Z',official_products:['Small Craft Advisory']}),
+  event({title:'Tropical Depression Nine',started_at:'2026-10-05T22:48:40Z',ended_at:'2026-10-07T06:16:59Z',official_products:['Small Craft Advisory']}),
+  event({title:'High Surf / Wave Impact',started_at:'2026-09-29T18:57:39Z',ended_at:'2026-09-30T01:47:12Z',official_products:[]}),
+ ];
+ const groups=api.groupRecentEvents(records);
+ assert.equal(groups.length,5);
+ assert.equal(JSON.stringify(groups.map(group=>group.records.length).sort((a,b)=>a-b)),'[1,1,1,1,3]');
+ assert.equal(groups.reduce((count,group)=>count+group.records.length,0),records.length);
 });
 
 test('empty and malformed event records are retained as separate history entries',()=>{

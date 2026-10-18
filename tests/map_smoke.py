@@ -2,11 +2,11 @@
 """Browser regression for continuous Leaflet map tiles. Run before publishing."""
 import json
 from playwright.sync_api import sync_playwright
-from browser_runtime import launch_chromium
+from browser_runtime import launch_configured_browser
 
 def main():
     with sync_playwright() as p:
-        browser=launch_chromium(p.chromium,"map")
+        browser=launch_configured_browser(p,"map")
         page=browser.new_page(viewport={"width":1600,"height":1000},device_scale_factor=1)
         errors=[]
         page.on("pageerror",lambda err: errors.append(str(err)))

@@ -144,6 +144,7 @@ jobs:
           /tmp/saco-map-venv/bin/python tests/push_ui_smoke.py
           /tmp/saco-map-venv/bin/python tests/abellona_player_smoke.py
           /tmp/saco-map-venv/bin/python tests/responsive_accessibility_smoke.py
+          SACOCAST_ALERT_SCREENSHOT_DIR=ui-audit /tmp/saco-map-venv/bin/python tests/weather_alerts_smoke.py
       - name: Save map test screenshot
         if: failure() && github.event_name != 'schedule'
         uses: actions/upload-artifact@v7.0.2
@@ -199,5 +200,7 @@ jobs:
         with:
           name: sacocast-ui-audit-before-after
           retention-days: 1
-          path: ui-audit/*.jpg
+          path: |
+            ui-audit/*.jpg
+            ui-audit/active-alert-*.png
           if-no-files-found: error

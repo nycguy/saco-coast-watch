@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 import json
 from playwright.sync_api import sync_playwright
-from browser_runtime import launch_chromium
+from browser_runtime import launch_configured_browser
 
 BASE="http://127.0.0.1:8765/eastcast/"
 # Browser layout fixture only: neutral cards with no invented measurements. The
@@ -26,7 +26,7 @@ def install_snapshot_fixture(page):
 def main():
     errors=[]
     with sync_playwright() as p:
-        browser=launch_chromium(p.chromium,"eastcast")
+        browser=launch_configured_browser(p,"eastcast")
         page=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=2)
         page.on("pageerror",lambda exc: errors.append("pageerror: "+str(exc)))
         install_snapshot_fixture(page)

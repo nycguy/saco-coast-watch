@@ -9,6 +9,39 @@ from importlib.metadata import PackageNotFoundError, version
 DEFAULT_LAUNCH_TIMEOUT_MS = 30_000
 
 
+def launch_configured_browser(playwright, suite, extra_args=()):
+    """Launch the selected Playwright-managed engine for local smoke suites.
+
+    Chromium remains the default and CI engine. Set SACOCAST_BROWSER_ENGINE=webkit
+    when the host cannot start Chromium; WebKit is still Playwright-managed and
+    uses an isolated, headless session rather than a personal browser profile.
+    """
+    engine = os.environ.get("SACOCAST_BROWSER_ENGINE", "chromium").lower()
+    if engine == "webkit":
+        try:
+            playwright_version = version("playwright")
+        except PackageNotFoundError:
+            playwright_version = "unknown"
+        diagnostic = {
+            "suite": suite,
+            "browser": "Playwright-managed WebKit",
+            "executable": playwright.webkit.name,
+            "headless": True,
+            "playwrightVersion": playwright_version,
+        }
+        print("BROWSER_LAUNCH " + json.dumps(diagnostic, sort_keys=True), flush=True)
+        try:
+            browser = playwright.webkit.launch(headless=True, timeout=int(os.environ.get("SACOCAST_BROWSER_LAUNCH_TIMEOUT_MS", DEFAULT_LAUNCH_TIMEOUT_MS)))
+        except Exception as error:
+            print("BROWSER_LAUNCH_FAILED " + json.dumps({**diagnostic, "error": f"{type(error).__name__}: {error}"}, sort_keys=True), flush=True)
+            raise
+        print("BROWSER_LAUNCHED " + json.dumps({**diagnostic, "browserVersion": browser.version}, sort_keys=True), flush=True)
+        return browser
+    if engine != "chromium":
+        raise ValueError("SACOCAST_BROWSER_ENGINE must be chromium or webkit")
+    return launch_chromium(playwright.chromium, suite, extra_args)
+
+
 def launch_chromium(chromium, suite, extra_args=()):
     """Launch headless Chromium with bounded diagnostics.
 

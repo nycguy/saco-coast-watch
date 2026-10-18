@@ -8,4 +8,4 @@ const $=id=>document.getElementById(id);
 // JSON null and empty strings mean "not supplied"; Number(null) and Number('')
 // both become zero, which can otherwise make missing measurements look real.
 const hasNumericValue=value=>value!==null&&value!==undefined&&value!==''&&Number.isFinite(Number(value));
-const state={obs:[],pred:[],predShort:[],predLong:[],highs:[],model:[],alerts:[],days:3,showFlood:true,showModel:true,loading:false,lastSuccess:null,lastAttempt:null,errors:{},lastFetched:{},weatherObservation:null,weatherForecast:[],weatherForecastUpdated:null,weatherPointUrl:null,marine:{},marineFetchError:null,marineSnapshotAt:null,briefing:null,briefingError:null,hazards:null,hazardsError:null,hazardsFetchedAt:null};
+const state={obs:[],pred:[],predShort:[],predLong:[],highs:[],model:[],alerts:[],alertsActiveCount:0,days:3,showFlood:true,showModel:true,loading:false,lastSuccess:null,lastAttempt:null,errors:{},lastFetched:{},weatherObservation:null,weatherForecast:[],weatherForecastUpdated:null,weatherPointUrl:null,marine:{},marineFetchError:null,marineSnapshotAt:null,briefing:null,briefingError:null,hazards:null,hazardsError:null,hazardsFetchedAt:null};

@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 import base64
 import json
 from playwright.sync_api import sync_playwright
-from browser_runtime import launch_chromium
+from browser_runtime import launch_configured_browser
 
 BASE="http://127.0.0.1:8765/index.html"
 VALUES=[9.84,9.98,10.23,10.54,10.71,10.70,10.52,10.23,9.94,9.76,9.73,9.85,10.01,10.11,10.12,10.32,10.36,10.24,10.00,9.67,9.31,8.96,8.67,8.50,8.47,8.56,8.78,9.07,9.38,9.87]
@@ -436,7 +436,7 @@ def assert_header_weather(page):
 def main():
     errors=[]
     with sync_playwright() as p:
-        browser=launch_chromium(p.chromium,"tide-outlook")
+        browser=launch_configured_browser(p,"tide-outlook")
 
         desktop=browser.new_page(viewport={"width":1440,"height":1000},device_scale_factor=1)
         desktop.on("pageerror",lambda exc: errors.append("desktop pageerror: "+str(exc)))

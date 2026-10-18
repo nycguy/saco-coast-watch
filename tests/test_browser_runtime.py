@@ -4,7 +4,7 @@ import unittest
 from contextlib import redirect_stdout
 from unittest.mock import patch
 
-from browser_runtime import DEFAULT_LAUNCH_TIMEOUT_MS, launch_chromium
+from browser_runtime import DEFAULT_LAUNCH_TIMEOUT_MS, launch_chromium, launch_configured_browser
 
 
 class FakeBrowser:
@@ -25,7 +25,36 @@ class FakeChromium:
         return FakeBrowser()
 
 
+class FakeBrowserType(FakeChromium):
+    name = "webkit"
+
+
+class FakePlaywright:
+    def __init__(self):
+        self.chromium = FakeChromium()
+        self.webkit = FakeBrowserType()
+
+
 class BrowserRuntimeTests(unittest.TestCase):
+    def test_webkit_override_uses_playwright_managed_webkit(self):
+        playwright = FakePlaywright()
+        output = io.StringIO()
+        with patch.dict("os.environ", {"SACOCAST_BROWSER_ENGINE": "webkit"}, clear=True), redirect_stdout(output):
+            browser = launch_configured_browser(playwright, "unit")
+
+        self.assertEqual(browser.version, "test-browser")
+        self.assertEqual(playwright.webkit.calls, [{"headless": True, "timeout": DEFAULT_LAUNCH_TIMEOUT_MS}])
+        self.assertEqual(playwright.chromium.calls, [])
+        record = json.loads(output.getvalue().splitlines()[0].split(" ", 1)[1])
+        self.assertEqual(record["browser"], "Playwright-managed WebKit")
+
+    def test_configured_browser_defaults_to_chromium(self):
+        playwright = FakePlaywright()
+        with patch.dict("os.environ", {}, clear=True), redirect_stdout(io.StringIO()):
+            launch_configured_browser(playwright, "unit")
+        self.assertEqual(playwright.chromium.calls[0]["channel"], "chromium")
+        self.assertEqual(playwright.webkit.calls, [])
+
     def test_launches_managed_headless_browser_with_timeout_and_diagnostics(self):
         chromium = FakeChromium()
         output = io.StringIO()

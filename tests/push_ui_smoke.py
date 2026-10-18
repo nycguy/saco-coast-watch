@@ -3,7 +3,7 @@
 import json
 import os
 from playwright.sync_api import sync_playwright
-from browser_runtime import launch_chromium
+from browser_runtime import launch_configured_browser
 
 BASE = os.environ.get('SACOCAST_SMOKE_URL', 'http://127.0.0.1:8765/index.html')
 LIVE = os.environ.get('SACOCAST_LIVE_SMOKE') == '1'
@@ -439,7 +439,7 @@ def run_mocked(browser):
 
 def main():
     with sync_playwright() as p:
-        browser=launch_chromium(p.chromium,"push-ui")
+        browser=launch_configured_browser(p,"push-ui")
         try:
             run_live(browser) if LIVE else run_mocked(browser)
         finally:

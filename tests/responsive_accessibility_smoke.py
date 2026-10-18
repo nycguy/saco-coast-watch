@@ -8,7 +8,7 @@ permission, enroll a device, or send a push notification.
 import os
 
 from playwright.sync_api import sync_playwright
-from browser_runtime import launch_chromium
+from browser_runtime import launch_configured_browser
 
 
 BASE = os.environ.get("SACOCAST_SMOKE_URL", "http://127.0.0.1:8765/index.html")
@@ -60,7 +60,7 @@ def assert_contained(page, width):
 def main():
     page_errors = []
     with sync_playwright() as playwright:
-        browser = launch_chromium(playwright.chromium, "responsive-accessibility")
+        browser = launch_configured_browser(playwright, "responsive-accessibility")
         page = browser.new_page(viewport={"width": 1440, "height": 1000})
         page.on("pageerror", lambda error: page_errors.append(str(error)))
         page.goto(BASE, wait_until="domcontentloaded", timeout=45000)

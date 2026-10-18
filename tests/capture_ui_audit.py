@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
-from browser_runtime import launch_chromium
+from browser_runtime import launch_configured_browser
 
 
 VIEWPORTS = (
@@ -29,7 +29,7 @@ def main():
     errors = []
 
     with sync_playwright() as playwright:
-        browser = launch_chromium(playwright.chromium, "ui-audit-" + args.prefix)
+        browser = launch_configured_browser(playwright, "ui-audit-" + args.prefix)
         pages = {}
         for name, width, height, mobile in VIEWPORTS:
             page = browser.new_page(viewport={"width": width, "height": height},

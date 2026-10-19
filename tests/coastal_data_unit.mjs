@@ -7,13 +7,13 @@ const now=Date.UTC(2026,9,13,16,0,0);
 class FixedDate extends Date { static now(){return now;} }
 const context={Date:FixedDate,Intl,URL,URLSearchParams,console};
 const source=['js/config.js','js/data.js','js/water-levels.js'].map(path=>readFileSync(new URL('../'+path,import.meta.url),'utf8')).join('\n');
-vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,observedWaterTrend,countdown,riskBand,hasNumericValue,observationFromNWS,state};',context);
+vm.runInNewContext(source+'\nglobalThis.api={toDate,decodeSeries,decodeHighs,decodeObservations,forecastPeriod,currentStatus,observedWaterTrend,countdown,riskBand,hasNumericValue,observationFromNWS,weatherObservationDisplay,usableWeatherForecast,hasUsefulWeatherContent,state};',context);
 const api=context.api;
 const state=api.state;
 const timestamp=ms=>new Date(ms).toISOString().replace('T',' ').slice(0,19);
 
-const intelligenceContext={Date:FixedDate,Number,Math,document:{},state:{},now:()=>now};
-vm.runInNewContext(readFileSync(new URL('../js/intelligence.js',import.meta.url),'utf8')+'\nglobalThis.floodThresholdDistance=floodThresholdDistance;',intelligenceContext);
+const intelligenceContext={Date:FixedDate,Number,Math,document:{},state:{},now:()=>now,dayTime:()=> 'Tue, Oct 13 at 3:00 PM'};
+vm.runInNewContext(readFileSync(new URL('../js/intelligence.js',import.meta.url),'utf8')+'\nglobalThis.floodThresholdDistance=floodThresholdDistance;globalThis.assessUpcomingForecast=assessUpcomingForecast;',intelligenceContext);
 
 test('NOAA dates reject rollover and malformed timestamps',()=>{
  assert.ok(Number.isNaN(api.toDate('2026-02-30 12:00')));
@@ -123,7 +123,7 @@ test('next high tide countdown is minute based and never reports a negative dura
  assert.equal(api.countdown(Number.NaN),'High tide now');
 });
 
-test('marine source failures show plain-language status without workflow or parser details',()=>{
+test('marine observations hide completely when every station lacks current measurements',()=>{
  const nodes=new Map();
  const node=()=>({textContent:'',className:'',children:[],replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
  const marineContext={
@@ -134,10 +134,10 @@ test('marine source failures show plain-language status without workflow or pars
  };
  vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
  const sourceMessage=nodes.get('marineFeedNote').textContent;
- assert.match(sourceMessage,/NOAA marine snapshot is temporarily unavailable or stale/);
- assert.match(sourceMessage,/Use the station links/);
- assert.doesNotMatch(sourceMessage,/Invalid JSON|workflow|updater|parser/i);
- assert.match(nodes.get('marine44007Meta').textContent,/No recent measurements are available/);
+ assert.match(sourceMessage,/Values older than 60 minutes are withheld/);
+ assert.doesNotMatch(sourceMessage,/Invalid JSON|temporarily unavailable|stale|workflow|updater|parser/i);
+ assert.equal(nodes.get('marineObservations').hidden,true);
+ assert.equal(nodes.get('marine44007Card').hidden,true);
 });
 
 test('fresh wind remains visible when buoy wave data is stale or absent',()=>{
@@ -147,7 +147,7 @@ test('fresh wind remains visible when buoy wave data is stale or absent',()=>{
  vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
  assert.equal(nodes.get('marine44007Status').textContent,'Recent');
  assert.deepEqual(nodes.get('marine44007Speed').children[0].textContent,'17');
- assert.match(nodes.get('marine44007Meta').textContent,/Wave reading is stale and withheld/);
+ assert.match(nodes.get('marine44007Meta').textContent,/20 min old/);
  assert.equal(nodes.get('marine44007Wave').parentElement.hidden,true);
 });
 
@@ -159,7 +159,9 @@ test('NOAA marine freshness keeps the exact 60-minute boundary and withholds old
   vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
   assert.equal(nodes.get('marine44007Status').textContent,label);
   assert.equal(nodes.get('marine44007Speed').children[0].textContent,expectedSpeed);
-  assert.match(nodes.get('marine44007Meta').textContent,/min old/);
+  assert.equal(nodes.get('marine44007Card').hidden,minutes>60);
+  assert.equal(nodes.get('marine44007SpeedBox').hidden,minutes>60);
+  if(minutes===60)assert.match(nodes.get('marine44007Meta').textContent,/60 min old/);
  }
 });
 
@@ -169,9 +171,71 @@ test('a stale wind timestamp does not withhold a separately fresh buoy wave',()=
  vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
  assert.equal(nodes.get('marine44007Status').textContent,'Recent');
  assert.match(nodes.get('marine44007Speed').children[0].textContent,/--/);
- assert.match(nodes.get('marine44007Meta').textContent,/Wind observation is stale/);
+ assert.match(nodes.get('marine44007Meta').textContent,/10 min old/);
  assert.equal(nodes.get('marine44007Wave').parentElement.hidden,false);
  assert.equal(nodes.get('marine44007Wave').textContent,'5.4 ft');
+});
+
+test('all missing, malformed, and stale marine observations hide the complete subsection',()=>{
+ for(const station of [{observed_at:new Date(now-5*60000).toISOString(),speed_mph:null,gust_mph:null},{observed_at:'not-a-date',speed_mph:12,gust_mph:20},{observed_at:new Date(now-61*60000).toISOString(),speed_mph:12,gust_mph:20}]){
+  const nodes=new Map(),node=()=>({textContent:'',className:'',children:[],parentElement:{hidden:false},replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
+  const marineContext={Date:FixedDate,Number,Math,Intl,state:{marineSnapshotAt:now,marine:{'44007':station}},now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},document:{createTextNode:text=>({textContent:text}),createElement:node},dayTime:()=> 'Tue, Oct 13 at 3:00 PM',relative:()=> 'recently',windCompass:()=> 'N',health:()=>{}};
+  vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
+  assert.equal(nodes.get('marineObservations').hidden,true);
+  assert.equal(nodes.get('marine44007Card').hidden,true);
+ }
+});
+
+test('one fresh station remains while another goes stale, and stale stations reappear on recovery',()=>{
+ const nodes=new Map(),node=()=>({textContent:'',className:'',children:[],parentElement:{hidden:false},replaceChildren(){this.children=[];},append(value){this.children.push(value);}});
+ const marineState={marineSnapshotAt:now,marine:{'44007':{observed_at:new Date(now-75*60000).toISOString(),speed_mph:12},WEXM1:{observed_at:new Date(now-10*60000).toISOString(),speed_mph:7}}};
+ const marineContext={Date:FixedDate,Number,Math,Intl,state:marineState,now:()=>now,$:id=>{if(!nodes.has(id))nodes.set(id,node());return nodes.get(id);},document:{createTextNode:text=>({textContent:text}),createElement:node},dayTime:()=> 'Tue, Oct 13 at 2:50 PM',relative:()=> '10 min ago',windCompass:()=> 'N',health:()=>{}};
+ vm.runInNewContext(readFileSync(new URL('../js/marine.js',import.meta.url),'utf8')+'\nrenderMarine();',marineContext);
+ assert.equal(nodes.get('marineObservations').hidden,false);
+ assert.equal(nodes.get('marine44007Card').hidden,true);
+ assert.equal(nodes.get('marineWEXM1Card').hidden,false);
+ marineState.marine['44007']={observed_at:new Date(now-10*60000).toISOString(),speed_mph:12};
+ marineContext.renderMarine();assert.equal(nodes.get('marine44007Card').hidden,false);
+ marineState.marine['44007']={observed_at:new Date(now-61*60000).toISOString(),speed_mph:12};
+ marineState.marine.WEXM1={observed_at:new Date(now-61*60000).toISOString(),speed_mph:7};
+ marineContext.renderMarine();assert.equal(nodes.get('marineObservations').hidden,true);
+});
+
+test('weather observations require valid measurements and expire after the 60-minute display threshold',()=>{
+ const display=api.weatherObservationDisplay;
+ assert.equal(display({t:now-60*60000,wind:10,temp:42},now,60*60000).wind,10);
+ assert.equal(display({t:now-60*60000-1,wind:10,temp:42},now,60*60000).fresh,false);
+ assert.equal(display({t:now,wind:NaN,temp:42},now,60*60000).temp,42);
+ assert.equal(display({t:now,wind:NaN,temp:NaN},now,60*60000).fresh,false);
+ assert.equal(display({t:now+11*60000,wind:10},now,60*60000).fresh,false);
+});
+
+test('coastal hourly forecasts remain usable only with valid future periods and supported content',()=>{
+ const usable=api.usableWeatherForecast;
+ assert.equal(usable([{t:now+3600000,end:now+2*3600000,wind:8,summary:'Clear'}],now).length,1);
+ assert.equal(usable([{t:now-3600000,end:now-1,wind:8},{t:now+3600000,end:now+2*3600000,wind:NaN,summary:''}],now).length,0);
+ const future=[{t:now+3600000,end:now+2*3600000,wind:8}];
+ assert.equal(usable(future,now,72,now-24*3600000).length,1);
+ assert.equal(usable(future,now,72,now-24*3600000-1).length,0);
+ assert.equal(usable(future,now,72,now+11*60000).length,0);
+});
+
+test('weather section stays available for airport observations or coastal forecasts when marine data is unavailable',()=>{
+ const available=api.hasUsefulWeatherContent;
+ assert.equal(available({marine:false,observation:true,forecast:false}),true);
+ assert.equal(available({marine:false,observation:false,forecast:true}),true);
+ assert.equal(available({marine:false,observation:false,forecast:false}),false);
+ assert.equal(available({marine:true,observation:false,forecast:false}),true);
+});
+
+test('upcoming forecast assessment distinguishes full, partial, stale, and unavailable source coverage',()=>{
+ const assess=intelligenceContext.assessUpcomingForecast,at=now;
+ const full={generated_at:new Date(at).toISOString(),hourly_full:[{end:new Date(at+72*3600000).toISOString()}],errors:{}};
+ assert.equal(assess(full,at,true).state,'available');
+ assert.equal(assess({...full,hourly_full:[{end:new Date(at+24*3600000).toISOString()}]},at,true).state,'partial');
+ assert.equal(assess({...full,generated_at:new Date(at-46*60000).toISOString()},at,true).state,'unavailable');
+ assert.equal(assess(full,at,false).state,'unavailable');
+ assert.equal(assess(full,at,true,'feed failed').state,'unavailable');
 });
 
 test('Portland flood classifications retain exact threshold boundaries',()=>{

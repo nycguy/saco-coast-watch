@@ -813,7 +813,7 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
     if (num(buoy.get("wave_height_ft")) or 0)>=8 or (num(buoy.get("gust_mph")) or 0)>=35 or (num(buoy.get("speed_mph")) or 0)>=25: add("marine_hazard","Marine Hazard","NDBC 44007 measured offshore conditions are elevated")
     all_alerts=list(alerts)+list(marine_alerts)
     coastal_impact=coastal_impact_state(hazards,water if water_assessed else None,buoy if marine_assessed else None,all_alerts,now)
-    if (coastal_impact.get("impact") or {}).get("rank",0)>=1: add("coastal_impact","Coastal Impact","Saco Coast Watch combines high tide, NOAA water forecast, surf and wind signals")
+    if (coastal_impact.get("impact") or {}).get("rank",0)>=1: add("coastal_impact","Coastal Impact","SacoCast combines high tide, NOAA water forecast, surf and wind signals")
     active_hazards=[]
     for mode in modes:
         code=mode.get("code"); rank=0; raw_basis=mode.get("basis"); basis=list(raw_basis) if isinstance(raw_basis,list) else ([raw_basis] if raw_basis else [])
@@ -879,7 +879,7 @@ def derive_event_state(hazards, water=None, marine=None, alerts=None, now=None):
     reasons=list(dict.fromkeys(reason for reason in reasons if reason))[:8]
     event_timing=None
     if peak_window and (coastal_impact.get("impact") or {}).get("rank",0)>=1:
-        event_timing={"peak_at":peak_window.get("high_tide_at"),"window_start":peak_window.get("window_start"),"window_end":peak_window.get("window_end"),"hours_until_peak":coastal_impact.get("hours_until_peak"),"basis":"Highest Saco Coast Watch compound coastal-impact window"}
+        event_timing={"peak_at":peak_window.get("high_tide_at"),"window_start":peak_window.get("window_start"),"window_end":peak_window.get("window_end"),"hours_until_peak":coastal_impact.get("hours_until_peak"),"basis":"Highest SacoCast compound coastal-impact window"}
     elif water.get("forecast_peak_72h_time") and forecast72 is not None:
         target=parse_iso(water.get("forecast_peak_72h_time")); event_timing={"peak_at":water.get("forecast_peak_72h_time"),"window_start":None,"window_end":None,"hours_until_peak":round((target-now).total_seconds()/3600,1) if target else None,"basis":"NOAA OFS modeled total-water peak"}
     if phase=="Recent": summary="Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine."

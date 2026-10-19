@@ -49,7 +49,7 @@ async function sendEmail(env,to,subject,text){
 }
 function landing(req,env){
   if(!configured(env))return html("Pilot unavailable","<p>Worker configuration is incomplete. Check /health.</p>",503);
-  return html("Owner email test",'<p>This private-pilot form only accepts the configured owner support address. It tests an email confirmation; coastal alert delivery remains disabled.</p><form action="/pilot/signup" method="post"><label>Your email <input type="email" name="email" required maxlength="254" autocomplete="email"></label><div class="cf-turnstile" data-sitekey="'+escapeHtml(env.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div><button type="submit">Send confirmation email</button></form><p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p>');
+  return html("Owner email test",'<p>This private-pilot form only accepts the configured owner support address. It tests an email confirmation; coastal alert delivery remains disabled.</p><form action="/pilot/signup" method="post"><label>Your email <input type="email" name="email" required maxlength="254" autocomplete="email"></label><div class="cf-turnstile" data-sitekey="'+escapeHtml(env.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div><button type="submit">Send confirmation email</button></form><p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Back to SacoCast</a></p>');
 }
 async function requestConfirmation(req,env){
   if(!configured(env))return html("Pilot unavailable","<p>Worker configuration is incomplete.</p>",503);
@@ -71,7 +71,7 @@ async function requestConfirmation(req,env){
   await env.DB.prepare("INSERT INTO tokens(hash,subscriber_id,email,purpose,payload_json,expires_at) VALUES(?,?,?,?,?,?)").bind(await digest(raw),null,email,"confirm-email","{}",current+3600).run();
   const link=env.WORKER_PUBLIC_URL.replace(/\/$/,"")+"/pilot/confirm?token="+raw;
   try{
-    await sendEmail(env,email,"Confirm your Saco Coast Watch email pilot","You requested an owner-only email delivery test for Saco Coast Watch. Confirm here:\n"+link+"\n\nThis link expires in one hour. Coastal alerts are not yet active.\n\nIf you did not request this, ignore this message. Contact: "+env.SUPPORT_EMAIL);
+    await sendEmail(env,email,"Confirm your SacoCast email pilot","You requested an owner-only email delivery test for SacoCast. Confirm here:\n"+link+"\n\nThis link expires in one hour. Coastal alerts are not yet active.\n\nIf you did not request this, ignore this message. Contact: "+env.SUPPORT_EMAIL);
   }catch(e){console.error("Pilot email send failed",String(e));return html("Email test failed","<p>The email provider did not accept the test message. Check Cloudflare Worker logs; no alerts have been activated.</p>",503);}
   return html("Check your inbox","<p>We sent a one-time confirmation link to the owner support address. No coastal notifications are enabled.</p>");
 }
@@ -93,7 +93,7 @@ async function confirm(req,env){
   }else{
     await env.DB.prepare("INSERT INTO subscribers(id,email,email_confirmed,prefs_json,unsubscribed,created_at,updated_at) VALUES(?,?,?,?,?,?,?)").bind(crypto.randomUUID(),row.email,1,JSON.stringify({metrics:{},channels:{email:true,push:false}}),0,ts,ts).run();
   }
-  return html("Email test complete",'<p>Your confirmation worked and your verified email was recorded in D1. <strong>No coastal alerts are being sent yet.</strong></p><p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p>');
+  return html("Email test complete",'<p>Your confirmation worked and your verified email was recorded in D1. <strong>No coastal alerts are being sent yet.</strong></p><p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Back to SacoCast</a></p>');
 }
 
 const DATA_TIMEOUT_MS = 12000;
@@ -264,7 +264,7 @@ function testAlertForm(env) {
     '<form method="post" action="/pilot/test-alert-email">'+
     '<div class="cf-turnstile" data-sitekey="'+escapeHtml(env.TURNSTILE_SITE_KEY)+'" data-action="subscribe"></div>'+
     '<button type="submit">Send TEST email</button></form>'+
-    '<p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Return to Saco Coast Watch</a></p>');
+    '<p><a href="'+escapeHtml(env.PUBLIC_SITE)+'">Return to SacoCast</a></p>');
 }
 async function sendSimulatedOwnerAlert(req,env) {
   if(!configured(env))return html("Email test unavailable","<p>Worker configuration is incomplete.</p>",503);
@@ -283,7 +283,7 @@ async function sendSimulatedOwnerAlert(req,env) {
   // Reserve the cooldown before calling Resend, limiting repeated sends on rapid retries.
   await env.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts").bind(ipKey,current+600).run();
   await env.DB.prepare("INSERT INTO request_limits(ip_hash,until_ts) VALUES(?,?) ON CONFLICT(ip_hash) DO UPDATE SET until_ts=excluded.until_ts").bind(emailKey,current+600).run();
-  const subject="[TEST ONLY] Saco Coast Watch simulated water-level threshold alert";
+  const subject="[TEST ONLY] SacoCast simulated water-level threshold alert";
   const message=[
     "TEST ONLY — SIMULATED READING — NOT A REAL WEATHER OR FLOOD ALERT",
     "",
@@ -311,7 +311,7 @@ async function sendSimulatedOwnerAlert(req,env) {
 const ALERTS=THRESHOLD_SPECS.map(spec=>[spec.id,spec.label,spec.unit,spec.defaultThreshold,spec.min,spec.max]);
 const liveAlerts=e=>configured(e)&&e.LIVE_ALERTS==="true";
 const siteUrl=e=>e.WORKER_PUBLIC_URL.replace(/\/$/,"");
-function publicPage(e,title,body,status=200){return html(title,body+'<p><a href="'+escapeHtml(e.PUBLIC_SITE)+'">Back to Saco Coast Watch</a></p><p>Support: '+escapeHtml(e.SUPPORT_EMAIL)+'</p>',status);}
+function publicPage(e,title,body,status=200){return html(title,body+'<p><a href="'+escapeHtml(e.PUBLIC_SITE)+'">Back to SacoCast</a></p><p>Support: '+escapeHtml(e.SUPPORT_EMAIL)+'</p>',status);}
 function alertFields(values={}) {
  return '<fieldset class="threshold-group"><legend>Custom Threshold Alerts</legend><p>Choose the conditions you care about. Email alerts are sent when selected thresholds are crossed.</p>'+
  ALERTS.map(([id,label,unit,def,low,high])=>{
@@ -371,7 +371,7 @@ async function subscribeEmail(req,e){
  const ip=req.headers.get("CF-Connecting-IP")||"unknown";
  if(!await rateCheck(e,"signup-ip:"+ip)||!await rateCheck(e,"signup-email:"+email))return publicPage(e,"Please wait","<p>Try again in ten minutes.</p>",429);
  const raw=await issueToken(e,email,"alerts-confirm",{metrics,requestedAt:stamp(),termsVersion:"2026-09"});
- try{await sendEmail(e,email,"Confirm your Saco Coast Watch coastal email alerts",
+ try{await sendEmail(e,email,"Confirm your SacoCast coastal email alerts",
   "Confirm your requested custom threshold emails:\n"+siteUrl(e)+"/alerts/confirm?token="+raw+
   "\n\nExpires in 1 hour. No alerts are sent until you confirm. This is not an official weather-warning service. Contact "+e.SUPPORT_EMAIL);}
  catch(err){console.error("Confirmation send failed",String(err));return publicPage(e,"Email unavailable","<p>Try again later.</p>",503);}
@@ -486,7 +486,7 @@ async function managementRequest(req,e){
  const sub=await e.DB.prepare("SELECT id,email FROM subscribers WHERE email=? AND email_confirmed=1 AND unsubscribed=0").bind(email).first();
  if(sub){
   const raw=await issueToken(e,email,"alerts-manage",{},1800,sub.id);
-  try{await sendEmail(e,email,"Manage your Saco Coast Watch email alerts",
+  try{await sendEmail(e,email,"Manage your SacoCast email alerts",
    "One-time management link (expires in 30 minutes):\n"+siteUrl(e)+"/alerts/manage/edit?token="+raw+
    "\n\nIgnore this if you did not request it. Support: "+e.SUPPORT_EMAIL);}
   catch(err){console.error("Management link send failed",String(err));return publicPage(e,"Email unavailable","<p>Please try again later.</p>",503);}
@@ -574,7 +574,7 @@ async function runLiveEmailChecks(e,loadMeasurements){
       continue;
      }
      const body=[
-      "Your Saco Coast Watch custom threshold was reached.",
+      "Your SacoCast custom threshold was reached.",
       "",
       "Condition: "+label,
       "Reading/model value: "+m.value+" "+unit,
@@ -594,7 +594,7 @@ async function runLiveEmailChecks(e,loadMeasurements){
        await digest(rawToken()),sub.id,null,"alerts-delivery-quota",JSON.stringify({metric}),t+2*86400,stamp()).run();
      daily++;
      try{
-      await sendEmail(e,sub.email,"Saco Coast Watch threshold reached: "+label,body);
+      await sendEmail(e,sub.email,"SacoCast threshold reached: "+label,body);
       sent++;
       await e.DB.prepare("INSERT INTO alert_state(subscriber_id,channel,metric,active,last_sent) VALUES(?,'email',?,1,?) ON CONFLICT(subscriber_id,channel,metric) DO UPDATE SET active=1,last_sent=excluded.last_sent").bind(sub.id,metric,stamp()).run();
      }catch(err){errors++;console.error("Email delivery failed for",metric,String(err));}

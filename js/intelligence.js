@@ -115,7 +115,9 @@ function miniLine(svgId,points,valueKey='v',zeroLine=false,options={}){
 }
 
 function renderResidualIntelligence(){
+  const panel=$('residualDetail');
   const rows=residualSeries(24),latest=rows.at(-1)||null,max=rows.reduce((a,b)=>!a||b.v>a.v?b:a,null);
+  if(panel)panel.hidden=!rows.length;
   $('residualNow').textContent=latest?(latest.v>=0?'+':'')+fmtN(latest.v)+' ft':'--';
   $('residualMax').textContent=max?(max.v>=0?'+':'')+fmtN(max.v)+' ft':'--';
   $('residualMeta').textContent=max?'Highest difference in the past 24 hours at '+dayTime(max.t)+' ET. Positive values mean the water ran higher than the predicted tide.':'This comparison needs both a Portland water-level observation and a matching tide prediction.';
@@ -148,33 +150,41 @@ function floodThresholdDistance(value){
   return (level-14).toFixed(2)+' ft above Major Flood';
 }
 
+function assessUpcomingForecast(hazards,at=now(),alertsAvailable=true,loadError=''){
+ const generated=Date.parse(hazards?.generated_at||''),age=at-generated;
+ const fresh=Number.isFinite(generated)&&age>=-10*60000&&age<=45*60000&&!loadError;
+ const errors=hazards?.errors||{},alertError=Boolean(errors.nws_alerts||errors.nws_marine_alerts);
+ const forecastError=Object.keys(errors).some(key=>/nws_(point|hourly|grid|surf|marine_alerts)|forecast/i.test(key));
+ const rows=Array.isArray(hazards?.hourly_full)?hazards.hourly_full:Array.isArray(hazards?.hourly)?hazards.hourly:[];
+ const ends=rows.map(row=>Date.parse(row?.end||'')).filter(value=>Number.isFinite(value)&&value>at);
+ const coverageHours=ends.length?Math.max(0,(Math.max(...ends)-at)/3600000):0;
+ const available=fresh&&alertsAvailable&&!alertError;
+ const state=!available?'unavailable':forecastError||coverageHours<70?'partial':'available';
+ const rounded=Math.max(0,Math.floor(coverageHours));
+ return{state,fresh,coverageHours,period:state==='available'?'Next 72 hours':rounded>0?'Partial forecast · through '+dayTime(at+rounded*3600000):'Forecast period unavailable'};
+}
+
 function renderHighWaterWindows(){
   const root=$('highWaterWindows');if(!root)return;root.replaceChildren();
-  const h=typeof sourceHazards==='function'?sourceHazards():{},wx=[];
-  if(hasNumericValue(h.wind?.max_gust_24h_mph))wx.push('NWS forecast gusts up to '+Math.round(Number(h.wind.max_gust_24h_mph))+' mph · next 24h');
-  if(hasNumericValue(h.rain?.qpf_24h_in))wx.push('NWS forecast rain '+Number(h.rain.qpf_24h_in).toFixed(2)+' in · next 24h');
-  const official=(h.alerts||[]).filter(alert=>alert?.event).slice(0,2).map(alert=>'NWS alert: '+alert.event);
-  const context=document.createElement('p');context.className='upcoming-context';
-  context.textContent=[...wx,...official].join(' · ')||'NWS wind, precipitation and alert context is unavailable in the current snapshot.';
-  root.append(context);
   const impactWindows=typeof normalizedEventState==='function'?(normalizedEventState().coastal_impact?.windows||[]):[];
   if(impactWindows.length){
     for(const w of impactWindows){
       const card=document.createElement('article'),rank=Number(w.impact?.rank)||0;
       card.className='high-window impact-'+(['green','yellow','orange','red'][rank]||'green');
       const tideAt=Date.parse(w.high_tide_at||''),startAt=Date.parse(w.window_start||''),endAt=Date.parse(w.window_end||'');
+      if(!Number.isFinite(startAt)&&!Number.isFinite(tideAt)&&!hasNumericValue(w.modeled_total_ft)&&!hasNumericValue(w.astronomical_ft))continue;
       const title=document.createElement('div');title.className='high-window-time';
       title.textContent=Number.isFinite(startAt)&&Number.isFinite(endAt)?dayTime(startAt)+'–'+dayTime(endAt)+' ET · high tide '+dayTime(tideAt):Number.isFinite(tideAt)?dayTime(tideAt)+' ET':'High-water window';
       const grid=document.createElement('div');grid.className='high-window-grid';
       const impact=w.impact||{},pairs=[
-        ['Coastal impact',impact.label?impact.label+(hasNumericValue(impact.score)?' · '+impact.score+'/100':''):'Routine'],
-        ['Predicted high tide',hasNumericValue(w.astronomical_ft)?Number(w.astronomical_ft).toFixed(2)+' ft MLLW':'Unavailable'],
-        ['NOAA forecast water level',hasNumericValue(w.modeled_total_ft)?Number(w.modeled_total_ft).toFixed(2)+' ft MLLW':'Unavailable'],
-        ['Distance to next flood threshold',floodThresholdDistance(w.modeled_total_ft)],
-        ['Forecast above predicted tide',hasNumericValue(w.modeled_uplift_ft)?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':'Unavailable'],
-        ['Wind pushing toward shore',hasNumericValue(w.onshore_component_mph)?Math.round(w.onshore_component_mph)+' mph':'Unavailable'],
-        ['NWS surf forecast',hasNumericValue(w.surf_context_ft)?Math.round(w.surf_context_ft)+' ft max':'Unavailable']
-      ];
+        ['Coastal impact',impact.label?impact.label+(hasNumericValue(impact.score)?' · '+impact.score+'/100':''):null],
+        ['Predicted high tide',hasNumericValue(w.astronomical_ft)?Number(w.astronomical_ft).toFixed(2)+' ft MLLW':null],
+        ['NOAA forecast water level',hasNumericValue(w.modeled_total_ft)?Number(w.modeled_total_ft).toFixed(2)+' ft MLLW':null],
+        ['Distance to next flood threshold',hasNumericValue(w.modeled_total_ft)?floodThresholdDistance(w.modeled_total_ft):null],
+        ['Forecast above predicted tide',hasNumericValue(w.modeled_uplift_ft)?(Number(w.modeled_uplift_ft)>=0?'+':'')+Number(w.modeled_uplift_ft).toFixed(2)+' ft':null],
+        ['Wind pushing toward shore',hasNumericValue(w.onshore_component_mph)?Math.round(w.onshore_component_mph)+' mph':null],
+        ['NWS surf forecast',hasNumericValue(w.surf_context_ft)?Math.round(w.surf_context_ft)+' ft max':null]
+      ].filter(pair=>pair[1]!==null);
       for(const [label,value] of pairs){const d=document.createElement('div');d.innerHTML='<span></span><strong></strong>';d.querySelector('span').textContent=label;d.querySelector('strong').textContent=value;grid.append(d);}
       const note=document.createElement('p');note.className='intel-note';note.textContent='The coastal-impact rating combines these signals. NWS surf guidance may cover a broader part of the day unless a specific time is given.';
       card.append(title,grid,note);root.append(card);
@@ -183,13 +193,13 @@ function renderHighWaterWindows(){
   }
   const sourceHighs=state.highs.length?state.highs:highTides();
   const highs=sourceHighs.filter(x=>x.t>=now()-10*60000).slice(0,3);
-  if(!highs.length){const empty=document.createElement('div');empty.className='intel-empty';empty.textContent='Upcoming high-water windows are unavailable.';root.append(empty);return;}
+  if(!highs.length)return;
   for(const high of highs){
     const w=modelWindowForHigh(high),card=document.createElement('article');
     const band=riskBand(w.model?.v);card.className='high-window risk-'+band;
     const title=document.createElement('div');title.className='high-window-time';title.textContent=dayTime(high.t)+' ET';
     const grid=document.createElement('div');grid.className='high-window-grid';
-    const pairs=[['Predicted tide',fmtN(high.v)+' ft MLLW'],['NOAA forecast water level',w.model?fmtN(w.model.v)+' ft MLLW':'Unavailable'],['Forecast above predicted tide',w.contribution===null||w.contribution===undefined?'Unavailable':(w.contribution>=0?'+':'')+fmtN(w.contribution)+' ft'],['Distance to next flood threshold',floodThresholdDistance(w.model?.v)]];
+    const pairs=[['Predicted tide',fmtN(high.v)+' ft MLLW'],...(w.model?[['NOAA forecast water level',fmtN(w.model.v)+' ft MLLW'],['Distance to next flood threshold',floodThresholdDistance(w.model.v)]]:[]),...(w.contribution===null||w.contribution===undefined?[]:[['Forecast above predicted tide',(w.contribution>=0?'+':'')+fmtN(w.contribution)+' ft']])];
     for(const [label,value] of pairs){const d=document.createElement('div');d.innerHTML='<span></span><strong></strong>';d.querySelector('span').textContent=label;d.querySelector('strong').textContent=value;grid.append(d);}
     card.append(title,grid);root.append(card);
   }
@@ -198,16 +208,22 @@ function renderHighWaterWindows(){
 function renderUpcomingEvents(){
   const root=$('upcomingEventCards');if(!root)return;root.replaceChildren();
   const hazards=typeof sourceHazards==='function'?sourceHazards():{};
+  const generated=Date.parse(hazards?.generated_at||''),hazardsFresh=Number.isFinite(generated)&&now()-generated>=-10*60000&&now()-generated<=45*60000&&!state.hazardsError;
+  const alertsFetched=Number(state.lastFetched?.alerts),alertsFresh=Number.isFinite(alertsFetched)&&now()-alertsFetched>=-10*60000&&now()-alertsFetched<=30*60000&&!state.errors?.alerts;
+  const alertAvailable=alertsFresh||(hazardsFresh&&!hazards.errors?.nws_alerts&&!hazards.errors?.nws_marine_alerts);
+  const assessment=assessUpcomingForecast(hazards,now(),alertAvailable,state.hazardsError||'');
+  const period=$('upcomingForecastPeriod');if(period){period.textContent=assessment.period;period.className='upcoming-period upcoming-period--'+assessment.state;period.hidden=assessment.state==='unavailable';}
   const eventState=typeof normalizedEventState==='function'?normalizedEventState():hazards.event_state||{};
   const impact=eventState.coastal_impact||hazards.event_state?.coastal_impact||{};
-  const alerts=[...(Array.isArray(state.alerts)?state.alerts:[]),...(Array.isArray(hazards.alerts)?hazards.alerts:[])];
-  const events=window.SacoEventUtils?.upcomingEvents({alerts,eventState,windows:impact.windows||[],now:now()})||[];
-  if(!events.length){const empty=document.createElement('p');empty.className='intel-empty';const errors=hazards.errors||{},unavailable=Object.keys(errors).some(key=>/nws|forecast|surf|marine/i.test(key))||state.errors?.water||state.errors?.forecast;empty.textContent=unavailable?'Official coastal hazard guidance is temporarily unavailable. Check NWS alerts and the source status below; routine tides remain in the tide outlook.':'No significant coastal hazards are currently identified in the available official forecast. This does not rule out changing conditions. Routine tides remain in the tide outlook.';root.append(empty);return;}
+  const alerts=[...(alertsFresh&&Array.isArray(state.alerts)?state.alerts:[]),...(hazardsFresh&&Array.isArray(hazards.alerts)?hazards.alerts:[])];
+  const events=window.SacoEventUtils?.upcomingEvents({alerts,eventState:hazardsFresh?eventState:{},windows:hazardsFresh?impact.windows||[]:[],now:now()})||[];
+  if(!events.length){const status=document.createElement('div');status.className='upcoming-status upcoming-status--'+assessment.state;const heading=document.createElement('strong');heading.textContent=assessment.state==='available'?'No Significant Coastal Hazards Identified':assessment.state==='partial'?'Forecast Coverage Is Incomplete':'Coastal Forecast Unavailable';const text=document.createElement('p');text.textContent=assessment.state==='available'?'No qualifying coastal hazards are identified in the available official forecast. Routine high tides are shown in the tide outlook.':assessment.state==='partial'?'Available official forecast data does not cover the full period, so conditions may change. Check current NWS alerts and forecasts.':'Official forecast data is missing or stale, so coastal hazards cannot be assessed right now.';status.append(heading,text);root.append(status);return;}
   events.forEach((event,index)=>{
-    const card=document.createElement('article');card.className='upcoming-event'+(index?' upcoming-event-secondary':'');
+    const card=document.createElement('article');card.className='upcoming-event upcoming-event--'+(['neutral','yellow','orange','red'][Math.min(3,Math.max(0,Number(event.rank)||0))]||'neutral')+(index?' upcoming-event-secondary':'');
     const title=document.createElement('h5');title.textContent=(index?'Also · ':'')+event.title;card.append(title);
-    const when=document.createElement('p');when.className='upcoming-event-meta';when.textContent=event.at<=now()+10*60000?'Active or expected now':'Expected '+dayTime(event.at)+' ET';card.append(when);
-    const source=document.createElement('p');source.className='upcoming-event-source';source.textContent=(event.sources||[event.source]).join(' · ');card.append(source);
+    const when=document.createElement('p');when.className='upcoming-event-meta';when.textContent=!Number.isFinite(event.at)?'Timing not provided by source':event.at<=now()+10*60000?'Active or expected now':'Expected '+dayTime(event.at)+' ET'+(Number.isFinite(event.end)?' · until '+dayTime(event.end)+' ET':'');card.append(when);
+    const severity=document.createElement('p');severity.className='upcoming-event-severity';severity.textContent=event.severityLabel||(['Routine','Minor','Moderate','Severe'][Math.min(3,Math.max(0,Number(event.rank)||0))]);card.append(severity);
+    const source=event.url?document.createElement('a'):document.createElement('p');source.className='upcoming-event-source';source.textContent=(event.sources||[event.source]).join(' · ')+(event.url?' ↗':'');if(event.url){source.href=event.url;source.target='_blank';source.rel='noopener noreferrer';}card.append(source);
     const context=(event.details||[]).find(Boolean);
     if(context){const note=document.createElement('p');note.className='upcoming-event-context';note.textContent=String(context).replace(/\s+/g,' ').slice(0,240);card.append(note);}
     if(event.window){
@@ -222,9 +238,10 @@ function renderUpcomingEvents(){
   });
 }
 function renderForecastEvolution(){
-  const items=state.briefing?.forecast_evolution?.items||[];
+  const allItems=state.briefing?.forecast_evolution?.items||[],items=allItems.filter(item=>hasNumericValue(item?.peak_ft));
   const root=$('forecastEvolutionRows');if(!root)return;root.replaceChildren();
-  if(!items.length){root.innerHTML='<div class="intel-empty">Forecast history is still building.</div>';miniLine('forecastEvolutionSpark',[]);return;}
+  const panel=$('evolutionDetail');if(panel)panel.hidden=!items.length;
+  if(!items.length){miniLine('forecastEvolutionSpark',[]);return;}
   const pts=items.map((item,i)=>({t:i,v:Number(item.peak_ft),label:item.label})).filter(p=>Number.isFinite(p.v));
   miniLine('forecastEvolutionSpark',pts,'v',false);
   for(const item of items){
@@ -244,5 +261,7 @@ function renderCoastalIntelligence(){
   renderHighWaterWindows();
   renderUpcomingEvents();
   renderForecastEvolution();
+  const timeline=$('forecastTimelineDetail');if(timeline)timeline.hidden=!$('highWaterWindows')?.children?.length;
+  const details=$('forecastDetails');if(details)details.hidden=['forecastTimelineDetail','residualDetail','evolutionDetail'].every(id=>$(id)?.hidden!==false);
   if(typeof renderEventFocus==='function')renderEventFocus();
 }

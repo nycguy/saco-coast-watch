@@ -101,6 +101,25 @@ test('grouped events never turn null metrics into fabricated zero measurements',
  assert.equal(group.max_residual_ft,null);
 });
 
+test('recent event navigation orders newest first and preserves one event identity',()=>{
+ const groups=api.orderRecentEvents(api.groupRecentEvents([
+  event({title:'Winter Storm',started_at:'2026-10-16T10:00:00Z',ended_at:'2026-10-16T14:00:00Z',official_products:['Winter Storm Warning']}),
+  event({title:'Tropical Storm Alex',started_at:'2026-10-18T08:00:00Z',ended_at:'2026-10-18T12:00:00Z',official_products:[]}),
+  event({title:'High Surf Advisory',started_at:'2026-10-17T10:00:00Z',ended_at:'2026-10-17T14:00:00Z',official_products:['High Surf Advisory']}),
+ ]));
+ assert.deepEqual(Array.from(groups,group=>group.title),['Tropical Storm Alex','High Surf Advisory','Winter Storm']);
+ assert.equal(api.recentEventIndex(groups,api.recentGroupKey(groups[1]),api.recentGroupTime(groups[1])),1);
+});
+
+test('removed selected event restores the nearest remaining event chronologically',()=>{
+ const make=times=>api.orderRecentEvents(times.map((time,index)=>api.groupRecentEvents([event({title:['Winter Storm','High Surf Advisory','Tropical Storm Alex'][index],started_at:time,ended_at:time,official_products:[]})])[0]));
+ const before=make(['2026-10-16T10:00:00Z','2026-10-17T18:00:00Z','2026-10-18T10:00:00Z']);
+ const selectedAt=api.recentGroupTime(before[1]);
+ const after=make(['2026-10-16T10:00:00Z','2026-10-18T10:00:00Z']);
+ assert.equal(api.recentEventIndex(after,api.recentGroupKey(before[1]),selectedAt),0);
+ assert.equal(api.recentEventIndex([],null,selectedAt),-1);
+});
+
 test('upcoming selection ignores routine high tides and shows plain empty when no hazard qualifies',()=>{
  assert.deepEqual(JSON.parse(JSON.stringify(api.upcomingEvents({windows:[{impact:{rank:0,label:'Routine'},high_tide_at:start,astronomical_ft:11.2}],now:Date.parse('2026-10-18T09:00:00Z')}))),[]);
 });
@@ -120,4 +139,18 @@ test('malformed and expired alerts do not invent an upcoming coastal event',()=>
   null,{event:'',onset:start},{event:'Coastal Flood Warning',onset:'bad',ends:'2026-10-18T08:00:00Z'},
  ],windows:[{impact:{rank:'bad'},window_start:'bad',high_tide_at:start}]});
  assert.equal(events.length,0);
+});
+
+test('upcoming events preserve missing timing and missing official severity without inventing either',()=>{
+ const [event]=api.upcomingEvents({now:Date.parse('2026-10-18T09:00:00Z'),alerts:[{event:'Coastal Flood Warning',severity:null,onset:'malformed',ends:'malformed'}]});
+ assert.equal(event.at,null);
+ assert.equal(event.severityLabel,'Severity not stated');
+});
+
+test('official NWS alert severity maps to distinct text and hazard emphasis',()=>{
+ const now=Date.parse('2026-10-18T09:00:00Z');
+ for(const [severity,rank] of [['Minor',1],['Moderate',2],['Severe',3],['Extreme',3]]){
+  const [event]=api.upcomingEvents({now,alerts:[{event:'Coastal Flood Warning',severity,onset:'2026-10-18T10:00:00Z'}]});
+  assert.equal(event.rank,rank);assert.equal(event.severityLabel,severity);
+ }
 });

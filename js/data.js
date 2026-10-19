@@ -43,9 +43,29 @@ function observationFromNWS(data,station){
  if(!Number.isFinite(rawTime)||now()-rawTime>2*3600000||rawTime>now()+10*60000)throw new Error('Station observation is missing, future-dated, or older than 2 hours');
  const wind=validMeasurement(p.windSpeed),gust=validMeasurement(p.windGust),temp=validMeasurement(p.temperature);
  const humidityRaw=validMeasurement(p.relativeHumidity),humidity=humidityRaw!==null&&humidityRaw>=0&&humidityRaw<=100?humidityRaw:null;
- if(wind===null&&temp===null&&humidity===null)throw new Error('Station did not provide valid wind, air temperature, or relative humidity');
+ if(wind===null&&gust===null&&temp===null&&humidity===null)throw new Error('Station did not provide valid wind, air temperature, gust, or relative humidity');
  return {station,t:rawTime,wind:wind===null?null:wind*2.236936,gust:gust===null?null:gust*2.236936,temp:temp===null?null:temp*9/5+32,humidity,direction:validMeasurement(p.windDirection)};
 }
+function weatherObservationDisplay(observation,at=now(),maxAgeMs=2*3600000){
+ const t=Number(observation?.t),age=at-t,base={fresh:false,age:null,wind:null,gust:null,temp:null,humidity:null,direction:null};
+ if(!Number.isFinite(t)||age< -10*60000||age>maxAgeMs)return base;
+ const within=(value,min,max)=>typeof value==='number'&&Number.isFinite(value)&&value>=min&&value<=max?value:null;
+ const wind=within(observation?.wind,0,250),gust=within(observation?.gust,0,250),temp=within(observation?.temp,-100,140),humidity=within(observation?.humidity,0,100);
+ if(wind===null&&gust===null&&temp===null&&humidity===null)return base;
+ const direction=within(observation?.direction,0,360);
+ return{fresh:true,age,wind,gust,temp,humidity,direction};
+}
+// Forecast guidance must be issued/fetched within 24h and cannot be >10m future dated.
+function usableWeatherForecast(rows,at=now(),hours=72,sourceAt=at,maxSourceAgeMs=24*3600000){
+ const sourceAge=at-Number(sourceAt);if(!Number.isFinite(sourceAge)||sourceAge< -10*60000||sourceAge>maxSourceAgeMs)return[];
+ const end=at+hours*3600000;
+ return(Array.isArray(rows)?rows:[]).filter(row=>{
+  if(!Number.isFinite(row?.t)||!Number.isFinite(row?.end)||row.end<=at||row.t>=end||row.end<=row.t)return false;
+  const hasNumber=value=>typeof value==='number'&&Number.isFinite(value);
+  return hasNumber(row.wind)||hasNumber(row.gust)||hasNumber(row.temp)||hasNumber(row.pop)||Boolean(String(row.summary||'').trim());
+ });
+}
+function hasUsefulWeatherContent({marine=false,observation=false,forecast=false}={}){return Boolean(marine||observation||forecast);}
 function parseWindSpeed(text){
  if(typeof text==='object'&&text!==null){const v=validMeasurement(text);return v===null?null:(String(text.unitCode||'').includes('km_h')?v*.621371:String(text.unitCode||'').includes('m_s-1')?v*2.236936:v);}
  const m=String(text||'').match(/(\d+(?:\.\d+)?)(?:\s*(?:to|-|–)\s*(\d+(?:\.\d+)?))?/i);

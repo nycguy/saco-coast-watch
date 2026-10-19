@@ -1,4 +1,5 @@
 'use strict';
+let currentRecentEventKey=null,currentRecentEventAt=null;
 function eventHistoryTime(value){const t=Date.parse(value||'');return Number.isFinite(t)?new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))+' ET':'Time unavailable';}
 function briefingDataAvailability(coverage){
  if(!coverage||!Number.isFinite(coverage.total))return 'Coastal source availability is unavailable in this briefing. Check the source status cards below; missing information is not an all-clear.';
@@ -31,10 +32,13 @@ function renderBriefingPriorities(items){
  if(root){root.replaceChildren();for(const item of priorities){const article=document.createElement('article'),title=document.createElement('h5'),text=document.createElement('p');article.className='brief-priority-item';title.textContent=item.title;text.textContent=item.text;article.append(title,text);root.append(article);}}
 }
 function renderEventHistory(){
- const panel=$('eventHistoryPanel'),root=$('eventHistoryCards'),archive=$('eventHistoryArchive'),archiveRoot=$('eventHistoryArchiveCards');if(!panel||!root||!archiveRoot)return;
- const events=Array.isArray(state.briefing?.event_history)?state.briefing.event_history:[];
- const groups=window.SacoEventUtils?.groupRecentEvents(events)||events.map(item=>({records:[item],...(item||{}),rank:Number(item?.highest_impact?.rank)||0}));
- panel.hidden=!events.length;root.replaceChildren();archiveRoot.replaceChildren();if(!events.length)return;
+ const panel=$('eventHistoryPanel'),root=$('eventHistoryCards'),archive=$('eventHistoryArchive'),archiveRoot=$('eventHistoryArchiveCards'),navigation=$('eventHistoryNavigation'),position=$('recentEventPosition'),previous=$('previousRecentEvent'),next=$('nextRecentEvent');if(!panel||!root||!archiveRoot)return;
+ const events=Array.isArray(state.briefing?.event_history)?state.briefing.event_history.filter(item=>item&&typeof item==='object'):[];
+ const utils=window.SacoEventUtils,groups=utils?.orderRecentEvents(utils.groupRecentEvents(events))||events.map(item=>({records:[item],...(item||{}),rank:Number(item?.highest_impact?.rank)||0})).sort((a,b)=>(Date.parse(b.started_at)||0)-(Date.parse(a.started_at)||0));
+ panel.hidden=!groups.length;root.replaceChildren();archiveRoot.replaceChildren();if(!groups.length){if(navigation)navigation.hidden=true;currentRecentEventKey=null;currentRecentEventAt=null;return;}
+ const selectedIndex=utils?.recentEventIndex(groups,currentRecentEventKey,currentRecentEventAt)??0,selected=groups[selectedIndex];
+ currentRecentEventKey=utils?.recentGroupKey(selected)||selected.title+'|'+selected.started_at;
+ currentRecentEventAt=utils?.recentGroupTime(selected)||Date.parse(selected.started_at)||null;
  function renderCards(target,items,primary=false){
   for(const [index,raw] of items.entries()){
    const item=raw&&typeof raw==='object'?raw:{};
@@ -55,7 +59,11 @@ function renderEventHistory(){
    target.append(card);
   }
  }
- renderCards(root,groups,true);renderCards(archiveRoot,events);
+ renderCards(root,[selected],true);renderCards(archiveRoot,events);
+ if(navigation)navigation.hidden=false;
+ if(position)position.textContent='Event '+(selectedIndex+1)+' of '+groups.length;
+ if(previous){previous.disabled=selectedIndex>=groups.length-1;previous.onclick=()=>{if(selectedIndex<groups.length-1){currentRecentEventKey=utils?.recentGroupKey(groups[selectedIndex+1])||null;currentRecentEventAt=utils?.recentGroupTime(groups[selectedIndex+1])||null;renderEventHistory();}};}
+ if(next){next.disabled=selectedIndex<=0;next.onclick=()=>{if(selectedIndex>0){currentRecentEventKey=utils?.recentGroupKey(groups[selectedIndex-1])||null;currentRecentEventAt=utils?.recentGroupTime(groups[selectedIndex-1])||null;renderEventHistory();}};}
  const summary=archive?.querySelector(':scope > summary');
  if(summary){const action=summary.querySelector('.disclosure-action');summary.textContent='Complete event history · '+events.length+' captured record'+(events.length===1?'':'s');if(action)summary.append(action);}
  window.SacoDisclosures?.init(panel);

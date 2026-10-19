@@ -41,7 +41,7 @@ def fmt_time(v):
 def _baseline_name(row):
     source=((row.get("provenance") or {}).get("forecast") or row.get("source") or "stored forecast snapshot").lower()
     if "archived gomofs" in source or "archive" in source: return "archived NOAA GoMOFS model cycle"
-    if "reconstructed" in source: return "reconstructed Saco Coast Watch dashboard snapshot"
+    if "reconstructed" in source: return "reconstructed SacoCast dashboard snapshot"
     if "live_noaa" in source or "ofs" in source: return "captured NOAA OFS model snapshot"
     return "stored forecast snapshot"
 def _recent(events,key,now,hours=24):
@@ -273,7 +273,7 @@ def _event_history(snaps,current,now):
             "ended_at":hc.iso(end),
             "captured_coverage_hours":coverage,
             "duration_hours":coverage,
-            "coverage_basis":"This is how much of the event Saco Coast Watch captured, not how long the storm itself lasted.",
+            "coverage_basis":"This is how much of the event SacoCast captured, not how long the storm itself lasted.",
             "phase":states[-1].get("phase"),
             "highest_impact":{"rank":rank,"label":labels[min(rank,3)]},
             "max_observed_water_ft":_max_value(group,("water","observed_24h_max_ft")),
@@ -474,7 +474,7 @@ def build_payload(current,hist,now=None):
     if coastal_impact_change:
         ci=coastal_impact_change; delta=ci["score_delta"]
         if delta:
-            forecast_change+=f" The Saco Coast Watch compound coastal-impact score {'increased' if delta>0 else 'decreased'} by {abs(delta)} points, from {ci['previous_score']} to {ci['current_score']}."
+            forecast_change+=f" The SacoCast compound coastal-impact score {'increased' if delta>0 else 'decreased'} by {abs(delta)} points, from {ci['previous_score']} to {ci['current_score']}."
             if ci.get("drivers"):
                 parts=[]
                 for driver in ci["drivers"][:3]: parts.append(f"{driver['label']} {'rose' if driver['delta']>0 else 'fell'} by {abs(driver['delta']):.1f} {driver['unit']}")

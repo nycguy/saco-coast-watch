@@ -58,6 +58,29 @@
   return groups.map(group=>summarize(group.records)).sort((a,b)=>
    (b.rank-a.rank)||(dateOf(b.ended_at)||dateOf(b.started_at)||0)-(dateOf(a.ended_at)||dateOf(a.started_at)||0));
  }
+ function recentGroupTime(group){
+  const records=Array.isArray(group?.records)?group.records:[group||{}];
+  const times=records.map(item=>dateOf(item?.started_at)).filter(value=>value!==null);
+  return times.length?Math.min(...times):dateOf(group?.started_at)||0;
+ }
+ function recentGroupKey(group){
+  const records=Array.isArray(group?.records)?group.records:[group||{}];
+  const start=recentGroupTime(group),sample=records[0]||group||{};
+  const identity=identityOf(sample),family=familyOf([sample.title,sample.label,...(sample.official_products||[])].join(' '));
+  const location=String(sample.location||sample.area||'').trim().toLowerCase();
+  return [start,family,identity,location].join('|');
+ }
+ function orderRecentEvents(groups){
+  return (Array.isArray(groups)?groups:[]).slice().sort((a,b)=>recentGroupTime(b)-recentGroupTime(a));
+ }
+ function recentEventIndex(groups,key,previousAt){
+  if(!Array.isArray(groups)||!groups.length)return -1;
+  if(key){const match=groups.findIndex(group=>recentGroupKey(group)===key);if(match>=0)return match;}
+  if(!Number.isFinite(previousAt))return 0;
+  let best=0,distance=Infinity;
+  groups.forEach((group,index)=>{const delta=Math.abs(recentGroupTime(group)-previousAt);if(delta<distance){best=index;distance=delta;}});
+  return best;
+ }
  function summarize(records){
   const rankOf=x=>Number.isFinite(Number(x?.highest_impact?.rank))?Number(x.highest_impact.rank):0;
   const rich=records.slice().sort((a,b)=>(rankOf(b)-rankOf(a))||(String(b?.title||'').length-String(a?.title||'').length)||((dateOf(b?.started_at)||0)-(dateOf(a?.started_at)||0)))[0]||{};
@@ -76,24 +99,25 @@
   const rows=Array.isArray(alerts)?alerts:[];
   for(const raw of rows){
    const p=raw?.properties||raw||{},label=String(p.event||'').trim();if(!label)continue;
-   const start=dateOf(p.onset||p.effective||p.sent)||now,end=dateOf(p.ends||p.expires);
-   if((end!==null&&end<now)||(start>until))continue;
-   const family=familyOf(label),severity=String(p.severity||'').toLowerCase();
-   candidates.push({title:label,family,location:String(p.areaDesc||'').trim(),source:'Official NWS alert',at:start,end,rank:/extreme/.test(severity)?3:/severe|warning/.test(severity)?2:/moderate|advisory|watch/.test(severity)?1:0,details:[p.headline,p.description].filter(Boolean)});
+   const start=dateOf(p.onset||p.effective||p.sent),end=dateOf(p.ends||p.expires);
+   if((end!==null&&end<now)||(start!==null&&start>until))continue;
+   const family=familyOf(label),severity=String(p.severity||'').toLowerCase(),rank=/extreme|severe/.test(severity)?3:/moderate/.test(severity)?2:/minor/.test(severity)?1:0;
+   const url=[p.web,p.uri,raw?.id].find(value=>typeof value==='string'&&/^https:\/\/(?:api\.weather\.gov|www\.weather\.gov|weather\.gov)\//i.test(value));
+   candidates.push({title:label,family,location:String(p.areaDesc||'').trim(),source:'Official NWS alert',url,at:start,end,rank,severityLabel:severity?severity[0].toUpperCase()+severity.slice(1):'Severity not stated',details:[p.headline,p.description].filter(Boolean)});
   }
   const identity=eventState?.event_identity||{},phase=String(eventState?.phase||'');
   const active=(eventState?.show_focus===true)&&!['Routine','Recent'].includes(phase);
   if(active){
    const title=String(identity.label||eventState.primary_display||'Coastal hazard guidance');
    const timing=eventState.event_timing||{},at=dateOf(timing.peak_at)||now;
-   if(at<=until)candidates.push({title,family:familyOf(title),source:'SacoCast hazard classification based on official guidance',at,rank:Number(eventState.impact?.rank)||0,details:[eventState.summary].filter(Boolean)});
+   if(at===null||at<=until){const rank=Number(eventState.impact?.rank)||0;candidates.push({title,family:familyOf(title),source:'SacoCast hazard classification based on official guidance',at,rank,severityLabel:eventState.impact?.label||'SacoCast impact classification',details:[eventState.summary].filter(Boolean)});}
   }
   for(const w of Array.isArray(windows)?windows:[]){
    const rank=Number(w?.impact?.rank)||0,at=dateOf(w?.window_start||w?.high_tide_at);
    if(rank<1||at===null||at<now-30*60*1000||at>until)continue;
-   candidates.push({title:(w.impact?.label||'Elevated')+' coastal-impact guidance',family:'coastal-flood',source:'SacoCast forecast synthesis',at,end:dateOf(w.window_end),rank,details:[],window:w});
+   candidates.push({title:(w.impact?.label||'Elevated')+' coastal-impact guidance',family:'coastal-flood',source:'SacoCast forecast synthesis',at,end:dateOf(w.window_end),rank,severityLabel:'SacoCast coastal-impact classification: '+(w.impact?.label||'Elevated'),details:[],window:w});
   }
-  candidates.sort((a,b)=>b.rank-a.rank||((a.source==='Official NWS alert'?-1:0)-(b.source==='Official NWS alert'?-1:0))||a.at-b.at);
+  candidates.sort((a,b)=>b.rank-a.rank||((a.source==='Official NWS alert'?-1:0)-(b.source==='Official NWS alert'?-1:0))||((a.at??Infinity)-(b.at??Infinity)));
   const chosen=[];
   for(const candidate of candidates){
    const same=chosen.find(item=>item.family===candidate.family&&rangesNear(item,candidate,18)&&(!item.location||!candidate.location||item.location.toLowerCase()===candidate.location.toLowerCase()));
@@ -102,5 +126,5 @@
   }
   return chosen;
  }
- root.SacoEventUtils={familyOf,sameEpisode,groupRecentEvents,upcomingEvents};
+ root.SacoEventUtils={familyOf,sameEpisode,groupRecentEvents,upcomingEvents,recentGroupTime,recentGroupKey,orderRecentEvents,recentEventIndex};
 })(typeof window!=='undefined'?window:globalThis);

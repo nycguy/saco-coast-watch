@@ -320,7 +320,7 @@ def seed_snapshots():
     out=[]
     for r in d.get("forecast_snapshots") or []:
         ft=r.get("model_peak_ft")
-        out.append({"snapshot_at":r.get("generated_at"),"snapshot_kind":"reconstructed_dashboard_snapshot","provenance":{"forecast":"reconstructed_dashboard_snapshot","note":"Recovered from a Saco Coast Watch dashboard capture; not a NOAA forecast archive record."},"water":{"forecast_peak_72h_ft":ft,"forecast_peak_72h_time":r.get("model_peak_time"),"threshold_margins_ft":hc.threshold_margins(ft)},"alerts":[{"event":e} for e in r.get("alerts") or []],"confidence":r.get("confidence")})
+        out.append({"snapshot_at":r.get("generated_at"),"snapshot_kind":"reconstructed_dashboard_snapshot","provenance":{"forecast":"reconstructed_dashboard_snapshot","note":"Recovered from a SacoCast dashboard capture; not a NOAA forecast archive record."},"water":{"forecast_peak_72h_ft":ft,"forecast_peak_72h_time":r.get("model_peak_time"),"threshold_margins_ft":hc.threshold_margins(ft)},"alerts":[{"event":e} for e in r.get("alerts") or []],"confidence":r.get("confidence")})
     return out
 def initial_backfill(now,days=7):
     start=now-dt.timedelta(days=days); out={"period_start":hc.iso(start),"period_end":hc.iso(now),"water_observations_hourly":[],"water_observed_daily_peaks":[],"marine_hourly":{},"marine_daily":{},"nws_alert_products":[],"attempts":{}}

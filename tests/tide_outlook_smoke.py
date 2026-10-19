@@ -72,8 +72,12 @@ def install_noaa_fixture(page):
         status=503,content_type="application/geo+json",body=json.dumps({"title":"Fixture: NWS unavailable"})))
 
     peak_at=(now+timedelta(hours=4)).isoformat().replace("+00:00","Z")
-    event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Coastal Impact","basis":["Synthetic coastal impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Highest Saco Coast Watch compound coastal-impact window"},"coastal_impact":{"method":"SacoCast combines official forecasts and observations into this local coastal-impact rating. The rating is not an official NOAA/NWS forecast.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"data_coverage":{"available":4,"assessed":5,"total":5,"available_sources":["NOAA forecast water level","NOAA tide predictions","NWS surf forecast","NWS wind forecast"],"missing":["NDBC 44007 wave observation"],"unassessed":[],"sources":[{"name":"NOAA forecast water level","status":"available"},{"name":"NOAA tide predictions","status":"available"},{"name":"NWS surf forecast","status":"available"},{"name":"NWS wind forecast","status":"available"},{"name":"NDBC 44007 wave observation","status":"missing"}]},"drivers":[{"label":"NOAA forecast water level","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"NWS surf forecast","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Wind pushing toward shore","value":"24 mph","source":"Calculated from NWS hourly wind direction and speed"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
-    event_history=[{"title":"Coastal Storm","started_at":(now-timedelta(hours=18)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"captured_coverage_hours":18.0,"duration_hours":18.0,"coverage_basis":"This is how much of the event Saco Coast Watch captured, not how long the storm itself lasted.","phase":"Recent","highest_impact":{"rank":2,"label":"Significant"},"max_observed_water_ft":11.4,"max_residual_ft":1.1,"max_modeled_water_ft":11.9,"max_wave_ft":None,"max_gust_mph":None,"max_surf_ft":9.0,"official_products":["High Surf Advisory"],"snapshot_count":12,"data_quality":[{"type":"superseded_surf_parse","count":1,"message":"One earlier surf value was corrected after the same NWS forecast was re-read. This summary uses the corrected value."}]}]
+    event_state={"phase":"Approaching","show_focus":True,"primary_display":"Coastal Storm","impact":{"rank":1,"level":"yellow","label":"Elevated"},"recent_impact":{"rank":0,"level":"green","label":"Routine"},"event_identity":None,"active_hazards":[{"code":"coastal_impact","label":"Coastal Impact","basis":["Synthetic coastal impact"]},{"code":"high_surf","label":"High Surf / Wave Impact","basis":["Synthetic browser event"]}],"official_alerts":[{"event":"High Surf Advisory"}],"recent_impacts":[],"reasons":["Synthetic browser event"],"event_timing":{"peak_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"hours_until_peak":4,"basis":"Highest SacoCast compound coastal-impact window"},"coastal_impact":{"method":"SacoCast combines official forecasts and observations into this local coastal-impact rating. The rating is not an official NOAA/NWS forecast.","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"},"data_coverage":{"available":4,"assessed":5,"total":5,"available_sources":["NOAA forecast water level","NOAA tide predictions","NWS surf forecast","NWS wind forecast"],"missing":["NDBC 44007 wave observation"],"unassessed":[],"sources":[{"name":"NOAA forecast water level","status":"available"},{"name":"NOAA tide predictions","status":"available"},{"name":"NWS surf forecast","status":"available"},{"name":"NWS wind forecast","status":"available"},{"name":"NDBC 44007 wave observation","status":"missing"}]},"drivers":[{"label":"NOAA forecast water level","value":"11.80 ft MLLW","source":"NOAA OFS"},{"label":"NWS surf forecast","value":"8 ft max","source":"NWS Surf Zone Forecast"},{"label":"Wind pushing toward shore","value":"24 mph","source":"Calculated from NWS hourly wind direction and speed"}],"peak_window":{"high_tide_at":peak_at,"window_start":(now+timedelta(hours=2.5)).isoformat().replace("+00:00","Z"),"window_end":(now+timedelta(hours=5.5)).isoformat().replace("+00:00","Z"),"onshore_component_mph":24,"forecast_wind_direction":"ESE","impact":{"score":44,"rank":1,"level":"yellow","label":"Elevated"}},"wave_context":{"power_proxy_kw_m":24.0}}}
+    event_history=[
+        {"title":"Winter Storm","started_at":(now-timedelta(hours=44)).isoformat().replace("+00:00","Z"),"ended_at":(now-timedelta(hours=40)).isoformat().replace("+00:00","Z"),"phase":"Recent","highest_impact":{"rank":1,"label":"Elevated"},"official_products":["Winter Storm Warning"],"snapshot_count":3},
+        {"title":"Coastal Storm","started_at":(now-timedelta(hours=18)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"captured_coverage_hours":18.0,"duration_hours":18.0,"coverage_basis":"This is how much of the event SacoCast captured, not how long the storm itself lasted.","phase":"Recent","highest_impact":{"rank":2,"label":"Significant"},"max_observed_water_ft":11.4,"max_residual_ft":1.1,"max_modeled_water_ft":11.9,"max_wave_ft":None,"max_gust_mph":None,"max_surf_ft":9.0,"official_products":["High Surf Advisory"],"snapshot_count":12,"data_quality":[{"type":"superseded_surf_parse","count":1,"message":"One earlier surf value was corrected after the same NWS forecast was re-read. This summary uses the corrected value."}]},
+        {"title":"Tropical Storm Alex","started_at":(now-timedelta(hours=1)).isoformat().replace("+00:00","Z"),"ended_at":now.isoformat().replace("+00:00","Z"),"phase":"Recent","highest_impact":{"rank":1,"label":"Elevated"},"official_products":[],"snapshot_count":2},
+    ]
     briefing={
         "schema_version":1,
         "generated_at":datetime.now(timezone.utc).isoformat().replace("+00:00","Z"),
@@ -269,9 +273,11 @@ def assert_common(page):
     event_section.evaluate("el => el.hidden=false")
     event_row.evaluate("el => el.hidden=true")
     assert page.locator("#forecastEvolutionRows .evolution-row").count()==4
-    timeline=page.locator(".upcoming-timeline-detail > summary")
+    timeline=page.locator("#forecastDetails > summary")
+    assert timeline.inner_text().startswith("Forecast Details")
+    assert page.locator("#forecastDetails").is_visible()
     timeline.click()
-    page.wait_for_function("document.querySelector('.upcoming-timeline-detail')?.open && document.querySelector('.upcoming-timeline-detail > summary')?.getAttribute('aria-expanded')==='true'")
+    page.wait_for_function("document.querySelector('#forecastDetails')?.open")
     assert timeline.get_attribute("aria-expanded")=="true"
     assert timeline.locator(".disclosure-action").inner_text()=="Hide details"
     assert page.locator("#highWaterWindows .high-window").count()>=1
@@ -292,6 +298,18 @@ def assert_common(page):
     assert page.locator("#eventWhyList .event-why-row").count()==3
     assert page.locator("#eventHistoryPanel").is_visible()
     assert page.locator("#eventHistoryCards .event-history-card").count()==1
+    assert page.locator("#recentEventPosition").inner_text()=="Event 1 of 3"
+    assert page.locator("#eventHistoryCards .event-history-card").inner_text().startswith("Tropical Storm Alex")
+    assert page.locator("#nextRecentEvent").is_disabled()
+    previous_event=page.locator("#previousRecentEvent")
+    previous_event.click()
+    assert page.locator("#recentEventPosition").inner_text()=="Event 2 of 3"
+    assert page.locator("#eventHistoryCards .event-history-card").inner_text().startswith("Coastal Storm")
+    previous_event.click()
+    assert page.locator("#recentEventPosition").inner_text()=="Event 3 of 3"
+    assert page.locator("#previousRecentEvent").is_disabled()
+    page.locator("#nextRecentEvent").click()
+    assert page.locator("#recentEventPosition").inner_text()=="Event 2 of 3"
     high_water_label_size=page.locator("#highWaterWindows .high-window-grid span").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
     high_water_value_size=page.locator("#highWaterWindows .high-window-grid strong").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
     evolution_size=page.locator("#forecastEvolutionRows .evolution-row").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
@@ -320,7 +338,7 @@ def assert_common(page):
     assert "Forecast evolution" not in decision_text
     history_text=history_card.inner_text()
     assert "Recorded for 18.0h" in history_text
-    assert "how much of the event Saco Coast Watch captured" in history_text
+    assert "how much of the event SacoCast captured" in history_text
     assert "One earlier surf value was corrected after the same NWS forecast was re-read" in history_text
     assert "Water above predicted tide" in history_text
     assert "Highest NOAA forecast" in history_text
@@ -332,7 +350,6 @@ def assert_common(page):
     badge_color=page.locator("#eventFocusBadge").evaluate("el => getComputedStyle(el).backgroundColor")
     assert badge_color=="rgb(244, 197, 66)",badge_color
     assert page.locator("#residualSpark .mini-line").count()==1
-    page.locator(".coastal-intelligence .intelligence-detail:has(#residualSpark) > summary").click()
     residual_chart=page.locator("#residualSpark")
     assert residual_chart.get_attribute("tabindex")=="0"
     residual_chart.focus()
@@ -444,6 +461,32 @@ def assert_header_weather(page):
     }""")
     assert page.locator('#headerWeather .header-weather-item').count()==1
     assert page.locator('#headerWeather .header-weather-item span').inner_text()=='Weather Unavailable'
+
+    page.evaluate("""() => {
+      const at=Date.now();
+      state.briefing.current_snapshot.event_state={phase:'Routine',show_focus:false,active_hazards:[]};
+      state.hazards={generated_at:new Date(at).toISOString(),hourly_full:[{end:new Date(at+72*3600000).toISOString()}],hourly:[],alerts:[],errors:{}};
+      state.hazardsError=null;state.alerts=[];state.errors.alerts=null;state.lastFetched.alerts=at;
+      renderUpcomingEvents();
+    }""")
+    assert page.locator("#upcomingEventCards .upcoming-status strong").inner_text()=="No Significant Coastal Hazards Identified"
+    assert page.locator("#upcomingEventCards").inner_text().count("Routine high tides") == 1
+    assert page.locator("#upcomingForecastPeriod").inner_text()=="Next 72 hours"
+    page.evaluate("""() => {
+      const at=Date.now();state.alerts=[{id:'https://api.weather.gov/alerts/test',properties:{event:'Coastal Flood Warning',severity:'Severe',onset:new Date(at+3600000).toISOString(),ends:new Date(at+6*3600000).toISOString(),headline:'Test official coastal flood warning',description:'Test source-backed details.'}}];
+      renderUpcomingEvents();
+    }""")
+    active_event=page.locator("#upcomingEventCards .upcoming-event")
+    assert active_event.count()==1
+    assert "Severe" in active_event.inner_text()
+    assert active_event.get_attribute("class").endswith("--red")
+    assert active_event.locator("a.upcoming-event-source").get_attribute("href")=="https://api.weather.gov/alerts/test"
+    page.evaluate("""() => {
+      state.hazards.generated_at=new Date(Date.now()-46*60000).toISOString();state.lastFetched.alerts=Date.now()-31*60000;state.alerts=[];
+      renderUpcomingEvents();
+    }""")
+    assert page.locator("#upcomingEventCards .upcoming-status strong").inner_text()=="Coastal Forecast Unavailable"
+    assert "No Significant Coastal Hazards Identified" not in page.locator("#upcomingEventCards").inner_text()
 
 def main():
     errors=[]

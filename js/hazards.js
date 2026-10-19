@@ -25,7 +25,7 @@ function renderEventFocus(){
  const severity=hazardSeverity();document.body.classList.add('hazard-severity-'+severity.level);
  $('eventFocusTitle').textContent=eventDisplayTitle(eventState);
  $('eventFocusBadge').textContent=severity.label+' · '+(eventState.phase||'Active');
- $('eventFocusDescription').textContent=(eventState.summary||'Saco Coast Watch is prioritizing the hazards most relevant to the next 72 hours.')+' Official NWS/NHC products remain authoritative.';
+ $('eventFocusDescription').textContent=(eventState.summary||'SacoCast is highlighting the hazards most relevant to the next 72 hours.')+' Official NWS/NHC products remain authoritative.';
  const timing=eventState.event_timing||{},peakAt=Date.parse(timing.peak_at||''),hours=Number(timing.hours_until_peak);
  const peakNode=$('eventPeakSummary');
  if(peakNode){
@@ -55,7 +55,7 @@ function renderEventFocus(){
  if(codes.has('high_wind')||codes.has('winter')||codes.has('tropical'))metrics.append(eventMetric('Peak gust next 24h',fmtHaz(h.wind?.max_gust_24h_mph,0,' mph'),'NWS land forecast'));
  if(codes.has('marine_hazard'))metrics.append(eventMetric('Buoy 44007 waves',Number.isFinite(buoy.wave_height_ft)?buoy.wave_height_ft.toFixed(1)+' ft':'--',Number.isFinite(buoy.gust_mph)?'gust '+Math.round(buoy.gust_mph)+' mph':'Measured offshore'));
  if(codes.has('extreme_cold')||codes.has('winter'))metrics.append(eventMetric('Low temperature next 24h',fmtHaz(h.cold?.min_temp_24h_f,0,'°F'),'NWS hourly guidance'));
- if(codes.has('coastal_impact')){const peak=coastal.peak_window||{},impact=coastal.impact||{};metrics.append(eventMetric('Coastal impact',impact.label||'--',hasNumericValue(impact.score)?'Score '+impact.score+'/100':'Saco Coast Watch synthesis'));if(hasNumericValue(peak.onshore_component_mph))metrics.append(eventMetric('Wind pushing toward shore',Math.round(peak.onshore_component_mph)+' mph',peak.forecast_wind_direction||'NWS hourly wind'));}
+ if(codes.has('coastal_impact')){const peak=coastal.peak_window||{},impact=coastal.impact||{};metrics.append(eventMetric('Coastal impact',impact.label||'--',hasNumericValue(impact.score)?'Score '+impact.score+'/100':'SacoCast synthesis'));if(hasNumericValue(peak.onshore_component_mph))metrics.append(eventMetric('Wind pushing toward shore',Math.round(peak.onshore_component_mph)+' mph',peak.forecast_wind_direction||'NWS hourly wind'));}
  const wave=coastal.wave_context||{};if(hasNumericValue(wave.power_proxy_kw_m)&&metrics.children.length<4)metrics.append(eventMetric('Wave energy estimate',Number(wave.power_proxy_kw_m).toFixed(1)+' kW/m','Estimated from latest NDBC wave height and dominant period'));
  const high=(state.highs.length?state.highs:highTides()).find(x=>x.t>=now()-10*60000);if(high&&metrics.children.length<4)metrics.append(eventMetric('Next high tide',fmtN(high.v)+' ft',dayTime(high.t)+' ET'));
  while(metrics.children.length>4)metrics.lastElementChild.remove();

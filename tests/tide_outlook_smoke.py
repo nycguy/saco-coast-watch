@@ -277,7 +277,7 @@ def assert_common(page):
     assert timeline.inner_text().startswith("Forecast Details")
     assert page.locator("#forecastDetails").is_visible()
     timeline.click()
-    page.wait_for_function("document.querySelector('#forecastDetails')?.open")
+    page.wait_for_function("document.querySelector('#forecastDetails')?.open && document.querySelector('#forecastDetails > summary')?.getAttribute('aria-expanded')==='true'")
     assert timeline.get_attribute("aria-expanded")=="true"
     assert timeline.locator(".disclosure-action").inner_text()=="Hide details"
     assert page.locator("#highWaterWindows .high-window").count()>=1

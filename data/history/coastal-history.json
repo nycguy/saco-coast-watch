@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-19T01:23:23Z",
+  "generated_at": "2026-10-19T01:28:17Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -277391,7 +277391,7 @@
       }
     },
     {
-      "snapshot_at": "2026-10-19T01:23:23Z",
+      "snapshot_at": "2026-10-19T01:28:17Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -277488,7 +277488,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-10-19T01:23:23.306800Z",
+        "generated_at": "2026-10-19T01:28:17.915134Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -277524,7 +277524,7 @@
             "peak_at": "2026-10-20T23:12:00Z",
             "window_start": null,
             "window_end": null,
-            "hours_until_peak": 45.8,
+            "hours_until_peak": 45.7,
             "basis": "NOAA OFS modeled total-water peak"
           },
           "coastal_impact": {
@@ -277784,19 +277784,19 @@
                 }
               ]
             },
-            "hours_until_peak": 8.8,
+            "hours_until_peak": 8.7,
             "data_coverage": {
-              "available": 3,
+              "available": 4,
               "assessed": 5,
               "total": 5,
               "available_sources": [
                 "NOAA forecast water level",
                 "NOAA tide predictions",
-                "NWS wind forecast"
+                "NWS wind forecast",
+                "NDBC 44007 wave observation"
               ],
               "missing": [
-                "NWS surf forecast",
-                "NDBC 44007 wave observation"
+                "NWS surf forecast"
               ],
               "unassessed": [],
               "sources": [
@@ -277822,8 +277822,8 @@
                 },
                 {
                   "name": "NDBC 44007 wave observation",
-                  "status": "stale",
-                  "message": "The latest reading is older than the freshness window."
+                  "status": "available",
+                  "message": "Current source data is available."
                 }
               ],
               "observations": [
@@ -277862,14 +277862,14 @@
               },
               {
                 "label": "Latest buoy onshore-wind component",
-                "value": "6 mph",
+                "value": "3 mph",
                 "source": "Derived from NDBC 44007"
               }
             ],
             "wave_context": {
               "height_ft": 1.6,
               "dominant_period_sec": 3.0,
-              "direction_deg": 222.0,
+              "direction_deg": 221.0,
               "power_proxy_kw_m": 0.3
             },
             "onshore_reference": {
@@ -278841,20 +278841,20 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-10-19T00:40:00Z",
-            "speed_mph": 13.4,
+            "observed_at": "2026-10-19T01:00:00Z",
+            "speed_mph": 15.7,
             "gust_mph": 17.9,
-            "direction_deg": 190,
+            "direction_deg": 200,
             "wave_height_ft": 1.6,
             "wave_height_supported": true,
             "dominant_period_sec": 3.0,
             "average_period_sec": 3.2,
-            "wave_direction_deg": 222,
-            "pressure_mb": 1033.9,
-            "pressure_tendency_mb": null,
+            "wave_direction_deg": 221,
+            "pressure_mb": 1034.0,
+            "pressure_tendency_mb": 0.7,
             "water_temp_f": 54.9,
             "air_temp_f": 52.3,
-            "wave_observed_at": "2026-10-19T00:20:00Z",
+            "wave_observed_at": "2026-10-19T00:50:00Z",
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 17.9,
             "max_24h_speed_at": "2026-10-18T01:40:00Z",
@@ -278864,10 +278864,10 @@
             "max_24h_wave_at": "2026-10-18T22:50:00Z"
           },
           "WEXM1": {
-            "observed_at": "2026-10-19T00:00:00Z",
-            "speed_mph": 2.2,
+            "observed_at": "2026-10-19T01:00:00Z",
+            "speed_mph": 1.1,
             "gust_mph": null,
-            "direction_deg": 220,
+            "direction_deg": 230,
             "wave_height_ft": null,
             "wave_height_supported": true,
             "dominant_period_sec": null,
@@ -278876,7 +278876,7 @@
             "pressure_mb": null,
             "pressure_tendency_mb": null,
             "water_temp_f": null,
-            "air_temp_f": 43.7,
+            "air_temp_f": 42.1,
             "wave_observed_at": null,
             "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
             "max_24h_speed_mph": 9.2,
@@ -278913,7 +278913,7 @@
           "peak_at": "2026-10-20T23:12:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 45.8,
+          "hours_until_peak": 45.7,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -279173,19 +279173,19 @@
               }
             ]
           },
-          "hours_until_peak": 8.8,
+          "hours_until_peak": 8.7,
           "data_coverage": {
-            "available": 3,
+            "available": 4,
             "assessed": 5,
             "total": 5,
             "available_sources": [
               "NOAA forecast water level",
               "NOAA tide predictions",
-              "NWS wind forecast"
+              "NWS wind forecast",
+              "NDBC 44007 wave observation"
             ],
             "missing": [
-              "NWS surf forecast",
-              "NDBC 44007 wave observation"
+              "NWS surf forecast"
             ],
             "unassessed": [],
             "sources": [
@@ -279211,8 +279211,8 @@
               },
               {
                 "name": "NDBC 44007 wave observation",
-                "status": "stale",
-                "message": "The latest reading is older than the freshness window."
+                "status": "available",
+                "message": "Current source data is available."
               }
             ],
             "observations": [
@@ -279251,14 +279251,14 @@
             },
             {
               "label": "Latest buoy onshore-wind component",
-              "value": "6 mph",
+              "value": "3 mph",
               "source": "Derived from NDBC 44007"
             }
           ],
           "wave_context": {
             "height_ft": 1.6,
             "dominant_period_sec": 3.0,
-            "direction_deg": 222.0,
+            "direction_deg": 221.0,
             "power_proxy_kw_m": 0.3
           },
           "onshore_reference": {
@@ -280755,7 +280755,7 @@
     }
   ],
   "source_health": {
-    "checked_at": "2026-10-19T01:23:23Z",
+    "checked_at": "2026-10-19T01:28:17Z",
     "feeds": [
       {
         "name": "Local news search",

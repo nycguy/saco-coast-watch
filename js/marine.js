@@ -31,10 +31,12 @@ function renderMarine(){
   const status=$('marine'+id+'Status');if(status){status.textContent=statusLabel;status.className='marine-tag '+(usable?'good':statusLabel==='Stale'?'stale':'bad');}
   marineNumber('marine'+id+'Speed',speed);marineNumber('marine'+id+'Gust',gust);
   const speedBox=$('marine'+id+'SpeedBox'),gustBox=$('marine'+id+'GustBox');if(speedBox)speedBox.hidden=!Number.isFinite(speed);if(gustBox)gustBox.hidden=!Number.isFinite(gust);
-  const readingAt=Number.isFinite(speed)||Number.isFinite(gust)?t:Number.isFinite(wave)||Number.isFinite(period)||Number.isFinite(waveDirection)?waveAt:t;
-  const readingAge=at-readingAt,when=Number.isFinite(readingAt)&&readingAt>0?'Observed '+dayTime(readingAt)+' ET · '+relative(readingAt)+' · '+Math.max(0,Math.round(readingAge/60000))+' min old':'';
+  const observedWhen=(label,stamp)=>Number.isFinite(stamp)&&stamp>0?label+' observed '+dayTime(stamp)+' ET · '+relative(stamp)+' · '+Math.max(0,Math.round((at-stamp)/60000))+' min old':'';
   const directions=windFresh&&Number.isFinite(station?.direction_deg)?windCompass(station.direction_deg)+' wind':'';
-  const meta=$('marine'+id+'Meta');if(meta)meta.textContent=usable?[directions,when].filter(Boolean).join(' · '):'';
+  const details=[];if(Number.isFinite(speed)||Number.isFinite(gust))details.push(directions,observedWhen('Wind',t));
+  if(Number.isFinite(wave)||Number.isFinite(period)||Number.isFinite(waveDirection))details.push(observedWhen('Wave reading',waveAt));
+  if(usable&&!details.length)details.push(observedWhen('Station measurements',t));
+  const meta=$('marine'+id+'Meta');if(meta)meta.textContent=usable?details.filter(Boolean).join(' · '):'';
   health('healthMarine'+id,usable,statusLabel);
   if(id==='44007'){
    const values={marine44007Wave:Number.isFinite(wave)?wave.toFixed(1)+' ft':null,marine44007Period:Number.isFinite(period)?period.toFixed(0)+' s':null,marine44007WaveDirection:Number.isFinite(waveDirection)?windCompass(waveDirection)+' · '+Math.round(waveDirection)+'°':null,marine44007Pressure:Number.isFinite(pressure)?pressure.toFixed(1)+' mb':null,marine44007PressureTrend:Number.isFinite(pressureTrend)?(pressureTrend>=0?'+':'')+pressureTrend.toFixed(1)+' mb / 3h':null,marine44007WaterTemp:Number.isFinite(waterTemp)?waterTemp.toFixed(1)+' °F':null};

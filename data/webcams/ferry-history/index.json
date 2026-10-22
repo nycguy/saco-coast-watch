@@ -88,8 +88,31 @@
         "dominant_period_sec": null,
         "gust_mph": 15.7
       }
+    },
+    {
+      "captured_at": "2026-10-22T04:50:15Z",
+      "file": "20261022T045015Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "STS Josephine",
+        "Significant · Approaching",
+        "NHC track/advisory or local NWS tropical alert",
+        "NWS marine warning for coastal waters",
+        "NWS Gale Warning"
+      ],
+      "context": {
+        "event": "STS Josephine",
+        "phase": "Approaching",
+        "impact": "Significant",
+        "impact_level": "orange",
+        "water_level_ft": 3.35,
+        "residual_ft": 0.93,
+        "wave_height_ft": 5.6,
+        "dominant_period_sec": null,
+        "gust_mph": 17.9
+      }
     }
   ],
-  "generated_at": "2026-10-22T00:13:58Z",
+  "generated_at": "2026-10-22T04:50:15Z",
   "retention_hours": 24
 }

@@ -4,29 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-10-22T14:49:20Z",
-      "file": "20261022T144920Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "STS Josephine",
-        "Significant · Approaching",
-        "NHC track/advisory or local NWS tropical alert",
-        "NWS marine warning for coastal waters",
-        "NWS Gale Warning"
-      ],
-      "context": {
-        "event": "STS Josephine",
-        "phase": "Approaching",
-        "impact": "Significant",
-        "impact_level": "orange",
-        "water_level_ft": 7.81,
-        "residual_ft": 0.82,
-        "wave_height_ft": 5.6,
-        "dominant_period_sec": 9.0,
-        "gust_mph": 22.4
-      }
-    },
-    {
       "captured_at": "2026-10-22T19:00:54Z",
       "file": "20261022T190054Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -137,8 +114,28 @@
         "dominant_period_sec": 7.0,
         "gust_mph": 35.8
       }
+    },
+    {
+      "captured_at": "2026-10-23T15:28:37Z",
+      "file": "20261023T152837Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Routine Coastal Conditions",
+        "Elevated · Improving"
+      ],
+      "context": {
+        "event": "Routine Coastal Conditions",
+        "phase": "Improving",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 8.32,
+        "residual_ft": 0.78,
+        "wave_height_ft": 5.2,
+        "dominant_period_sec": 6.0,
+        "gust_mph": 24.6
+      }
     }
   ],
-  "generated_at": "2026-10-23T10:31:05Z",
+  "generated_at": "2026-10-23T15:28:37Z",
   "retention_hours": 24
 }

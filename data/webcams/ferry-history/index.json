@@ -4,51 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-10-23T01:04:46Z",
-      "file": "20261023T010446Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Potential Tropical Cyclone Josephine",
-        "Significant · Ongoing",
-        "NHC track/advisory or local NWS tropical alert",
-        "NWS marine warning for coastal waters",
-        "NWS Gale Warning"
-      ],
-      "context": {
-        "event": "Potential Tropical Cyclone Josephine",
-        "phase": "Ongoing",
-        "impact": "Significant",
-        "impact_level": "orange",
-        "water_level_ft": 9.59,
-        "residual_ft": 0.6,
-        "wave_height_ft": 5.9,
-        "dominant_period_sec": 9.0,
-        "gust_mph": 31.3
-      }
-    },
-    {
-      "captured_at": "2026-10-23T05:39:46Z",
-      "file": "20261023T053946Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Marine Hazard",
-        "Significant · Ongoing",
-        "NWS marine warning for coastal waters",
-        "NWS Gale Warning"
-      ],
-      "context": {
-        "event": "Marine Hazard",
-        "phase": "Ongoing",
-        "impact": "Significant",
-        "impact_level": "orange",
-        "water_level_ft": 3.15,
-        "residual_ft": 0.98,
-        "wave_height_ft": 5.2,
-        "dominant_period_sec": 9.0,
-        "gust_mph": 31.3
-      }
-    },
-    {
       "captured_at": "2026-10-23T10:31:05Z",
       "file": "20261023T103105Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -90,6 +45,6 @@
       }
     }
   ],
-  "generated_at": "2026-10-24T01:04:39Z",
+  "generated_at": "2026-10-24T05:49:20Z",
   "retention_hours": 24
 }

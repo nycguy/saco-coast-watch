@@ -4,26 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-10-23T15:28:37Z",
-      "file": "20261023T152837Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Routine Coastal Conditions",
-        "Elevated · Improving"
-      ],
-      "context": {
-        "event": "Routine Coastal Conditions",
-        "phase": "Improving",
-        "impact": "Elevated",
-        "impact_level": "yellow",
-        "water_level_ft": 8.32,
-        "residual_ft": 0.78,
-        "wave_height_ft": 5.2,
-        "dominant_period_sec": 6.0,
-        "gust_mph": 24.6
-      }
-    },
-    {
       "captured_at": "2026-10-24T10:06:27Z",
       "file": "20261024T100627Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -44,6 +24,6 @@
       }
     }
   ],
-  "generated_at": "2026-10-24T13:59:50Z",
+  "generated_at": "2026-10-24T17:17:47Z",
   "retention_hours": 24
 }

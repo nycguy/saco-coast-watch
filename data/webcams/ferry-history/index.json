@@ -2,29 +2,7 @@
   "schema_version": 1,
   "camera": "ferry_beach",
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
-  "frames": [
-    {
-      "captured_at": "2026-10-31T06:44:48Z",
-      "file": "20261031T064448Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Marine Hazard",
-        "Elevated · Ongoing",
-        "NDBC 44007 measured offshore conditions are elevated"
-      ],
-      "context": {
-        "event": "Marine Hazard",
-        "phase": "Ongoing",
-        "impact": "Elevated",
-        "impact_level": "yellow",
-        "water_level_ft": 8.66,
-        "residual_ft": -0.06,
-        "wave_height_ft": 3.0,
-        "dominant_period_sec": null,
-        "gust_mph": 38.0
-      }
-    }
-  ],
-  "generated_at": "2026-11-01T02:39:05Z",
+  "frames": [],
+  "generated_at": "2026-11-01T09:43:35Z",
   "retention_hours": 24
 }

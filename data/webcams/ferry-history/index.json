@@ -2,7 +2,29 @@
   "schema_version": 1,
   "camera": "ferry_beach",
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
-  "frames": [],
-  "generated_at": "2026-11-21T03:31:05Z",
+  "frames": [
+    {
+      "captured_at": "2026-11-21T11:46:46Z",
+      "file": "20261121T114646Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Heavy Rain",
+        "Elevated · Outlook",
+        "NWS precipitation guidance or excessive-rain product"
+      ],
+      "context": {
+        "event": "Heavy Rain",
+        "phase": "Outlook",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 8.97,
+        "residual_ft": -0.08,
+        "wave_height_ft": 0.7,
+        "dominant_period_sec": null,
+        "gust_mph": 4.5
+      }
+    }
+  ],
+  "generated_at": "2026-11-21T11:46:46Z",
   "retention_hours": 24
 }

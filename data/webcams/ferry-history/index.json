@@ -2,7 +2,29 @@
   "schema_version": 1,
   "camera": "ferry_beach",
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
-  "frames": [],
-  "generated_at": "2026-11-24T03:55:34Z",
+  "frames": [
+    {
+      "captured_at": "2026-11-24T14:29:25Z",
+      "file": "20261124T142925Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Coastal Flood",
+        "Elevated · Approaching",
+        "Portland observed or NOAA forecast water reaches Minor Flood"
+      ],
+      "context": {
+        "event": "Coastal Flood",
+        "phase": "Approaching",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 11.01,
+        "residual_ft": 0.02,
+        "wave_height_ft": 3.6,
+        "dominant_period_sec": 10.0,
+        "gust_mph": 20.1
+      }
+    }
+  ],
+  "generated_at": "2026-11-24T14:29:25Z",
   "retention_hours": 24
 }

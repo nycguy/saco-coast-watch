@@ -44,8 +44,29 @@
         "dominant_period_sec": 10.0,
         "gust_mph": 26.8
       }
+    },
+    {
+      "captured_at": "2026-11-25T05:40:50Z",
+      "file": "20261125T054050Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Heavy Rain",
+        "Elevated · Approaching",
+        "NWS precipitation guidance or excessive-rain product"
+      ],
+      "context": {
+        "event": "Heavy Rain",
+        "phase": "Approaching",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 7.56,
+        "residual_ft": -0.09,
+        "wave_height_ft": 2.0,
+        "dominant_period_sec": 10.0,
+        "gust_mph": 26.8
+      }
     }
   ],
-  "generated_at": "2026-11-24T23:36:56Z",
+  "generated_at": "2026-11-25T05:40:50Z",
   "retention_hours": 24
 }

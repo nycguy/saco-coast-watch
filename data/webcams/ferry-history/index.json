@@ -50,8 +50,32 @@
         "dominant_period_sec": null,
         "gust_mph": 11.2
       }
+    },
+    {
+      "captured_at": "2026-11-26T18:40:18Z",
+      "file": "20261126T184018Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Coastal Storm",
+        "Significant · Approaching",
+        "Active NWS coastal flood or storm surge alert",
+        "NWS Coastal Flood Advisory",
+        "NWS marine warning for coastal waters",
+        "NWS Gale Warning"
+      ],
+      "context": {
+        "event": "Coastal Storm",
+        "phase": "Approaching",
+        "impact": "Significant",
+        "impact_level": "orange",
+        "water_level_ft": 9.39,
+        "residual_ft": 0.25,
+        "wave_height_ft": 3.6,
+        "dominant_period_sec": 4.0,
+        "gust_mph": 24.6
+      }
     }
   ],
-  "generated_at": "2026-11-26T08:43:11Z",
+  "generated_at": "2026-11-26T18:40:18Z",
   "retention_hours": 24
 }

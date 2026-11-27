@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-27T09:45:21Z",
+  "generated_at": "2026-11-27T09:49:51Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -41311,7 +41311,7 @@
       }
     },
     {
-      "snapshot_at": "2026-11-27T09:45:21Z",
+      "snapshot_at": "2026-11-27T09:49:51Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -41329,12 +41329,12 @@
           "forecast": null,
           "predictions": null
         },
-        "latest_observed_ft": 3.11,
-        "latest_observed_at": "2026-11-27T09:36:00Z",
+        "latest_observed_ft": 2.92,
+        "latest_observed_at": "2026-11-27T09:42:00Z",
         "observed_24h_max_ft": 11.41,
         "observed_24h_max_time": "2026-11-26T16:48:00Z",
-        "residual_current_ft": 1.35,
-        "residual_current_at": "2026-11-27T09:36:00Z",
+        "residual_current_ft": 1.37,
+        "residual_current_at": "2026-11-27T09:42:00Z",
         "residual_24h_max_ft": 1.74,
         "residual_24h_max_time": "2026-11-27T07:48:00Z",
         "forecast_peak_24h_ft": 12.07,
@@ -41408,7 +41408,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-11-27T09:45:21.201596Z",
+        "generated_at": "2026-11-27T09:49:51.893251Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -41952,8 +41952,8 @@
           "precip_transition_24h": "Rain"
         },
         "rain": {
-          "qpf_24h_in": 0.43,
-          "qpf_72h_in": 0.5
+          "qpf_24h_in": 0.42,
+          "qpf_72h_in": 0.49
         },
         "wind": {
           "max_sustained_24h_mph": 25.0,

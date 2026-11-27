@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-27T09:45:12.550675Z",
+  "generated_at": "2026-11-27T09:49:46.167709Z",
   "stations": {
     "44007": {
       "id": "44007",
@@ -41,13 +41,13 @@
   "source_health": {
     "44007": {
       "status": "available",
-      "checked_at": "2026-11-27T09:45:12.550688Z",
+      "checked_at": "2026-11-27T09:49:46.167723Z",
       "observed_at": "2026-11-27T09:00:00Z",
       "error_type": null
     },
     "WEXM1": {
       "status": "available",
-      "checked_at": "2026-11-27T09:45:13.093990Z",
+      "checked_at": "2026-11-27T09:49:46.408366Z",
       "observed_at": "2026-11-27T09:00:00Z",
       "error_type": null
     }

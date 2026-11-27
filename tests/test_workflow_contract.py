@@ -26,6 +26,14 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('url: ${{ steps.deployment.outputs.page_url }}',workflow)
         self.assertNotIn(r'\${{ steps.deployment.outputs.page_url }}',workflow)
 
+    def test_pages_artifact_registration_is_verified_before_deployment(self):
+        workflow=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
+        self.assertIn('actions: read',workflow)
+        self.assertIn('Wait for Pages artifact registration',workflow)
+        self.assertIn('actions/runs/${GITHUB_RUN_ID}/artifacts?name=github-pages',workflow)
+        self.assertLess(workflow.index('Wait for Pages artifact registration'),workflow.index('Publish GitHub Pages'))
+        self.assertIn('sleep 5',workflow)
+
     def test_public_runner_and_existing_refresh_schedules_are_preserved(self):
         pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
         history=(ROOT/'.github/workflows/capture-history.yml').read_text(encoding='utf-8')

@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 concurrency:
@@ -161,6 +162,27 @@ jobs:
       - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: dist
+      - name: Wait for Pages artifact registration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          artifact_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?name=github-pages&per_page=100"
+          for attempt in $(seq 1 12); do
+            artifact_count="$(curl --fail --silent --show-error \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "${artifact_url}" | python3 -c 'import json,sys; print(sum(1 for a in json.load(sys.stdin).get("artifacts",[]) if a.get("name")=="github-pages" and not a.get("expired")))')"
+            if [ "$artifact_count" -ge 1 ]; then
+              echo "Pages artifact is registered and available to deploy-pages."
+              exit 0
+            fi
+            echo "Pages artifact is not visible to the Actions API yet (attempt ${attempt}/12); waiting 5 seconds."
+            sleep 5
+          done
+          echo "Pages artifact was uploaded but did not become visible before deployment." >&2
+          exit 1
       - name: Publish GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5.0.1

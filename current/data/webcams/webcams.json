@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-27T09:50:14Z",
+  "generated_at": "2026-11-27T10:37:12Z",
   "refresh_target_minutes": 5,
   "cameras": {
     "ferry_beach": {
       "name": "Ferry Beach",
       "status": "ok",
       "image": "data/webcams/ferry-beach.jpg",
-      "fetched_at": "2026-11-27T09:50:14Z",
+      "fetched_at": "2026-11-27T10:37:12Z",
       "source": "WebCOOS / NERACOOS live HLS frame",
       "live_url": "https://webcoos.org/cameras/ferrybeach_north/"
     },

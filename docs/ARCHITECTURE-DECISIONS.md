@@ -26,4 +26,12 @@ Status: Implemented. Run `45727373906` demonstrated a successful artifact finali
 
 Status: Deferred. The observed GitHub schedule is much less frequent than the configured ten- and fifteen-minute intervals. A separate data branch or Worker-backed delivery path may improve freshness, but it must first be validated for CORS, cache behavior, rate limits, atomic publication, mobile latency, and failure fallback. The current Pages path remains the known-good delivery mechanism until that evidence exists.
 
+## ADR-007: Publish generated JSON on a dedicated data branch in parallel
+
+Status: Implemented in parallel. The validated candidate is committed as one atomic update to `data-delivery/current`, with a manifest containing dataset hashes, timestamps, schema versions, and source-specific freshness thresholds. Browser loaders retain the same-origin Pages snapshot as fallback. Pages publication and durable history are not removed.
+
+## ADR-008: Do not use GitHub Contents API for browser polling
+
+Status: Rejected. It supports browser CORS but its unauthenticated rate limit and base64/API response overhead are poor fits for repeated mobile refreshes and severe-storm traffic. Raw delivery is preferred for the small public snapshot, subject to continued endpoint verification.
+
 

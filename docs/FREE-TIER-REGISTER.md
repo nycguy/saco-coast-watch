@@ -44,3 +44,7 @@ This register records published platform limits and the distinction between plat
 - Cloudflare cache limits: https://developers.cloudflare.com/cache/how-to/cache-rules/settings/
 - Resend pricing: https://resend.com/pricing
 
+## Phase 2 delivery addition
+
+The independent snapshot uses the existing public GitHub repository and standard GitHub Actions runners. It introduces no paid service, billing-enabled feature, larger runner, KV namespace, Worker binding, or automatic overage. The branch is kept separate from durable history so generated refreshes do not rewrite the historical record. GitHub Actions contents write permission is limited to the repository workflow token and is used only for the validated data publication.
+

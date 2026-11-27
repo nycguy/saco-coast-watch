@@ -51,7 +51,7 @@ function renderMarine(){
 async function loadMarine(){
  try{
   if(location.protocol==='file:')throw Error('Local file mode cannot load NOAA snapshots. Start run-local.bat and open http://127.0.0.1:8765/');
-  const data=await getJSON('data/wind.json?ts='+now(),12000);
+  const data=await getGeneratedJSON('data/wind.json',12000);
   const generated=Date.parse(data?.generated_at||'');
   if(!data||!data.stations||typeof data.stations!=='object'||!Number.isFinite(generated)||generated>now()+10*60000)throw Error('Invalid or future-dated marine snapshot');
   state.marine=data.stations;state.marineSnapshotAt=generated;

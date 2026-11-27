@@ -69,9 +69,7 @@
  const getColor=name=>name.startsWith('Storm Surge')?(name.endsWith('Warning')?'#df3e99':'#c89de9'):(name.endsWith('Warning')?'#f69b45':name.endsWith('Watch')?'#f1cb64':'#ffe3a0');
  async function updateAlertMap(){
   try{
-   const response=await fetch('data/coastal-alerts.json?ts='+Date.now(),{cache:'no-store'});
-   if(!response.ok)throw new Error('Map alert feed HTTP '+response.status);
-   const json=await response.json();
+   const json=await getGeneratedJSON('data/coastal-alerts.json',12000);
    if(json.error)throw new Error(String(json.error));
    if(!json.generatedAt||!Array.isArray(json.features))throw new Error('Map alert snapshot missing');
    const age=Date.now()-Date.parse(json.generatedAt);
@@ -105,8 +103,7 @@
  async function updateTropicalMap(){
   const node=document.getElementById('mapTropicalStatus'),button=document.getElementById('mapStormTrack');
   try{
-   const response=await fetch('data/hazards.json?ts='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('Tropical feed HTTP '+response.status);
-   const json=await response.json(),storms=json?.tropical?.storms||[];tropical.clearLayers();tropicalBounds=null;const pts=[];
+   const json=await getGeneratedJSON('data/hazards.json',12000),storms=json?.tropical?.storms||[];tropical.clearLayers();tropicalBounds=null;const pts=[];
    for(const storm of storms){
     const cone=Array.isArray(storm.cone)?storm.cone:[],track=Array.isArray(storm.track)?storm.track:[];
     if(cone.length>=3){L.polygon(cone,{color:'#dc3545',weight:1.5,fillColor:'#f28c28',fillOpacity:.12,interactive:false}).addTo(tropical);pts.push(...cone);}

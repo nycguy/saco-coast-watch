@@ -66,4 +66,8 @@ SacoCast (`nycguy/saco-coast-watch`) belongs to the personal account; the 0.45 G
 5. **Device-local identity (low):** Push management requires the device's stored random credential. Clearing browser storage can prevent that device from authenticating for management; the application deliberately does not enable insecure cross-device discovery.
 6. **Local macOS Chromium startup (medium):** Both system Chrome and Playwright-managed Chromium fail during launch in the supplied Intel/macOS automation context. CI Linux browser coverage passes; local desktop/mobile browser coverage on this Mac remains blocked by browser process startup and should be retried in an interactive macOS session or after a browser/macOS update.
 
+## Phase 2 independent delivery assessment
+
+Generated JSON now has a parallel delivery candidate on `data-delivery`. The manifest and one-commit publication remove partial-update risk. Browser loaders fall back to the Pages snapshot and local last-known-good data if the branch, manifest, schema, or freshness check fails. Raw GitHub content has materially better storm-traffic characteristics than the unauthenticated Contents API, but its cache invalidation remains provider-controlled. The Pages path therefore remains the rollback authority until repeated scheduled publications establish stable freshness and mobile latency.
+
 For this Pages release, verify live Pages assets/data and perform read-only Worker health/configuration checks. A future Worker release must additionally pass its read-only schema and subscriber-preservation preflight before any explicitly authorized apply/deploy.

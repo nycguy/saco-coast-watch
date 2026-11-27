@@ -41,12 +41,21 @@ let currentMode='radar';
 let currentHorizon=0;
 let currentPoint=null;
 let lastSnapshotFetch=0;
+const DATA_DELIVERY_BASE='https://raw.githubusercontent.com/nycguy/saco-coast-watch/data-delivery/current';
+let deliveryManifestPromise;
+async function loadIndependentSnapshot(){
+  if(!deliveryManifestPromise)deliveryManifestPromise=fetch(DATA_DELIVERY_BASE+'/manifest.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Independent data manifest '+r.status);return r.json()});
+  const manifest=await deliveryManifestPromise,meta=manifest?.datasets?.['eastcast/data/snapshot.json'];
+  const generated=Date.parse(meta?.generated_at||'');
+  if(manifest?.manifest_schema_version!==1||!meta||!Number.isFinite(generated)||Date.now()-generated>Number(meta.max_age_minutes||90)*60000)throw Error('Independent EastCast snapshot is stale');
+  const r=await fetch(DATA_DELIVERY_BASE+'/'+meta.path.replace(/^current\//,''),{cache:'no-store'});if(!r.ok)throw Error('Independent EastCast snapshot '+r.status);return r.json();
+}
 
 async function loadSnapshot(force=false){
   const url='data/snapshot.json'+(force?'?t='+Date.now():'');
-  const r=await fetch(url,{cache:force?'no-store':'default'});
-  if(!r.ok) throw new Error('EastCast snapshot '+r.status);
-  const data=await r.json();
+  let data;
+  try{data=await loadIndependentSnapshot();}
+  catch(independentError){const r=await fetch(url,{cache:force?'no-store':'default'});if(!r.ok) throw new Error('EastCast snapshot '+r.status+'; '+independentError.message);data=await r.json();}
   if(!data?.summary) throw new Error('Invalid EastCast snapshot');
   snapshot=data; lastSnapshotFetch=Date.now();
   renderAll();

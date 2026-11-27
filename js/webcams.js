@@ -63,9 +63,7 @@
   }
   async function loadWebcamPreviews(){
     try{
-      const r=await fetch('data/webcams/webcams.json?t='+Date.now(),{cache:'no-store'});
-      if(!r.ok)throw Error('preview manifest HTTP '+r.status);
-      const m=await r.json();
+      const m=await getGeneratedJSON('data/webcams/webcams.json',12000);
       await preloadPreview(m.cameras?.ferry_beach,'ferryPreviewImage','ferryPreviewTime','ferryStatus',ferryVideo);
     }catch(err){
       console.warn('Saco Coast Watch webcam previews:',err);

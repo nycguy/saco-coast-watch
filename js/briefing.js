@@ -99,7 +99,7 @@ function renderBriefing(){
  const timeline=$('briefTimeline');if(timeline){timeline.replaceChildren();const events=b.impact_timeline||[];if(!events.length){const p=document.createElement('p');p.className='impact-empty';p.textContent='No timestamped coastal impacts were retained in the past 24 hours.';timeline.append(p);}else for(const item of events){const row=document.createElement('div');row.className='impact-item';const when=document.createElement('div');when.className='impact-time';const t=Date.parse(item.at||'');when.textContent=Number.isFinite(t)?dayTime(t)+' ET':'Time unavailable';const dot=document.createElement('span');dot.className='impact-dot';const body=document.createElement('div');body.className='impact-body';const title=document.createElement('strong');title.textContent=item.title||'Coastal event';const source=document.createElement('small');source.textContent=(item.anecdotal?'Anecdotal · ':'')+(item.source||'Public source');if(item.anecdotal)source.className='anecdotal';body.append(title,source);if(item.url){const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open source ↗';a.className='mini-link';body.append(a);}row.append(when,dot,body);timeline.append(row);}}
 }
 async function loadBriefing(){
- try{state.briefing=await getJSON('data/coastal-briefing.json?t='+Date.now(),12000);state.briefingError=null;}
+ try{state.briefing=await getGeneratedJSON('data/coastal-briefing.json',12000);state.briefingError=null;}
  catch(err){state.briefingError=String(err?.message||err);console.warn('Saco Coast Watch briefing:',err);}
  renderBriefing();
  if(typeof renderCoastalIntelligence==='function')renderCoastalIntelligence();

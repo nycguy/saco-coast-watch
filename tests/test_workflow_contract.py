@@ -65,6 +65,20 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertLess(pages.index('tests/responsive_accessibility_smoke.py'),pages.index('Publish GitHub Pages'))
         self.assertGreater(pages.rindex('tests/responsive_accessibility_smoke.py'),pages.index('Publish GitHub Pages'))
 
+    def test_independent_data_publication_is_validated_atomic_and_duplicate_safe(self):
+        pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
+        self.assertIn('contents: write',pages)
+        self.assertIn('scripts/build_data_manifest.py',pages)
+        self.assertIn('data-delivery',pages)
+        self.assertIn('git -C "$publish_dir" push',pages)
+        self.assertIn('dataset hashes are unchanged',pages)
+        self.assertLess(pages.index('Build independently delivered data manifest'),pages.index('Verify EastCast'))
+
+    def test_notification_worker_release_workflow_remains_separate(self):
+        worker=(ROOT/'.github/workflows/release-worker.yml').read_text(encoding='utf-8')
+        self.assertIn('wrangler',worker)
+        self.assertNotIn('data-delivery',worker)
+
 if __name__=='__main__':
     unittest.main()
 

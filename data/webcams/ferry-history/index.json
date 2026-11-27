@@ -4,30 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-11-26T18:40:18Z",
-      "file": "20261126T184018Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Coastal Storm",
-        "Significant · Approaching",
-        "Active NWS coastal flood or storm surge alert",
-        "NWS Coastal Flood Advisory",
-        "NWS marine warning for coastal waters",
-        "NWS Gale Warning"
-      ],
-      "context": {
-        "event": "Coastal Storm",
-        "phase": "Approaching",
-        "impact": "Significant",
-        "impact_level": "orange",
-        "water_level_ft": 9.39,
-        "residual_ft": 0.25,
-        "wave_height_ft": 3.6,
-        "dominant_period_sec": 4.0,
-        "gust_mph": 24.6
-      }
-    },
-    {
       "captured_at": "2026-11-27T01:56:08Z",
       "file": "20261127T015608Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -98,8 +74,29 @@
         "dominant_period_sec": 9.0,
         "gust_mph": 38.0
       }
+    },
+    {
+      "captured_at": "2026-11-27T19:35:52Z",
+      "file": "20261127T193552Z.jpg",
+      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
+      "reasons": [
+        "Marine Hazard",
+        "Elevated · Ongoing",
+        "NDBC 44007 measured offshore conditions are elevated"
+      ],
+      "context": {
+        "event": "Marine Hazard",
+        "phase": "Ongoing",
+        "impact": "Elevated",
+        "impact_level": "yellow",
+        "water_level_ft": 9.69,
+        "residual_ft": 0.91,
+        "wave_height_ft": 8.9,
+        "dominant_period_sec": 11.0,
+        "gust_mph": 15.7
+      }
     }
   ],
-  "generated_at": "2026-11-27T10:29:16Z",
+  "generated_at": "2026-11-27T19:35:52Z",
   "retention_hours": 24
 }

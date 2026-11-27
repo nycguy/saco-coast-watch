@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-11-27T09:45:12.550675Z",
+  "stations": {
+    "44007": {
+      "id": "44007",
+      "observed_at": "2026-11-27T09:00:00Z",
+      "speed_mph": 29.1,
+      "gust_mph": 35.8,
+      "direction_deg": 50,
+      "wave_height_ft": 12.5,
+      "wave_height_supported": true,
+      "dominant_period_sec": 9.0,
+      "average_period_sec": 6.6,
+      "wave_direction_deg": 114,
+      "pressure_mb": 1007.8,
+      "pressure_tendency_mb": -4.8,
+      "water_temp_f": 50.5,
+      "air_temp_f": 47.8,
+      "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
+      "wave_observed_at": "2026-11-27T08:50:00Z"
+    },
+    "WEXM1": {
+      "id": "WEXM1",
+      "observed_at": "2026-11-27T09:00:00Z",
+      "speed_mph": 9.2,
+      "gust_mph": null,
+      "direction_deg": 360,
+      "wave_height_ft": null,
+      "wave_height_supported": true,
+      "dominant_period_sec": null,
+      "average_period_sec": null,
+      "wave_direction_deg": null,
+      "pressure_mb": null,
+      "pressure_tendency_mb": null,
+      "water_temp_f": null,
+      "air_temp_f": 38.5,
+      "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
+      "wave_observed_at": null
+    }
+  },
+  "source_health": {
+    "44007": {
+      "status": "available",
+      "checked_at": "2026-11-27T09:45:12.550688Z",
+      "observed_at": "2026-11-27T09:00:00Z",
+      "error_type": null
+    },
+    "WEXM1": {
+      "status": "available",
+      "checked_at": "2026-11-27T09:45:13.093990Z",
+      "observed_at": "2026-11-27T09:00:00Z",
+      "error_type": null
+    }
+  }
+}

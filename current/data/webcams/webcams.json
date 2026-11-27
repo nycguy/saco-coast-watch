@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-27T09:46:00Z",
+  "refresh_target_minutes": 5,
+  "cameras": {
+    "ferry_beach": {
+      "name": "Ferry Beach",
+      "status": "ok",
+      "image": "data/webcams/ferry-beach.jpg",
+      "fetched_at": "2026-11-27T09:46:00Z",
+      "source": "WebCOOS / NERACOOS live HLS frame",
+      "live_url": "https://webcoos.org/cameras/ferrybeach_north/"
+    },
+    "abellona": {
+      "name": "Abellona Inn / Old Orchard Beach",
+      "status": "live_embed",
+      "image": null,
+      "fetched_at": null,
+      "source": "Abellona Inn / YouTube Live player",
+      "live_url": "https://www.youtube.com/watch?v=HSQpqIWLViI",
+      "note": "The app displays the actual muted live player. YouTube's static poster thumbnail is not used as current-condition imagery."
+    }
+  }
+}

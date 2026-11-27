@@ -25,7 +25,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   capture:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out application code
         uses: actions/checkout@v7.0.1
@@ -119,3 +119,4 @@ jobs:
           git commit -m "Capture coastal history $(date -u +'%Y-%m-%dT%H:%MZ')"
           git pull --rebase origin coastal-history
           git push origin HEAD:coastal-history
+

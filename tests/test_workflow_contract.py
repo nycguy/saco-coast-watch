@@ -37,9 +37,9 @@ class WorkflowContractTests(unittest.TestCase):
     def test_public_runner_and_existing_refresh_schedules_are_preserved(self):
         pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')
         history=(ROOT/'.github/workflows/capture-history.yml').read_text(encoding='utf-8')
-        self.assertIn('runs-on: ubuntu-latest',pages)
+        self.assertIn('runs-on: ubuntu-24.04',pages)
         self.assertIn("cron: '*/10 * * * *'",pages)
-        self.assertIn('runs-on: ubuntu-latest',history)
+        self.assertIn('runs-on: ubuntu-24.04',history)
         self.assertIn("cron: '*/15 * * * *'",history)
 
     def test_debug_screenshot_artifacts_expire_after_one_day(self):
@@ -67,3 +67,4 @@ class WorkflowContractTests(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
+

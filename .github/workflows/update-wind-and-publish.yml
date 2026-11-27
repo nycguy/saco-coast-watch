@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -226,3 +226,4 @@ jobs:
             ui-audit/*.jpg
             ui-audit/active-alert-*.png
           if-no-files-found: error
+

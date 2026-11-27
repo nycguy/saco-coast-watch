@@ -5,22 +5,33 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import time
+import urllib.error
 import urllib.request
 
 
-def fetch(url):
+def fetch(url, attempts=1):
     request = urllib.request.Request(url, headers={"Origin": "https://nycguy.github.io", "Accept": "application/json"})
-    with urllib.request.urlopen(request, timeout=15) as response:
-        headers = {key.lower(): value for key, value in response.headers.items()}
-        if response.status != 200:
-            raise RuntimeError(f"{url}: HTTP {response.status}")
-        if headers.get("access-control-allow-origin") not in ("*", "https://nycguy.github.io"):
-            raise RuntimeError(f"{url}: browser CORS header is missing")
-        return response.read(), headers
+    last_error = None
+    for attempt in range(attempts):
+        try:
+            with urllib.request.urlopen(request, timeout=15) as response:
+                headers = {key.lower(): value for key, value in response.headers.items()}
+                if response.status != 200:
+                    raise RuntimeError(f"{url}: HTTP {response.status}")
+                if headers.get("access-control-allow-origin") not in ("*", "https://nycguy.github.io"):
+                    raise RuntimeError(f"{url}: browser CORS header is missing")
+                return response.read(), headers
+        except urllib.error.HTTPError as exc:
+            last_error = exc
+            if exc.code not in (404, 503) or attempt == attempts - 1:
+                raise
+            time.sleep(5)
+    raise last_error or RuntimeError(f"{url}: delivery did not respond")
 
 
 def verify(base):
-    raw, headers = fetch(base.rstrip("/") + "/manifest.json")
+    raw, headers = fetch(base.rstrip("/") + "/manifest.json", attempts=12)
     manifest = json.loads(raw)
     if manifest.get("manifest_schema_version") != 1:
         raise RuntimeError("unsupported independent manifest schema")
@@ -28,7 +39,7 @@ def verify(base):
     if "max-age=" not in cache:
         raise RuntimeError("manifest cache policy is not observable")
     for logical, meta in manifest.get("datasets", {}).items():
-        data, _ = fetch(base.rstrip("/") + "/" + meta["path"].removeprefix("current/"))
+        data, _ = fetch(base.rstrip("/") + "/" + meta["path"].removeprefix("current/"), attempts=3)
         if hashlib.sha256(data).hexdigest() != meta.get("sha256"):
             raise RuntimeError(f"{logical}: SHA-256 does not match manifest")
         json.loads(data)

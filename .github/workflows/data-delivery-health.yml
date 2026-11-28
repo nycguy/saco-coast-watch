@@ -1,6 +1,11 @@
 name: Monitor SacoCast data delivery
 
 on:
+  push:
+    paths:
+      - '.github/workflows/data-delivery-health.yml'
+      - 'scripts/check_data_delivery_health.py'
+      - 'scripts/verify_data_delivery.py'
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:

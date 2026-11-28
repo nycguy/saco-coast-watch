@@ -4,30 +4,6 @@
   "live_url": "https://webcoos.org/cameras/ferrybeach_north/",
   "frames": [
     {
-      "captured_at": "2026-11-27T01:56:08Z",
-      "file": "20261127T015608Z.jpg",
-      "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
-      "reasons": [
-        "Coastal Storm",
-        "Significant · Ongoing",
-        "Active NWS coastal flood or storm surge alert",
-        "NWS Coastal Flood Advisory",
-        "NWS marine warning for coastal waters",
-        "NWS Gale Warning"
-      ],
-      "context": {
-        "event": "Coastal Storm",
-        "phase": "Ongoing",
-        "impact": "Significant",
-        "impact_level": "orange",
-        "water_level_ft": 3.5,
-        "residual_ft": 0.52,
-        "wave_height_ft": 7.9,
-        "dominant_period_sec": 6.0,
-        "gust_mph": 35.8
-      }
-    },
-    {
       "captured_at": "2026-11-27T02:38:02Z",
       "file": "20261127T023802Z.jpg",
       "source": "WebCOOS / NERACOOS Ferry Beach north HLS",
@@ -97,6 +73,6 @@
       }
     }
   ],
-  "generated_at": "2026-11-27T19:35:52Z",
+  "generated_at": "2026-11-28T02:10:54Z",
   "retention_hours": 24
 }

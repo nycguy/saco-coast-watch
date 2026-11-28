@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-28T02:37:43Z",
+  "generated_at": "2026-11-28T02:47:01Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "past_24h": {
     "text": "Over the past 24 hours, the Portland gauge reached 12.24 ft MLLW around Fri, Nov 27 at 12:42 PM ET, 0.24 ft above the 12.0 ft Minor Flood threshold. Marine observations: 44007 gusted to 47.0 mph; WEXM1 reached 12.8 mph sustained. Portland water reached +1.74 ft above the predicted astronomical tide around Fri, Nov 27 at 2:48 AM ET. The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 6.7 mph, fell from 33.6 mph in the compatible snapshot nearest 24 hours earlier. The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 42.5 mph in the compatible snapshot nearest 24 hours earlier. The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 991.9 mb, fell from 1021.7 mb in the compatible snapshot nearest 24 hours earlier. NWS alert changes: Gale Warning expired; Small Craft Advisory issued. Recent coastal event: offshore wind gust, Portland water above the predicted tide, offshore wave height. Current and forward-looking conditions have returned to Routine.",
@@ -153,7 +153,7 @@
       {
         "label": "Now",
         "target_hours_ago": 0,
-        "snapshot_at": "2026-11-28T02:37:43Z",
+        "snapshot_at": "2026-11-28T02:47:01Z",
         "peak_ft": 11.28,
         "peak_time": "2026-11-28T18:24:00Z",
         "minor_margin_ft": 0.72,
@@ -256,7 +256,7 @@
       "peak_at": "2026-11-28T18:24:00Z",
       "window_start": null,
       "window_end": null,
-      "hours_until_peak": 15.8,
+      "hours_until_peak": 15.6,
       "basis": "NOAA OFS modeled total-water peak"
     },
     "coastal_impact": {
@@ -516,7 +516,7 @@
           }
         ]
       },
-      "hours_until_peak": 15.8,
+      "hours_until_peak": 15.7,
       "data_coverage": {
         "available": 4,
         "assessed": 5,
@@ -685,9 +685,9 @@
     "retrospective": {
       "title": "Coastal Storm",
       "started_at": "2026-11-26T00:18:26Z",
-      "ended_at": "2026-11-28T02:37:43Z",
-      "captured_coverage_hours": 50.3,
-      "duration_hours": 50.3,
+      "ended_at": "2026-11-28T02:47:01Z",
+      "captured_coverage_hours": 50.5,
+      "duration_hours": 50.5,
       "coverage_basis": "This is how much of the event SacoCast captured, not how long the storm itself lasted.",
       "phase": "Recent",
       "highest_impact": {
@@ -754,9 +754,9 @@
     {
       "title": "Coastal Storm",
       "started_at": "2026-11-26T00:18:26Z",
-      "ended_at": "2026-11-28T02:37:43Z",
-      "captured_coverage_hours": 50.3,
-      "duration_hours": 50.3,
+      "ended_at": "2026-11-28T02:47:01Z",
+      "captured_coverage_hours": 50.5,
+      "duration_hours": 50.5,
       "coverage_basis": "This is how much of the event SacoCast captured, not how long the storm itself lasted.",
       "phase": "Recent",
       "highest_impact": {
@@ -1336,7 +1336,7 @@
     }
   ],
   "current_snapshot": {
-    "snapshot_at": "2026-11-28T02:37:43Z",
+    "snapshot_at": "2026-11-28T02:47:01Z",
     "snapshot_kind": "realtime",
     "provenance": {
       "forecast": "live_noaa_ofs_capture",
@@ -1354,12 +1354,12 @@
         "forecast": null,
         "predictions": null
       },
-      "latest_observed_ft": 3.88,
-      "latest_observed_at": "2026-11-28T02:30:00Z",
+      "latest_observed_ft": 4.38,
+      "latest_observed_at": "2026-11-28T02:42:00Z",
       "observed_24h_max_ft": 12.24,
       "observed_24h_max_time": "2026-11-27T17:42:00Z",
-      "residual_current_ft": 1.4,
-      "residual_current_at": "2026-11-28T02:30:00Z",
+      "residual_current_ft": 1.35,
+      "residual_current_at": "2026-11-28T02:42:00Z",
       "residual_24h_max_ft": 1.74,
       "residual_24h_max_time": "2026-11-27T07:48:00Z",
       "forecast_peak_24h_ft": 11.28,
@@ -1433,7 +1433,7 @@
     },
     "hazards": {
       "schema_version": 1,
-      "generated_at": "2026-11-28T02:37:43.202599Z",
+      "generated_at": "2026-11-28T02:47:01.583688Z",
       "location": {
         "name": "Saco Bay coastal reference",
         "lat": 43.472,
@@ -1539,7 +1539,7 @@
           "peak_at": "2026-11-28T18:24:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 15.8,
+          "hours_until_peak": 15.6,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -1799,7 +1799,7 @@
               }
             ]
           },
-          "hours_until_peak": 15.8,
+          "hours_until_peak": 15.7,
           "data_coverage": {
             "available": 4,
             "assessed": 5,
@@ -3049,7 +3049,7 @@
         "peak_at": "2026-11-28T18:24:00Z",
         "window_start": null,
         "window_end": null,
-        "hours_until_peak": 15.8,
+        "hours_until_peak": 15.6,
         "basis": "NOAA OFS modeled total-water peak"
       },
       "coastal_impact": {
@@ -3309,7 +3309,7 @@
             }
           ]
         },
-        "hours_until_peak": 15.8,
+        "hours_until_peak": 15.7,
         "data_coverage": {
           "available": 4,
           "assessed": 5,

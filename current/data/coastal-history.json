@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-28T02:37:43Z",
+  "generated_at": "2026-11-28T02:47:01Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -41726,7 +41726,7 @@
       }
     },
     {
-      "snapshot_at": "2026-11-28T02:37:43Z",
+      "snapshot_at": "2026-11-28T02:47:01Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -41744,12 +41744,12 @@
           "forecast": null,
           "predictions": null
         },
-        "latest_observed_ft": 3.88,
-        "latest_observed_at": "2026-11-28T02:30:00Z",
+        "latest_observed_ft": 4.38,
+        "latest_observed_at": "2026-11-28T02:42:00Z",
         "observed_24h_max_ft": 12.24,
         "observed_24h_max_time": "2026-11-27T17:42:00Z",
-        "residual_current_ft": 1.4,
-        "residual_current_at": "2026-11-28T02:30:00Z",
+        "residual_current_ft": 1.35,
+        "residual_current_at": "2026-11-28T02:42:00Z",
         "residual_24h_max_ft": 1.74,
         "residual_24h_max_time": "2026-11-27T07:48:00Z",
         "forecast_peak_24h_ft": 11.28,
@@ -41823,7 +41823,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-11-28T02:37:43.202599Z",
+        "generated_at": "2026-11-28T02:47:01.583688Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -41929,7 +41929,7 @@
             "peak_at": "2026-11-28T18:24:00Z",
             "window_start": null,
             "window_end": null,
-            "hours_until_peak": 15.8,
+            "hours_until_peak": 15.6,
             "basis": "NOAA OFS modeled total-water peak"
           },
           "coastal_impact": {
@@ -42189,7 +42189,7 @@
                 }
               ]
             },
-            "hours_until_peak": 15.8,
+            "hours_until_peak": 15.7,
             "data_coverage": {
               "available": 4,
               "assessed": 5,
@@ -43439,7 +43439,7 @@
           "peak_at": "2026-11-28T18:24:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 15.8,
+          "hours_until_peak": 15.6,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -43699,7 +43699,7 @@
               }
             ]
           },
-          "hours_until_peak": 15.8,
+          "hours_until_peak": 15.7,
           "data_coverage": {
             "available": 4,
             "assessed": 5,

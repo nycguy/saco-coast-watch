@@ -1,30 +1,30 @@
 {
-  "generated_at": "2026-11-28T02:46:55.342839Z",
+  "generated_at": "2026-11-28T10:36:02.911621Z",
   "stations": {
     "44007": {
       "id": "44007",
-      "observed_at": "2026-11-28T02:10:00Z",
-      "speed_mph": 6.7,
-      "gust_mph": 13.4,
-      "direction_deg": 320,
-      "wave_height_ft": 7.2,
+      "observed_at": "2026-11-28T09:50:00Z",
+      "speed_mph": 24.6,
+      "gust_mph": 31.3,
+      "direction_deg": 240,
+      "wave_height_ft": 6.9,
       "wave_height_supported": true,
-      "dominant_period_sec": 8.0,
-      "average_period_sec": 6.6,
-      "wave_direction_deg": 137,
-      "pressure_mb": 991.9,
+      "dominant_period_sec": 10.0,
+      "average_period_sec": 5.8,
+      "wave_direction_deg": 129,
+      "pressure_mb": 992.7,
       "pressure_tendency_mb": null,
-      "water_temp_f": 50.4,
-      "air_temp_f": 45.7,
+      "water_temp_f": 50.5,
+      "air_temp_f": 47.3,
       "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
-      "wave_observed_at": "2026-11-28T01:50:00Z"
+      "wave_observed_at": "2026-11-28T09:50:00Z"
     },
     "WEXM1": {
       "id": "WEXM1",
-      "observed_at": "2026-11-28T02:00:00Z",
-      "speed_mph": 1.1,
+      "observed_at": "2026-11-28T10:00:00Z",
+      "speed_mph": 5.8,
       "gust_mph": null,
-      "direction_deg": 300,
+      "direction_deg": 230,
       "wave_height_ft": null,
       "wave_height_supported": true,
       "dominant_period_sec": null,
@@ -33,7 +33,7 @@
       "pressure_mb": null,
       "pressure_tendency_mb": null,
       "water_temp_f": null,
-      "air_temp_f": 42.6,
+      "air_temp_f": 43.3,
       "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
       "wave_observed_at": null
     }
@@ -41,14 +41,14 @@
   "source_health": {
     "44007": {
       "status": "available",
-      "checked_at": "2026-11-28T02:46:55.342853Z",
-      "observed_at": "2026-11-28T02:10:00Z",
+      "checked_at": "2026-11-28T10:36:02.911634Z",
+      "observed_at": "2026-11-28T09:50:00Z",
       "error_type": null
     },
     "WEXM1": {
       "status": "available",
-      "checked_at": "2026-11-28T02:46:55.514134Z",
-      "observed_at": "2026-11-28T02:00:00Z",
+      "checked_at": "2026-11-28T10:36:03.288933Z",
+      "observed_at": "2026-11-28T10:00:00Z",
       "error_type": null
     }
   }

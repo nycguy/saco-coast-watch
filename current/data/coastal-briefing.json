@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-27T19:38:27Z",
+  "generated_at": "2026-11-28T02:00:24Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "past_24h": {
-    "text": "Over the past 24 hours, the Portland gauge reached 12.24 ft MLLW around Fri, Nov 27 at 12:42 PM ET, 0.24 ft above the 12.0 ft Minor Flood threshold. Marine observations: 44007 gusted to 47.0 mph; WEXM1 reached 12.8 mph sustained. Portland water reached +1.74 ft above the predicted astronomical tide around Fri, Nov 27 at 2:48 AM ET. The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 11.2 mph, fell from 20.1 mph in the compatible snapshot nearest 24 hours earlier. The latest offshore significant wave height at NOAA/NDBC offshore buoy 44007 was 8.9 ft, rose from 3.6 ft in the compatible snapshot nearest 24 hours earlier. This offshore buoy reading is not a local surf measurement. The latest dominant wave period at NOAA/NDBC offshore buoy 44007 was 11.0 seconds, rose from 4.0 seconds in the compatible snapshot nearest 24 hours earlier. The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 998.1 mb, fell from 1033.6 mb in the compatible snapshot nearest 24 hours earlier. NWS alert changes: Gale Warning expired; Small Craft Advisory issued.",
+    "text": "Over the past 24 hours, the Portland gauge reached 12.24 ft MLLW around Fri, Nov 27 at 12:42 PM ET, 0.24 ft above the 12.0 ft Minor Flood threshold. Marine observations: 44007 gusted to 47.0 mph; WEXM1 reached 12.8 mph sustained. Portland water reached +1.74 ft above the predicted astronomical tide around Fri, Nov 27 at 2:48 AM ET. The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 8.9 mph, fell from 29.1 mph in the compatible snapshot nearest 24 hours earlier. The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 35.8 mph in the compatible snapshot nearest 24 hours earlier. The latest dominant wave period at NOAA/NDBC offshore buoy 44007 was 9.0 seconds, rose from 6.0 seconds in the compatible snapshot nearest 24 hours earlier. The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 992.2 mb, fell from 1023.7 mb in the compatible snapshot nearest 24 hours earlier. NWS alert changes: Gale Warning expired; Small Craft Advisory issued. Recent coastal event: offshore wind gust, Portland water above the predicted tide, offshore wave height. Current and forward-looking conditions have returned to Routine.",
     "dashboard_text": "Portland gauge peak: 12.24 ft MLLW (0.24 ft above Minor Flood). Water ran as much as +1.74 ft above predicted tide. Marine: 44007 gusted to 47.0 mph.",
     "observed_peak_ft": 12.24,
     "observed_peak_time": "2026-11-27T17:42:00Z",
@@ -15,38 +15,38 @@
       {
         "station": "44007",
         "metric": "speed_mph",
-        "current": 11.2,
-        "previous": 20.1,
-        "current_at": "2026-11-27T19:00:00Z",
-        "previous_at": "2026-11-26T18:10:00Z",
-        "text": "The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 11.2 mph, fell from 20.1 mph in the compatible snapshot nearest 24 hours earlier."
+        "current": 8.9,
+        "previous": 29.1,
+        "current_at": "2026-11-28T01:30:00Z",
+        "previous_at": "2026-11-27T01:30:00Z",
+        "text": "The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 8.9 mph, fell from 29.1 mph in the compatible snapshot nearest 24 hours earlier."
       },
       {
         "station": "44007",
-        "metric": "wave_height_ft",
-        "current": 8.9,
-        "previous": 3.6,
-        "current_at": "2026-11-27T18:50:00Z",
-        "previous_at": "2026-11-26T17:50:00Z",
-        "text": "The latest offshore significant wave height at NOAA/NDBC offshore buoy 44007 was 8.9 ft, rose from 3.6 ft in the compatible snapshot nearest 24 hours earlier. This offshore buoy reading is not a local surf measurement."
+        "metric": "gust_mph",
+        "current": 13.4,
+        "previous": 35.8,
+        "current_at": "2026-11-28T01:30:00Z",
+        "previous_at": "2026-11-27T01:30:00Z",
+        "text": "The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 35.8 mph in the compatible snapshot nearest 24 hours earlier."
       },
       {
         "station": "44007",
         "metric": "dominant_period_sec",
-        "current": 11.0,
-        "previous": 4.0,
-        "current_at": "2026-11-27T18:50:00Z",
-        "previous_at": "2026-11-26T17:50:00Z",
-        "text": "The latest dominant wave period at NOAA/NDBC offshore buoy 44007 was 11.0 seconds, rose from 4.0 seconds in the compatible snapshot nearest 24 hours earlier."
+        "current": 9.0,
+        "previous": 6.0,
+        "current_at": "2026-11-28T01:20:00Z",
+        "previous_at": "2026-11-27T01:20:00Z",
+        "text": "The latest dominant wave period at NOAA/NDBC offshore buoy 44007 was 9.0 seconds, rose from 6.0 seconds in the compatible snapshot nearest 24 hours earlier."
       },
       {
         "station": "44007",
         "metric": "pressure_mb",
-        "current": 998.1,
-        "previous": 1033.6,
-        "current_at": "2026-11-27T19:00:00Z",
-        "previous_at": "2026-11-26T18:10:00Z",
-        "text": "The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 998.1 mb, fell from 1033.6 mb in the compatible snapshot nearest 24 hours earlier."
+        "current": 992.2,
+        "previous": 1023.7,
+        "current_at": "2026-11-28T01:30:00Z",
+        "previous_at": "2026-11-27T01:30:00Z",
+        "text": "The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 992.2 mb, fell from 1023.7 mb in the compatible snapshot nearest 24 hours earlier."
       }
     ],
     "alert_changes": [
@@ -70,82 +70,115 @@
     "local_impacts": []
   },
   "forecast_change_24h": {
-    "text": "The highest NOAA-predicted water level over the next 72 hours decreased by 0.66 ft compared with the forecast captured about 24 hours ago, from 11.97 to 11.31 ft MLLW. Peak timing shifted about 49.9 hours later. The margin to the 12.0 ft Minor Flood threshold grew by 0.66 ft. Compared with forecast guidance captured around 24 hours earlier, NWS 72-hour precipitation guidance decreased by 0.4 in, from 1.2 to 0.9 in. Compared with coastal conditions around 24 hours ago, coastal status shifted from approaching to ongoing; SacoCast's local impact rating moved from Significant to Elevated. The SacoCast compound coastal-impact score decreased by 8 points, from 16 to 8. Drivers: NOAA forecast water level fell by 0.7 ft.",
-    "dashboard_text": "The highest NOAA-predicted water level over the next 72 hours decreased by 0.66 ft compared with the forecast captured about 24 hours ago, from 11.97 to 11.31 ft MLLW. Peak timing shifted about 49.9 hours later. The margin to the 12.0 ft Minor Flood threshold grew by 0.66 ft.",
+    "text": "The highest NOAA-predicted water level over the next 72 hours fell below Portland's Minor Flood threshold, changing from 12.03 to 11.28 ft MLLW. Compared with coastal conditions around 24 hours ago, coastal status shifted from ongoing to recently ended; SacoCast's local impact rating moved from Significant to Routine. The SacoCast compound coastal-impact score decreased by 16 points, from 24 to 8. Drivers: NOAA forecast water level fell by 0.8 ft.",
+    "dashboard_text": "The highest NOAA-predicted water level over the next 72 hours fell below Portland's Minor Flood threshold, changing from 12.03 to 11.28 ft MLLW.",
     "comparison": {
-      "baseline_at": "2026-11-26T18:39:33Z",
+      "baseline_at": "2026-11-27T01:55:50Z",
       "baseline_source": "live_noaa_ofs_capture",
-      "peak_delta_ft": -0.66,
-      "previous_peak_ft": 11.97,
-      "current_peak_ft": 11.31,
-      "previous_peak_time": "2026-11-27T17:30:00Z",
-      "current_peak_time": "2026-11-29T19:24:00Z",
-      "time_shift_minutes": 2994,
+      "peak_delta_ft": -0.75,
+      "previous_peak_ft": 12.03,
+      "current_peak_ft": 11.28,
+      "previous_peak_time": "2026-11-27T17:36:00Z",
+      "current_peak_time": "2026-11-28T18:24:00Z",
+      "time_shift_minutes": 1488,
       "threshold_margin_delta_ft": {
-        "minor": 0.66,
-        "moderate": 0.66,
-        "major": 0.66
+        "minor": 0.75,
+        "moderate": 0.75,
+        "major": 0.75
       },
       "previous_threshold_margins_ft": {
-        "minor": 0.03,
-        "moderate": 1.03,
-        "major": 2.03
+        "minor": -0.03,
+        "moderate": 0.97,
+        "major": 1.97
       },
       "current_threshold_margins_ft": {
-        "minor": 0.69,
-        "moderate": 1.69,
-        "major": 2.69
+        "minor": 0.72,
+        "moderate": 1.72,
+        "major": 2.72
       }
     },
     "wind_comparison": {
       "44007": {
-        "speed_delta_mph": -8.9,
-        "gust_delta_mph": -8.9,
-        "current_direction_deg": 280,
-        "previous_direction_deg": 40
+        "speed_delta_mph": -20.2,
+        "gust_delta_mph": -22.4,
+        "current_direction_deg": 320,
+        "previous_direction_deg": 60
       },
       "WEXM1": {
-        "speed_delta_mph": -5.8,
+        "speed_delta_mph": -4.5,
         "gust_delta_mph": null,
-        "current_direction_deg": 310,
-        "previous_direction_deg": 10
+        "current_direction_deg": 320,
+        "previous_direction_deg": 360
       }
     }
   },
   "forecast_change_48h": {
-    "comparison": null
+    "comparison": {
+      "baseline_at": "2026-11-26T00:18:26Z",
+      "baseline_source": "live_noaa_ofs_capture",
+      "peak_delta_ft": -0.76,
+      "previous_peak_ft": 12.04,
+      "current_peak_ft": 11.28,
+      "previous_peak_time": "2026-11-27T17:36:00Z",
+      "current_peak_time": "2026-11-28T18:24:00Z",
+      "time_shift_minutes": 1488,
+      "threshold_margin_delta_ft": {
+        "minor": 0.76,
+        "moderate": 0.76,
+        "major": 0.76
+      },
+      "previous_threshold_margins_ft": {
+        "minor": -0.04,
+        "moderate": 0.96,
+        "major": 1.96
+      },
+      "current_threshold_margins_ft": {
+        "minor": 0.72,
+        "moderate": 1.72,
+        "major": 2.72
+      }
+    }
   },
   "forecast_evolution": {
     "items": [
       {
         "label": "24h ago",
         "target_hours_ago": 24,
-        "snapshot_at": "2026-11-26T18:39:33Z",
-        "peak_ft": 11.97,
-        "peak_time": "2026-11-27T17:30:00Z",
-        "minor_margin_ft": 0.03,
+        "snapshot_at": "2026-11-27T01:55:50Z",
+        "peak_ft": 12.03,
+        "peak_time": "2026-11-27T17:36:00Z",
+        "minor_margin_ft": -0.03,
+        "source": "captured NOAA OFS model snapshot"
+      },
+      {
+        "label": "6h ago",
+        "target_hours_ago": 6,
+        "snapshot_at": "2026-11-27T19:35:24Z",
+        "peak_ft": 11.31,
+        "peak_time": "2026-11-29T19:24:00Z",
+        "minor_margin_ft": 0.69,
         "source": "captured NOAA OFS model snapshot"
       },
       {
         "label": "Now",
         "target_hours_ago": 0,
-        "snapshot_at": "2026-11-27T19:38:27Z",
-        "peak_ft": 11.31,
-        "peak_time": "2026-11-29T19:24:00Z",
-        "minor_margin_ft": 0.69,
+        "snapshot_at": "2026-11-28T02:00:24Z",
+        "peak_ft": 11.28,
+        "peak_time": "2026-11-28T18:24:00Z",
+        "minor_margin_ft": 0.72,
         "source": "captured NOAA OFS model snapshot"
       }
     ],
     "basis": "Captured forecast snapshots nearest 24, 12 and 6 hours ago plus the current snapshot. Retrieval time is not NOAA model issuance time."
   },
   "event_state": {
-    "phase": "Ongoing",
-    "show_focus": true,
-    "primary_display": "Marine Hazard",
+    "phase": "Recent",
+    "show_focus": false,
+    "primary_display": "Routine Coastal Conditions",
     "impact": {
-      "rank": 1,
-      "level": "yellow",
-      "label": "Elevated"
+      "rank": 0,
+      "level": "green",
+      "label": "Routine"
     },
     "recent_impact": {
       "rank": 2,
@@ -153,16 +186,7 @@
       "label": "Significant"
     },
     "event_identity": null,
-    "active_hazards": [
-      {
-        "code": "marine_hazard",
-        "label": "Marine Hazard",
-        "basis": [
-          "NDBC 44007 measured offshore conditions are elevated"
-        ],
-        "impact_rank": 1
-      }
-    ],
+    "active_hazards": [],
     "official_alerts": [
       {
         "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.933181c564db44e93af019972b30928dda2caa77.001.1",
@@ -235,15 +259,13 @@
         "impact_rank": 1
       }
     ],
-    "reasons": [
-      "NDBC 44007 measured offshore conditions are elevated"
-    ],
-    "summary": "Marine Hazard is ongoing with elevated local impact potential.",
+    "reasons": [],
+    "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
     "event_timing": {
-      "peak_at": "2026-11-29T19:24:00Z",
+      "peak_at": "2026-11-28T18:24:00Z",
       "window_start": null,
       "window_end": null,
-      "hours_until_peak": 47.8,
+      "hours_until_peak": 16.4,
       "basis": "NOAA OFS modeled total-water peak"
     },
     "coastal_impact": {
@@ -260,9 +282,9 @@
           "window_start": "2026-11-28T04:47:00Z",
           "window_end": "2026-11-28T07:47:00Z",
           "astronomical_ft": 9.55,
-          "modeled_total_ft": 10.19,
-          "modeled_time": "2026-11-28T06:06:00Z",
-          "modeled_uplift_ft": 0.65,
+          "modeled_total_ft": 10.2,
+          "modeled_time": "2026-11-28T06:00:00Z",
+          "modeled_uplift_ft": 0.69,
           "forecast_wind_mph": 15.0,
           "forecast_wind_direction": "SW",
           "onshore_component_mph": 0.0,
@@ -276,7 +298,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "10.19 ft MLLW",
+              "value": "10.20 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -296,9 +318,9 @@
           "window_start": "2026-11-28T16:57:00Z",
           "window_end": "2026-11-28T19:57:00Z",
           "astronomical_ft": 10.99,
-          "modeled_total_ft": 11.3,
+          "modeled_total_ft": 11.28,
           "modeled_time": "2026-11-28T18:24:00Z",
-          "modeled_uplift_ft": 0.31,
+          "modeled_uplift_ft": 0.29,
           "forecast_wind_mph": 10.0,
           "forecast_wind_direction": "W",
           "onshore_component_mph": 0.0,
@@ -312,7 +334,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "11.30 ft MLLW",
+              "value": "11.28 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -332,9 +354,9 @@
           "window_start": "2026-11-29T05:45:00Z",
           "window_end": "2026-11-29T08:45:00Z",
           "astronomical_ft": 9.38,
-          "modeled_total_ft": 9.74,
+          "modeled_total_ft": 9.77,
           "modeled_time": "2026-11-29T07:00:00Z",
-          "modeled_uplift_ft": 0.4,
+          "modeled_uplift_ft": 0.42,
           "forecast_wind_mph": 5.0,
           "forecast_wind_direction": "W",
           "onshore_component_mph": 0.0,
@@ -348,7 +370,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "9.74 ft MLLW",
+              "value": "9.77 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -368,9 +390,9 @@
           "window_start": "2026-11-29T17:57:00Z",
           "window_end": "2026-11-29T20:57:00Z",
           "astronomical_ft": 10.51,
-          "modeled_total_ft": 11.31,
-          "modeled_time": "2026-11-29T19:24:00Z",
-          "modeled_uplift_ft": 0.8,
+          "modeled_total_ft": 11.28,
+          "modeled_time": "2026-11-29T19:30:00Z",
+          "modeled_uplift_ft": 0.77,
           "forecast_wind_mph": 5.0,
           "forecast_wind_direction": "SW",
           "onshore_component_mph": 0.0,
@@ -384,7 +406,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "11.31 ft MLLW",
+              "value": "11.28 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -404,9 +426,9 @@
           "window_start": "2026-11-30T06:48:00Z",
           "window_end": "2026-11-30T09:48:00Z",
           "astronomical_ft": 9.26,
-          "modeled_total_ft": 10.22,
+          "modeled_total_ft": 10.21,
           "modeled_time": "2026-11-30T08:00:00Z",
-          "modeled_uplift_ft": 1.01,
+          "modeled_uplift_ft": 0.99,
           "forecast_wind_mph": 10.0,
           "forecast_wind_direction": "S",
           "onshore_component_mph": 5.0,
@@ -420,7 +442,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "10.22 ft MLLW",
+              "value": "10.21 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -434,6 +456,37 @@
               "source": "Calculated from NWS hourly wind direction and speed"
             }
           ]
+        },
+        {
+          "high_tide_at": "2026-11-30T20:33:00Z",
+          "window_start": "2026-11-30T19:03:00Z",
+          "window_end": "2026-11-30T22:03:00Z",
+          "astronomical_ft": 9.99,
+          "modeled_total_ft": null,
+          "modeled_time": null,
+          "modeled_uplift_ft": null,
+          "forecast_wind_mph": 25.0,
+          "forecast_wind_direction": "W",
+          "onshore_component_mph": 0.0,
+          "surf_context_ft": null,
+          "impact": {
+            "score": 0,
+            "rank": 0,
+            "level": "green",
+            "label": "Routine"
+          },
+          "drivers": [
+            {
+              "label": "Predicted high tide",
+              "value": "9.99 ft MLLW",
+              "source": "NOAA CO-OPS tide prediction"
+            },
+            {
+              "label": "Wind pushing toward shore",
+              "value": "0 mph",
+              "source": "Calculated from NWS hourly wind direction and speed"
+            }
+          ]
         }
       ],
       "peak_window": {
@@ -441,9 +494,9 @@
         "window_start": "2026-11-28T16:57:00Z",
         "window_end": "2026-11-28T19:57:00Z",
         "astronomical_ft": 10.99,
-        "modeled_total_ft": 11.3,
+        "modeled_total_ft": 11.28,
         "modeled_time": "2026-11-28T18:24:00Z",
-        "modeled_uplift_ft": 0.31,
+        "modeled_uplift_ft": 0.29,
         "forecast_wind_mph": 10.0,
         "forecast_wind_direction": "W",
         "onshore_component_mph": 0.0,
@@ -457,7 +510,7 @@
         "drivers": [
           {
             "label": "NOAA forecast water level",
-            "value": "11.30 ft MLLW",
+            "value": "11.28 ft MLLW",
             "source": "NOAA OFS"
           },
           {
@@ -472,7 +525,7 @@
           }
         ]
       },
-      "hours_until_peak": 22.8,
+      "hours_until_peak": 16.4,
       "data_coverage": {
         "available": 4,
         "assessed": 5,
@@ -525,7 +578,7 @@
       "drivers": [
         {
           "label": "NOAA forecast water level",
-          "value": "11.30 ft MLLW",
+          "value": "11.28 ft MLLW",
           "source": "NOAA OFS"
         },
         {
@@ -540,12 +593,12 @@
         },
         {
           "label": "Latest offshore wave observation",
-          "value": "8.9 ft at 11.0 sec dominant period",
+          "value": "7.2 ft at 9.0 sec dominant period",
           "source": "NDBC 44007"
         },
         {
           "label": "Wave energy estimate",
-          "value": "39.7 kW/m estimate",
+          "value": "21.2 kW/m estimate",
           "source": "Estimated from NDBC wave height and dominant period"
         },
         {
@@ -555,10 +608,10 @@
         }
       ],
       "wave_context": {
-        "height_ft": 8.9,
-        "dominant_period_sec": 11.0,
-        "direction_deg": 139.0,
-        "power_proxy_kw_m": 39.7
+        "height_ft": 7.2,
+        "dominant_period_sec": 9.0,
+        "direction_deg": 117.0,
+        "power_proxy_kw_m": 21.2
       },
       "onshore_reference": {
         "shore_normal_from_deg": 120.0,
@@ -570,62 +623,101 @@
     {
       "kind": "forecast_change",
       "title": "Forecast change",
-      "text": "NOAA's compatible 72-hour peak forecast fell by 0.66 ft versus the captured forecast nearest 24 hours ago. The distance to the 12.0 ft Minor Flood threshold increased by 0.66 ft.",
+      "text": "NOAA's compatible 72-hour peak forecast fell by 0.75 ft versus the captured forecast nearest 24 hours ago. The distance to the 12.0 ft Minor Flood threshold increased by 0.75 ft.",
       "priority": 4
     },
     {
       "kind": "high_water",
       "title": "Next high tide",
-      "text": "Around Sat, Nov 28 at 1:27 PM ET, NOAA total-water guidance is 11.30 ft MLLW, 0.70 ft below Portland's Minor Flood threshold.",
+      "text": "Around Sat, Nov 28 at 1:27 PM ET, NOAA total-water guidance is 11.28 ft MLLW, 0.72 ft below Portland's Minor Flood threshold.",
       "at": "2026-11-28T18:27:00Z",
       "priority": 1
     }
   ],
   "event_briefing": {
+    "active": false,
+    "title": "Coastal Briefing",
+    "modes": [],
+    "severity": {
+      "rank": 0,
+      "level": "green",
+      "label": "Routine"
+    },
+    "phase": "Recent",
+    "summary": "",
+    "change_text": "Compared with coastal conditions around 24 hours ago, coastal status shifted from ongoing to recently ended; SacoCast's local impact rating moved from Significant to Routine.",
+    "next24_text": "",
+    "next72_text": ""
+  },
+  "recent_event": {
     "active": true,
-    "title": "Marine Hazard Briefing",
-    "modes": [
+    "summary": "Recent coastal event: offshore wind gust, Portland water above the predicted tide, offshore wave height. Current and forward-looking conditions have returned to Routine.",
+    "items": [
       {
-        "code": "marine_hazard",
-        "label": "Marine Hazard",
-        "basis": [
-          "NDBC 44007 measured offshore conditions are elevated"
-        ],
+        "code": "marine_wind",
+        "label": "Buoy 44007 gust",
+        "at": "2026-11-27T07:10:00Z",
+        "value": 47.0,
+        "unit": "mph",
+        "impact_rank": 1
+      },
+      {
+        "code": "residual",
+        "label": "Portland water-level residual",
+        "at": "2026-11-27T07:48:00Z",
+        "value": 1.74,
+        "unit": "ft",
+        "impact_rank": 2
+      },
+      {
+        "code": "waves",
+        "label": "Buoy 44007 significant wave height",
+        "at": "2026-11-27T11:50:00Z",
+        "value": 13.5,
+        "unit": "ft",
+        "impact_rank": 2
+      },
+      {
+        "code": "coastal_flood",
+        "label": "Portland observed high water",
+        "at": "2026-11-27T17:42:00Z",
+        "value": 12.24,
+        "unit": "ft MLLW",
         "impact_rank": 1
       }
     ],
-    "severity": {
-      "rank": 1,
-      "level": "yellow",
-      "label": "Elevated"
-    },
-    "phase": "Ongoing",
-    "summary": "Marine Hazard: Elevated · Ongoing. Active NWS products: Small Craft Advisory.",
-    "change_text": "Compared with forecast guidance captured around 24 hours earlier, NWS 72-hour precipitation guidance decreased by 0.4 in, from 1.2 to 0.9 in. Compared with coastal conditions around 24 hours ago, coastal status shifted from approaching to ongoing; SacoCast's local impact rating moved from Significant to Elevated.",
-    "next24_text": "No additional event-specific 24-hour metric is available.",
-    "next72_text": "No additional event-specific 72-hour metric is available."
-  },
-  "recent_event": {
-    "active": false,
-    "summary": "",
-    "items": [],
     "impact": {
       "rank": 2,
       "level": "orange",
       "label": "Significant"
+    },
+    "retrospective": {
+      "title": "Coastal Storm",
+      "started_at": "2026-11-26T00:18:26Z",
+      "ended_at": "2026-11-28T02:00:24Z",
+      "captured_coverage_hours": 49.7,
+      "duration_hours": 49.7,
+      "coverage_basis": "This is how much of the event SacoCast captured, not how long the storm itself lasted.",
+      "phase": "Recent",
+      "highest_impact": {
+        "rank": 2,
+        "label": "Significant"
+      },
+      "max_observed_water_ft": 12.24,
+      "max_residual_ft": 1.74,
+      "max_modeled_water_ft": 12.09,
+      "max_wave_ft": 13.5,
+      "max_gust_mph": 47.0,
+      "max_surf_ft": null,
+      "official_products": [
+        "Gale Warning",
+        "Small Craft Advisory"
+      ],
+      "snapshot_count": 8,
+      "data_quality": []
     }
   },
   "event_transitions": [
-    {
-      "at": "2026-11-24T23:35:57Z",
-      "type": "event_state_transition",
-      "from_phase": "Approaching",
-      "to_phase": "Approaching",
-      "from_impact": "Elevated",
-      "to_impact": "Elevated",
-      "from_display": "Coastal Flood",
-      "to_display": "Heavy Rain"
-    },
     {
       "at": "2026-11-26T00:18:26Z",
       "type": "event_state_transition",
@@ -661,11 +753,11 @@
     {
       "title": "Coastal Storm",
       "started_at": "2026-11-26T00:18:26Z",
-      "ended_at": "2026-11-27T19:38:27Z",
-      "captured_coverage_hours": 43.3,
-      "duration_hours": 43.3,
+      "ended_at": "2026-11-28T02:00:24Z",
+      "captured_coverage_hours": 49.7,
+      "duration_hours": 49.7,
       "coverage_basis": "This is how much of the event SacoCast captured, not how long the storm itself lasted.",
-      "phase": "Ongoing",
+      "phase": "Recent",
       "highest_impact": {
         "rank": 2,
         "label": "Significant"
@@ -680,7 +772,7 @@
         "Gale Warning",
         "Small Craft Advisory"
       ],
-      "snapshot_count": 7,
+      "snapshot_count": 8,
       "data_quality": []
     },
     {
@@ -826,18 +918,18 @@
     }
   ],
   "coastal_impact_change_24h": {
-    "score_delta": -8,
+    "score_delta": -16,
     "current_score": 8,
-    "previous_score": 16,
+    "previous_score": 24,
     "current_label": "Routine",
     "previous_label": "Routine",
     "drivers": [
       {
         "label": "NOAA forecast water level",
-        "delta": -0.67,
+        "delta": -0.75,
         "unit": "ft",
-        "current": 11.3,
-        "previous": 11.97
+        "current": 11.28,
+        "previous": 12.03
       }
     ]
   },
@@ -899,41 +991,19 @@
   ],
   "impact_timeline_next24": [
     {
-      "start": "2026-11-27T19:00:00Z",
-      "end": "2026-11-27T20:00:00Z",
-      "temperature_f": 47.0,
-      "wind_mph": 5.0,
-      "gust_mph": null,
-      "wind_direction": "W",
-      "precip_probability_pct": 5,
-      "summary": "Cloudy",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-27T22:00:00Z",
-      "end": "2026-11-27T23:00:00Z",
-      "temperature_f": 45.0,
-      "wind_mph": 5.0,
-      "gust_mph": null,
-      "wind_direction": "W",
-      "precip_probability_pct": 23,
-      "summary": "Isolated Rain Showers",
-      "precip_type": "Rain"
-    },
-    {
-      "start": "2026-11-28T01:00:00Z",
-      "end": "2026-11-28T02:00:00Z",
+      "start": "2026-11-28T02:00:00Z",
+      "end": "2026-11-28T03:00:00Z",
       "temperature_f": 46.0,
       "wind_mph": 10.0,
       "gust_mph": null,
       "wind_direction": "SW",
-      "precip_probability_pct": 69,
-      "summary": "Light Rain Likely",
+      "precip_probability_pct": 25,
+      "summary": "Scattered Rain Showers",
       "precip_type": "Rain"
     },
     {
-      "start": "2026-11-28T04:00:00Z",
-      "end": "2026-11-28T05:00:00Z",
+      "start": "2026-11-28T05:00:00Z",
+      "end": "2026-11-28T06:00:00Z",
       "temperature_f": 45.0,
       "wind_mph": 15.0,
       "gust_mph": null,
@@ -943,19 +1013,8 @@
       "precip_type": "Dry / Clouds"
     },
     {
-      "start": "2026-11-28T07:00:00Z",
-      "end": "2026-11-28T08:00:00Z",
-      "temperature_f": 43.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 4,
-      "summary": "Partly Cloudy",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T10:00:00Z",
-      "end": "2026-11-28T11:00:00Z",
+      "start": "2026-11-28T08:00:00Z",
+      "end": "2026-11-28T09:00:00Z",
       "temperature_f": 42.0,
       "wind_mph": 15.0,
       "gust_mph": null,
@@ -965,21 +1024,43 @@
       "precip_type": "Dry / Clouds"
     },
     {
-      "start": "2026-11-28T13:00:00Z",
-      "end": "2026-11-28T14:00:00Z",
-      "temperature_f": 43.0,
+      "start": "2026-11-28T11:00:00Z",
+      "end": "2026-11-28T12:00:00Z",
+      "temperature_f": 42.0,
+      "wind_mph": 15.0,
+      "gust_mph": null,
+      "wind_direction": "SW",
+      "precip_probability_pct": 4,
+      "summary": "Mostly Sunny",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-11-28T14:00:00Z",
+      "end": "2026-11-28T15:00:00Z",
+      "temperature_f": 46.0,
       "wind_mph": 10.0,
       "gust_mph": null,
       "wind_direction": "SW",
       "precip_probability_pct": 3,
-      "summary": "Sunny",
+      "summary": "Mostly Sunny",
       "precip_type": "Dry / Clouds"
     },
     {
-      "start": "2026-11-28T16:00:00Z",
-      "end": "2026-11-28T17:00:00Z",
-      "temperature_f": 50.0,
+      "start": "2026-11-28T17:00:00Z",
+      "end": "2026-11-28T18:00:00Z",
+      "temperature_f": 51.0,
       "wind_mph": 15.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 3,
+      "summary": "Mostly Cloudy",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-11-28T20:00:00Z",
+      "end": "2026-11-28T21:00:00Z",
+      "temperature_f": 51.0,
+      "wind_mph": 10.0,
       "gust_mph": null,
       "wind_direction": "W",
       "precip_probability_pct": 3,
@@ -987,15 +1068,37 @@
       "precip_type": "Dry / Clouds"
     },
     {
-      "start": "2026-11-28T19:00:00Z",
-      "end": "2026-11-28T20:00:00Z",
-      "temperature_f": 52.0,
-      "wind_mph": 10.0,
+      "start": "2026-11-28T23:00:00Z",
+      "end": "2026-11-29T00:00:00Z",
+      "temperature_f": 48.0,
+      "wind_mph": 5.0,
       "gust_mph": null,
       "wind_direction": "W",
-      "precip_probability_pct": 3,
+      "precip_probability_pct": 11,
       "summary": "Mostly Cloudy",
       "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-11-29T00:00:00Z",
+      "end": "2026-11-29T01:00:00Z",
+      "temperature_f": 47.0,
+      "wind_mph": 5.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 15,
+      "summary": "Isolated Rain Showers",
+      "precip_type": "Rain"
+    },
+    {
+      "start": "2026-11-29T02:00:00Z",
+      "end": "2026-11-29T03:00:00Z",
+      "temperature_f": 46.0,
+      "wind_mph": 5.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 39,
+      "summary": "Scattered Rain Showers",
+      "precip_type": "Rain"
     }
   ],
   "observed_daily_peaks": [
@@ -1041,15 +1144,15 @@
     }
   ],
   "next_24h": {
-    "text": "The highest NOAA forecast water level in the next 24 hours is 11.30 ft MLLW around Sat, Nov 28 at 1:24 PM ET, 0.70 ft below Minor Flood. NWS hourly guidance reaches about 15 mph sustained wind in this period. No additional event-specific 24-hour metric is available.",
-    "dashboard_text": "NOAA water-level guidance peaks near 11.30 ft MLLW around Sat, Nov 28 at 1:24 PM ET, 0.70 ft below Minor Flood. NWS wind peaks near 15 mph.",
-    "peak_ft": 11.3,
+    "text": "The highest NOAA forecast water level in the next 24 hours is 11.28 ft MLLW around Sat, Nov 28 at 1:24 PM ET, 0.72 ft below Minor Flood. NWS hourly guidance reaches about 15 mph sustained wind in this period.",
+    "dashboard_text": "NOAA water-level guidance peaks near 11.28 ft MLLW around Sat, Nov 28 at 1:24 PM ET, 0.72 ft below Minor Flood. NWS wind peaks near 15 mph.",
+    "peak_ft": 11.28,
     "peak_time": "2026-11-28T18:24:00Z"
   },
   "next_72h": {
-    "text": "The highest NOAA forecast water level in the next 72 hours is 11.31 ft MLLW around Sun, Nov 29 at 2:24 PM ET, 0.69 ft below Minor Flood. The astronomical tide at that time is 10.51 ft MLLW, so NOAA's water forecast is +0.80 ft above the tide prediction. Maximum hourly precipitation probability in the 72-hour guidance is 94%. No additional event-specific 72-hour metric is available.",
-    "peak_ft": 11.31,
-    "peak_time": "2026-11-29T19:24:00Z"
+    "text": "The highest NOAA forecast water level in the next 72 hours is 11.28 ft MLLW around Sat, Nov 28 at 1:24 PM ET, 0.72 ft below Minor Flood. The astronomical tide at that time is 10.99 ft MLLW, so NOAA's water forecast is +0.29 ft above the tide prediction. Maximum hourly precipitation probability in the 72-hour guidance is 94%.",
+    "peak_ft": 11.28,
+    "peak_time": "2026-11-28T18:24:00Z"
   },
   "local_pulse": {
     "summary": "12 weather/coastal public reports retained in the recent scan (12 news/other public, 0 community). Source check: Public community search temporarily unavailable. An empty scan is not proof that no local impacts occurred. Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent.",
@@ -1232,7 +1335,7 @@
     }
   ],
   "current_snapshot": {
-    "snapshot_at": "2026-11-27T19:38:27Z",
+    "snapshot_at": "2026-11-28T02:00:24Z",
     "snapshot_kind": "realtime",
     "provenance": {
       "forecast": "live_noaa_ofs_capture",
@@ -1250,107 +1353,105 @@
         "forecast": null,
         "predictions": null
       },
-      "latest_observed_ft": 9.69,
-      "latest_observed_at": "2026-11-27T19:30:00Z",
+      "latest_observed_ft": 2.36,
+      "latest_observed_at": "2026-11-28T01:54:00Z",
       "observed_24h_max_ft": 12.24,
       "observed_24h_max_time": "2026-11-27T17:42:00Z",
-      "residual_current_ft": 0.91,
-      "residual_current_at": "2026-11-27T19:30:00Z",
+      "residual_current_ft": 1.36,
+      "residual_current_at": "2026-11-28T01:54:00Z",
       "residual_24h_max_ft": 1.74,
       "residual_24h_max_time": "2026-11-27T07:48:00Z",
-      "forecast_peak_24h_ft": 11.3,
+      "forecast_peak_24h_ft": 11.28,
       "forecast_peak_24h_time": "2026-11-28T18:24:00Z",
-      "forecast_peak_72h_ft": 11.31,
-      "forecast_peak_72h_time": "2026-11-29T19:24:00Z",
-      "astronomical_tide_at_peak_ft": 10.51,
-      "model_uplift_ft": 0.8,
+      "forecast_peak_72h_ft": 11.28,
+      "forecast_peak_72h_time": "2026-11-28T18:24:00Z",
+      "astronomical_tide_at_peak_ft": 10.99,
+      "model_uplift_ft": 0.29,
       "threshold_margins_ft": {
-        "minor": 0.69,
-        "moderate": 1.69,
-        "major": 2.69
+        "minor": 0.72,
+        "moderate": 1.72,
+        "major": 2.72
       },
       "high_tides": [
         {
           "time": "2026-11-28T06:17:00Z",
           "astronomical_ft": 9.55,
-          "modeled_total_ft": 10.19,
-          "modeled_time": "2026-11-28T06:06:00Z",
-          "modeled_uplift_ft": 0.65
+          "modeled_total_ft": 10.2,
+          "modeled_time": "2026-11-28T06:00:00Z",
+          "modeled_uplift_ft": 0.69
         },
         {
           "time": "2026-11-28T18:27:00Z",
           "astronomical_ft": 10.99,
-          "modeled_total_ft": 11.3,
+          "modeled_total_ft": 11.28,
           "modeled_time": "2026-11-28T18:24:00Z",
-          "modeled_uplift_ft": 0.31
+          "modeled_uplift_ft": 0.29
         },
         {
           "time": "2026-11-29T07:15:00Z",
           "astronomical_ft": 9.38,
-          "modeled_total_ft": 9.74,
+          "modeled_total_ft": 9.77,
           "modeled_time": "2026-11-29T07:00:00Z",
-          "modeled_uplift_ft": 0.4
+          "modeled_uplift_ft": 0.42
         },
         {
           "time": "2026-11-29T19:27:00Z",
           "astronomical_ft": 10.51,
-          "modeled_total_ft": 11.31,
-          "modeled_time": "2026-11-29T19:24:00Z",
-          "modeled_uplift_ft": 0.8
+          "modeled_total_ft": 11.28,
+          "modeled_time": "2026-11-29T19:30:00Z",
+          "modeled_uplift_ft": 0.77
         },
         {
           "time": "2026-11-30T08:18:00Z",
           "astronomical_ft": 9.26,
-          "modeled_total_ft": 10.22,
+          "modeled_total_ft": 10.21,
           "modeled_time": "2026-11-30T08:00:00Z",
-          "modeled_uplift_ft": 1.01
+          "modeled_uplift_ft": 0.99
+        },
+        {
+          "time": "2026-11-30T20:33:00Z",
+          "astronomical_ft": 9.99,
+          "modeled_total_ft": null,
+          "modeled_time": null,
+          "modeled_uplift_ft": null
         }
       ]
     },
     "forecast_conditions": {
       "source": "https://api.weather.gov/gridpoints/GYX/70,49/forecast/hourly",
       "next24_max_sustained_wind_mph": 15.0,
-      "next72_max_sustained_wind_mph": 20.0,
-      "next24_max_precip_probability_pct": 89,
+      "next72_max_sustained_wind_mph": 25.0,
+      "next24_max_precip_probability_pct": 39,
       "next72_max_precip_probability_pct": 94,
       "next24_summaries": [
-        "Cloudy",
-        "Isolated Rain Showers",
-        "Scattered Rain Showers",
-        "Light Rain"
+        "Mostly Cloudy",
+        "Partly Cloudy",
+        "Mostly Sunny",
+        "Sunny"
       ]
     },
     "hazards": {
       "schema_version": 1,
-      "generated_at": "2026-11-27T19:38:27.630745Z",
+      "generated_at": "2026-11-28T02:00:24.281145Z",
       "location": {
         "name": "Saco Bay coastal reference",
         "lat": 43.472,
         "lon": -70.385
       },
-      "active_modes": [
-        {
-          "code": "marine_hazard",
-          "label": "Marine Hazard",
-          "basis": [
-            "NDBC 44007 measured offshore conditions are elevated"
-          ],
-          "impact_rank": 1
-        }
-      ],
+      "active_modes": [],
       "severity": {
-        "rank": 1,
-        "level": "yellow",
-        "label": "Elevated"
+        "rank": 0,
+        "level": "green",
+        "label": "Routine"
       },
       "event_state": {
-        "phase": "Ongoing",
-        "show_focus": true,
-        "primary_display": "Marine Hazard",
+        "phase": "Recent",
+        "show_focus": false,
+        "primary_display": "Routine Coastal Conditions",
         "impact": {
-          "rank": 1,
-          "level": "yellow",
-          "label": "Elevated"
+          "rank": 0,
+          "level": "green",
+          "label": "Routine"
         },
         "recent_impact": {
           "rank": 2,
@@ -1358,16 +1459,7 @@
           "label": "Significant"
         },
         "event_identity": null,
-        "active_hazards": [
-          {
-            "code": "marine_hazard",
-            "label": "Marine Hazard",
-            "basis": [
-              "NDBC 44007 measured offshore conditions are elevated"
-            ],
-            "impact_rank": 1
-          }
-        ],
+        "active_hazards": [],
         "official_alerts": [
           {
             "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.933181c564db44e93af019972b30928dda2caa77.001.1",
@@ -1440,15 +1532,13 @@
             "impact_rank": 1
           }
         ],
-        "reasons": [
-          "NDBC 44007 measured offshore conditions are elevated"
-        ],
-        "summary": "Marine Hazard is ongoing with elevated local impact potential.",
+        "reasons": [],
+        "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
         "event_timing": {
-          "peak_at": "2026-11-29T19:24:00Z",
+          "peak_at": "2026-11-28T18:24:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 47.8,
+          "hours_until_peak": 16.4,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -1465,9 +1555,9 @@
               "window_start": "2026-11-28T04:47:00Z",
               "window_end": "2026-11-28T07:47:00Z",
               "astronomical_ft": 9.55,
-              "modeled_total_ft": 10.19,
-              "modeled_time": "2026-11-28T06:06:00Z",
-              "modeled_uplift_ft": 0.65,
+              "modeled_total_ft": 10.2,
+              "modeled_time": "2026-11-28T06:00:00Z",
+              "modeled_uplift_ft": 0.69,
               "forecast_wind_mph": 15.0,
               "forecast_wind_direction": "SW",
               "onshore_component_mph": 0.0,
@@ -1481,7 +1571,7 @@
               "drivers": [
                 {
                   "label": "NOAA forecast water level",
-                  "value": "10.19 ft MLLW",
+                  "value": "10.20 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
@@ -1501,9 +1591,9 @@
               "window_start": "2026-11-28T16:57:00Z",
               "window_end": "2026-11-28T19:57:00Z",
               "astronomical_ft": 10.99,
-              "modeled_total_ft": 11.3,
+              "modeled_total_ft": 11.28,
               "modeled_time": "2026-11-28T18:24:00Z",
-              "modeled_uplift_ft": 0.31,
+              "modeled_uplift_ft": 0.29,
               "forecast_wind_mph": 10.0,
               "forecast_wind_direction": "W",
               "onshore_component_mph": 0.0,
@@ -1517,7 +1607,7 @@
               "drivers": [
                 {
                   "label": "NOAA forecast water level",
-                  "value": "11.30 ft MLLW",
+                  "value": "11.28 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
@@ -1537,9 +1627,9 @@
               "window_start": "2026-11-29T05:45:00Z",
               "window_end": "2026-11-29T08:45:00Z",
               "astronomical_ft": 9.38,
-              "modeled_total_ft": 9.74,
+              "modeled_total_ft": 9.77,
               "modeled_time": "2026-11-29T07:00:00Z",
-              "modeled_uplift_ft": 0.4,
+              "modeled_uplift_ft": 0.42,
               "forecast_wind_mph": 5.0,
               "forecast_wind_direction": "W",
               "onshore_component_mph": 0.0,
@@ -1553,7 +1643,7 @@
               "drivers": [
                 {
                   "label": "NOAA forecast water level",
-                  "value": "9.74 ft MLLW",
+                  "value": "9.77 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
@@ -1573,9 +1663,9 @@
               "window_start": "2026-11-29T17:57:00Z",
               "window_end": "2026-11-29T20:57:00Z",
               "astronomical_ft": 10.51,
-              "modeled_total_ft": 11.31,
-              "modeled_time": "2026-11-29T19:24:00Z",
-              "modeled_uplift_ft": 0.8,
+              "modeled_total_ft": 11.28,
+              "modeled_time": "2026-11-29T19:30:00Z",
+              "modeled_uplift_ft": 0.77,
               "forecast_wind_mph": 5.0,
               "forecast_wind_direction": "SW",
               "onshore_component_mph": 0.0,
@@ -1589,7 +1679,7 @@
               "drivers": [
                 {
                   "label": "NOAA forecast water level",
-                  "value": "11.31 ft MLLW",
+                  "value": "11.28 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
@@ -1609,9 +1699,9 @@
               "window_start": "2026-11-30T06:48:00Z",
               "window_end": "2026-11-30T09:48:00Z",
               "astronomical_ft": 9.26,
-              "modeled_total_ft": 10.22,
+              "modeled_total_ft": 10.21,
               "modeled_time": "2026-11-30T08:00:00Z",
-              "modeled_uplift_ft": 1.01,
+              "modeled_uplift_ft": 0.99,
               "forecast_wind_mph": 10.0,
               "forecast_wind_direction": "S",
               "onshore_component_mph": 5.0,
@@ -1625,7 +1715,7 @@
               "drivers": [
                 {
                   "label": "NOAA forecast water level",
-                  "value": "10.22 ft MLLW",
+                  "value": "10.21 ft MLLW",
                   "source": "NOAA OFS"
                 },
                 {
@@ -1639,6 +1729,37 @@
                   "source": "Calculated from NWS hourly wind direction and speed"
                 }
               ]
+            },
+            {
+              "high_tide_at": "2026-11-30T20:33:00Z",
+              "window_start": "2026-11-30T19:03:00Z",
+              "window_end": "2026-11-30T22:03:00Z",
+              "astronomical_ft": 9.99,
+              "modeled_total_ft": null,
+              "modeled_time": null,
+              "modeled_uplift_ft": null,
+              "forecast_wind_mph": 25.0,
+              "forecast_wind_direction": "W",
+              "onshore_component_mph": 0.0,
+              "surf_context_ft": null,
+              "impact": {
+                "score": 0,
+                "rank": 0,
+                "level": "green",
+                "label": "Routine"
+              },
+              "drivers": [
+                {
+                  "label": "Predicted high tide",
+                  "value": "9.99 ft MLLW",
+                  "source": "NOAA CO-OPS tide prediction"
+                },
+                {
+                  "label": "Wind pushing toward shore",
+                  "value": "0 mph",
+                  "source": "Calculated from NWS hourly wind direction and speed"
+                }
+              ]
             }
           ],
           "peak_window": {
@@ -1646,9 +1767,9 @@
             "window_start": "2026-11-28T16:57:00Z",
             "window_end": "2026-11-28T19:57:00Z",
             "astronomical_ft": 10.99,
-            "modeled_total_ft": 11.3,
+            "modeled_total_ft": 11.28,
             "modeled_time": "2026-11-28T18:24:00Z",
-            "modeled_uplift_ft": 0.31,
+            "modeled_uplift_ft": 0.29,
             "forecast_wind_mph": 10.0,
             "forecast_wind_direction": "W",
             "onshore_component_mph": 0.0,
@@ -1662,7 +1783,7 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "11.30 ft MLLW",
+                "value": "11.28 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
@@ -1677,7 +1798,7 @@
               }
             ]
           },
-          "hours_until_peak": 22.8,
+          "hours_until_peak": 16.4,
           "data_coverage": {
             "available": 4,
             "assessed": 5,
@@ -1730,7 +1851,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "11.30 ft MLLW",
+              "value": "11.28 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -1745,12 +1866,12 @@
             },
             {
               "label": "Latest offshore wave observation",
-              "value": "8.9 ft at 11.0 sec dominant period",
+              "value": "7.2 ft at 9.0 sec dominant period",
               "source": "NDBC 44007"
             },
             {
               "label": "Wave energy estimate",
-              "value": "39.7 kW/m estimate",
+              "value": "21.2 kW/m estimate",
               "source": "Estimated from NDBC wave height and dominant period"
             },
             {
@@ -1760,10 +1881,10 @@
             }
           ],
           "wave_context": {
-            "height_ft": 8.9,
-            "dominant_period_sec": 11.0,
-            "direction_deg": 139.0,
-            "power_proxy_kw_m": 39.7
+            "height_ft": 7.2,
+            "dominant_period_sec": 9.0,
+            "direction_deg": 117.0,
+            "power_proxy_kw_m": 21.2
           },
           "onshore_reference": {
             "shore_normal_from_deg": 120.0,
@@ -1802,17 +1923,17 @@
         "snowfall_72h_in": 0.0,
         "ice_72h_in": 0.0,
         "max_average_snow_rate_24h_in_hr": 0.0,
-        "min_visibility_24h_mi": 5.0,
+        "min_visibility_24h_mi": 1.0,
         "precip_transition_24h": "Rain"
       },
       "rain": {
-        "qpf_24h_in": 0.02,
-        "qpf_72h_in": 0.87
+        "qpf_24h_in": 0.03,
+        "qpf_72h_in": 0.88
       },
       "wind": {
         "max_sustained_24h_mph": 15.0,
         "max_sustained_24h_time": "2026-11-28T03:00:00Z",
-        "max_sustained_72h_mph": 20.0,
+        "max_sustained_72h_mph": 25.0,
         "max_gust_24h_mph": null,
         "max_gust_24h_time": null,
         "max_gust_72h_mph": null,
@@ -1830,41 +1951,19 @@
       },
       "hourly": [
         {
-          "start": "2026-11-27T19:00:00Z",
-          "end": "2026-11-27T20:00:00Z",
-          "temperature_f": 47.0,
-          "wind_mph": 5.0,
-          "gust_mph": null,
-          "wind_direction": "W",
-          "precip_probability_pct": 5,
-          "summary": "Cloudy",
-          "precip_type": "Dry / Clouds"
-        },
-        {
-          "start": "2026-11-27T22:00:00Z",
-          "end": "2026-11-27T23:00:00Z",
-          "temperature_f": 45.0,
-          "wind_mph": 5.0,
-          "gust_mph": null,
-          "wind_direction": "W",
-          "precip_probability_pct": 23,
-          "summary": "Isolated Rain Showers",
-          "precip_type": "Rain"
-        },
-        {
-          "start": "2026-11-28T01:00:00Z",
-          "end": "2026-11-28T02:00:00Z",
+          "start": "2026-11-28T02:00:00Z",
+          "end": "2026-11-28T03:00:00Z",
           "temperature_f": 46.0,
           "wind_mph": 10.0,
           "gust_mph": null,
           "wind_direction": "SW",
-          "precip_probability_pct": 69,
-          "summary": "Light Rain Likely",
+          "precip_probability_pct": 25,
+          "summary": "Scattered Rain Showers",
           "precip_type": "Rain"
         },
         {
-          "start": "2026-11-28T04:00:00Z",
-          "end": "2026-11-28T05:00:00Z",
+          "start": "2026-11-28T05:00:00Z",
+          "end": "2026-11-28T06:00:00Z",
           "temperature_f": 45.0,
           "wind_mph": 15.0,
           "gust_mph": null,
@@ -1874,19 +1973,8 @@
           "precip_type": "Dry / Clouds"
         },
         {
-          "start": "2026-11-28T07:00:00Z",
-          "end": "2026-11-28T08:00:00Z",
-          "temperature_f": 43.0,
-          "wind_mph": 15.0,
-          "gust_mph": null,
-          "wind_direction": "SW",
-          "precip_probability_pct": 4,
-          "summary": "Partly Cloudy",
-          "precip_type": "Dry / Clouds"
-        },
-        {
-          "start": "2026-11-28T10:00:00Z",
-          "end": "2026-11-28T11:00:00Z",
+          "start": "2026-11-28T08:00:00Z",
+          "end": "2026-11-28T09:00:00Z",
           "temperature_f": 42.0,
           "wind_mph": 15.0,
           "gust_mph": null,
@@ -1896,21 +1984,43 @@
           "precip_type": "Dry / Clouds"
         },
         {
-          "start": "2026-11-28T13:00:00Z",
-          "end": "2026-11-28T14:00:00Z",
-          "temperature_f": 43.0,
+          "start": "2026-11-28T11:00:00Z",
+          "end": "2026-11-28T12:00:00Z",
+          "temperature_f": 42.0,
+          "wind_mph": 15.0,
+          "gust_mph": null,
+          "wind_direction": "SW",
+          "precip_probability_pct": 4,
+          "summary": "Mostly Sunny",
+          "precip_type": "Dry / Clouds"
+        },
+        {
+          "start": "2026-11-28T14:00:00Z",
+          "end": "2026-11-28T15:00:00Z",
+          "temperature_f": 46.0,
           "wind_mph": 10.0,
           "gust_mph": null,
           "wind_direction": "SW",
           "precip_probability_pct": 3,
-          "summary": "Sunny",
+          "summary": "Mostly Sunny",
           "precip_type": "Dry / Clouds"
         },
         {
-          "start": "2026-11-28T16:00:00Z",
-          "end": "2026-11-28T17:00:00Z",
-          "temperature_f": 50.0,
+          "start": "2026-11-28T17:00:00Z",
+          "end": "2026-11-28T18:00:00Z",
+          "temperature_f": 51.0,
           "wind_mph": 15.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 3,
+          "summary": "Mostly Cloudy",
+          "precip_type": "Dry / Clouds"
+        },
+        {
+          "start": "2026-11-28T20:00:00Z",
+          "end": "2026-11-28T21:00:00Z",
+          "temperature_f": 51.0,
+          "wind_mph": 10.0,
           "gust_mph": null,
           "wind_direction": "W",
           "precip_probability_pct": 3,
@@ -1918,95 +2028,40 @@
           "precip_type": "Dry / Clouds"
         },
         {
-          "start": "2026-11-28T19:00:00Z",
-          "end": "2026-11-28T20:00:00Z",
-          "temperature_f": 52.0,
-          "wind_mph": 10.0,
-          "gust_mph": null,
-          "wind_direction": "W",
-          "precip_probability_pct": 3,
-          "summary": "Mostly Cloudy",
-          "precip_type": "Dry / Clouds"
-        }
-      ],
-      "hourly_full": [
-        {
-          "start": "2026-11-27T19:00:00Z",
-          "end": "2026-11-27T20:00:00Z",
-          "temperature_f": 47.0,
-          "wind_mph": 5.0,
-          "gust_mph": null,
-          "wind_direction": "W",
-          "precip_probability_pct": 5,
-          "summary": "Cloudy",
-          "precip_type": "Dry / Clouds"
-        },
-        {
-          "start": "2026-11-27T20:00:00Z",
-          "end": "2026-11-27T21:00:00Z",
-          "temperature_f": 47.0,
-          "wind_mph": 5.0,
-          "gust_mph": null,
-          "wind_direction": "W",
-          "precip_probability_pct": 5,
-          "summary": "Cloudy",
-          "precip_type": "Dry / Clouds"
-        },
-        {
-          "start": "2026-11-27T21:00:00Z",
-          "end": "2026-11-27T22:00:00Z",
-          "temperature_f": 46.0,
+          "start": "2026-11-28T23:00:00Z",
+          "end": "2026-11-29T00:00:00Z",
+          "temperature_f": 48.0,
           "wind_mph": 5.0,
           "gust_mph": null,
           "wind_direction": "W",
           "precip_probability_pct": 11,
-          "summary": "Cloudy",
+          "summary": "Mostly Cloudy",
           "precip_type": "Dry / Clouds"
         },
         {
-          "start": "2026-11-27T22:00:00Z",
-          "end": "2026-11-27T23:00:00Z",
-          "temperature_f": 45.0,
+          "start": "2026-11-29T00:00:00Z",
+          "end": "2026-11-29T01:00:00Z",
+          "temperature_f": 47.0,
           "wind_mph": 5.0,
           "gust_mph": null,
           "wind_direction": "W",
-          "precip_probability_pct": 23,
+          "precip_probability_pct": 15,
           "summary": "Isolated Rain Showers",
           "precip_type": "Rain"
         },
         {
-          "start": "2026-11-27T23:00:00Z",
-          "end": "2026-11-28T00:00:00Z",
-          "temperature_f": 47.0,
-          "wind_mph": 10.0,
-          "gust_mph": null,
-          "wind_direction": "SW",
-          "precip_probability_pct": 43,
-          "summary": "Scattered Rain Showers",
-          "precip_type": "Rain"
-        },
-        {
-          "start": "2026-11-28T00:00:00Z",
-          "end": "2026-11-28T01:00:00Z",
-          "temperature_f": 47.0,
+          "start": "2026-11-29T02:00:00Z",
+          "end": "2026-11-29T03:00:00Z",
+          "temperature_f": 46.0,
           "wind_mph": 5.0,
           "gust_mph": null,
-          "wind_direction": "SW",
-          "precip_probability_pct": 89,
-          "summary": "Light Rain",
+          "wind_direction": "W",
+          "precip_probability_pct": 39,
+          "summary": "Scattered Rain Showers",
           "precip_type": "Rain"
-        },
-        {
-          "start": "2026-11-28T01:00:00Z",
-          "end": "2026-11-28T02:00:00Z",
-          "temperature_f": 46.0,
-          "wind_mph": 10.0,
-          "gust_mph": null,
-          "wind_direction": "SW",
-          "precip_probability_pct": 69,
-          "summary": "Light Rain Likely",
-          "precip_type": "Rain"
-        },
+        }
+      ],
+      "hourly_full": [
         {
           "start": "2026-11-28T02:00:00Z",
           "end": "2026-11-28T03:00:00Z",
@@ -2732,6 +2787,83 @@
           "precip_probability_pct": 51,
           "summary": "Chance Light Rain",
           "precip_type": "Rain"
+        },
+        {
+          "start": "2026-11-30T20:00:00Z",
+          "end": "2026-11-30T21:00:00Z",
+          "temperature_f": 53.0,
+          "wind_mph": 20.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 41,
+          "summary": "Chance Light Rain",
+          "precip_type": "Rain"
+        },
+        {
+          "start": "2026-11-30T21:00:00Z",
+          "end": "2026-11-30T22:00:00Z",
+          "temperature_f": 51.0,
+          "wind_mph": 25.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 31,
+          "summary": "Chance Light Rain",
+          "precip_type": "Rain"
+        },
+        {
+          "start": "2026-11-30T22:00:00Z",
+          "end": "2026-11-30T23:00:00Z",
+          "temperature_f": 50.0,
+          "wind_mph": 20.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 21,
+          "summary": "Slight Chance Light Rain",
+          "precip_type": "Rain"
+        },
+        {
+          "start": "2026-11-30T23:00:00Z",
+          "end": "2026-12-01T00:00:00Z",
+          "temperature_f": 48.0,
+          "wind_mph": 20.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 10,
+          "summary": "Partly Cloudy",
+          "precip_type": "Dry / Clouds"
+        },
+        {
+          "start": "2026-12-01T00:00:00Z",
+          "end": "2026-12-01T01:00:00Z",
+          "temperature_f": 45.0,
+          "wind_mph": 20.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 8,
+          "summary": "Partly Cloudy",
+          "precip_type": "Dry / Clouds"
+        },
+        {
+          "start": "2026-12-01T01:00:00Z",
+          "end": "2026-12-01T02:00:00Z",
+          "temperature_f": 43.0,
+          "wind_mph": 20.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 5,
+          "summary": "Partly Cloudy",
+          "precip_type": "Dry / Clouds"
+        },
+        {
+          "start": "2026-12-01T02:00:00Z",
+          "end": "2026-12-01T03:00:00Z",
+          "temperature_f": 41.0,
+          "wind_mph": 20.0,
+          "gust_mph": null,
+          "wind_direction": "W",
+          "precip_probability_pct": 3,
+          "summary": "Partly Cloudy",
+          "precip_type": "Dry / Clouds"
         }
       ],
       "errors": {
@@ -2750,20 +2882,20 @@
     "marine": {
       "stations": {
         "44007": {
-          "observed_at": "2026-11-27T19:00:00Z",
-          "speed_mph": 11.2,
-          "gust_mph": 15.7,
-          "direction_deg": 280,
-          "wave_height_ft": 8.9,
+          "observed_at": "2026-11-28T01:30:00Z",
+          "speed_mph": 8.9,
+          "gust_mph": 13.4,
+          "direction_deg": 320,
+          "wave_height_ft": 7.2,
           "wave_height_supported": true,
-          "dominant_period_sec": 11.0,
-          "average_period_sec": 7.4,
-          "wave_direction_deg": 139,
-          "pressure_mb": 998.1,
-          "pressure_tendency_mb": -2.1,
+          "dominant_period_sec": 9.0,
+          "average_period_sec": 6.5,
+          "wave_direction_deg": 117,
+          "pressure_mb": 992.2,
+          "pressure_tendency_mb": null,
           "water_temp_f": 50.5,
-          "air_temp_f": 44.8,
-          "wave_observed_at": "2026-11-27T18:50:00Z",
+          "air_temp_f": 46.6,
+          "wave_observed_at": "2026-11-28T01:20:00Z",
           "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
           "max_24h_speed_mph": 35.8,
           "max_24h_speed_at": "2026-11-27T04:00:00Z",
@@ -2773,10 +2905,10 @@
           "max_24h_wave_at": "2026-11-27T11:50:00Z"
         },
         "WEXM1": {
-          "observed_at": "2026-11-27T19:00:00Z",
-          "speed_mph": 3.4,
+          "observed_at": "2026-11-28T01:00:00Z",
+          "speed_mph": 4.7,
           "gust_mph": null,
-          "direction_deg": 310,
+          "direction_deg": 320,
           "wave_height_ft": null,
           "wave_height_supported": true,
           "dominant_period_sec": null,
@@ -2785,7 +2917,7 @@
           "pressure_mb": null,
           "pressure_tendency_mb": null,
           "water_temp_f": null,
-          "air_temp_f": 44.1,
+          "air_temp_f": 42.8,
           "wave_observed_at": null,
           "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
           "max_24h_speed_mph": 12.8,
@@ -2823,13 +2955,13 @@
       }
     ],
     "event_state": {
-      "phase": "Ongoing",
-      "show_focus": true,
-      "primary_display": "Marine Hazard",
+      "phase": "Recent",
+      "show_focus": false,
+      "primary_display": "Routine Coastal Conditions",
       "impact": {
-        "rank": 1,
-        "level": "yellow",
-        "label": "Elevated"
+        "rank": 0,
+        "level": "green",
+        "label": "Routine"
       },
       "recent_impact": {
         "rank": 2,
@@ -2837,16 +2969,7 @@
         "label": "Significant"
       },
       "event_identity": null,
-      "active_hazards": [
-        {
-          "code": "marine_hazard",
-          "label": "Marine Hazard",
-          "basis": [
-            "NDBC 44007 measured offshore conditions are elevated"
-          ],
-          "impact_rank": 1
-        }
-      ],
+      "active_hazards": [],
       "official_alerts": [
         {
           "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.933181c564db44e93af019972b30928dda2caa77.001.1",
@@ -2919,15 +3042,13 @@
           "impact_rank": 1
         }
       ],
-      "reasons": [
-        "NDBC 44007 measured offshore conditions are elevated"
-      ],
-      "summary": "Marine Hazard is ongoing with elevated local impact potential.",
+      "reasons": [],
+      "summary": "Recent coastal impacts remain in the fixed past-24-hour window; current and forward-looking conditions are Routine.",
       "event_timing": {
-        "peak_at": "2026-11-29T19:24:00Z",
+        "peak_at": "2026-11-28T18:24:00Z",
         "window_start": null,
         "window_end": null,
-        "hours_until_peak": 47.8,
+        "hours_until_peak": 16.4,
         "basis": "NOAA OFS modeled total-water peak"
       },
       "coastal_impact": {
@@ -2944,9 +3065,9 @@
             "window_start": "2026-11-28T04:47:00Z",
             "window_end": "2026-11-28T07:47:00Z",
             "astronomical_ft": 9.55,
-            "modeled_total_ft": 10.19,
-            "modeled_time": "2026-11-28T06:06:00Z",
-            "modeled_uplift_ft": 0.65,
+            "modeled_total_ft": 10.2,
+            "modeled_time": "2026-11-28T06:00:00Z",
+            "modeled_uplift_ft": 0.69,
             "forecast_wind_mph": 15.0,
             "forecast_wind_direction": "SW",
             "onshore_component_mph": 0.0,
@@ -2960,7 +3081,7 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "10.19 ft MLLW",
+                "value": "10.20 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
@@ -2980,9 +3101,9 @@
             "window_start": "2026-11-28T16:57:00Z",
             "window_end": "2026-11-28T19:57:00Z",
             "astronomical_ft": 10.99,
-            "modeled_total_ft": 11.3,
+            "modeled_total_ft": 11.28,
             "modeled_time": "2026-11-28T18:24:00Z",
-            "modeled_uplift_ft": 0.31,
+            "modeled_uplift_ft": 0.29,
             "forecast_wind_mph": 10.0,
             "forecast_wind_direction": "W",
             "onshore_component_mph": 0.0,
@@ -2996,7 +3117,7 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "11.30 ft MLLW",
+                "value": "11.28 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
@@ -3016,9 +3137,9 @@
             "window_start": "2026-11-29T05:45:00Z",
             "window_end": "2026-11-29T08:45:00Z",
             "astronomical_ft": 9.38,
-            "modeled_total_ft": 9.74,
+            "modeled_total_ft": 9.77,
             "modeled_time": "2026-11-29T07:00:00Z",
-            "modeled_uplift_ft": 0.4,
+            "modeled_uplift_ft": 0.42,
             "forecast_wind_mph": 5.0,
             "forecast_wind_direction": "W",
             "onshore_component_mph": 0.0,
@@ -3032,7 +3153,7 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "9.74 ft MLLW",
+                "value": "9.77 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
@@ -3052,9 +3173,9 @@
             "window_start": "2026-11-29T17:57:00Z",
             "window_end": "2026-11-29T20:57:00Z",
             "astronomical_ft": 10.51,
-            "modeled_total_ft": 11.31,
-            "modeled_time": "2026-11-29T19:24:00Z",
-            "modeled_uplift_ft": 0.8,
+            "modeled_total_ft": 11.28,
+            "modeled_time": "2026-11-29T19:30:00Z",
+            "modeled_uplift_ft": 0.77,
             "forecast_wind_mph": 5.0,
             "forecast_wind_direction": "SW",
             "onshore_component_mph": 0.0,
@@ -3068,7 +3189,7 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "11.31 ft MLLW",
+                "value": "11.28 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
@@ -3088,9 +3209,9 @@
             "window_start": "2026-11-30T06:48:00Z",
             "window_end": "2026-11-30T09:48:00Z",
             "astronomical_ft": 9.26,
-            "modeled_total_ft": 10.22,
+            "modeled_total_ft": 10.21,
             "modeled_time": "2026-11-30T08:00:00Z",
-            "modeled_uplift_ft": 1.01,
+            "modeled_uplift_ft": 0.99,
             "forecast_wind_mph": 10.0,
             "forecast_wind_direction": "S",
             "onshore_component_mph": 5.0,
@@ -3104,7 +3225,7 @@
             "drivers": [
               {
                 "label": "NOAA forecast water level",
-                "value": "10.22 ft MLLW",
+                "value": "10.21 ft MLLW",
                 "source": "NOAA OFS"
               },
               {
@@ -3118,6 +3239,37 @@
                 "source": "Calculated from NWS hourly wind direction and speed"
               }
             ]
+          },
+          {
+            "high_tide_at": "2026-11-30T20:33:00Z",
+            "window_start": "2026-11-30T19:03:00Z",
+            "window_end": "2026-11-30T22:03:00Z",
+            "astronomical_ft": 9.99,
+            "modeled_total_ft": null,
+            "modeled_time": null,
+            "modeled_uplift_ft": null,
+            "forecast_wind_mph": 25.0,
+            "forecast_wind_direction": "W",
+            "onshore_component_mph": 0.0,
+            "surf_context_ft": null,
+            "impact": {
+              "score": 0,
+              "rank": 0,
+              "level": "green",
+              "label": "Routine"
+            },
+            "drivers": [
+              {
+                "label": "Predicted high tide",
+                "value": "9.99 ft MLLW",
+                "source": "NOAA CO-OPS tide prediction"
+              },
+              {
+                "label": "Wind pushing toward shore",
+                "value": "0 mph",
+                "source": "Calculated from NWS hourly wind direction and speed"
+              }
+            ]
           }
         ],
         "peak_window": {
@@ -3125,9 +3277,9 @@
           "window_start": "2026-11-28T16:57:00Z",
           "window_end": "2026-11-28T19:57:00Z",
           "astronomical_ft": 10.99,
-          "modeled_total_ft": 11.3,
+          "modeled_total_ft": 11.28,
           "modeled_time": "2026-11-28T18:24:00Z",
-          "modeled_uplift_ft": 0.31,
+          "modeled_uplift_ft": 0.29,
           "forecast_wind_mph": 10.0,
           "forecast_wind_direction": "W",
           "onshore_component_mph": 0.0,
@@ -3141,7 +3293,7 @@
           "drivers": [
             {
               "label": "NOAA forecast water level",
-              "value": "11.30 ft MLLW",
+              "value": "11.28 ft MLLW",
               "source": "NOAA OFS"
             },
             {
@@ -3156,7 +3308,7 @@
             }
           ]
         },
-        "hours_until_peak": 22.8,
+        "hours_until_peak": 16.4,
         "data_coverage": {
           "available": 4,
           "assessed": 5,
@@ -3209,7 +3361,7 @@
         "drivers": [
           {
             "label": "NOAA forecast water level",
-            "value": "11.30 ft MLLW",
+            "value": "11.28 ft MLLW",
             "source": "NOAA OFS"
           },
           {
@@ -3224,12 +3376,12 @@
           },
           {
             "label": "Latest offshore wave observation",
-            "value": "8.9 ft at 11.0 sec dominant period",
+            "value": "7.2 ft at 9.0 sec dominant period",
             "source": "NDBC 44007"
           },
           {
             "label": "Wave energy estimate",
-            "value": "39.7 kW/m estimate",
+            "value": "21.2 kW/m estimate",
             "source": "Estimated from NDBC wave height and dominant period"
           },
           {
@@ -3239,10 +3391,10 @@
           }
         ],
         "wave_context": {
-          "height_ft": 8.9,
-          "dominant_period_sec": 11.0,
-          "direction_deg": 139.0,
-          "power_proxy_kw_m": 39.7
+          "height_ft": 7.2,
+          "dominant_period_sec": 9.0,
+          "direction_deg": 117.0,
+          "power_proxy_kw_m": 21.2
         },
         "onshore_reference": {
           "shore_normal_from_deg": 120.0,

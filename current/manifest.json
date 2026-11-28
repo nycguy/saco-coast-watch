@@ -1,7 +1,7 @@
 {
   "manifest_schema_version": 1,
-  "publication_id": "f9b568ac57f60e8f",
-  "published_at": "2026-11-28T15:13:58Z",
+  "publication_id": "502fde6c3d2b9a22",
+  "published_at": "2026-11-28T15:23:33Z",
   "delivery": {
     "provider": "GitHub raw content",
     "branch": "data-delivery",
@@ -11,95 +11,95 @@
   "datasets": {
     "data/wind.json": {
       "path": "current/data/wind.json",
-      "bytes": 1561,
-      "sha256": "b22c4b813fa5a2c1e4502e92a73cc3a9c087250440ff1a798ee67fbe14c3d69c",
+      "bytes": 1562,
+      "sha256": "3a1826093a8e0b928e9cf7842313caa810e12381123307e5175316537a4af935",
       "schema_version": null,
-      "generated_at": "2026-11-28T15:13:14.622269Z",
+      "generated_at": "2026-11-28T15:22:33.408363Z",
       "max_age_minutes": 45
     },
     "data/coastal-alerts.json": {
       "path": "current/data/coastal-alerts.json",
       "bytes": 126,
-      "sha256": "a7b5f07555bcd641292c79bf0e90aeecf8c50f215e9551019f7c05538673a07e",
+      "sha256": "9ca3712a565bce81bdf29ac1e244c1df8de44e55682e3be7c926318fe69e0fa5",
       "schema_version": null,
-      "generated_at": "2026-11-28T15:13:14.835052Z",
+      "generated_at": "2026-11-28T15:22:33.821470Z",
       "max_age_minutes": 45
     },
     "data/hazards.json": {
       "path": "current/data/hazards.json",
       "bytes": 31348,
-      "sha256": "dc977d2f270476a739ddbc84e7e72ee5afe79d2e9feec01c1ea2bf3daaaa3ad5",
+      "sha256": "387254d69e8f18732ef3f79f919a9e2fafc5240898b03fabf5b4972f4cee75b1",
       "schema_version": 1,
-      "generated_at": "2026-11-28T15:13:14.978169Z",
+      "generated_at": "2026-11-28T15:22:34.277048Z",
       "max_age_minutes": 45
     },
     "data/coastal-briefing.json": {
       "path": "current/data/coastal-briefing.json",
-      "bytes": 107533,
-      "sha256": "0848554028cf49b6cac89b654780f1ddd7fe31620c4599b9080b984df3543570",
+      "bytes": 106897,
+      "sha256": "9d2ef14ffca3635d8efdcd6eb01bb79288e114bde0477b694bd1a71dd49c6ba7",
       "schema_version": 2,
-      "generated_at": "2026-11-28T15:13:22Z",
+      "generated_at": "2026-11-28T15:22:40Z",
       "max_age_minutes": 45
     },
     "data/coastal-history.json": {
       "path": "current/data/coastal-history.json",
-      "bytes": 1684800,
-      "sha256": "af9735953b372bb7cbdb4d5affc6a0d920a9256d1890d4db90a7000e53f7c3a4",
+      "bytes": 1684349,
+      "sha256": "f1ef5a7e48766b4061015be9c716ec5fa0582a087cbec3adc5478195ed12d0c6",
       "schema_version": 2,
-      "generated_at": "2026-11-28T15:13:22Z",
+      "generated_at": "2026-11-28T15:22:40Z",
       "max_age_minutes": 1440
     },
     "data/webcams/webcams.json": {
       "path": "current/data/webcams/webcams.json",
       "bytes": 817,
-      "sha256": "a4bb548003cb7c55fd5a16a8ce44e91794ca45c6d2e3360755036af2cd2b4b80",
+      "sha256": "796c47e052bce6116900d9ed46353f1248703923563d0da0de448f563b0fda38",
       "schema_version": 1,
-      "generated_at": "2026-11-28T15:13:54Z",
+      "generated_at": "2026-11-28T15:23:29Z",
       "max_age_minutes": 45
     },
     "eastcast/data/snapshot.json": {
       "path": "current/eastcast/data/snapshot.json",
-      "bytes": 79097,
-      "sha256": "984b0e2f7060b72b0ad7fd1f4c44435d80d059005737a24f26f1c409dbcd51da",
+      "bytes": 79093,
+      "sha256": "0d2fa490df5f0bd0e45a47be4d4ebadc99cbbd46efa02b33ce81e5c569677139",
       "schema_version": 2,
-      "generated_at": "2026-11-28T15:13:57Z",
+      "generated_at": "2026-11-28T15:23:30Z",
       "max_age_minutes": 90
     }
   },
   "source_health": {
     "data/wind.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:14.622269Z",
+      "generated_at": "2026-11-28T15:22:33.408363Z",
       "max_age_minutes": 45
     },
     "data/coastal-alerts.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:14.835052Z",
+      "generated_at": "2026-11-28T15:22:33.821470Z",
       "max_age_minutes": 45
     },
     "data/hazards.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:14.978169Z",
+      "generated_at": "2026-11-28T15:22:34.277048Z",
       "max_age_minutes": 45
     },
     "data/coastal-briefing.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:22Z",
+      "generated_at": "2026-11-28T15:22:40Z",
       "max_age_minutes": 45
     },
     "data/coastal-history.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:22Z",
+      "generated_at": "2026-11-28T15:22:40Z",
       "max_age_minutes": 1440
     },
     "data/webcams/webcams.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:54Z",
+      "generated_at": "2026-11-28T15:23:29Z",
       "max_age_minutes": 45
     },
     "eastcast/data/snapshot.json": {
       "status": "published",
-      "generated_at": "2026-11-28T15:13:57Z",
+      "generated_at": "2026-11-28T15:23:30Z",
       "max_age_minutes": 90
     }
   }

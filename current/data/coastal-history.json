@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-28T15:13:22Z",
+  "generated_at": "2026-11-28T15:22:40Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -42103,7 +42103,7 @@
       }
     },
     {
-      "snapshot_at": "2026-11-28T15:13:22Z",
+      "snapshot_at": "2026-11-28T15:22:40Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -42121,12 +42121,12 @@
           "forecast": null,
           "predictions": null
         },
-        "latest_observed_ft": 5.43,
-        "latest_observed_at": "2026-11-28T15:06:00Z",
+        "latest_observed_ft": 5.72,
+        "latest_observed_at": "2026-11-28T15:12:00Z",
         "observed_24h_max_ft": 12.24,
         "observed_24h_max_time": "2026-11-27T17:42:00Z",
-        "residual_current_ft": 0.49,
-        "residual_current_at": "2026-11-28T15:06:00Z",
+        "residual_current_ft": 0.5,
+        "residual_current_at": "2026-11-28T15:12:00Z",
         "residual_24h_max_ft": 1.47,
         "residual_24h_max_time": "2026-11-28T01:06:00Z",
         "forecast_peak_24h_ft": 11.27,
@@ -42200,7 +42200,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-11-28T15:13:22.364555Z",
+        "generated_at": "2026-11-28T15:22:40.950402Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -42306,7 +42306,7 @@
             "peak_at": "2026-11-30T20:06:00Z",
             "window_start": null,
             "window_end": null,
-            "hours_until_peak": 52.9,
+            "hours_until_peak": 52.7,
             "basis": "NOAA OFS modeled total-water peak"
           },
           "coastal_impact": {
@@ -42571,7 +42571,7 @@
                 }
               ]
             },
-            "hours_until_peak": 53.3,
+            "hours_until_peak": 53.2,
             "data_coverage": {
               "available": 4,
               "assessed": 5,
@@ -42639,13 +42639,8 @@
               },
               {
                 "label": "Latest offshore wave observation",
-                "value": "6.2 ft at 9.0 sec dominant period",
+                "value": "6.6 ft",
                 "source": "NDBC 44007"
-              },
-              {
-                "label": "Wave energy estimate",
-                "value": "15.7 kW/m estimate",
-                "source": "Estimated from NDBC wave height and dominant period"
               },
               {
                 "label": "Latest buoy onshore-wind component",
@@ -42654,10 +42649,10 @@
               }
             ],
             "wave_context": {
-              "height_ft": 6.2,
-              "dominant_period_sec": 9.0,
-              "direction_deg": 135.0,
-              "power_proxy_kw_m": 15.7
+              "height_ft": 6.6,
+              "dominant_period_sec": null,
+              "direction_deg": 107.0,
+              "power_proxy_kw_m": null
             },
             "onshore_reference": {
               "shore_normal_from_deg": 120.0,
@@ -43659,16 +43654,16 @@
             "speed_mph": 20.1,
             "gust_mph": 26.8,
             "direction_deg": 250,
-            "wave_height_ft": 6.2,
+            "wave_height_ft": 6.6,
             "wave_height_supported": true,
-            "dominant_period_sec": 9.0,
-            "average_period_sec": 5.7,
-            "wave_direction_deg": 135,
+            "dominant_period_sec": null,
+            "average_period_sec": 5.9,
+            "wave_direction_deg": 107,
             "pressure_mb": 994.7,
             "pressure_tendency_mb": null,
             "water_temp_f": 50.5,
             "air_temp_f": 45.5,
-            "wave_observed_at": "2026-11-28T14:20:00Z",
+            "wave_observed_at": "2026-11-28T14:40:00Z",
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 26.8,
             "max_24h_speed_at": "2026-11-28T01:00:00Z",
@@ -43821,7 +43816,7 @@
           "peak_at": "2026-11-30T20:06:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 52.9,
+          "hours_until_peak": 52.7,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -44086,7 +44081,7 @@
               }
             ]
           },
-          "hours_until_peak": 53.3,
+          "hours_until_peak": 53.2,
           "data_coverage": {
             "available": 4,
             "assessed": 5,
@@ -44154,13 +44149,8 @@
             },
             {
               "label": "Latest offshore wave observation",
-              "value": "6.2 ft at 9.0 sec dominant period",
+              "value": "6.6 ft",
               "source": "NDBC 44007"
-            },
-            {
-              "label": "Wave energy estimate",
-              "value": "15.7 kW/m estimate",
-              "source": "Estimated from NDBC wave height and dominant period"
             },
             {
               "label": "Latest buoy onshore-wind component",
@@ -44169,10 +44159,10 @@
             }
           ],
           "wave_context": {
-            "height_ft": 6.2,
-            "dominant_period_sec": 9.0,
-            "direction_deg": 135.0,
-            "power_proxy_kw_m": 15.7
+            "height_ft": 6.6,
+            "dominant_period_sec": null,
+            "direction_deg": 107.0,
+            "power_proxy_kw_m": null
           },
           "onshore_reference": {
             "shore_normal_from_deg": 120.0,
@@ -44234,9 +44224,9 @@
     },
     {
       "date": "2026-11-28",
-      "snapshot_count": 2,
+      "snapshot_count": 3,
       "max_observed_ft": 12.24,
-      "max_forecast_peak_ft": 11.49,
+      "max_forecast_peak_ft": 11.51,
       "max_gust_mph": 29.1
     }
   ],
@@ -44391,13 +44381,13 @@
   ],
   "local_events": [],
   "source_health": {
-    "checked_at": "2026-11-28T10:22:02Z",
+    "checked_at": "2026-11-28T15:13:07Z",
     "feeds": [
       {
         "name": "Local news search",
         "status": "available",
-        "item_count": 32,
-        "message": "Feed responded with matching items."
+        "item_count": 0,
+        "message": "Feed responded; no matching items were found."
       },
       {
         "name": "Public community search",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-28T10:36:03.997729Z",
+  "generated_at": "2026-11-28T15:13:14.978169Z",
   "location": {
     "name": "Saco Bay coastal reference",
     "lat": 43.472,
@@ -161,7 +161,7 @@
   },
   "wind": {
     "max_sustained_24h_mph": 15.0,
-    "max_sustained_24h_time": "2026-11-28T10:00:00Z",
+    "max_sustained_24h_time": "2026-11-28T15:00:00Z",
     "max_sustained_72h_mph": 20.0,
     "max_gust_24h_mph": null,
     "max_gust_24h_time": null,
@@ -169,8 +169,8 @@
     "max_gust_72h_time": null
   },
   "cold": {
-    "min_temp_24h_f": 41.0,
-    "min_temp_24h_time": "2026-11-29T09:00:00Z"
+    "min_temp_24h_f": 40.0,
+    "min_temp_24h_time": "2026-11-29T11:00:00Z"
   },
   "tropical": {
     "active": false,
@@ -180,31 +180,9 @@
   },
   "hourly": [
     {
-      "start": "2026-11-28T10:00:00Z",
-      "end": "2026-11-28T11:00:00Z",
-      "temperature_f": 47.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 4,
-      "summary": "Mostly Cloudy",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T13:00:00Z",
-      "end": "2026-11-28T14:00:00Z",
-      "temperature_f": 43.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 2,
-      "summary": "Mostly Sunny",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T16:00:00Z",
-      "end": "2026-11-28T17:00:00Z",
-      "temperature_f": 47.0,
+      "start": "2026-11-28T15:00:00Z",
+      "end": "2026-11-28T16:00:00Z",
+      "temperature_f": 46.0,
       "wind_mph": 15.0,
       "gust_mph": null,
       "wind_direction": "W",
@@ -213,10 +191,10 @@
       "precip_type": "Dry / Clouds"
     },
     {
-      "start": "2026-11-28T19:00:00Z",
-      "end": "2026-11-28T20:00:00Z",
-      "temperature_f": 49.0,
-      "wind_mph": 10.0,
+      "start": "2026-11-28T18:00:00Z",
+      "end": "2026-11-28T19:00:00Z",
+      "temperature_f": 50.0,
+      "wind_mph": 15.0,
       "gust_mph": null,
       "wind_direction": "W",
       "precip_probability_pct": 4,
@@ -224,13 +202,24 @@
       "precip_type": "Dry / Clouds"
     },
     {
-      "start": "2026-11-28T22:00:00Z",
-      "end": "2026-11-28T23:00:00Z",
-      "temperature_f": 47.0,
+      "start": "2026-11-28T21:00:00Z",
+      "end": "2026-11-28T22:00:00Z",
+      "temperature_f": 48.0,
       "wind_mph": 10.0,
       "gust_mph": null,
       "wind_direction": "W",
-      "precip_probability_pct": 7,
+      "precip_probability_pct": 5,
+      "summary": "Mostly Cloudy",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-11-29T00:00:00Z",
+      "end": "2026-11-29T01:00:00Z",
+      "temperature_f": 46.0,
+      "wind_mph": 5.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 11,
       "summary": "Mostly Cloudy",
       "precip_type": "Dry / Clouds"
     },
@@ -246,20 +235,20 @@
       "precip_type": "Rain"
     },
     {
-      "start": "2026-11-29T04:00:00Z",
-      "end": "2026-11-29T05:00:00Z",
-      "temperature_f": 44.0,
+      "start": "2026-11-29T03:00:00Z",
+      "end": "2026-11-29T04:00:00Z",
+      "temperature_f": 45.0,
       "wind_mph": 5.0,
       "gust_mph": null,
       "wind_direction": "W",
-      "precip_probability_pct": 40,
+      "precip_probability_pct": 49,
       "summary": "Chance Light Rain",
       "precip_type": "Rain"
     },
     {
-      "start": "2026-11-29T07:00:00Z",
-      "end": "2026-11-29T08:00:00Z",
-      "temperature_f": 42.0,
+      "start": "2026-11-29T06:00:00Z",
+      "end": "2026-11-29T07:00:00Z",
+      "temperature_f": 44.0,
       "wind_mph": 5.0,
       "gust_mph": null,
       "wind_direction": "W",
@@ -268,73 +257,40 @@
       "precip_type": "Rain"
     },
     {
-      "start": "2026-11-29T10:00:00Z",
-      "end": "2026-11-29T11:00:00Z",
+      "start": "2026-11-29T09:00:00Z",
+      "end": "2026-11-29T10:00:00Z",
       "temperature_f": 41.0,
       "wind_mph": 5.0,
       "gust_mph": null,
       "wind_direction": "W",
-      "precip_probability_pct": 14,
-      "summary": "Mostly Cloudy",
+      "precip_probability_pct": 22,
+      "summary": "Slight Chance Light Rain",
+      "precip_type": "Rain"
+    },
+    {
+      "start": "2026-11-29T12:00:00Z",
+      "end": "2026-11-29T13:00:00Z",
+      "temperature_f": 40.0,
+      "wind_mph": 5.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 0,
+      "summary": "Mostly Sunny",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-11-29T15:00:00Z",
+      "end": "2026-11-29T16:00:00Z",
+      "temperature_f": 48.0,
+      "wind_mph": 5.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 0,
+      "summary": "Sunny",
       "precip_type": "Dry / Clouds"
     }
   ],
   "hourly_full": [
-    {
-      "start": "2026-11-28T10:00:00Z",
-      "end": "2026-11-28T11:00:00Z",
-      "temperature_f": 47.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 4,
-      "summary": "Mostly Cloudy",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T11:00:00Z",
-      "end": "2026-11-28T12:00:00Z",
-      "temperature_f": 45.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 3,
-      "summary": "Mostly Sunny",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T12:00:00Z",
-      "end": "2026-11-28T13:00:00Z",
-      "temperature_f": 42.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 2,
-      "summary": "Mostly Sunny",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T13:00:00Z",
-      "end": "2026-11-28T14:00:00Z",
-      "temperature_f": 43.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "SW",
-      "precip_probability_pct": 2,
-      "summary": "Mostly Sunny",
-      "precip_type": "Dry / Clouds"
-    },
-    {
-      "start": "2026-11-28T14:00:00Z",
-      "end": "2026-11-28T15:00:00Z",
-      "temperature_f": 45.0,
-      "wind_mph": 15.0,
-      "gust_mph": null,
-      "wind_direction": "W",
-      "precip_probability_pct": 2,
-      "summary": "Mostly Sunny",
-      "precip_type": "Dry / Clouds"
-    },
     {
       "start": "2026-11-28T15:00:00Z",
       "end": "2026-11-28T16:00:00Z",
@@ -1081,6 +1037,61 @@
       "wind_direction": "W",
       "precip_probability_pct": 0,
       "summary": "Mostly Clear",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-12-01T11:00:00Z",
+      "end": "2026-12-01T12:00:00Z",
+      "temperature_f": 32.0,
+      "wind_mph": 15.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 0,
+      "summary": "Sunny",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-12-01T12:00:00Z",
+      "end": "2026-12-01T13:00:00Z",
+      "temperature_f": 32.0,
+      "wind_mph": 10.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 0,
+      "summary": "Sunny",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-12-01T13:00:00Z",
+      "end": "2026-12-01T14:00:00Z",
+      "temperature_f": 34.0,
+      "wind_mph": 10.0,
+      "gust_mph": null,
+      "wind_direction": "W",
+      "precip_probability_pct": 0,
+      "summary": "Sunny",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-12-01T14:00:00Z",
+      "end": "2026-12-01T15:00:00Z",
+      "temperature_f": 37.0,
+      "wind_mph": 15.0,
+      "gust_mph": null,
+      "wind_direction": "NW",
+      "precip_probability_pct": 0,
+      "summary": "Sunny",
+      "precip_type": "Dry / Clouds"
+    },
+    {
+      "start": "2026-12-01T15:00:00Z",
+      "end": "2026-12-01T16:00:00Z",
+      "temperature_f": 39.0,
+      "wind_mph": 15.0,
+      "gust_mph": null,
+      "wind_direction": "NW",
+      "precip_probability_pct": 0,
+      "summary": "Sunny",
       "precip_type": "Dry / Clouds"
     }
   ],

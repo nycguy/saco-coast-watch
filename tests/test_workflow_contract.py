@@ -88,7 +88,9 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('cancel-in-progress: true',monitor)
         self.assertIn('check_data_delivery_health.py',monitor)
         self.assertNotIn('resend',monitor.lower())
-        self.assertNotIn('push',monitor.lower().replace('data-delivery',''))
+        self.assertIn("'.github/workflows/data-delivery-health.yml'",monitor)
+        self.assertIn("'scripts/check_data_delivery_health.py'",monitor)
+        self.assertIn("'scripts/verify_data_delivery.py'",monitor)
 
 if __name__=='__main__':
     unittest.main()

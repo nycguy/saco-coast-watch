@@ -14,7 +14,7 @@ OUT.mkdir(parents=True,exist_ok=True)
 
 def alert(severity,event):
     now=datetime.now(timezone.utc)
-    return {'properties':{'event':event,'severity':severity,'effective':(now-timedelta(minutes=10)).isoformat(),'expires':(now+timedelta(hours=2)).isoformat(),'headline':f'Official {event} headline','description':f'Full official {event} details.'}}
+    return {'properties':{'event':event,'severity':severity,'effective':(now-timedelta(minutes=10)).isoformat(),'expires':(now+timedelta(hours=2)).isoformat(),'areaDesc':'Coastal Waters Near Saco Bay; Additional Official Marine Zones','headline':f'Official {event} headline','description':f'Full official {event} details.'}}
 
 def main():
     fixture={'features':[]}
@@ -44,6 +44,13 @@ def main():
             assert panel.locator('.alert').count()==3,'all alerts must remain available'
             assert panel.locator('.alert').nth(0).locator('strong').inner_text()=='Extreme wind alert','most severe alert must appear first'
             assert 'NWS Severity: Extreme' in panel.locator('.alert-severity').inner_text()
+            assert panel.locator('.alert-area').count()==0
+            official=panel.locator('.alert-details').first
+            official.locator('summary').click()
+            assert 'Affected Area: Coastal Waters Near Saco Bay; Additional Official Marine Zones' in official.locator('p').inner_text()
+            page.evaluate('renderAlerts()')
+            assert official.get_attribute('open') is not None,'reading state must survive refresh'
+            official.locator('summary').click()
             appearance=panel.evaluate("el=>({background:getComputedStyle(el).backgroundColor,border:getComputedStyle(el).borderTopColor,width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})")
             assert appearance['width']<=width and appearance['height']>0,appearance
             assert appearance['background']=='rgb(51, 11, 23)',appearance

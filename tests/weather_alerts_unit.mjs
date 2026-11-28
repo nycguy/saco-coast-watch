@@ -69,12 +69,15 @@ test('a fresh valid active response restores the card after a valid empty respon
 });
 
 test('message expiry and expected condition end retain distinct labels and official text',()=>{
- const item=alert('Minor',{ends:new Date(now+2*60*60_000).toISOString(),description:'Official advisory description',instruction:'Official boating instruction'});
+ const item=alert('Minor',{ends:new Date(now+2*60*60_000).toISOString(),areaDesc:'Coastal Waters Near Saco Bay; Additional Official Marine Zones',description:'Official advisory description',instruction:'Official boating instruction'});
  setState({alerts:[item]});render();
  const card=list.children[1];
  assert.match(card.children[1].textContent,/Message Expires/);
+ assert.doesNotMatch(card.children[1].textContent,/NWS Severity/);
  assert.match(card.children[2].textContent,/Conditions Expected Through/);
+ assert.equal(card.children.length,4,'full zone list belongs in the official details');
  const details=card.children.at(-1);
+ assert.match(details.children[1].textContent,/Affected Area: Coastal Waters Near Saco Bay; Additional Official Marine Zones/);
  assert.match(details.children[1].textContent,/Official advisory description/);
  assert.match(details.children[1].textContent,/Official boating instruction/);
 });

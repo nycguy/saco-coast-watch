@@ -49,7 +49,7 @@ The dashboard ID helper takes a raw ID, not a CSS selector. Layout assertions ve
 - Touch/keyboard chart inspection reports each source's actual sample timestamp.
 - Camera archive display applies its rolling window against current time, excludes invalid/future timestamps and unsafe filenames, and recounts qualifying images. This does not delete durable historical evidence.
 - Local reports require actual weather relevance, defensible local geography, valid dates within seven days, public source links, and deduplication. Publisher nationality alone does not disqualify a genuine local report. Search results are reports, not verified observations.
-- NWS message expiration is labeled separately from `ends`, when provided. Preserve official headline, description, and instructions inside alert details.
+- NWS message expiration is labeled separately from `ends`, when provided. Keep product, severity, and both time labels visible. Preserve the full affected-area list, official headline, description, and instructions inside alert details. A single alert uses one severity label; multiple alerts retain individual severities.
 - The same official alert's full headline is not repeated as upcoming context; active duplicate products link to the official alert above.
 
 ## Brand assets and delivery

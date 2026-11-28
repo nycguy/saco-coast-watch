@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-28T02:00:24Z",
+  "generated_at": "2026-11-28T02:10:35Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "station": "8418150",
   "thresholds_ft_mllw": {
@@ -41726,7 +41726,7 @@
       }
     },
     {
-      "snapshot_at": "2026-11-28T02:00:24Z",
+      "snapshot_at": "2026-11-28T02:10:35Z",
       "snapshot_kind": "realtime",
       "provenance": {
         "forecast": "live_noaa_ofs_capture",
@@ -41744,12 +41744,12 @@
           "forecast": null,
           "predictions": null
         },
-        "latest_observed_ft": 2.36,
-        "latest_observed_at": "2026-11-28T01:54:00Z",
+        "latest_observed_ft": 2.56,
+        "latest_observed_at": "2026-11-28T02:00:00Z",
         "observed_24h_max_ft": 12.24,
         "observed_24h_max_time": "2026-11-27T17:42:00Z",
-        "residual_current_ft": 1.36,
-        "residual_current_at": "2026-11-28T01:54:00Z",
+        "residual_current_ft": 1.34,
+        "residual_current_at": "2026-11-28T02:00:00Z",
         "residual_24h_max_ft": 1.74,
         "residual_24h_max_time": "2026-11-27T07:48:00Z",
         "forecast_peak_24h_ft": 11.28,
@@ -41823,7 +41823,7 @@
       },
       "hazards": {
         "schema_version": 1,
-        "generated_at": "2026-11-28T02:00:24.281145Z",
+        "generated_at": "2026-11-28T02:10:35.808938Z",
         "location": {
           "name": "Saco Bay coastal reference",
           "lat": 43.472,
@@ -41929,7 +41929,7 @@
             "peak_at": "2026-11-28T18:24:00Z",
             "window_start": null,
             "window_end": null,
-            "hours_until_peak": 16.4,
+            "hours_until_peak": 16.2,
             "basis": "NOAA OFS modeled total-water peak"
           },
           "coastal_impact": {
@@ -42189,7 +42189,7 @@
                 }
               ]
             },
-            "hours_until_peak": 16.4,
+            "hours_until_peak": 16.3,
             "data_coverage": {
               "available": 4,
               "assessed": 5,
@@ -43273,19 +43273,19 @@
       "marine": {
         "stations": {
           "44007": {
-            "observed_at": "2026-11-28T01:30:00Z",
+            "observed_at": "2026-11-28T01:40:00Z",
             "speed_mph": 8.9,
             "gust_mph": 13.4,
-            "direction_deg": 320,
+            "direction_deg": 330,
             "wave_height_ft": 7.2,
             "wave_height_supported": true,
             "dominant_period_sec": 9.0,
             "average_period_sec": 6.5,
             "wave_direction_deg": 117,
-            "pressure_mb": 992.2,
+            "pressure_mb": 992.1,
             "pressure_tendency_mb": null,
             "water_temp_f": 50.5,
-            "air_temp_f": 46.6,
+            "air_temp_f": 45.9,
             "wave_observed_at": "2026-11-28T01:20:00Z",
             "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
             "max_24h_speed_mph": 35.8,
@@ -43439,7 +43439,7 @@
           "peak_at": "2026-11-28T18:24:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 16.4,
+          "hours_until_peak": 16.2,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -43699,7 +43699,7 @@
               }
             ]
           },
-          "hours_until_peak": 16.4,
+          "hours_until_peak": 16.3,
           "data_coverage": {
             "available": 4,
             "assessed": 5,

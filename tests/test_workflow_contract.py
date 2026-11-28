@@ -33,6 +33,8 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('actions/runs/${GITHUB_RUN_ID}/artifacts?name=github-pages',workflow)
         self.assertLess(workflow.index('Wait for Pages artifact registration'),workflow.index('Publish GitHub Pages'))
         self.assertIn('sleep 5',workflow)
+        self.assertIn('finish propagating metadata',workflow)
+        self.assertIn('sleep 10',workflow)
 
     def test_public_runner_and_existing_refresh_schedules_are_preserved(self):
         pages=(ROOT/'.github/workflows/update-wind-and-publish.yml').read_text(encoding='utf-8')

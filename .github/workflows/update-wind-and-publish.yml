@@ -179,6 +179,8 @@ jobs:
               "${artifact_url}" | python3 -c 'import json,sys; print(sum(1 for a in json.load(sys.stdin).get("artifacts",[]) if a.get("name")=="github-pages" and not a.get("expired")))')"
             if [ "$artifact_count" -ge 1 ]; then
               echo "Pages artifact is registered and available to deploy-pages."
+              echo "Allowing the artifact service to finish propagating metadata before deployment."
+              sleep 10
               exit 0
             fi
             echo "Pages artifact is not visible to the Actions API yet (attempt ${attempt}/12); waiting 5 seconds."
@@ -267,4 +269,5 @@ jobs:
           echo "Published independent data snapshot to data-delivery."
       - name: Verify independent data delivery headers, hashes, and JSON
         run: python3 scripts/verify_data_delivery.py https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/data-delivery/current
+
 

@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-28T02:10:35Z",
+  "generated_at": "2026-11-28T02:37:43Z",
   "window_basis": "Fixed rolling windows; never based on a visitor's last app visit.",
   "past_24h": {
-    "text": "Over the past 24 hours, the Portland gauge reached 12.24 ft MLLW around Fri, Nov 27 at 12:42 PM ET, 0.24 ft above the 12.0 ft Minor Flood threshold. Marine observations: 44007 gusted to 47.0 mph; WEXM1 reached 12.8 mph sustained. Portland water reached +1.74 ft above the predicted astronomical tide around Fri, Nov 27 at 2:48 AM ET. The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 8.9 mph, fell from 29.1 mph in the compatible snapshot nearest 24 hours earlier. The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 35.8 mph in the compatible snapshot nearest 24 hours earlier. The latest dominant wave period at NOAA/NDBC offshore buoy 44007 was 9.0 seconds, rose from 6.0 seconds in the compatible snapshot nearest 24 hours earlier. The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 992.1 mb, fell from 1023.7 mb in the compatible snapshot nearest 24 hours earlier. NWS alert changes: Gale Warning expired; Small Craft Advisory issued. Recent coastal event: offshore wind gust, Portland water above the predicted tide, offshore wave height. Current and forward-looking conditions have returned to Routine.",
+    "text": "Over the past 24 hours, the Portland gauge reached 12.24 ft MLLW around Fri, Nov 27 at 12:42 PM ET, 0.24 ft above the 12.0 ft Minor Flood threshold. Marine observations: 44007 gusted to 47.0 mph; WEXM1 reached 12.8 mph sustained. Portland water reached +1.74 ft above the predicted astronomical tide around Fri, Nov 27 at 2:48 AM ET. The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 6.7 mph, fell from 33.6 mph in the compatible snapshot nearest 24 hours earlier. The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 42.5 mph in the compatible snapshot nearest 24 hours earlier. The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 991.9 mb, fell from 1021.7 mb in the compatible snapshot nearest 24 hours earlier. NWS alert changes: Gale Warning expired; Small Craft Advisory issued. Recent coastal event: offshore wind gust, Portland water above the predicted tide, offshore wave height. Current and forward-looking conditions have returned to Routine.",
     "dashboard_text": "Portland gauge peak: 12.24 ft MLLW (0.24 ft above Minor Flood). Water ran as much as +1.74 ft above predicted tide. Marine: 44007 gusted to 47.0 mph.",
     "observed_peak_ft": 12.24,
     "observed_peak_time": "2026-11-27T17:42:00Z",
@@ -15,38 +15,29 @@
       {
         "station": "44007",
         "metric": "speed_mph",
-        "current": 8.9,
-        "previous": 29.1,
-        "current_at": "2026-11-28T01:40:00Z",
-        "previous_at": "2026-11-27T01:30:00Z",
-        "text": "The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 8.9 mph, fell from 29.1 mph in the compatible snapshot nearest 24 hours earlier."
+        "current": 6.7,
+        "previous": 33.6,
+        "current_at": "2026-11-28T02:10:00Z",
+        "previous_at": "2026-11-27T02:10:00Z",
+        "text": "The latest sustained wind at NOAA/NDBC offshore buoy 44007 was 6.7 mph, fell from 33.6 mph in the compatible snapshot nearest 24 hours earlier."
       },
       {
         "station": "44007",
         "metric": "gust_mph",
         "current": 13.4,
-        "previous": 35.8,
-        "current_at": "2026-11-28T01:40:00Z",
-        "previous_at": "2026-11-27T01:30:00Z",
-        "text": "The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 35.8 mph in the compatible snapshot nearest 24 hours earlier."
-      },
-      {
-        "station": "44007",
-        "metric": "dominant_period_sec",
-        "current": 9.0,
-        "previous": 6.0,
-        "current_at": "2026-11-28T01:20:00Z",
-        "previous_at": "2026-11-27T01:20:00Z",
-        "text": "The latest dominant wave period at NOAA/NDBC offshore buoy 44007 was 9.0 seconds, rose from 6.0 seconds in the compatible snapshot nearest 24 hours earlier."
+        "previous": 42.5,
+        "current_at": "2026-11-28T02:10:00Z",
+        "previous_at": "2026-11-27T02:10:00Z",
+        "text": "The latest wind gust at NOAA/NDBC offshore buoy 44007 was 13.4 mph, fell from 42.5 mph in the compatible snapshot nearest 24 hours earlier."
       },
       {
         "station": "44007",
         "metric": "pressure_mb",
-        "current": 992.1,
-        "previous": 1023.7,
-        "current_at": "2026-11-28T01:40:00Z",
-        "previous_at": "2026-11-27T01:30:00Z",
-        "text": "The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 992.1 mb, fell from 1023.7 mb in the compatible snapshot nearest 24 hours earlier."
+        "current": 991.9,
+        "previous": 1021.7,
+        "current_at": "2026-11-28T02:10:00Z",
+        "previous_at": "2026-11-27T02:10:00Z",
+        "text": "The latest barometric pressure at NOAA/NDBC offshore buoy 44007 was 991.9 mb, fell from 1021.7 mb in the compatible snapshot nearest 24 hours earlier."
       }
     ],
     "alert_changes": [
@@ -73,7 +64,7 @@
     "text": "The highest NOAA-predicted water level over the next 72 hours fell below Portland's Minor Flood threshold, changing from 12.03 to 11.28 ft MLLW. Compared with coastal conditions around 24 hours ago, coastal status shifted from ongoing to recently ended; SacoCast's local impact rating moved from Significant to Routine. The SacoCast compound coastal-impact score decreased by 16 points, from 24 to 8. Drivers: NOAA forecast water level fell by 0.8 ft.",
     "dashboard_text": "The highest NOAA-predicted water level over the next 72 hours fell below Portland's Minor Flood threshold, changing from 12.03 to 11.28 ft MLLW.",
     "comparison": {
-      "baseline_at": "2026-11-27T01:55:50Z",
+      "baseline_at": "2026-11-27T02:37:37Z",
       "baseline_source": "live_noaa_ofs_capture",
       "peak_delta_ft": -0.75,
       "previous_peak_ft": 12.03,
@@ -99,15 +90,15 @@
     },
     "wind_comparison": {
       "44007": {
-        "speed_delta_mph": -20.2,
-        "gust_delta_mph": -22.4,
-        "current_direction_deg": 330,
+        "speed_delta_mph": -26.9,
+        "gust_delta_mph": -29.1,
+        "current_direction_deg": 320,
         "previous_direction_deg": 60
       },
       "WEXM1": {
-        "speed_delta_mph": -4.5,
+        "speed_delta_mph": -7.0,
         "gust_delta_mph": null,
-        "current_direction_deg": 320,
+        "current_direction_deg": 300,
         "previous_direction_deg": 360
       }
     }
@@ -144,7 +135,7 @@
       {
         "label": "24h ago",
         "target_hours_ago": 24,
-        "snapshot_at": "2026-11-27T01:55:50Z",
+        "snapshot_at": "2026-11-27T02:37:37Z",
         "peak_ft": 12.03,
         "peak_time": "2026-11-27T17:36:00Z",
         "minor_margin_ft": -0.03,
@@ -162,7 +153,7 @@
       {
         "label": "Now",
         "target_hours_ago": 0,
-        "snapshot_at": "2026-11-28T02:10:35Z",
+        "snapshot_at": "2026-11-28T02:37:43Z",
         "peak_ft": 11.28,
         "peak_time": "2026-11-28T18:24:00Z",
         "minor_margin_ft": 0.72,
@@ -265,7 +256,7 @@
       "peak_at": "2026-11-28T18:24:00Z",
       "window_start": null,
       "window_end": null,
-      "hours_until_peak": 16.2,
+      "hours_until_peak": 15.8,
       "basis": "NOAA OFS modeled total-water peak"
     },
     "coastal_impact": {
@@ -525,7 +516,7 @@
           }
         ]
       },
-      "hours_until_peak": 16.3,
+      "hours_until_peak": 15.8,
       "data_coverage": {
         "available": 4,
         "assessed": 5,
@@ -593,12 +584,12 @@
         },
         {
           "label": "Latest offshore wave observation",
-          "value": "7.2 ft at 9.0 sec dominant period",
+          "value": "7.2 ft at 8.0 sec dominant period",
           "source": "NDBC 44007"
         },
         {
           "label": "Wave energy estimate",
-          "value": "21.2 kW/m estimate",
+          "value": "18.9 kW/m estimate",
           "source": "Estimated from NDBC wave height and dominant period"
         },
         {
@@ -609,9 +600,9 @@
       ],
       "wave_context": {
         "height_ft": 7.2,
-        "dominant_period_sec": 9.0,
-        "direction_deg": 117.0,
-        "power_proxy_kw_m": 21.2
+        "dominant_period_sec": 8.0,
+        "direction_deg": 137.0,
+        "power_proxy_kw_m": 18.9
       },
       "onshore_reference": {
         "shore_normal_from_deg": 120.0,
@@ -694,9 +685,9 @@
     "retrospective": {
       "title": "Coastal Storm",
       "started_at": "2026-11-26T00:18:26Z",
-      "ended_at": "2026-11-28T02:10:35Z",
-      "captured_coverage_hours": 49.9,
-      "duration_hours": 49.9,
+      "ended_at": "2026-11-28T02:37:43Z",
+      "captured_coverage_hours": 50.3,
+      "duration_hours": 50.3,
       "coverage_basis": "This is how much of the event SacoCast captured, not how long the storm itself lasted.",
       "phase": "Recent",
       "highest_impact": {
@@ -747,15 +738,25 @@
       "to_impact": "Elevated",
       "from_display": "Coastal Storm",
       "to_display": "Marine Hazard"
+    },
+    {
+      "at": "2026-11-28T02:10:32Z",
+      "type": "event_state_transition",
+      "from_phase": "Ongoing",
+      "to_phase": "Recent",
+      "from_impact": "Elevated",
+      "to_impact": "Routine",
+      "from_display": "Marine Hazard",
+      "to_display": "Routine Coastal Conditions"
     }
   ],
   "event_history": [
     {
       "title": "Coastal Storm",
       "started_at": "2026-11-26T00:18:26Z",
-      "ended_at": "2026-11-28T02:10:35Z",
-      "captured_coverage_hours": 49.9,
-      "duration_hours": 49.9,
+      "ended_at": "2026-11-28T02:37:43Z",
+      "captured_coverage_hours": 50.3,
+      "duration_hours": 50.3,
       "coverage_basis": "This is how much of the event SacoCast captured, not how long the storm itself lasted.",
       "phase": "Recent",
       "highest_impact": {
@@ -1157,7 +1158,7 @@
   "local_pulse": {
     "summary": "12 weather/coastal public reports retained in the recent scan (12 news/other public, 0 community). Source check: Public community search temporarily unavailable. An empty scan is not proof that no local impacts occurred. Community reports are labeled anecdotal. Public Facebook coverage is not assumed comprehensive because indexing and access are inconsistent.",
     "dashboard_summary": "12 weather/coastal public reports found; community posts are anecdotal. A source feed is temporarily unavailable.",
-    "updated_at": "2026-11-27T19:35:24Z",
+    "updated_at": "2026-11-28T02:10:32Z",
     "items": [
       {
         "type": "news",
@@ -1284,7 +1285,7 @@
       {
         "name": "Local news search",
         "status": "available",
-        "item_count": 30,
+        "item_count": 32,
         "message": "Feed responded with matching items."
       },
       {
@@ -1335,7 +1336,7 @@
     }
   ],
   "current_snapshot": {
-    "snapshot_at": "2026-11-28T02:10:35Z",
+    "snapshot_at": "2026-11-28T02:37:43Z",
     "snapshot_kind": "realtime",
     "provenance": {
       "forecast": "live_noaa_ofs_capture",
@@ -1353,12 +1354,12 @@
         "forecast": null,
         "predictions": null
       },
-      "latest_observed_ft": 2.56,
-      "latest_observed_at": "2026-11-28T02:00:00Z",
+      "latest_observed_ft": 3.88,
+      "latest_observed_at": "2026-11-28T02:30:00Z",
       "observed_24h_max_ft": 12.24,
       "observed_24h_max_time": "2026-11-27T17:42:00Z",
-      "residual_current_ft": 1.34,
-      "residual_current_at": "2026-11-28T02:00:00Z",
+      "residual_current_ft": 1.4,
+      "residual_current_at": "2026-11-28T02:30:00Z",
       "residual_24h_max_ft": 1.74,
       "residual_24h_max_time": "2026-11-27T07:48:00Z",
       "forecast_peak_24h_ft": 11.28,
@@ -1432,7 +1433,7 @@
     },
     "hazards": {
       "schema_version": 1,
-      "generated_at": "2026-11-28T02:10:35.808938Z",
+      "generated_at": "2026-11-28T02:37:43.202599Z",
       "location": {
         "name": "Saco Bay coastal reference",
         "lat": 43.472,
@@ -1538,7 +1539,7 @@
           "peak_at": "2026-11-28T18:24:00Z",
           "window_start": null,
           "window_end": null,
-          "hours_until_peak": 16.2,
+          "hours_until_peak": 15.8,
           "basis": "NOAA OFS modeled total-water peak"
         },
         "coastal_impact": {
@@ -1798,7 +1799,7 @@
               }
             ]
           },
-          "hours_until_peak": 16.3,
+          "hours_until_peak": 15.8,
           "data_coverage": {
             "available": 4,
             "assessed": 5,
@@ -1866,12 +1867,12 @@
             },
             {
               "label": "Latest offshore wave observation",
-              "value": "7.2 ft at 9.0 sec dominant period",
+              "value": "7.2 ft at 8.0 sec dominant period",
               "source": "NDBC 44007"
             },
             {
               "label": "Wave energy estimate",
-              "value": "21.2 kW/m estimate",
+              "value": "18.9 kW/m estimate",
               "source": "Estimated from NDBC wave height and dominant period"
             },
             {
@@ -1882,9 +1883,9 @@
           ],
           "wave_context": {
             "height_ft": 7.2,
-            "dominant_period_sec": 9.0,
-            "direction_deg": 117.0,
-            "power_proxy_kw_m": 21.2
+            "dominant_period_sec": 8.0,
+            "direction_deg": 137.0,
+            "power_proxy_kw_m": 18.9
           },
           "onshore_reference": {
             "shore_normal_from_deg": 120.0,
@@ -1927,7 +1928,7 @@
         "precip_transition_24h": "Rain"
       },
       "rain": {
-        "qpf_24h_in": 0.03,
+        "qpf_24h_in": 0.04,
         "qpf_72h_in": 0.88
       },
       "wind": {
@@ -2882,20 +2883,20 @@
     "marine": {
       "stations": {
         "44007": {
-          "observed_at": "2026-11-28T01:40:00Z",
-          "speed_mph": 8.9,
+          "observed_at": "2026-11-28T02:10:00Z",
+          "speed_mph": 6.7,
           "gust_mph": 13.4,
-          "direction_deg": 330,
+          "direction_deg": 320,
           "wave_height_ft": 7.2,
           "wave_height_supported": true,
-          "dominant_period_sec": 9.0,
-          "average_period_sec": 6.5,
-          "wave_direction_deg": 117,
-          "pressure_mb": 992.1,
+          "dominant_period_sec": 8.0,
+          "average_period_sec": 6.6,
+          "wave_direction_deg": 137,
+          "pressure_mb": 991.9,
           "pressure_tendency_mb": null,
-          "water_temp_f": 50.5,
-          "air_temp_f": 45.9,
-          "wave_observed_at": "2026-11-28T01:20:00Z",
+          "water_temp_f": 50.4,
+          "air_temp_f": 45.7,
+          "wave_observed_at": "2026-11-28T01:50:00Z",
           "source": "https://www.ndbc.noaa.gov/data/realtime2/44007.txt",
           "max_24h_speed_mph": 35.8,
           "max_24h_speed_at": "2026-11-27T04:00:00Z",
@@ -2905,10 +2906,10 @@
           "max_24h_wave_at": "2026-11-27T11:50:00Z"
         },
         "WEXM1": {
-          "observed_at": "2026-11-28T01:00:00Z",
-          "speed_mph": 4.7,
+          "observed_at": "2026-11-28T02:00:00Z",
+          "speed_mph": 1.1,
           "gust_mph": null,
-          "direction_deg": 320,
+          "direction_deg": 300,
           "wave_height_ft": null,
           "wave_height_supported": true,
           "dominant_period_sec": null,
@@ -2917,7 +2918,7 @@
           "pressure_mb": null,
           "pressure_tendency_mb": null,
           "water_temp_f": null,
-          "air_temp_f": 42.8,
+          "air_temp_f": 42.6,
           "wave_observed_at": null,
           "source": "https://www.ndbc.noaa.gov/data/realtime2/WEXM1.txt",
           "max_24h_speed_mph": 12.8,
@@ -3048,7 +3049,7 @@
         "peak_at": "2026-11-28T18:24:00Z",
         "window_start": null,
         "window_end": null,
-        "hours_until_peak": 16.2,
+        "hours_until_peak": 15.8,
         "basis": "NOAA OFS modeled total-water peak"
       },
       "coastal_impact": {
@@ -3308,7 +3309,7 @@
             }
           ]
         },
-        "hours_until_peak": 16.3,
+        "hours_until_peak": 15.8,
         "data_coverage": {
           "available": 4,
           "assessed": 5,
@@ -3376,12 +3377,12 @@
           },
           {
             "label": "Latest offshore wave observation",
-            "value": "7.2 ft at 9.0 sec dominant period",
+            "value": "7.2 ft at 8.0 sec dominant period",
             "source": "NDBC 44007"
           },
           {
             "label": "Wave energy estimate",
-            "value": "21.2 kW/m estimate",
+            "value": "18.9 kW/m estimate",
             "source": "Estimated from NDBC wave height and dominant period"
           },
           {
@@ -3392,9 +3393,9 @@
         ],
         "wave_context": {
           "height_ft": 7.2,
-          "dominant_period_sec": 9.0,
-          "direction_deg": 117.0,
-          "power_proxy_kw_m": 21.2
+          "dominant_period_sec": 8.0,
+          "direction_deg": 137.0,
+          "power_proxy_kw_m": 18.9
         },
         "onshore_reference": {
           "shore_normal_from_deg": 120.0,

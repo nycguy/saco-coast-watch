@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-28T02:10:34.178155Z",
+  "generated_at": "2026-11-28T02:37:38.979583Z",
   "location": {
     "name": "Saco Bay coastal reference",
     "lat": 43.472,
@@ -156,7 +156,7 @@
     "precip_transition_24h": "Rain"
   },
   "rain": {
-    "qpf_24h_in": 0.03,
+    "qpf_24h_in": 0.04,
     "qpf_72h_in": 0.88
   },
   "wind": {

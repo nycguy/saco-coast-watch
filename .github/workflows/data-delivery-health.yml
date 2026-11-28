@@ -1,0 +1,26 @@
+name: Monitor SacoCast data delivery
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-delivery-health
+  cancel-in-progress: true
+
+jobs:
+  health:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Check independent delivery freshness and integrity
+        run: >-
+          python3 scripts/check_data_delivery_health.py
+          https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/data-delivery/current
+          --max-manifest-age-minutes 30
+

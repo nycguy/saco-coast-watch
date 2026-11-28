@@ -1,5 +1,21 @@
 # SacoCast operations
 
+## Independent data-delivery health monitor
+
+The public `Monitor SacoCast data delivery` workflow runs every 15 minutes and
+checks the independent raw-content manifest and all dataset hashes. It fails
+when the manifest is more than 30 minutes old, a dataset exceeds its
+source-specific freshness threshold, the manifest is malformed, CORS or cache
+headers are missing, or a dataset hash does not match.
+
+This is intentionally a GitHub Actions failure signal, not an email or Web Push
+notification. It adds no subscriber traffic and uses the public repository's
+free runner allocation. GitHub account notifications for failed workflows must
+be enabled if an email or GitHub notification is desired.
+
+The existing Pages snapshot remains the browser fallback. A failed monitor does
+not alter, delete, or replace any dataset.
+
 ## Source health
 
 The dashboard combines independent sources. A failure in one source should not block the rest of the site.
@@ -76,3 +92,4 @@ This feature is **not active in production** until the D1 migration is applied a
 ## Independent data delivery
 
 Inspect the refresh workflow's independent-delivery verification step for the publication ID, endpoint headers, and hash results. A failed manifest, stale dataset, hash mismatch, or CORS failure is a delivery failure, not evidence that NOAA/NWS conditions are safe. Pages data remains the last-known-good operational fallback. Do not send test notifications while diagnosing this path.
+

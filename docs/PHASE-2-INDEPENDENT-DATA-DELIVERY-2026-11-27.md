@@ -61,33 +61,12 @@ provider-controlled, not application-controlled. Versioned dataset paths and
 manifest hashes make a new publication unambiguous, while the Pages snapshot
 continues to provide the immediate rollback target.
 
-## Production-confidence validation: 2026-11-28
+## Freshness monitoring addition
 
-The post-deployment validation pass completed against the production application
-and the independent delivery branch. The deterministic Python suite passed all
-147 tests, including schema, interrupted-publication, missing-data, artifact,
-workflow, and historical-data contracts. The Node suite passed all 101 tests.
-
-The live raw GitHub delivery check passed for all seven datasets. The manifest
-reported publication `73bdc075c8ccd84e` and exposed the expected CORS and
-`max-age=300` response policy. The Pages snapshots also returned HTTP 200 with
-`access-control-allow-origin: *` and `max-age=600`.
-
-The controlled failure behavior remains safe by design: an invalid or stale
-independent manifest is rejected by the browser loader, which then tries the
-same-origin Pages snapshot, followed by the in-session and local
-last-known-good caches. No independent publication can replace the prior
-dataset until the complete manifest and all dataset hashes validate.
-
-The validation pass identified an operational freshness gap. At the time of
-testing, the latest successful refresh workflow was run
-`46058094062` at `2026-11-27T19:38:13Z`; the live manifest publication was
-`2026-11-27T19:38:59Z`. The application correctly displayed stale or
-unavailable states rather than presenting the data as current. This is a
-workflow-scheduling or publication-observability issue, not a partial-data
-replacement issue, and the existing Pages publication path remains in place.
-
-The production Worker health endpoint returned HTTP 200 with D1 connected,
-email alerts healthy, Web Push healthy, threshold push healthy, and no missing
-tables or settings. No notification was sent during testing.
+The public `Monitor SacoCast data delivery` workflow now runs every 15 minutes
+with a five-minute timeout. It checks CORS, cache headers, JSON integrity,
+manifest hashes, publication age, and each dataset's source-specific freshness
+threshold. It fails closed when delivery is stale or malformed, using the
+standard GitHub Actions failure signal. It does not send email, Web Push, or
+subscriber notifications and does not change the Pages fallback.
 

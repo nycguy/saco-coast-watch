@@ -79,6 +79,18 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('wrangler',worker)
         self.assertNotIn('data-delivery',worker)
 
+    def test_data_delivery_health_monitor_is_low_noise_and_free(self):
+        monitor=(ROOT/'.github/workflows/data-delivery-health.yml').read_text(encoding='utf-8')
+        self.assertIn("cron: '*/15 * * * *'",monitor)
+        self.assertIn('workflow_dispatch:',monitor)
+        self.assertIn('contents: read',monitor)
+        self.assertIn('timeout-minutes: 5',monitor)
+        self.assertIn('cancel-in-progress: true',monitor)
+        self.assertIn('check_data_delivery_health.py',monitor)
+        self.assertNotIn('resend',monitor.lower())
+        self.assertNotIn('push',monitor.lower().replace('data-delivery',''))
+
 if __name__=='__main__':
     unittest.main()
+
 

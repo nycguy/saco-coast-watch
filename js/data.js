@@ -44,7 +44,7 @@ function observedWaterTrend(observations,at=now()){
  const rows=(Array.isArray(observations)?observations:[]).filter(p=>Number.isFinite(p?.t)&&Number.isFinite(p?.v)&&p.t<=at&&p.t>=at-60*60000).sort((a,b)=>a.t-b.t);
  if(rows.length<3||rows.at(-1).t-rows[0].t<10*60000)return{direction:'unavailable',change:null};
  const change=rows.at(-1).v-rows[0].v;
- return{direction:change>0.05?'rising':change< -0.05?'falling':'steady',change};
+ return{direction:change>0.05?'rising':change< -0.05?'falling':'steady',change,spanMinutes:(rows.at(-1).t-rows[0].t)/60000};
 }
 function health(id,ok,label){$(id).textContent=label|| (ok?'Connected':'Unavailable');$(id).className='badge '+(ok?'ok':'fail');}
 

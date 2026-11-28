@@ -3,24 +3,31 @@ import pathlib, re, unittest
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 INDEX=ROOT/'index.html'
 EXPECTED_JS=[
- 'js/config.js','js/marine.js','js/data.js','js/weather.js','js/water-levels.js','js/intelligence.js','js/coastal-events.js',
- 'js/alerts.js','js/chart.js','js/hazards.js','js/briefing.js','js/app.js','js/map.js','js/webcams.js','js/abellona-player.mjs','js/disclosures.js'
+ 'js/config.js','js/presentation.js','js/marine.js','js/data.js','js/weather.js','js/water-levels.js','js/intelligence.js','js/coastal-events.js',
+ 'js/alerts.js','js/chart.js','js/hazards.js','js/briefing.js','js/app.js','js/map.js','js/webcams.js','js/abellona-player.mjs','js/disclosures.js','js/icons.js'
 ]
 
 class FrontendArchitectureTests(unittest.TestCase):
  def test_index_is_markup_shell_with_external_assets(self):
   html=INDEX.read_text(encoding='utf-8')
-  self.assertLess(len(html),50000)
-  self.assertIn('href="css/app.css"',html)
+  self.assertLess(len(html),60000)
+  self.assertRegex(html,r'href="css/app\.css\?v=[^"]+"')
   self.assertNotRegex(html,r'<style\b')
   inline=[body for attrs,body in re.findall(r'<script\b([^>]*)>([\s\S]*?)</script>',html,re.I) if body.strip()]
   self.assertEqual(inline,[])
   positions=[]
   for src in EXPECTED_JS:
-   token=f'src="{src}"'
-   self.assertIn(token,html)
-   positions.append(html.index(token))
+   match=re.search(r'src="'+re.escape(src)+r'\?v=[^"]+"',html)
+   self.assertIsNotNone(match,src)
+   positions.append(match.start())
   self.assertEqual(positions,sorted(positions))
+
+ def test_release_assets_have_one_coherent_cache_version(self):
+  html=INDEX.read_text(encoding='utf-8')
+  release=re.search(r'data-release="([^"]+)"',html).group(1)
+  assets=re.findall(r'(?:src|href)="((?:js/|css/)[^"]+)"',html)
+  self.assertGreater(len(assets),15)
+  for asset in assets:self.assertTrue(asset.endswith('?v='+release),asset)
 
  def test_frontend_modules_exist_and_are_nontrivial(self):
   css=(ROOT/'css'/'app.css').read_text(encoding='utf-8')

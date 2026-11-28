@@ -59,3 +59,17 @@ class CaptureTests(unittest.TestCase):
   cur={'snapshot_at':'2026-09-27T12:00:00Z','event_state':{'phase':'Improving','primary_display':'Coastal Storm','impact':{'label':'Elevated'}}}
   e=c.event_transition(old,cur); self.assertEqual(e['from_phase'],'Ongoing'); self.assertEqual(e['to_phase'],'Improving'); self.assertEqual(e['from_impact'],'Significant'); self.assertEqual(e['to_impact'],'Elevated')
 if __name__=='__main__': unittest.main()
+
+class LocalReportRegressionTests(unittest.TestCase):
+ def setUp(self): self.now=dt.datetime(2026,11,28,14,tzinfo=dt.timezone.utc)
+ def report(self,title,**fields):
+  return {'headline':title,'published_at':'2026-11-28T13:00:00Z','source':'Public News','url':'https://example.test/'+str(len(title)),**fields}
+ def test_rejects_live_false_positives_and_accepts_real_local_impacts(self):
+  bad=[self.report('Scarborough volleyball storms into Class A final',source='Portland Press Herald'),self.report('Exceptional Coastal Living Near Biddeford Pool'),self.report('Scarborough flash flooding',source='This is the Coast'),self.report('A surf competition flies into Scarborough this November',source='Perth is OK!')]
+  self.assertEqual(c.qualifying_local_reports(bad,self.now),[])
+  for item in [self.report('Camp Ellis storm mitigation tested during nor’easter',source='Reuters'),self.report('Scarborough, Maine sees high surf'),self.report('Scarborough coastal flooding',source='WMTW')]:
+   self.assertTrue(c.local_weather_report(item,self.now),item)
+ def test_report_time_geography_and_deduplication(self):
+  good=self.report('Saco high surf and flooding')
+  rows=[good,{**good,'url':good['url']+'?utm_source=rss'},self.report('Saco storm',published_at='2026-11-20T13:00:00Z'),self.report('Saco rain',published_at='bad'),self.report('Saco wind',published_at='2026-11-28T15:00:00Z'),self.report('Scarborough flooding'),self.report('Saco flooding',url='https://[broken')]
+  self.assertEqual(c.qualifying_local_reports(rows,self.now),[good])

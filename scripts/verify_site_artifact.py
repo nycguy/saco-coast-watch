@@ -3,6 +3,7 @@
 import argparse
 import html.parser
 import json
+import struct
 from pathlib import Path
 
 class LocalAssets(html.parser.HTMLParser):
@@ -19,7 +20,9 @@ class LocalAssets(html.parser.HTMLParser):
 def verify(root):
     root = root.resolve()
     missing = []
-    for page in (root / 'index.html', root / 'eastcast/index.html'):
+    pages=[root/'index.html',root/'eastcast/index.html']
+    pages.extend(page for page in (root/'alerts-privacy.html',root/'alerts-terms.html') if page.is_file())
+    for page in pages:
         if not page.is_file():
             missing.append(str(page.relative_to(root)))
             continue
@@ -30,6 +33,8 @@ def verify(root):
                 # GitHub Pages base path may be absolute; only check relative URLs.
                 continue
             path = (page.parent / asset).resolve()
+            if path.is_dir():
+                path = path / 'index.html'
             if not path.is_relative_to(root) or not path.is_file():
                 missing.append(f'{page.relative_to(root)} -> {asset}')
     manifest = root / 'manifest.webmanifest'
@@ -39,6 +44,12 @@ def verify(root):
             path = root / icon['src'].lstrip('/')
             if not path.is_file():
                 missing.append(f'manifest.webmanifest -> {icon["src"]}')
+            elif icon.get('type')=='image/png' and icon.get('sizes'):
+                raw=path.read_bytes()
+                actual=struct.unpack('>II',raw[16:24]) if raw.startswith(b'\x89PNG\r\n\x1a\n') and len(raw)>=24 else None
+                declared=icon['sizes'].split('x')
+                if len(declared)!=2 or not all(n.isdigit() for n in declared) or actual!=tuple(map(int,declared)):
+                    missing.append(f'manifest.webmanifest -> {icon["src"]} dimensions do not match declared sizes')
     else:
         missing.append('manifest.webmanifest')
     for asset in ('favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js', 'js/push-ui.mjs', 'js/push-subscriptions.mjs', 'js/abellona-player.mjs'):

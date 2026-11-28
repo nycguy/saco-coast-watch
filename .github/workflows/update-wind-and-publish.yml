@@ -65,7 +65,8 @@ jobs:
           cp index.html dist/index.html
           cp manifest.webmanifest dist/manifest.webmanifest
           cp favicon.svg favicon-16x16.png favicon-32x32.png dist/
-          cp apple-touch-icon.png sacocast-app-icon-192.png dist/
+          cp apple-touch-icon.png sacocast-app-icon-*.png sacocast-maskable-*.png dist/
+          cp alerts-privacy.html alerts-terms.html dist/
           cp push-sw.js dist/push-sw.js
           cp -R css dist/css
           cp -R js dist/js

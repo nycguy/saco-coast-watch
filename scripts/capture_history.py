@@ -181,6 +181,41 @@ def coastal_topic(text):
     t=(text or "").lower()
     for loc in sorted(LOCAL_TERMS,key=len,reverse=True): t=t.replace(loc," ")
     return any(re.search(pattern,t) for pattern in WEATHER_TOPIC_PATTERNS)
+def local_weather_report(item, now=None, max_days=7):
+    """Require an actual local weather subject, valid time and public source URL."""
+    now=now or now_utc()
+    title=item.get("headline") or item.get("title") or ""
+    text=title+" "+(item.get("summary") or "")
+    published=hc.parse_iso(item.get("published_at"))
+    if not published or not now-dt.timedelta(days=max_days)<=published<=now: return False
+    try: url=urllib.parse.urlsplit(item.get("url") or "")
+    except ValueError: return False
+    if url.scheme not in ("http","https") or not url.netloc: return False
+    if re.search(r"\b(volleyball|football|soccer|basketball|varsity|real estate|realtor|luxury home|coastal living|homes? for sale|surf comp|surf competition)\b",title,re.I): return False
+    if re.search(r"\b(perth|yorkshire|ontario|toronto|queensland|western australia)\b",text,re.I) or re.search(r"this is the coast|perth is ok",item.get("source") or "",re.I): return False
+    precise=bool(re.search(r"\b(saco|biddeford(?: pool)?|camp ellis|ferry beach|old orchard beach)\b",text,re.I))
+    scarborough=bool(re.search(r"\bscarborough\b",text,re.I)) and bool(re.search(r"\bmaine\b",text,re.I) or re.search(r"press herald|newscentermaine|wgme|wmtw|saco bay news|bangor daily",item.get("source") or "",re.I))
+    if not (precise or scarborough): return False
+    # Coastal/ocean/shore words alone describe property marketing as often as weather.
+    physical=text.lower()
+    for word in (r"\bcoastal\b",r"\bocean\b",r"\bshore(?:line)?\b",r"\bmarine\b"): physical=re.sub(word," ",physical)
+    return coastal_topic(physical)
+
+
+def qualifying_local_reports(items, now=None, max_days=7):
+    now=now or now_utc(); seen_urls=set(); seen_titles=set(); out=[]
+    rows=sorted((item for item in (items or []) if isinstance(item,dict)),key=lambda item:hc.parse_iso(item.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
+    for item in rows:
+        if not local_weather_report(item,now,max_days): continue
+        url=urllib.parse.urlsplit(item["url"])
+        query=urllib.parse.urlencode([(key,value) for key,value in urllib.parse.parse_qsl(url.query) if not key.startswith("utm_") and key!="oc"])
+        canonical=urllib.parse.urlunsplit((url.scheme,url.netloc.lower(),url.path,query,""))
+        title=re.sub(r"[^a-z0-9]+"," ",(item.get("headline") or item.get("title") or "").lower()).strip()
+        if canonical in seen_urls or title in seen_titles: continue
+        seen_urls.add(canonical); seen_titles.add(title); out.append(item)
+    return out
+
+
 def event_location(text):
     t=(text or "").lower()
     for name in ("Camp Ellis","Ferry Beach","Biddeford Pool","Old Orchard Beach","Scarborough","Biddeford","Saco"):
@@ -199,7 +234,7 @@ def google_news(days=7):
         title=clean(item.findtext("title")); link=clean(item.findtext("link")); pub=parse_rss_time(item.findtext("pubDate")); source=clean(item.findtext("source")) or "Google News"
         if not title or not link or not relevant_local(title) or not coastal_topic(title): continue
         out.append({"published_at":hc.iso(pub),"source":source,"source_type":"news","location":event_location(title),"headline":title,"summary":title,"url":link,"event_category":event_category(title),"anecdotal":False})
-    return out[:40]
+    return qualifying_local_reports(out)[:40]
 def reddit_events():
     q='"Saco" Maine OR "Camp Ellis" OR "Ferry Beach" Maine OR "Biddeford Pool" OR "Old Orchard Beach" Maine OR Scarborough Maine'
     url="https://www.reddit.com/search.rss?"+urllib.parse.urlencode({"q":q,"sort":"new","t":"week"})
@@ -208,7 +243,7 @@ def reddit_events():
         title=clean(e.findtext("a:title",default="",namespaces=ns)); le=e.find("a:link",ns); link=(le.attrib.get("href") if le is not None else "") or ""; pub=hc.parse_iso(e.findtext("a:updated",default="",namespaces=ns))
         if not title or not link or not relevant_local(title) or not coastal_topic(title): continue
         out.append({"published_at":hc.iso(pub),"source":"Reddit","source_type":"community","location":event_location(title),"headline":title,"summary":title,"url":link,"event_category":event_category(title),"anecdotal":True,"verification_note":"Public community report; not an official observation."})
-    return out[:30]
+    return qualifying_local_reports(out)[:30]
 
 def collect_public_source(name,fetcher):
     """Record feed reachability separately from whether it returned matching posts."""

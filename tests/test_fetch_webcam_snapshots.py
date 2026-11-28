@@ -36,7 +36,7 @@ class WebcamSnapshotTests(unittest.TestCase):
   self.assertIn('id="abellonaPlayer" class="abellona-youtube-player"',html)
   self.assertIn('<meta name="referrer" content="strict-origin-when-cross-origin">',html)
   self.assertIn('id="abellonaWatchLive" type="button" hidden>Watch Live</button>',html)
-  self.assertIn('src="js/abellona-player.mjs"',html)
+  self.assertRegex(html,r'src="js/abellona-player\.mjs(?:\?v=[^"]+)?"')
   self.assertIn("ABELLONA_VIDEO_ID = 'HSQpqIWLViI'",player)
   self.assertIn('autoplay=1&amp;mute=1&amp;playsinline=1&amp;rel=0&amp;enablejsapi=1',html)
   self.assertIn('new yt.Player(iframe',player)

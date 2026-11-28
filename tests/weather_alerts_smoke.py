@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from browser_runtime import launch_configured_browser
+from tide_outlook_smoke import install_noaa_fixture
 
 BASE=os.environ.get('SACOCAST_SMOKE_URL','http://127.0.0.1:8765/').rstrip('/')+'/'
 OUT=Path(os.environ.get('SACOCAST_ALERT_SCREENSHOT_DIR','/tmp/sacocast-alert-audit'))
@@ -24,10 +25,11 @@ def main():
         for width,height,name,mobile in [(1440,900,'desktop',False),(390,844,'iphone',True),(375,667,'iphone-small',True)]:
             fixture['features']=[]
             page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=3 if mobile else 1,is_mobile=mobile,has_touch=mobile)
+            install_noaa_fixture(page)
             page.route('**/api.weather.gov/alerts/active?point=*',fulfill)
             page.goto(BASE,wait_until='domcontentloaded',timeout=45000)
             badge=page.locator('#healthAlerts')
-            badge.wait_for(timeout=30000)
+            badge.wait_for(state='attached',timeout=30000)
             page.wait_for_function("document.querySelector('#healthAlerts')?.textContent==='0 active'",timeout=30000)
             panel=page.locator('.alertpanel')
             assert panel.evaluate('(el)=>getComputedStyle(el).display')=='none','zero-alert panel must be removed from layout'
@@ -41,12 +43,12 @@ def main():
             assert panel.evaluate("el=>el.classList.contains('alertpanel--extreme')")
             assert panel.locator('.alert').count()==3,'all alerts must remain available'
             assert panel.locator('.alert').nth(0).locator('strong').inner_text()=='Extreme wind alert','most severe alert must appear first'
-            assert 'Highest NWS severity · Extreme' in panel.locator('.alert-severity').inner_text()
+            assert 'NWS Severity: Extreme' in panel.locator('.alert-severity').inner_text()
             appearance=panel.evaluate("el=>({background:getComputedStyle(el).backgroundColor,border:getComputedStyle(el).borderTopColor,width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})")
             assert appearance['width']<=width and appearance['height']>0,appearance
             assert appearance['background']=='rgb(51, 11, 23)',appearance
             assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'),f'horizontal overflow at {width}px with alerts'
-            page.screenshot(path=str(OUT/f'active-alert-{name}.png'),full_page=True)
+            panel.screenshot(path=str(OUT/f'active-alert-{name}.png'),animations='disabled')
             print(f'PASS weather alert panel {name} {width}x{height}: {appearance}')
             page.close()
         browser.close()

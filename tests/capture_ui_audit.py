@@ -56,6 +56,9 @@ def main():
         tools = phone.locator("#coastalToolsDetails > summary")
         if tools.count():
             tools.click()
+            map_tools=phone.locator("#mapTools > summary")
+            if map_tools.count():
+                map_tools.click()
         phone.locator(".coastal-map-panel").scroll_into_view_if_needed()
         save(phone, args.output_dir / f"{args.prefix}-iphone-map.jpg")
 

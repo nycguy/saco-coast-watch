@@ -40,7 +40,7 @@
   Object.values(tiles).forEach(layer=>{if(map.hasLayer(layer))map.removeLayer(layer)});
   currentBasemap=name;errors=0;basemapSelect.value=name;
   tiles[name].addTo(map);
-  basemapStatus.textContent='Basemap: '+(name==='streets'?'OpenStreetMap streets':name==='imagery'?'Esri aerial imagery':'USGS topographic')+' · no API key';
+  basemapStatus.textContent='Basemap: '+(name==='streets'?'OpenStreetMap streets':name==='imagery'?'Esri aerial imagery':'USGS topographic');
  }
  Object.entries(tiles).forEach(([name,layer])=>layer.on('tileerror',()=>{
   if(currentBasemap!==name)return;
@@ -55,7 +55,7 @@
  activateBasemap('streets');
  const surge=L.layerGroup().addTo(map), coastal=L.layerGroup().addTo(map), tropical=L.layerGroup().addTo(map), cams=L.layerGroup().addTo(map);let tropicalBounds=null;
  for(const c of cameras){
-  const icon=L.divIcon({html:'<div class="cam-pin" aria-hidden="true">▣</div>',className:'',iconSize:[29,29],iconAnchor:[14,14]});
+  const icon=L.divIcon({html:'<div class="cam-pin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3Z"/><circle cx="12" cy="13" r="4"/></svg></div>',className:'',iconSize:[29,29],iconAnchor:[14,14]});
   const pop=document.createElement('div');pop.className='map-pop';
   const strong=document.createElement('strong');strong.textContent=c.name;pop.append(strong);
   const para=document.createElement('p');para.textContent=c.source+' · location approximate; feed availability is controlled by the operator.';pop.append(para);
@@ -63,6 +63,7 @@
   L.marker([c.lat,c.lng],{icon,title:c.name}).bindPopup(pop).addTo(cams);
  }
  basemapSelect.addEventListener('change',e=>activateBasemap(e.target.value));
+ document.addEventListener('sacocast:section-toggle',()=>{map.invalidateSize();});
  document.getElementById('mapHome').addEventListener('click',()=>map.flyTo([43.47,-70.40],12,{duration:.65}));
  [['showSurgeAlerts',surge],['showCoastalAlerts',coastal],['showCameras',cams]].forEach(([id,layer])=>document.getElementById(id).addEventListener('change',e=>e.target.checked?layer.addTo(map):map.removeLayer(layer)));const tropicalToggle=document.getElementById('showTropicalTrack');tropicalToggle.addEventListener('change',e=>{if(e.target.checked){tropical.addTo(map);if(tropicalBounds?.isValid())map.fitBounds(tropicalBounds.pad(.12));}else map.removeLayer(tropical);});document.getElementById('mapStormTrack').addEventListener('click',()=>{if(tropicalBounds?.isValid())map.fitBounds(tropicalBounds.pad(.12));});
  const approved=new Set(['Storm Surge Watch','Storm Surge Warning','Coastal Flood Watch','Coastal Flood Warning','Coastal Flood Advisory']);

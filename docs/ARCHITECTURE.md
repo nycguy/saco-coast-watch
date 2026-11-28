@@ -107,3 +107,7 @@ The comprehensive requirements and their verified status are tracked in [the pro
 ## Cost and dependency guardrails
 
 The architecture uses public NOAA, NWS, NDBC, and NHC data, standard GitHub-hosted Ubuntu runners for this public repository, GitHub Pages, and the existing Cloudflare/Resend notification setup. No paid runner, paid data API, private-source mirror, or additional hosting service is part of the application. Routine scheduled refreshes skip the full test suites but still validate fetched/generated data and the assembled Pages artifact. Cost estimates and the cadence tradeoff are in [the architecture review](ARCHITECTURE-REVIEW.md).
+
+## Product presentation
+
+See [Product Design](PRODUCT-DESIGN.md) for the current mobile shell, source-scoped status, semantic tool disclosures, partial-day model presentation, report relevance, icon assets, and browser acceptance gates. `js/presentation.js` supplies deterministic display helpers; `js/disclosures.js` and `js/icons.js` provide shared controls. Leaflet 1.9.4 is packaged locally under `js/vendor/`, retaining its license and original integrity-verified bytes.

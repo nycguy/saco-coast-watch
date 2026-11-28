@@ -29,7 +29,8 @@ function dailyMax(series,from,to){
 }
 const highSource=state.highs.length?state.highs:extractHighsFromCurve(state.pred);
 const dailyTides=dailyMax(highSource,current-30*60000,end);
-const dailyModels=dailyMax(futureModel,current-10*60000,end);
+const dailyCoverage=SacoPresentation.dailyModelGuidance(futureModel,current);
+const dailyModels=[...dailyCoverage.values()].map(item=>({...item.peak,partial:item.partial}));
 const observedSeries=state.obs.filter(p=>p.t>=start&&p.t<=Math.min(current,end));
 const modelSeries=state.model.filter(p=>p.t>=Math.max(current-10*60000,start)&&p.t<=Math.min(end,current+72*3600000));
 const shortValues=[...observedSeries,...(state.showModel?modelSeries:[])].map(p=>p.v);
@@ -79,9 +80,9 @@ function lastVisible(series){return series.filter(p=>p.t>=start&&p.t<=end&&p.v>=
 
 if(longMode){
  peakPath(dailyTides,'daily-pred');for(const p of dailyTides)dot(p,'tide-dot',4);
- if(state.showModel&&dailyModels.length){peakPath(dailyModels,'daily-ofs');for(const p of dailyModels)dot(p,'peak-dot',4.8);}
+ if(state.showModel&&dailyModels.length){let segment=[];for(const p of dailyModels){if(p.partial){peakPath(segment,'daily-ofs');segment=[];}else segment.push(p);dot(p,p.partial?'peak-dot partial-guidance':'peak-dot',4.8,{'data-partial':String(p.partial)});}peakPath(segment,'daily-ofs');}
  const tideLast=lastVisible(dailyTides);if(tideLast)labelAt(tideLast,'Daily astronomical high','#f6cf6b',-9,'end');
- const modelLast=state.showModel?lastVisible(dailyModels):null;if(modelLast)labelAt(modelLast,'NOAA model high','#d9a3ff',15,'end');
+ const modelLast=state.showModel?lastVisible(dailyModels):null;if(modelLast)labelAt(modelLast,modelLast.partial?'Partial-Day Guidance*':'NOAA Model High','#d9a3ff',15,'end');
 }else{
  clippedPath(observedSeries,'obs',45);
  if(state.showModel)clippedPath(modelSeries,'ofs',150);
@@ -107,19 +108,33 @@ if(longMode){
 if(!(longMode?longValues:shortValues).length)el('text',{x:W/2,y:H/2,'text-anchor':'middle'},'No water-level data available. Use the direct source links below.');
 
 const hoverObserved=longMode?[]:observedSeries,hoverModels=longMode?dailyModels:modelSeries,hoverTides=longMode?dailyTides:[];
-const overlay=el('rect',{x:margin.left,y:margin.top,width:cw,height:ch,fill:'transparent','pointer-events':'all',style:'cursor:crosshair'});
-overlay.addEventListener('pointermove',event=>{
- const box=svg.getBoundingClientRect(),px=(event.clientX-box.left)/box.width*W,t=start+(px-margin.left)/cw*(end-start);
+const overlay=el('rect',{x:margin.left,y:margin.top,width:cw,height:ch,fill:'transparent','pointer-events':'all',style:'cursor:crosshair;touch-action:pan-y'});
+const selectable=[...new Set([...hoverObserved,...hoverModels,...hoverTides].map(p=>p.t))].sort((a,b)=>a-b);
+function inspect(t,event){
  const tol=longMode?(state.days>=30?18:state.days>=14?12:8)*3600000:60*60000;
  const o=longMode?null:nearest(hoverObserved,t,tol),m=state.showModel?nearest(hoverModels,t,longMode?14*3600000:tol):null,p=longMode?nearest(hoverTides,t,tol):null;
- if(!o&&!p&&!m){tip.hidden=true;return;}
- const rows=(longMode?[['Daily astronomical high',p],['NOAA model high',m]]:[['Observed',o],['NOAA total-water',m]]).filter(a=>a[1]&&a[1].v>=lo);
- tip.replaceChildren();const tm=document.createElement('time');tm.textContent=dayTime(t)+' ET';tip.append(tm);
- for(const [name,point] of rows){const row=document.createElement('div');row.className='ttrow';const n=document.createElement('span');n.textContent=name;const val=document.createElement('b');val.textContent=fmtN(point.v)+' ft';row.append(n,val);tip.append(row);}
+ const rows=(longMode?[['Tide-Only Daily High',p],['NOAA Model Guidance',m]]:[['Observed',o],['NOAA Model Guidance',m]]).filter(row=>row[1]);
  if(!rows.length){tip.hidden=true;return;}
- tip.hidden=false;const w=box.width,left=px/W*w;tip.style.left=Math.max(0,Math.min(w-228,left+12))+'px';tip.style.top=event.clientY-box.top>box.height/2?'9px':Math.max(0,box.height-110)+'px';
-});
+ state.chartSelectionTime=t;tip.replaceChildren();
+ const labels=[];
+ for(const [name,point] of rows){const row=document.createElement('div');row.className='ttrow';const label=document.createElement('span'),value=document.createElement('b');label.textContent=name+(point.partial?' (Partial Day)':'')+' · '+dayTime(point.t)+' ET';value.textContent=fmtN(point.v)+' ft';row.append(label,value);tip.append(row);labels.push(label.textContent+': '+value.textContent);}
+ $('chartSelection').textContent=labels.join(' · ');
+ if(event){const box=svg.getBoundingClientRect(),left=event.clientX-box.left;tip.hidden=false;tip.style.left=Math.max(0,Math.min(Math.max(0,box.width-250),left+8))+'px';tip.style.top='8px';}else tip.hidden=true;
+}
+function pointerInspect(event){const box=svg.getBoundingClientRect(),px=(event.clientX-box.left)/box.width*W,t=start+(px-margin.left)/cw*(end-start);inspect(t,event);}
+overlay.addEventListener('pointermove',event=>{if(event.pointerType!=='touch')pointerInspect(event);});
+overlay.addEventListener('pointerdown',pointerInspect);
 overlay.addEventListener('pointerleave',()=>tip.hidden=true);
+svg.onkeydown=event=>{
+ if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)||!selectable.length)return;
+ event.preventDefault();const target=state.chartSelectionTime??current;let index=selectable.reduce((best,t,i)=>Math.abs(t-target)<Math.abs(selectable[best]-target)?i:best,0);
+ index=event.key==='Home'?0:event.key==='End'?selectable.length-1:Math.max(0,Math.min(selectable.length-1,index+(event.key==='ArrowRight'?1:-1)));
+ inspect(selectable[index]);
+};
+svg.setAttribute('aria-describedby','chartViewNote chartSelection');
+if(state.chartSelectionTime&&selectable.length)inspect(state.chartSelectionTime);
+$('chartViewNote').textContent=longMode?'Tide Outlook · NOAA Guidance Ends Where Shown · * Partial-Day Coverage':'High-Water View · Values Below 8 ft Are Hidden';
+$('waterOutlookTitle').textContent=longMode?'Tide Outlook · Next '+state.days+' Days':'Water-Level Outlook';
 $('chart').setAttribute('aria-label',longMode?'Daily high-water peaks in feet MLLW for the selected outlook period, with available NOAA model peaks and Portland flood threshold bands':'Observed and NOAA total-water guidance in feet MLLW. Each forecast high-water peak has a vertical guide to an exact Eastern Time label. Continuous tide-cycle lines are shown only above 8 feet; lower portions are clipped.');
-$('chartPeriod').textContent=longMode?'Next '+state.days+' days · daily high-water peaks · NOAA model overlay where available':'Past 24h · next '+(state.days===1?'24h':'72h')+' · each forecast high aligned to exact ET time · chart clipped below 8 ft';
+$('chartPeriod').textContent=longMode?'Next '+state.days+' days · tide-only daily highs · NOAA guidance only within available coverage; * marks a partial day':'Past 24h · next '+(state.days===1?'24h':'72h')+' · each forecast high aligned to exact ET time · chart clipped below 8 ft';
 }

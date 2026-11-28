@@ -26,7 +26,7 @@ function renderBriefingPriorities(items){
  const row=$('briefPriorityRow'),compact=$('briefPriorities'),section=$('briefPrioritySection'),root=$('briefPriorityItems');
  const priorities=Array.isArray(items)?items.filter(item=>item&&item.title&&item.text):[];
  const next=priorities.slice(0,1);
- if(row)row.hidden=!next.length;
+ if(row)row.hidden=!next.length;const priorityLabel=$('briefPriorityLabel');if(priorityLabel)priorityLabel.textContent=/change/i.test(next[0]?.title||'')?'Key Change':'Watch Next';
  if(compact)compact.textContent=next.map(item=>item.title+': '+item.text).join(' ');
  if(section)section.hidden=!priorities.length;
  if(root){root.replaceChildren();for(const item of priorities){const article=document.createElement('article'),title=document.createElement('h5'),text=document.createElement('p');article.className='brief-priority-item';title.textContent=item.title;text.textContent=item.text;article.append(title,text);root.append(article);}}
@@ -48,10 +48,10 @@ function renderEventHistory(){
    strong.textContent=item.title||'Coastal Event';time.textContent=eventHistoryTime(item.started_at)+(item.ended_at?' → '+eventHistoryTime(item.ended_at):'');title.append(strong,time);
    const badge=document.createElement('span');badge.className='event-history-badge impact-'+(['green','yellow','orange','red'][Number(item.highest_impact?.rank)||0]||'green');badge.textContent=item.highest_impact?.label||'Routine';head.append(title,badge);card.append(head);
    const metrics=document.createElement('div');metrics.className='event-history-metrics';
-   const pairs=[['Highest observed water',item.max_observed_water_ft,' ft',2],['Water above predicted tide',item.max_residual_ft,' ft',2],['Highest NOAA forecast',item.max_modeled_water_ft,' ft',2],['Highest waves',item.max_wave_ft,' ft',1],['Highest gust',item.max_gust_mph,' mph',1],['Highest NWS surf',item.max_surf_ft,' ft',1]];
+   const pairs=[['Highest observed water',item.max_observed_water_ft,' ft',2],['Difference From Predicted Tide',item.max_residual_ft,' ft',2],['Highest NOAA forecast',item.max_modeled_water_ft,' ft',2],['Highest Offshore Waves',item.max_wave_ft,' ft',1],['Highest gust',item.max_gust_mph,' mph',1],['Highest NWS surf',item.max_surf_ft,' ft',1]];
    for(const [label,value,suffix,digits] of pairs){if(!hasNumericValue(value))continue;const d=document.createElement('div'),span=document.createElement('span'),b=document.createElement('b');span.textContent=label;b.textContent=Number(value).toFixed(digits)+suffix;d.append(span,b);metrics.append(d);}if(metrics.children.length)card.append(metrics);
    const definitions=document.createElement('p');definitions.className='event-history-definitions';definitions.textContent='Water above predicted tide compares the Portland gauge with the tide prediction. NOAA forecast is the highest captured forecast water level.';card.append(definitions);
-   const coverageValue=item.captured_coverage_hours??item.duration_hours,coverage=hasNumericValue(coverageValue)?Number(coverageValue):null,bits=[];if(coverage!==null)bits.push('Recorded for '+coverage.toFixed(1)+'h');if(hasNumericValue(item.snapshot_count))bits.push(item.snapshot_count+' saved records');if((item.official_products||[]).length)bits.push('NWS: '+item.official_products.slice(0,3).join(', '));
+   const coverageValue=item.captured_coverage_hours??item.duration_hours,coverage=hasNumericValue(coverageValue)?Number(coverageValue):null,bits=[];if(coverage!==null)bits.push('Saved Coverage: '+Math.round(coverage)+' hours');if(hasNumericValue(item.snapshot_count))bits.push(item.snapshot_count+' updates');if((item.official_products||[]).length)bits.push('NWS: '+item.official_products.slice(0,3).join(', '));
    const foot=document.createElement('p');foot.textContent=bits.join(' · ')||'Captured event summary';card.append(foot);
    if(item.coverage_basis){const note=document.createElement('p');note.className='event-history-note';note.textContent=item.coverage_basis;card.append(note);}
    for(const quality of item.data_quality||[]){const note=document.createElement('p');note.className='event-history-quality';note.textContent=quality.message||(quality.type==='superseded_surf_parse'?'An earlier surf reading was replaced after the same forecast was checked again.':'A correction was applied to an earlier saved reading.');card.append(note);}
@@ -65,7 +65,7 @@ function renderEventHistory(){
  if(previous){previous.disabled=selectedIndex>=groups.length-1;previous.onclick=()=>{if(selectedIndex<groups.length-1){currentRecentEventKey=utils?.recentGroupKey(groups[selectedIndex+1])||null;currentRecentEventAt=utils?.recentGroupTime(groups[selectedIndex+1])||null;renderEventHistory();}};}
  if(next){next.disabled=selectedIndex<=0;next.onclick=()=>{if(selectedIndex>0){currentRecentEventKey=utils?.recentGroupKey(groups[selectedIndex-1])||null;currentRecentEventAt=utils?.recentGroupTime(groups[selectedIndex-1])||null;renderEventHistory();}};}
  const summary=archive?.querySelector(':scope > summary');
- if(summary){const action=summary.querySelector('.disclosure-action');summary.textContent='Complete event history · '+events.length+' captured record'+(events.length===1?'':'s');if(action)summary.append(action);}
+ if(summary){summary.textContent='Complete event history · '+events.length+' captured record'+(events.length===1?'':'s');}
  window.SacoDisclosures?.init(panel);
 }
 function renderBriefing(){
@@ -85,15 +85,20 @@ function renderBriefing(){
  $('briefCurrentStatus').textContent=briefingCurrentStatus(b);
  const coverage=b.current_snapshot?.event_state?.coastal_impact?.data_coverage;
  $('briefDataAvailability').textContent=briefingDataAvailability(coverage);
- $('briefFullPulse').textContent=b.local_pulse?.summary||'No public local items were returned.';
+
  $('briefModalUpdated').textContent=(Number.isFinite(generated)?'Updated '+dayTime(generated)+' ET · ':'')+'Fixed rolling windows · NOAA / NWS / weather-related local reporting';
  const list=$('briefPulseList');list.replaceChildren();
- for(const item of (b.local_pulse?.items||[]).slice(0,8)){
+ const reports=SacoPresentation.localReports(b.local_pulse?.items,now());
+ for(const item of reports.slice(0,8)){
   const a=document.createElement('a');a.className='brief-pulse-item';a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';
   const small=document.createElement('small');small.textContent=(item.type==='reddit'?'Anecdotal weather report · Reddit':'Weather/coastal report · '+(item.source||'Public source'));
   const span=document.createElement('span');span.textContent=item.title||'Open source';
-  a.append(small,span);list.append(a);
+  const date=document.createElement('time');date.textContent=dayTime(Date.parse(item.published_at))+' ET';date.dateTime=item.published_at;a.append(small,span,date);list.append(a);
  }
+ $('briefPulse').textContent=reports.length?reports.length+' distinct local weather report'+(reports.length===1?'':'s')+' from the past 7 days.':'No qualifying local weather reports in the past 7 days.';
+ $('briefFullPulse').textContent=$('briefPulse').textContent+' These are public reports, not verified observations. Community reports are anecdotal.';
+ if((b.local_pulse?.errors||[]).length)$('briefPulse').textContent+=' A report source is unavailable.';
+ window.SacoIcons?.init(list);
  const feedHealth=(b.local_pulse?.sources||[]).filter(item=>item&&item.name&&item.status).map(item=>item.name+': '+(item.message||({available:'available',unavailable:'temporarily unavailable',malformed:'could not be read',not_checked:'not checked'}[item.status]||'status unavailable')));
  $('briefSourceNote').textContent=(b.local_pulse?.facebook_note||'Public Facebook posts are not included because reliable public indexing and access are inconsistent.')+' Only weather/coastal-condition items are retained. Community items are anecdotal and are not official NOAA/NWS observations.'+(feedHealth.length?' Source checks: '+feedHealth.join('; ')+'.':' Feed availability was not recorded for this capture.');if(typeof renderEventBriefingExtras==='function')renderEventBriefingExtras();renderEventHistory();
  const timeline=$('briefTimeline');if(timeline){timeline.replaceChildren();const events=b.impact_timeline||[];if(!events.length){const p=document.createElement('p');p.className='impact-empty';p.textContent='No timestamped coastal impacts were retained in the past 24 hours.';timeline.append(p);}else for(const item of events){const row=document.createElement('div');row.className='impact-item';const when=document.createElement('div');when.className='impact-time';const t=Date.parse(item.at||'');when.textContent=Number.isFinite(t)?dayTime(t)+' ET':'Time unavailable';const dot=document.createElement('span');dot.className='impact-dot';const body=document.createElement('div');body.className='impact-body';const title=document.createElement('strong');title.textContent=item.title||'Coastal event';const source=document.createElement('small');source.textContent=(item.anecdotal?'Anecdotal · ':'')+(item.source||'Public source');if(item.anecdotal)source.className='anecdotal';body.append(title,source);if(item.url){const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open source ↗';a.className='mini-link';body.append(a);}row.append(when,dot,body);timeline.append(row);}}

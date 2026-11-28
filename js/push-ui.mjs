@@ -57,7 +57,8 @@ function updateAlertsEntryState() {
   // browser-local flag. The Worker page offers both signup and email-link
   // management without exposing cross-device account discovery.
   emailOnlyLink.href = 'https://saco-coastal-alerts.mikewiley-nyc.workers.dev/alerts';
-  emailOnlyLink.textContent = 'Email Alerts (Create or Manage) ↗';
+  emailOnlyLink.textContent = 'Email Alerts';
+  window.SacoIcons?.init(emailOnlyEntry);
 }
 function showEnrolled() {
   appPushVerified = true;

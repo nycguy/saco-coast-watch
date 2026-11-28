@@ -107,8 +107,8 @@ def install_noaa_fixture(page):
             "dashboard_summary":"2 public weather/coastal reports found; community posts are anecdotal.",
             "facebook_note":"Public Facebook posts are not included because reliable public indexing and access are inconsistent.",
             "items":[
-                {"type":"news","source":"Local News","title":"Coastal conditions update for Saco and Biddeford","url":"https://example.com/news"},
-                {"type":"reddit","source":"Reddit","title":"Southern Maine shoreline discussion","url":"https://www.reddit.com/r/Maine/example"}
+                {"type":"news","source":"Local News","title":"Saco and Biddeford high surf update","url":"https://example.com/news","published_at":(now-timedelta(hours=2)).isoformat()},
+                {"type":"reddit","source":"Reddit","title":"Camp Ellis high surf report","url":"https://www.reddit.com/r/Maine/example","published_at":(now-timedelta(hours=1)).isoformat(),"anecdotal":True}
             ]
         },
         "alerts":[],
@@ -135,6 +135,8 @@ def install_noaa_fixture(page):
 def assert_common(page):
     page.goto(BASE,wait_until="domcontentloaded",timeout=30000)
     page.locator("#coastalToolsDetails > summary").click()
+    for selector in ("#tideTools > summary","#comparisonTools > summary","#sourceTools > summary","#hourlyDetails > summary"):
+        page.locator(selector).click()
     page.wait_for_function("state.lastFetched.weatherObservation && state.lastFetched.weatherForecast",timeout=20000)
     page.wait_for_function("document.querySelector('#tideOutlookPeak').textContent.includes('10.71')",timeout=20000)
     page.wait_for_function("document.querySelector('#briefPast').textContent.includes('past 24 hours')",timeout=10000)
@@ -154,7 +156,7 @@ def assert_common(page):
     assert page.locator("#ferryPreview").is_visible(), page.locator("#ferryPreview").evaluate("el => ({hidden:el.hidden,display:getComputedStyle(el).display,cameraHidden:el.closest('.ferry-camera')?.hidden,activeCamera:document.querySelector('.camera-choice.active')?.dataset.camera,archiveOpen:document.querySelector('#ferryArchive')?.hidden})")
     assert "frame-one.jpg" in page.locator("#ferryPreviewImage").get_attribute("src")
     assert page.locator("#ferryArchiveThumbs .ferry-archive-thumb.active").count()==1
-    assert "Water above predicted tide" in page.locator("#ferryArchiveContext").inner_text()
+    assert "Difference From Predicted Tide" in page.locator("#ferryArchiveContext").inner_text()
     assert "Portland water was +0.82 ft" in page.locator("#ferryArchiveReason").inner_text()
     page.locator("#ferryReturnLive").click()
     assert page.locator("#ferryArchiveThumbs .ferry-archive-thumb.active").count()==0
@@ -168,7 +170,7 @@ def assert_common(page):
     ofs_points=page.locator("#tideTrend .ofs-trend-point").count()
     assert ofs_points>=3,f"expected NOAA OFS daily peaks for the available ~72h model window, got {ofs_points}"
     assert page.locator("#tideTrend .ofs-trend-value").count()==ofs_points
-    assert page.locator("#tideTrend .ofs-trend-line").count()==1
+    assert page.locator("#tideTrend .ofs-trend-point[data-partial=\"true\"]").count()>=1, "incomplete days must be marked explicitly"
     assert page.locator("#tideTrend .zone-label").count()==3
     labels=page.eval_on_selector_all("#tideTrend .zone-label","els => els.map(el => el.textContent)")
     assert labels==["Minor 12–13 ft","Moderate 13–14 ft","Major 14+ ft"],labels
@@ -185,7 +187,7 @@ def assert_common(page):
     if forecast_index != 0:
         page.locator(f'#tideTrend .tide-hit[data-index="{forecast_index}"]').click()
     forecast_selected=page.locator("#tideTrendSelection").inner_text()
-    assert "NOAA OFS forecast peak" in forecast_selected,forecast_selected
+    assert "NOAA OFS forecast peak" in forecast_selected or "Partial-day NOAA guidance maximum" in forecast_selected,forecast_selected
     assert "vs astronomical tide at that time" in forecast_selected,forecast_selected
     assert page.locator("#tideTrend .tide-point.selected").count()==1
     assert page.locator("#tideTrend .ofs-trend-point.selected").count()==1
@@ -217,7 +219,9 @@ def assert_common(page):
     threshold_labels=page.eval_on_selector_all("#chart .zone-label","els => els.map(el => el.textContent)")
     assert threshold_labels==["Minor flood 12–13 ft","Moderate flood 13–14 ft","Major flood 14+ ft"],threshold_labels
     threshold_label_fills=page.eval_on_selector_all("#chart .zone-label","els => els.map(el => getComputedStyle(el).fill)")
-    assert threshold_label_fills==["rgb(7, 24, 36)","rgb(7, 24, 36)","rgb(255, 255, 255)"],threshold_label_fills
+    assert threshold_label_fills==["rgb(245, 248, 252)"]*3,threshold_label_fills
+    computed_bands=page.locator("#chart .threshold-band").evaluate_all("nodes=>nodes.map(e=>getComputedStyle(e).fill)")
+    assert all("rgba" in fill for fill in computed_bands),computed_bands
     peak_points=page.locator("#chart [data-series='noaa-model-high']").count()
     peak_guides=page.locator("#chart [data-peak-guide='true']").count()
     peak_ticks=page.locator("#chart [data-peak-tick='true']").count()
@@ -229,7 +233,7 @@ def assert_common(page):
     # App-wide readability: proper-case labels, higher contrast, and undistorted SVG text.
     assert page.locator(".brand h1").inner_text().strip()=="SacoCast"
     assert page.locator(".brand .logomark img").get_attribute("src")=="sacocast-app-icon-192.png"
-    assert page.locator('link[rel="manifest"]').get_attribute("href")=="manifest.webmanifest"
+    assert page.locator('link[rel="manifest"]').get_attribute("href").split("?")[0]=="manifest.webmanifest"
     assert page.locator('meta[name="apple-mobile-web-app-title"]').get_attribute("content")=="SacoCast"
     label_style=page.locator(".metric .label").first.evaluate("el => ({transform:getComputedStyle(el).textTransform,color:getComputedStyle(el).color,fontWeight:getComputedStyle(el).fontWeight})")
     assert label_style["transform"]=="none",label_style
@@ -249,10 +253,10 @@ def assert_common(page):
     assert "24h / 72h" in brief_text
     assert "Fixed rolling windows" in page.locator("#briefModalUpdated").inner_text()
     assert "0.50 ft" in brief_text
-    assert "2 public weather/coastal reports found" in brief_text
-    assert "community posts are anecdotal" in brief_text
+    assert "2 distinct local weather reports" in brief_text
+    assert "Community reports are anecdotal" in page.locator("#briefFullPulse").inner_text()
     assert "Higher-impact high-water window" in page.locator("#briefPriorityRow").inner_text()
-    assert page.locator("#briefPriorityRow").is_visible()
+    assert page.locator("#briefPriorityItems .brief-priority-item").count()>=1, "priority evidence remains in full briefing"
     assert page.locator("#briefPriorities").inner_text().count("Forecast change")==0, "secondary priority should stay in full briefing, not add another dashboard summary"
     assert page.locator("#briefEventRow").is_hidden(), "active event detail is already represented by the event panel above"
     priority_colors=page.locator(".brief-priority-item").first.evaluate("""el => {
@@ -279,7 +283,9 @@ def assert_common(page):
     timeline.click()
     page.wait_for_function("document.querySelector('#forecastDetails')?.open && document.querySelector('#forecastDetails > summary')?.getAttribute('aria-expanded')==='true'")
     assert timeline.get_attribute("aria-expanded")=="true"
-    assert timeline.locator(".disclosure-action").inner_text()=="Hide details"
+    assert timeline.get_attribute("aria-expanded")=="true"
+    assert timeline.locator(".disclosure-chevron").count()==1
+    assert timeline.locator(".disclosure-action").count()==0
     assert page.locator("#highWaterWindows .high-window").count()>=1
     assert "Distance to next flood threshold" in page.locator("#highWaterWindows").inner_text()
     assert page.locator("#stormModePanel").is_visible()
@@ -327,20 +333,20 @@ def assert_common(page):
     history_value_size=history_card.locator(".event-history-metrics b").first.evaluate("el => parseFloat(getComputedStyle(el).fontSize)")
     assert history_metric_size>=9.5,history_metric_size
     assert history_value_size>=12,history_value_size
-    decision_text=page.locator(".coastal-intelligence").inner_text()
-    assert "Water above predicted tide" in decision_text
-    assert "Difference from predicted tide" not in decision_text
-    assert "NOAA forecast water level" in decision_text
-    assert "Forecast changes" in decision_text
+    decision_text=page.locator(".coastal-intelligence").inner_text().lower()
+    assert "difference from predicted tide" in decision_text
+    assert "storm-surge measurement" in decision_text
+    assert "noaa forecast water level" in decision_text
+    assert "forecast changes" in decision_text
     assert "Storm surge residual" not in decision_text
     assert "NOAA modeled total" not in decision_text
     assert "Modeled uplift" not in decision_text
     assert "Forecast evolution" not in decision_text
     history_text=history_card.inner_text()
-    assert "Recorded for 18.0h" in history_text
+    assert "Saved Coverage: 18 hours" in history_text
     assert "how much of the event SacoCast captured" in history_text
     assert "One earlier surf value was corrected after the same NWS forecast was re-read" in history_text
-    assert "Water above predicted tide" in history_text
+    assert "Difference From Predicted Tide" in history_text
     assert "Highest NOAA forecast" in history_text
     assert "Residual" not in history_text
     assert "Modeled water" not in history_text
@@ -368,9 +374,9 @@ def assert_common(page):
     page.locator("#briefOpen").click()
     dialog=page.locator("#briefingDialog")
     assert dialog.evaluate("el => el.open")
-    assert "Past 24 hours" in dialog.inner_text()
-    assert "What is happening now?" in dialog.inner_text()
-    assert "What to watch next" in dialog.inner_text()
+    assert "Past 24 Hours" in dialog.inner_text()
+    assert "What Is Happening Now?" in dialog.inner_text()
+    assert "What to Watch Next" in dialog.inner_text()
     assert page.locator("#briefPriorityItems .brief-priority-item").count()==2, "full briefing should retain all ranked priorities"
     assert "NOAA total-water guidance is 11.80 ft MLLW" in dialog.inner_text()
     assert "Coastal Storm · Elevated impact · Approaching" in page.locator("#briefCurrentStatus").inner_text()
@@ -379,8 +385,8 @@ def assert_common(page):
     event_detail=page.locator("#briefFullEvent").text_content() or ""
     assert "Other active hazards: High Surf / Wave Impact" in event_detail
     assert "Coastal Storm: Elevated · Approaching." not in event_detail
-    assert "What changed versus ~24 hours ago" in dialog.inner_text()
-    assert "Next 72 hours" in dialog.inner_text()
+    assert "What Changed Versus ~24 Hours Ago" in dialog.inner_text()
+    assert "Next 72 Hours" in dialog.inner_text()
     assert "NDBC 44007 wave observation: no current value" in page.locator("#briefDataAvailability").inner_text()
     assert "does not mean conditions are safe" in page.locator("#briefDataAvailability").inner_text()
     assert dialog.locator(".brief-pulse-item").count()==2
@@ -406,7 +412,7 @@ def assert_common(page):
     page.wait_for_function("document.querySelector('#ferryPreviewTime').textContent.includes('older than 30 minutes')",timeout=10000)
     assert page.locator("#ferryPreviewImage").is_hidden()
     reference=page.locator(".threshold-reference")
-    assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood thresholds"
+    assert reference.locator("#thresholdHeading").inner_text().strip()=="Flood Thresholds"
     assert reference.locator(".threshold").count()==3
     rail_colors=reference.locator(".rail").evaluate_all("els => els.map(el => getComputedStyle(el).backgroundColor)")
     assert rail_colors==["rgb(255, 255, 0)","rgb(255, 165, 0)","rgb(255, 0, 0)"],rail_colors
@@ -414,13 +420,15 @@ def assert_common(page):
     assert not history.evaluate("el => el.open")
     assert "January 2024 historical reference" in reference.inner_text()
     collapsed_height=reference.bounding_box()["height"]
-    assert collapsed_height<360,f"threshold reference should stay compact when history is collapsed: {collapsed_height}px"
+    assert reference.locator(".threshold small").first.evaluate("e=>parseFloat(getComputedStyle(e).fontSize)")>=13
+    assert collapsed_height<(480 if page.viewport_size["width"]<620 else 360),f"readable threshold reference should remain compact: {collapsed_height}px"
     history.locator("summary").click()
     assert history.evaluate("el => el.open")
     assert reference.locator(".history").count()==2
     history.locator("summary").click()
     assert not history.evaluate("el => el.open")
 
+    page.locator('.section-links a[href="#tideTools"]').click()
     details=page.locator(".full-calendar")
     assert not details.evaluate("el => el.open")
     assert page.locator("#highTideCalendar .daytile").count()==30

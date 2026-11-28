@@ -9,7 +9,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 class MigrationContractTests(unittest.TestCase):
     def test_frontend_script_dependencies_are_present_and_ordered(self):
         html = (ROOT / 'index.html').read_text(encoding='utf-8')
-        scripts = re.findall(r'<script\s+src="(js/[^"]+)"', html)
+        scripts = [url.split('?',1)[0] for url in re.findall(r'<script\s+src="(js/[^"]+)"', html)]
         self.assertGreaterEqual(len(scripts), 10)
         for script in scripts:
             with self.subTest(script=script): self.assertTrue((ROOT / script).is_file(), script)

@@ -14,7 +14,7 @@ def write_json(path, value):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    for name in ('index.html', 'manifest.webmanifest', 'favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js'):
+    for name in ('index.html', 'manifest.webmanifest', 'favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'sacocast-app-icon-192.png', 'push-sw.js', 'sacocast-app-icon-512.png', 'sacocast-maskable-192.png', 'sacocast-maskable-512.png', 'alerts-privacy.html', 'alerts-terms.html'):
         shutil.copy2(ROOT / name, OUT / name)
     for folder in ('css', 'js', 'eastcast'):
         shutil.copytree(ROOT / folder, OUT / folder, dirs_exist_ok=True)

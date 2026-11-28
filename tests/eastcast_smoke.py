@@ -88,7 +88,7 @@ def main():
         safe.close()
 
         Path("eastcast-smoke-mobile.png").unlink(missing_ok=True)
-        page.screenshot(path="eastcast-smoke-mobile.png",full_page=True)
+        page.screenshot(path="eastcast-smoke-mobile.png",full_page=False,animations='disabled')
 
         # Desktop layout and key hierarchy.
         desktop=browser.new_page(viewport={"width":1440,"height":1000})
@@ -114,7 +114,7 @@ def main():
         desktop_overflow=desktop.evaluate("document.documentElement.scrollWidth - window.innerWidth")
         assert desktop_overflow <= 3, f"desktop horizontal overflow: {desktop_overflow}px"
 
-        desktop.screenshot(path="eastcast-smoke-desktop.png",full_page=False)
+        desktop.screenshot(path="eastcast-smoke-desktop.png",full_page=False,animations='disabled')
         desktop.close()
 
         browser.close()

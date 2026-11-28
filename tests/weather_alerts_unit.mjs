@@ -67,3 +67,14 @@ test('a fresh valid active response restores the card after a valid empty respon
  setState();render();assert.equal(section.hidden,true);
  setState({alerts:[alert('Severe')]});render();assert.equal(section.hidden,false);assert.equal(section.classList.contains('alertpanel--severe'),true);
 });
+
+test('message expiry and expected condition end retain distinct labels and official text',()=>{
+ const item=alert('Minor',{ends:new Date(now+2*60*60_000).toISOString(),description:'Official advisory description',instruction:'Official boating instruction'});
+ setState({alerts:[item]});render();
+ const card=list.children[1];
+ assert.match(card.children[1].textContent,/Message Expires/);
+ assert.match(card.children[2].textContent,/Conditions Expected Through/);
+ const details=card.children.at(-1);
+ assert.match(details.children[1].textContent,/Official advisory description/);
+ assert.match(details.children[1].textContent,/Official boating instruction/);
+});

@@ -34,6 +34,13 @@ class ArtifactTests(unittest.TestCase):
         self.tmp.cleanup()
     def test_complete_artifact(self):
         MODULE.verify(self.root)
+    def test_support_pages_accept_a_relative_home_directory_link(self):
+        (self.root/'alerts-privacy.html').write_text('<a href="./">Back</a>')
+        MODULE.verify(self.root)
+    def test_support_pages_reject_missing_brand_assets(self):
+        (self.root/'alerts-privacy.html').write_text('<img src="missing-brand.png">')
+        with self.assertRaises(SystemExit):
+            MODULE.verify(self.root)
     def test_missing_script_fails(self):
         (self.root / 'js/app.js').unlink()
         with self.assertRaises(SystemExit):

@@ -224,7 +224,10 @@ function renderUpcomingEvents(){
     const when=document.createElement('p');when.className='upcoming-event-meta';when.textContent=!Number.isFinite(event.at)?'Timing not provided by source':event.at<=now()+10*60000?'Active or expected now':'Expected '+dayTime(event.at)+' ET'+(Number.isFinite(event.end)?' · until '+dayTime(event.end)+' ET':'');card.append(when);
     const severity=document.createElement('p');severity.className='upcoming-event-severity';severity.textContent=event.severityLabel||(['Routine','Minor','Moderate','Severe'][Math.min(3,Math.max(0,Number(event.rank)||0))]);card.append(severity);
     const source=event.url?document.createElement('a'):document.createElement('p');source.className='upcoming-event-source';source.textContent=(event.sources||[event.source]).join(' · ')+(event.url?' ↗':'');if(event.url){source.href=event.url;source.target='_blank';source.rel='noopener noreferrer';}card.append(source);
-    const context=(event.details||[]).find(Boolean);
+    const feed=assessNwsAlertFeed({features:state.alerts},{nowMs:now(),fetchedAtMs:state.lastFetched.alerts,error:state.errors.alerts});
+    const repeatedOfficial=event.source==='Official NWS alert'&&feed.alerts.some(item=>item.properties.event===event.title);
+    if(repeatedOfficial&&event.url){source.href='#officialAlerts';source.removeAttribute('target');source.textContent='View Official Alert Above';}
+    const context=repeatedOfficial?null:(event.details||[]).find(Boolean);
     if(context){const note=document.createElement('p');note.className='upcoming-event-context';note.textContent=String(context).replace(/\s+/g,' ').slice(0,240);card.append(note);}
     if(event.window){
       const windowData=event.window,pairs=[];
@@ -236,6 +239,7 @@ function renderUpcomingEvents(){
     }
     root.append(card);
   });
+  window.SacoIcons?.init(root);
 }
 function renderForecastEvolution(){
   const allItems=state.briefing?.forecast_evolution?.items||[],items=allItems.filter(item=>hasNumericValue(item?.peak_ft));

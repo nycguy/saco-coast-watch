@@ -203,11 +203,11 @@ def run_mocked(browser):
     page.locator('#notificationHistory').wait_for(state='visible',timeout=5000)
     page.get_by_text('Coastal Flood Advisory').wait_for(timeout=5000)
     assert page.locator('#notificationHistory .history-delivered').count() >= 1
-    assert 'latest successful custom-threshold delivery' in page.locator('#notificationHistory').inner_text()
+    assert 'Threshold entries show the latest successful delivery per metric and channel.' in page.locator('#notificationHistoryStatus').inner_text()
     assert page.get_by_text('Observed water level threshold reached').is_visible()
     assert page.get_by_text('Wind speed threshold reached').is_visible()
     assert page.locator('#emailOnlyEntry').is_visible()
-    assert page.locator('#emailOnlyLink').inner_text() == 'Email Alerts (Create or Manage) ↗'
+    assert page.locator('#emailOnlyLink').inner_text() == 'Email Alerts'
     assert all(page.locator(f'[name="{name}"]').is_checked() for name in ('pushStarts','pushEnds','pushChanges'))
 
     page.locator('#thresholdPreferences').wait_for(state='visible', timeout=5000)

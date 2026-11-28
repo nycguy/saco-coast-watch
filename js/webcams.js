@@ -77,7 +77,7 @@
     const c=frame?.context||{},rows=[
       ['Event',c.event],['Phase',c.phase],['Impact',c.impact],
       ['Water level',hasNumericValue(c.water_level_ft)?Number(c.water_level_ft).toFixed(2)+' ft MLLW':null],
-      ['Water above predicted tide',hasNumericValue(c.residual_ft)?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
+      ['Difference From Predicted Tide',hasNumericValue(c.residual_ft)?(Number(c.residual_ft)>=0?'+':'')+Number(c.residual_ft).toFixed(2)+' ft':null],
       ['Waves',hasNumericValue(c.wave_height_ft)?Number(c.wave_height_ft).toFixed(1)+' ft':null],
       ['Dominant period',hasNumericValue(c.dominant_period_sec)?Number(c.dominant_period_sec).toFixed(1)+' sec':null],
       ['Gust',hasNumericValue(c.gust_mph)?Math.round(c.gust_mph)+' mph':null]
@@ -159,14 +159,14 @@
       const r=await fetch('data/webcams/ferry-history/index.json?t='+Date.now(),{cache:'no-store'});
       if(!r.ok){if(r.status===404){ferryArchive.hidden=true;if(ferryArchiveStatus){ferryArchiveStatus.hidden=false;ferryArchiveStatus.textContent='Saved event-image archive is not available. The live camera remains available.';}return;}throw Error('archive manifest HTTP '+r.status);}
       const doc=await r.json();
-      archiveFrames=(doc.frames||[]).filter(x=>x&&x.file&&x.captured_at);
-      if(!archiveFrames.length){ferryArchive.hidden=true;if(ferryArchiveStatus){ferryArchiveStatus.hidden=false;ferryArchiveStatus.textContent='No event images were captured during the current '+(doc.retention_hours||24)+'-hour archive window.';}return;}
+      const archive=SacoPresentation.recentArchiveFrames(doc,Date.now());archiveFrames=archive.frames;
+      if(!archiveFrames.length){if(archiveSelected)returnFerryLive();ferryArchive.hidden=true;if(ferryArchiveStatus){ferryArchiveStatus.hidden=false;ferryArchiveStatus.textContent='No event images were captured during the current '+archive.hours+'-hour archive window.';}return;}
       if(ferryArchiveStatus)ferryArchiveStatus.hidden=true;
       ferryArchive.hidden=false;
       renderArchiveThumbnails();
       ferryArchiveRange.min='0';ferryArchiveRange.max=String(archiveFrames.length-1);ferryArchiveRange.value=String(archiveFrames.length-1);
       ferryArchiveRange.hidden=archiveFrames.length<=6;
-      ferryArchiveCount.textContent=archiveFrames.length+' saved image'+(archiveFrames.length===1?'':'s')+' from the past '+(doc.retention_hours||24)+'h';
+      ferryArchiveCount.textContent=archiveFrames.length+' saved image'+(archiveFrames.length===1?'':'s')+' from the past '+archive.hours+'h';
       ferryArchiveTime.textContent='Choose a saved image above.';
       ferryArchiveReason.textContent='';
       renderArchiveContext(null);

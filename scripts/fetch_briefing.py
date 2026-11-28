@@ -326,7 +326,7 @@ def _briefing_priorities(water,change,event_state,now):
         margin_delta=(change.get("threshold_margin_delta_ft") or {}).get("minor")
         if abs(delta)>=0.15 or (margin_delta is not None and abs(float(margin_delta))>=0.15):
             direction="rose" if delta>0 else "fell" if delta<0 else "was nearly unchanged"
-            text=f"NOAA's compatible 72-hour peak forecast {direction} by {abs(delta):.2f} ft versus the captured forecast nearest 24 hours ago."
+            text=f"The forecast peak {direction} by {abs(delta):.2f} ft compared with about 24 hours ago."
             if margin_delta is not None and abs(float(margin_delta))>=0.15:
                 text+=f" The distance to the 12.0 ft Minor Flood threshold {'increased' if margin_delta>0 else 'decreased'} by {abs(float(margin_delta)):.2f} ft."
             previous=change.get("previous_peak_ft"); current=change.get("current_peak_ft")
@@ -439,7 +439,7 @@ def build_payload(current,hist,now=None):
     latest_stored=max((s for s in stored if hc.parse_iso(s.get("snapshot_at"))),key=lambda s:hc.parse_iso(s["snapshot_at"]),default=None)
     live_alert_changes=hc.diff_alerts((latest_stored or {}).get("alerts") or [],current.get("alerts") or [],now) if latest_stored else []
     alert_changes=hc.merge_events(_recent(hist.get("alert_events"),"at",now,24),live_alert_changes,100)
-    local24=[e for e in _recent(hist.get("local_events"),"published_at",now,24) if ch.coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or ""))]
+    local24=ch.qualifying_local_reports(_recent(hist.get("local_events"),"published_at",now,24),now,max_days=1)
     evolution=_forecast_evolution(snaps,current,now)
     timeline=_impact_timeline(current,alert_changes,local24,now)
     event_state=_event_state(current); event_briefing=_event_briefing(current,baseline,now); recent_event=_recent_event(current); event_transitions=_recent(hist.get("event_events"),"at",now,72)
@@ -504,14 +504,13 @@ def build_payload(current,hist,now=None):
         next72+=" "+event_briefing.get("next72_text","")
 
     local_items=[]
-    candidates=sorted(hist.get("local_events") or [],key=lambda x:hc.parse_iso(x.get("published_at")) or dt.datetime.min.replace(tzinfo=dt.timezone.utc),reverse=True)
+    candidates=ch.qualifying_local_reports(hist.get("local_events"),now)
     for e in candidates:
-        if not ch.coastal_topic((e.get("headline") or "")+" "+(e.get("summary") or "")): continue
         local_items.append({"type":"reddit" if e.get("source")=="Reddit" else "news","source":e.get("source"),"title":e.get("headline") or e.get("summary"),"url":e.get("url"),"published_at":e.get("published_at"),"location":e.get("location"),"event_category":e.get("event_category"),"anecdotal":e.get("anecdotal",False)})
         if len(local_items)>=12: break
     community=sum(1 for e in local_items if e.get("anecdotal")); officialish=len(local_items)-community
     if local_items:
-        local_summary=f"{len(local_items)} weather/coastal public report{'s' if len(local_items)!=1 else ''} retained in the recent scan ({officialish} news/other public, {community} community)."
+        local_summary=f"{len(local_items)} weather/coastal public report{'s' if len(local_items)!=1 else ''} retained in the past 7 days ({officialish} news/other public, {community} community)."
     else:
         local_summary="No weather-related local reports were retained in the recent coastal scan."
     local_health=(hist.get("source_health") or {}).get("feeds") or []

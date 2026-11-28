@@ -1,21 +1,21 @@
 'use strict';
 function updateNotice(){const missing=[];if(state.errors.observed)missing.push('live gauge');if(state.errors.predicted)missing.push('astronomical tide');if(state.errors.model)missing.push('model forecast');if(state.errors.alerts)missing.push('NWS alerts');if(state.errors.weatherObservation)missing.push('nearby measured weather');if(state.errors.weatherForecast)missing.push('coastal-point weather forecast');const recent=state.obs.at(-1);const age=recent?now()-recent.t:Infinity;const stale=!!recent&&(age>=45*60000||age< -10*60000);const node=$('notice');if(!missing.length&&!stale){node.classList.add('hidden');return;}node.classList.remove('hidden');const lines=[];if(missing.length)lines.push('Some live feeds are unavailable: '+missing.join(', ')+'. A dash means no data, not zero risk.');if(stale)lines.push('The most recent gauge reading is '+relative(recent.t)+'; treat it as stale.');lines.push('Open the official NOAA/NWS links below for current conditions.');$('noticeText').textContent=lines.join(' ');}
 function arrangeDashboard(){
- const main=document.querySelector('main.shell'),status=document.querySelector('.panel.status'),metrics=document.querySelector('.metrics'),chart=document.querySelector('.main-grid'),brief=document.querySelector('.coastal-briefing'),intel=document.querySelector('.coastal-intelligence'),history=$('#eventHistoryPanel'),weather=document.querySelector('.weather-panel'),alerts=document.querySelector('.alertpanel'),hub=document.querySelector('.camera-hub'),tools=$('#coastalToolsDetails');
+ const main=document.querySelector('main.shell'),status=document.querySelector('.panel.status'),metrics=document.querySelector('.metrics'),chart=document.querySelector('.main-grid'),brief=document.querySelector('.coastal-briefing'),intel=document.querySelector('.coastal-intelligence'),history=$('eventHistoryPanel'),weather=document.querySelector('.weather-panel'),alerts=document.querySelector('.alertpanel'),hub=document.querySelector('.camera-hub'),tools=$('coastalToolsDetails');
  if(!main)return;
- // Put official products and the live coastal outlook ahead of detail panels.
- if(status&&metrics)main.insertBefore(status,metrics);
- if(chart&&metrics)main.insertBefore(chart,metrics.nextSibling);
- if(hub&&chart)main.insertBefore(hub,chart.nextSibling);
- if(brief&&hub)main.insertBefore(brief,hub.nextSibling);
- if(intel&&brief)main.insertBefore(intel,brief.nextSibling);
- if(history&&intel)main.insertBefore(history,intel.nextSibling);
- if(weather&&history)main.insertBefore(weather,history.nextSibling);
- if(tools&&weather)main.insertBefore(tools,weather.nextSibling);
+ // Stable document order matches the visual and keyboard reading order.
+ const intro=document.querySelector('.intro'),notice=$('notice'),focus=$('stormModePanel'),timeline=$('impactTimelinePanel'),winter=$('winterWeatherPanel'),tropical=$('tropicalPanel');
+ for(const section of [alerts,notice,intro,focus,timeline,winter,tropical,status,metrics,brief,chart,intel,hub,weather,history,tools])if(section)main.append(section);
  const toolGrid=tools?.querySelector('.coastal-tools-grid');
- for(const selector of ['.threshold-reference','.comparison-panel','.tablepanel','.hourly-panel','.calendar-panel','.coastal-map-panel','.sources']){
-  const section=document.querySelector(selector);if(section&&toolGrid)toolGrid.append(section);
+ const groups=[['tideTools','Tides & Calendar',['.tablepanel','.calendar-panel']],['mapTools','Coastal Alert Map',['.coastal-map-panel']],['comparisonTools','January 2024 Gauge Reference',['.comparison-panel']],['sourceTools','Data Sources',['.sources']]];
+ for(const [id,label,selectors] of groups){
+  let group=$(id);if(!group&&toolGrid){group=document.createElement('details');group.id=id;group.className='tool-section';const summary=document.createElement('summary');summary.textContent=label;group.append(summary);toolGrid.append(group);}
+  for(const selector of selectors){const section=document.querySelector(selector);if(section&&group)group.append(section);}
  }
+ const threshold=document.querySelector('.threshold-reference');if(threshold&&chart)chart.append(threshold);
+ const hourly=$('hourlyWeatherPanel');if(hourly&&weather){let detail=$('hourlyDetails');if(!detail){detail=document.createElement('details');detail.id='hourlyDetails';const sum=document.createElement('summary');sum.textContent='Hourly Forecast';detail.append(sum);weather.append(detail);}detail.append(hourly);}
+ document.querySelectorAll('.table-wrap').forEach(table=>{table.tabIndex=0;table.setAttribute('role','region');table.setAttribute('aria-label','Scrollable data table');});
+ document.querySelectorAll('.section-links a').forEach(link=>link.addEventListener('click',()=>{const target=$(link.hash.slice(1));if(target){let parent=target;while(parent){if(parent.tagName==='DETAILS')parent.open=true;parent=parent.parentElement;}target.scrollIntoView({block:'start'});}}));
  const cameraPanels=hub?.querySelector('.camera-panels');
  let savedCamera='ferry-camera';try{const value=sessionStorage.getItem('sacocast-selected-camera');if(value==='abellona-camera')savedCamera=value;}catch(_err){}
  for(const cls of ['ferry-camera','abellona-camera']){const camera=document.querySelector('main > .'+cls);if(camera&&cameraPanels)cameraPanels.append(camera);}
@@ -43,9 +43,23 @@ function arrangeDashboard(){
  }));
  // Reassert this after all section moves so official products stay above
  // derived summaries and supporting content in every rendered layout.
- if(alerts&&status)main.insertBefore(alerts,status);
+
 }
-function updateClock(){$('currentClock').textContent=fmt(now(),{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});const o=state.obs.at(-1),age=o?now()-o.t:Infinity;const healthy=!!o&&age>=-10*60000&&age<45*60000;$('liveDot').className='dot '+(healthy?'good':state.loading?'warn':'bad');$('liveText').textContent=state.loading?'Refreshing feeds':healthy?'Gauge current':o?'Gauge delayed':'Live data unavailable';if(state.lastSuccess)$('syncTime').textContent='Last successful data refresh '+relative(state.lastSuccess);}
+function updateClock(){
+ $('currentClock').textContent=fmt(now(),{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+ const o=state.obs.at(-1),age=o?now()-o.t:Infinity,healthy=!!o&&age>=-10*60000&&age<45*60000;
+ const gaugeBadge=$('healthObserved');if(gaugeBadge){gaugeBadge.textContent=healthy?'Measured '+time(o.t)+' ET':o?'Delayed':'Unavailable';gaugeBadge.className='badge '+(healthy?'ok':'fail');}
+ $('liveDot').className='dot '+(healthy?'good':state.loading?'warn':'bad');
+ $('liveText').textContent=healthy?'Portland Gauge · '+relative(o.t):state.loading?'Checking Portland Gauge':o?'Portland Gauge Delayed':'Portland Gauge Unavailable';
+ const missing=Object.keys(state.errors),extra=[];
+ if(state.marineFetchError||Object.values(state.marine||{}).some(x=>x?.stale))extra.push('marine observations');
+ if(state.hazardsError)extra.push('coastal guidance');if(state.briefingError)extra.push('briefing');
+ const issues=[...missing,...extra];
+ const checked=state.lastAttempt?'Checked '+time(state.lastAttempt)+' ET':'Checking Sources';
+ $('syncTime').textContent=checked+(state.loading?' · Updating Sources':issues.length?' · Some Sources Unavailable or Delayed':' · See Individual Source Times');
+ const availability=$('sourceAvailability');if(availability){availability.hidden=!extra.length||missing.length>0;availability.textContent='Some sources are unavailable or delayed. Check Data Sources for individual status.';}
+}
+
 function render(){renderSummary();renderHistoricalComparison();renderMarine();renderWeather();renderTable();renderCalendar();renderCoastalIntelligence();renderAlerts();renderChart();renderBriefing();renderHazards();updateNotice();updateClock();}
 async function load(){
 if(state.loading)return;state.loading=true;state.lastAttempt=now();updateClock();const t=now(),start=ymd(t-3*86400000),end=ymd(t+4*86400000);
@@ -60,7 +74,7 @@ const calls=[
 for(const [name,url,save,interval] of calls){if(interval&&!shouldFetch(name,interval))continue;try{const data=await getJSON(url);save(data);state.lastFetched[name]=now();delete state.errors[name];if(['observed','predicted','model','alerts'].includes(name))health('health'+name[0].toUpperCase()+name.slice(1),true,name==='alerts'?state.alertsActiveCount+' active':'Connected');state.lastSuccess=now();}catch(err){if(name==='model')state.model=[];state.errors[name]=String(err?.message||err);if(['observed','predicted','model','alerts'].includes(name))health('health'+name[0].toUpperCase()+name.slice(1),false,'Unavailable');console.warn('Saco Coast Watch '+name+':',err);}render();if(name!=='alerts')await new Promise(r=>setTimeout(r,250));}
 await Promise.all([loadWeather(),loadMarine(),loadBriefing(),loadHazards()]);state.loading=false;$('lastUpdated').textContent='Last checked '+fmt(now(),{hour:'numeric',minute:'2-digit',timeZoneName:'short'})+' · 60-second live checks';render();
 }
-function exportCSV(){const timestamps=new Set([...state.obs,...state.pred,...state.model].map(x=>x.t));const lines=['utc_time,observed_ft_MLLW,astronomical_tide_ft_MLLW,model_guidance_ft_MLLW'];const obs=new Map(state.obs.map(x=>[x.t,x.v])),pred=new Map(state.pred.map(x=>[x.t,x.v])),model=new Map(state.model.map(x=>[x.t,x.v]));for(const t of [...timestamps].sort((a,b)=>a-b)){lines.push([new Date(t).toISOString(),obs.get(t)??'',pred.get(t)??'',model.get(t)??''].join(','));}const blob=new Blob([lines.join('\n')+'\n'],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='saco-coast-watch-'+ymd(now())+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+function exportCSV(){const timestamps=new Set([...state.obs,...state.pred,...state.model].map(x=>x.t));const lines=['utc_time,observed_ft_MLLW,astronomical_tide_ft_MLLW,model_guidance_ft_MLLW'];const obs=new Map(state.obs.map(x=>[x.t,x.v])),pred=new Map(state.pred.map(x=>[x.t,x.v])),model=new Map(state.model.map(x=>[x.t,x.v]));for(const t of [...timestamps].sort((a,b)=>a-b)){lines.push([new Date(t).toISOString(),obs.get(t)??'',pred.get(t)??'',model.get(t)??''].join(','));}const blob=new Blob([lines.join('\n')+'\n'],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SacoCast-'+ymd(now())+'.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 $('exportBtn').addEventListener('click',exportCSV);
 $('briefOpen').addEventListener('click',()=>{const d=$('briefingDialog');if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');});
 $('briefClose').addEventListener('click',()=>$('briefingDialog').close());
@@ -70,4 +84,4 @@ document.querySelectorAll('[data-days]').forEach(btn=>btn.addEventListener('clic
 $('showFlood').addEventListener('change',e=>{state.showFlood=e.target.checked;renderChart();});$('showModel').addEventListener('change',e=>{state.showModel=e.target.checked;renderChart();});
 arrangeDashboard();
 setInterval(updateClock,10000);setInterval(()=>{if(!document.hidden)load();},60*1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.lastAttempt||now()-state.lastAttempt>=60*1000))load();});let chartResizeTimer;window.addEventListener('resize',()=>{clearTimeout(chartResizeTimer);chartResizeTimer=setTimeout(renderChart,120);});load();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&(!state.lastAttempt||now()-state.lastAttempt>=60*1000))load();});document.addEventListener('sacocast:section-toggle',()=>{renderChart();renderCalendar();});let chartResizeTimer;window.addEventListener('resize',()=>{clearTimeout(chartResizeTimer);chartResizeTimer=setTimeout(renderChart,120);});load();
